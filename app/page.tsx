@@ -527,7 +527,7 @@ const COPY = {
     statsL2:    "All orbital types",
     statsL3:    "Polar coverage",
     waitlistL:  "Request early access",
-    waitlistSub:"Direct founder access. No sales calls. No automated sequences.",
+    waitlistSub:"Non-commercial R&D prototype · No sales calls · No automated sequences.",
     // Telemetry
     telemetryLabel:  "ILLUSTRATIVE ENGINE OUTPUT — NOT LIVE DATA",
     telemetryHeader: "ORBITAL INTELLIGENCE ENGINE · LIVE",
@@ -574,7 +574,7 @@ const COPY = {
     ],
     // CTA
     ctaH2:  "Built for operators, not marketers.",
-    ctaSub: "Nordic and Arctic launch. Early access users get direct access to the founder and shape the scoring models.",
+    ctaSub: "Nordic and Arctic launch. Early access users help shape the scoring models.",
     ctaBtn: "Request early access",
     // Demo reel
     demoL: "See GRYPS in 60 seconds",
@@ -587,8 +587,8 @@ const COPY = {
       { label: "05 · Export & deploy", headline: "Board-ready PDF. Deployment starts.", body: "Export your analysis as a structured executive report. Share with procurement, sign the contract, and deploy with data behind every decision." },
     ],
     // Footer
-    footerRights: "© 2026 GRYPS — All rights reserved",
-    footerTag:    "Designed & engineered in Finland for high-latitude resilience.",
+    footerRights: "© 2026 GRYPS · Espoo, Finland · Non-commercial R&D prototype · No registered company · No revenue generated",
+    footerTag:    "Built in Finland for high-latitude resilience.",
   },
   fi: {
     // Nav
@@ -601,7 +601,7 @@ const COPY = {
     statsL2:    "Kaikki orbitaalityypit",
     statsL3:    "Napapiirin kattavuus",
     waitlistL:  "Pyydä varhaista pääsyä",
-    waitlistSub:"Suora yhteys perustajaan. Ei myyntipuheluita. Ei automaattisia sekvenssejä.",
+    waitlistSub:"Ei-kaupallinen T&K-prototyyppi · Ei myyntipuheluita · Ei automaattisia sekvenssejä.",
     // Telemetry
     telemetryLabel:  "HAVAINNOLLISTAVA MOOTTORILÄHTÖ — EI LIVE-DATAA",
     telemetryHeader: "ORBITAALINEN TIEDUSTELUMOOTTORI · LIVE",
@@ -648,7 +648,7 @@ const COPY = {
     ],
     // CTA
     ctaH2:  "Rakennettu operaattoreille, ei markkinoijille.",
-    ctaSub: "Pohjoismainen ja arktinen julkaisu. Varhaiset käyttäjät saavat suoran yhteyden perustajaan ja muovaavat pisteytysmallit.",
+    ctaSub: "Pohjoismainen ja arktinen julkaisu. Varhaiset käyttäjät auttavat muovaamaan pisteytysmallit.",
     ctaBtn: "Pyydä varhaista pääsyä",
     // Demo reel
     demoL: "Katso GRYPS 60 sekunnissa",
@@ -661,8 +661,8 @@ const COPY = {
       { label: "05 · Vienti ja käyttöönotto", headline: "Hallitusvalmis PDF. Käyttöönotto alkaa.", body: "Vie analyysisi strukturoituna johtoraporttina. Jaa hankintaan, allekirjoita sopimus ja ota käyttöön dataan perustuvan jokaisen päätöksen kanssa." },
     ],
     // Footer
-    footerRights: "© 2026 GRYPS — Kaikki oikeudet pidätetään",
-    footerTag:    "Suunniteltu ja rakennettu Suomessa korkean leveysasteen resilienssille.",
+    footerRights: "© 2026 GRYPS · Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi · Ei rekisteröityä yritystä · Ei tuloja",
+    footerTag:    "Rakennettu Suomessa korkean leveysasteen resilienssille.",
   },
 }
 
@@ -1010,6 +1010,24 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
 
+      {/* Non-commercial banner */}
+      <div style={{
+        backgroundColor: "rgba(245,184,74,0.06)",
+        borderBottom: "1px solid rgba(245,184,74,0.2)",
+        padding: "8px 32px",
+        textAlign: "center",
+        fontFamily: "var(--font-data)",
+        fontSize: 10,
+        color: "#F5B84A",
+        letterSpacing: "0.08em",
+        position: "relative",
+        zIndex: 200,
+      }}>
+        {lang === "en"
+          ? "NON-COMMERCIAL R&D PROTOTYPE · NO REGISTERED COMPANY · NO REVENUE · FREE ACCESS · BUILT FOR RESEARCH AND LEARNING PURPOSES ONLY · ESPOO, FINLAND"
+          : "EI-KAUPALLINEN T&K-PROTOTYYPPI · EI REKISTERÖITYÄ YRITYSTÄ · EI TULOJA · ILMAINEN PÄÄSY · RAKENNETTU TUTKIMUS- JA OPPIMISTARKOITUKSIIN · ESPOO, SUOMI"}
+      </div>
+
       {/* Nav */}
       <header style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
@@ -1198,15 +1216,6 @@ export default function HomePage() {
             )
           })}
         </div>
-      </section>
-
-      {/* Pricing */}
-      <section style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
-        <p className="label" style={{ marginBottom: 8 }}>{t.pricingL}</p>
-        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 32, letterSpacing: "-0.01em" }}>
-          {t.pricingH2}
-        </h2>
-        <PricingTiers t={t} />
       </section>
 
       {/* CTA */}

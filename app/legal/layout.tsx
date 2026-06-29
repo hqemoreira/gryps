@@ -89,8 +89,8 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         marginTop: 64,
       }}>
         <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS LEGAL</span>
-        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>© 2026 GRYPS — All rights reserved</span>
-        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>Joroinen, Finland · EU</span>
+        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>© 2026 GRYPS · Non-commercial R&D prototype</span>
+        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>Espoo, Finland · EU</span>
       </footer>
     </div>
   )

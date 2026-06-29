@@ -6,14 +6,14 @@ const COPY = {
   en: {
     title: "Privacy Policy",
     effective: "Effective date: 29 June 2026",
-    controller: "Data Controller: Henrique Moreira · Joroinen, Finland · hqe.moreira@gmail.com",
+    controller: "Data Controller: GRYPS (research project) · Espoo, Finland · hqe.moreira@gmail.com",
     intro: "This Privacy Policy explains how GRYPS collects, processes, and protects personal data in connection with the GRYPS satellite connectivity intelligence platform. GRYPS is committed to full compliance with the EU General Data Protection Regulation (GDPR) and applicable Finnish data protection law.",
     sections: [
       {
         id: "01",
         title: "Who We Are",
         body: [
-          "GRYPS is a satellite connectivity intelligence platform operated by Henrique Moreira as a sole trader based in Joroinen, Finland. For the purposes of the GDPR, Henrique Moreira is the data controller responsible for personal data processed through the GRYPS platform.",
+          "GRYPS is a non-commercial research project based in Espoo, Finland. There is no registered company and no revenue. For the purposes of the GDPR, the researcher operating GRYPS (hqe.moreira@gmail.com) is the data controller responsible for personal data processed through the GRYPS platform.",
           "Contact for all data protection matters: hqe.moreira@gmail.com",
         ],
       },
@@ -56,7 +56,7 @@ const COPY = {
           "GRYPS is built on infrastructure that operates within European Union jurisdiction:",
           "Vercel (hosting & analytics): EU-region deployment (Frankfurt, Germany — iad1/fra1). Production deployments are configured to prioritise EU edge nodes. Vercel's EU data processing addendum is available at vercel.com/legal/dpa.",
           "Neon (database): PostgreSQL serverless database. GRYPS uses the EU (Frankfurt) region for all database instances. Customer waitlist data, analysis session records, and API logs are stored exclusively within EU-region Neon infrastructure.",
-          "Resend (transactional email): Used only to send notification emails to GRYPS's founder when a new waitlist submission is received. No customer data is retained within Resend beyond the transactional payload. Resend is SOC 2 Type II certified.",
+          "Resend (transactional email): Used only to send notification emails to the GRYPS researcher when a new waitlist submission is received. No customer data is retained within Resend beyond the transactional payload. Resend is SOC 2 Type II certified.",
           "GRYPS does not transfer personal data to third countries (outside the EU/EEA) without an adequate legal mechanism in place.",
         ],
       },
@@ -102,7 +102,7 @@ const COPY = {
         rows: [
           { processor: "Vercel", role: "Hosting, edge delivery, analytics", region: "EU (Frankfurt)", lawfulBasis: "DPA — vercel.com/legal/dpa" },
           { processor: "Neon", role: "PostgreSQL serverless database", region: "EU (Frankfurt)", lawfulBasis: "DPA — neon.tech/privacy" },
-          { processor: "Resend", role: "Transactional email (founder notification)", region: "US (SOC 2)", lawfulBasis: "Standard contractual clauses" },
+          { processor: "Resend", role: "Transactional email (waitlist notification)", region: "US (SOC 2)", lawfulBasis: "Standard contractual clauses" },
         ],
       },
       {
@@ -126,10 +126,10 @@ const COPY = {
         id: "11",
         title: "Contact",
         body: [
-          "Data Controller: Henrique Moreira",
+          "Data Controller: GRYPS (research project)",
           "Platform: gryps.vercel.app",
           "Email: hqe.moreira@gmail.com",
-          "Location: Joroinen, Finland — European Union",
+          "Location: Espoo, Finland — European Union",
         ],
       },
     ],
@@ -137,14 +137,14 @@ const COPY = {
   fi: {
     title: "Tietosuojakäytäntö",
     effective: "Voimaantulopäivä: 29. kesäkuuta 2026",
-    controller: "Rekisterinpitäjä: Henrique Moreira · Joroinen, Suomi · hqe.moreira@gmail.com",
+    controller: "Rekisterinpitäjä: GRYPS (tutkimusprojekti) · Espoo, Suomi · hqe.moreira@gmail.com",
     intro: "Tämä tietosuojakäytäntö selittää, miten GRYPS kerää, käsittelee ja suojaa henkilötietoja GRYPS-satelliittiyhteysintelligenssiplatformin yhteydessä. GRYPS on sitoutunut täydelliseen vaatimustenmukaisuuteen EU:n yleisen tietosuoja-asetuksen (GDPR) ja sovellettavan suomalaisen tietosuojalain kanssa.",
     sections: [
       {
         id: "01",
         title: "Keitä me olemme",
         body: [
-          "GRYPS on satelliittiyhteysintelligenssiplatforma, jota Henrique Moreira operoi yksityisyrittäjänä Joroisissa, Suomessa. GDPR:n tarkoituksiin Henrique Moreira on rekisterinpitäjä, joka vastaa GRYPS-platformin kautta käsitellyistä henkilötiedoista.",
+          "GRYPS on ei-kaupallinen tutkimusprojekti, jota operoidaan Espoosta, Suomesta. GDPR:n tarkoituksiin tutkija (hqe.moreira@gmail.com) on rekisterinpitäjä, joka vastaa GRYPS-platformin kautta käsitellyistä henkilötiedoista.",
           "Yhteystiedot kaikissa tietosuoja-asioissa: hqe.moreira@gmail.com",
         ],
       },
@@ -187,7 +187,7 @@ const COPY = {
           "GRYPS on rakennettu infrastruktuurille, joka toimii Euroopan unionin lainkäyttöalueella:",
           "Vercel (hosting ja analytiikka): EU-alueen käyttöönotto (Frankfurt, Saksa). Tuotantokäyttöönotot on konfiguroitu priorisoimaan EU:n reunasolmuja.",
           "Neon (tietokanta): PostgreSQL-palvelimetonta tietokantaa käytetään EU (Frankfurt) -alueella kaikissa tietokantainstansseissa.",
-          "Resend (transaktiosähköposti): Käytetään vain ilmoitussähköpostien lähettämiseen GRYPS:n perustajalle, kun uusi jonotuslistatoimitus vastaanotetaan.",
+          "Resend (transaktiosähköposti): Käytetään vain ilmoitussähköpostien lähettämiseen GRYPS-tutkijalle, kun uusi jonotuslistatoimitus vastaanotetaan.",
           "GRYPS ei siirrä henkilötietoja kolmansiin maihin (EU/ETA:n ulkopuolelle) ilman asianmukaista oikeusmekanismia.",
         ],
       },
@@ -252,10 +252,10 @@ const COPY = {
         id: "11",
         title: "Yhteystiedot",
         body: [
-          "Rekisterinpitäjä: Henrique Moreira",
+          "Rekisterinpitäjä: GRYPS (tutkimusprojekti)",
           "Platforma: gryps.vercel.app",
           "Sähköposti: hqe.moreira@gmail.com",
-          "Sijainti: Joroinen, Suomi — Euroopan unioni",
+          "Sijainti: Espoo, Suomi — Euroopan unioni",
         ],
       },
     ],

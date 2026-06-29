@@ -29,9 +29,9 @@ const jsonLd = {
     "audienceType": "Industrial operators in maritime, forestry, mining, and Arctic environments"
   },
   "author": {
-    "@type": "Person",
-    "name": "Henrique Moreira",
-    "url": "https://henriquemoreira.eu"
+    "@type": "Organization",
+    "name": "GRYPS Research Project",
+    "url": "https://gryps.vercel.app"
   }
 }
 
