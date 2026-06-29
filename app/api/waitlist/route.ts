@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { neon } from "@neondatabase/serverless"
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 const VERTICALS: Record<string, string> = {
   maritime:   "Maritime",
   forestry:   "Forestry",
@@ -45,6 +43,7 @@ export async function POST(req: NextRequest) {
 
   // ── Resend — notify founder ────────────────────────────────────────────────
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
     await resend.emails.send({
       from:    "GRYPS <noreply@henriquemoreira.eu>",
       to:      "hqe.moreira@gmail.com",
