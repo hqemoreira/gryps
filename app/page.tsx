@@ -1,6 +1,6 @@
 "use client"
-import { useState } from "react"
-import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle } from "lucide-react"
+import { useState, useEffect } from "react"
+import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle, Sun, Moon } from "lucide-react"
 
 // ── GRYPS Mark ────────────────────────────────────────────────────────────────
 function GrypsMark({ size = 36 }: { size?: number }) {
@@ -241,8 +241,26 @@ function AdvisorPreview() {
   )
 }
 
+const DARK: Record<string, string> = {
+  "--bg": "#070B12", "--surface": "#0B1220", "--surface2": "#111827",
+  "--border": "#1E293B", "--border2": "#253347",
+  "--text": "#F7FAFC", "--text-muted": "#64748B", "--text-dim": "#334155",
+}
+const LIGHT: Record<string, string> = {
+  "--bg": "#F4F6F9", "--surface": "#FFFFFF", "--surface2": "#EEF1F6",
+  "--border": "#DDE2EC", "--border2": "#C8D0DE",
+  "--text": "#0B1220", "--text-muted": "#5A6A84", "--text-dim": "#9AAABF",
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function HomePage() {
+  const [dark, setDark] = useState(true)
+
+  useEffect(() => {
+    const vars = dark ? DARK : LIGHT
+    Object.entries(vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v))
+  }, [dark])
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
 
@@ -262,6 +280,18 @@ export default function HomePage() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>CONNECTIVITY INTELLIGENCE</span>
+          <button
+            onClick={() => setDark(d => !d)}
+            title={dark ? "Switch to light mode" : "Switch to dark mode"}
+            style={{
+              background: "var(--surface2)", border: "1px solid var(--border2)",
+              borderRadius: 6, width: 32, height: 32, cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "var(--text-muted)",
+            }}
+          >
+            {dark ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
           <a href="#waitlist" style={{
             fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700,
             color: "#4FA8FF", textDecoration: "none",
@@ -429,7 +459,7 @@ export default function HomePage() {
           <GrypsMark size={18} />
           <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS</span>
         </div>
-        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>© 2026 GRYPS — Connectivity Intelligence</span>
+        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>© 2026 GRYPS — All rights reserved</span>
         <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>Espoo, Finland</span>
       </footer>
     </div>
