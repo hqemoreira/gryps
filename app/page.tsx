@@ -1014,14 +1014,18 @@ export default function HomePage() {
       <div style={{
         backgroundColor: "rgba(245,184,74,0.06)",
         borderBottom: "1px solid rgba(245,184,74,0.2)",
-        padding: "8px 32px",
+        padding: "7px 32px",
         textAlign: "center",
         fontFamily: "var(--font-data)",
         fontSize: 10,
         color: "#F5B84A",
         letterSpacing: "0.08em",
-        position: "relative",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
         zIndex: 200,
+        backdropFilter: "blur(12px)",
       }}>
         {lang === "en"
           ? "NON-COMMERCIAL R&D PROTOTYPE · NO REGISTERED COMPANY · NO REVENUE · FREE ACCESS · BUILT FOR RESEARCH AND LEARNING PURPOSES ONLY · ESPOO, FINLAND"
@@ -1030,7 +1034,7 @@ export default function HomePage() {
 
       {/* Nav */}
       <header style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        position: "fixed", top: 33, left: 0, right: 0, zIndex: 100,
         borderBottom: "1px solid var(--border)",
         backgroundColor: "rgba(7,11,18,0.92)",
         backdropFilter: "blur(12px)",
@@ -1079,7 +1083,7 @@ export default function HomePage() {
       </header>
 
       {/* Hero */}
-      <section style={{ paddingTop: 120, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
+      <section style={{ paddingTop: 153, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
 
           {/* Left */}
