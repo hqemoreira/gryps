@@ -144,7 +144,7 @@ const TELEMETRY_LINES = [
   { tag: "LEO-SCAN",   color: "#6EE7F9",  text: "Starlink Shell-4 pass density: 94.2%  [OPTIMAL]" },
   { tag: "GEO-CHECK",  color: "#F5B84A",  text: "Viasat ViaSat-3 horizon angle: 8.3°   [HIGH ATTENUATION RISK]" },
   { tag: "MEO-EVAL",   color: "#6EE7F9",  text: "OneWeb elevation window: 62°–89°      [STRONG]" },
-  { tag: "CANOPY",     color: "#F5B84A",  text: "Pine canopy blockage penalty applied: –6.2 dB" },
+  { tag: "CANOPY",     color: "#F5B84A",  text: "Pine canopy blockage penalty applied: −6.2 dB" },
   { tag: "REDUND",     color: "#4FA8FF",  text: "Dual-orbit redundancy path: Starlink + Iridium NEXT" },
   { tag: "SCORE",      color: "#2ED47A",  text: "Deployment Confidence computed: 94 · 81 · 67" },
   { tag: "REPORT",     color: "#2ED47A",  text: "Resilience signature generated — ready for export" },
@@ -289,7 +289,7 @@ function PricingTiers() {
   const tiers = [
     {
       name: "Report",
-      price: "€250",
+      price: "€550",
       unit: "per analysis",
       color: "var(--text)",
       accent: "var(--border2)",
@@ -306,7 +306,7 @@ function PricingTiers() {
     },
     {
       name: "Platform",
-      price: "€490",
+      price: "€990",
       unit: "per month",
       color: "#4FA8FF",
       accent: "rgba(79,168,255,0.2)",
@@ -324,7 +324,7 @@ function PricingTiers() {
     {
       name: "API",
       price: "Custom",
-      unit: "usage-based",
+      unit: "from €2,500 / month",
       color: "#6EE7F9",
       accent: "rgba(110,231,249,0.15)",
       description: "Direct API access for systems integrators and fleet platforms.",
@@ -401,6 +401,51 @@ function Stat({ value, label }: { value: string; label: string }) {
   )
 }
 
+// ── PDF download mock ─────────────────────────────────────────────────────────
+function PdfToggle() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div style={{ position: "relative" }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          display: "flex", alignItems: "center", gap: 6,
+          backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
+          borderRadius: 6, padding: "8px 14px", cursor: "pointer",
+          fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11,
+          color: "var(--text-muted)",
+        }}
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download sample report
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 8px)", right: 0, zIndex: 50,
+          backgroundColor: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: 8, padding: "16px", width: 260,
+          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+        }}>
+          <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)", marginBottom: 6 }}>PDF report — early access</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 12 }}>
+            Full PDF reports are generated per analysis and delivered to early access members. Join the waitlist to receive yours.
+          </p>
+          <a href="#waitlist" onClick={() => setOpen(false)} style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+            backgroundColor: "#4FA8FF", color: "#070B12",
+            borderRadius: 5, padding: "8px 14px", textDecoration: "none",
+            fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11,
+          }}>
+            Request early access <ArrowRight size={11} />
+          </a>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Sample advisor output ─────────────────────────────────────────────────────
 function AdvisorPreview() {
   const providers = [
@@ -458,7 +503,10 @@ function AdvisorPreview() {
           <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 6px #2ED47A" }} />
           <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.08em" }}>ADVISOR · MISSION ANALYSIS</span>
         </div>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>68.2°N · 27.4°E — FORESTRY — UPTIME</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>68.2°N · 27.4°E — FORESTRY — UPTIME</span>
+          <PdfToggle />
+        </div>
       </div>
 
       {/* Providers */}
@@ -512,9 +560,45 @@ const LIGHT: Record<string, string> = {
   "--text": "#0B1220", "--text-muted": "#5A6A84", "--text-dim": "#9AAABF",
 }
 
+// ── Copy (EN / FI) ───────────────────────────────────────────────────────────
+const COPY = {
+  en: {
+    tag:        "EARLY ACCESS · NORDIC & ARCTIC OPERATIONS",
+    h1:         ["Know which satellite", "provider to choose", "before it matters."],
+    sub:        "GRYPS is a connectivity intelligence platform for industrial operators in maritime, forestry, Arctic, and mining environments. Enter your coordinates and operational requirements — get a ranked, data-backed recommendation with a Deployment Confidence score.",
+    statsL1:    "Providers indexed",
+    statsL2:    "All orbital types",
+    statsL3:    "Polar coverage",
+    waitlistL:  "Request early access",
+    waitlistSub:"Direct founder access. No sales calls. No automated sequences.",
+    navCta:     "Early access",
+    ctaH2:      "Built for operators, not marketers.",
+    ctaSub:     "Nordic and Arctic launch. Early access users get direct access to the founder and shape the scoring models.",
+    ctaBtn:     "Request early access",
+    pricingL:   "Precision pricing for industrial procurement.",
+  },
+  fi: {
+    tag:        "VARHAINEN PÄÄSY · POHJOISMAAT JA ARKTINEN",
+    h1:         ["Tiedä mikä satelliitti-", "toimittaja valita", "ennen kuin se ratkaisee."],
+    sub:        "GRYPS on yhteysintelligenssiplatformi teollisuusoperaattoreille merenkululle, metsätaloudelle, arktisille alueille ja kaivostoiminnalle. Syötä koordinaatit ja operatiiviset vaatimuksesi — saat rankatun, dataan perustuvan suosituksen Deployment Confidence -pisteytyksen kera.",
+    statsL1:    "Palveluntarjoajaa indeksoitu",
+    statsL2:    "Kaikki orbitaalityypit",
+    statsL3:    "Napapiirin kattavuus",
+    waitlistL:  "Pyydä varhaista pääsyä",
+    waitlistSub:"Suora yhteys perustajaan. Ei myyntipuheluita. Ei automaattisia sekvenssejä.",
+    navCta:     "Varhainen pääsy",
+    ctaH2:      "Rakennettu operaattoreille, ei markkinoijille.",
+    ctaSub:     "Pohjoismainen ja arktinen julkaisu. Varhaiset käyttäjät saavat suoran yhteyden perustajaan ja muovaavat pisteytysmallit.",
+    ctaBtn:     "Pyydä varhaista pääsyä",
+    pricingL:   "Selkeä hinnoittelu teollisuushankintaan.",
+  },
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const [dark, setDark] = useState(true)
+  const [lang, setLang] = useState<"en" | "fi">("en")
+  const t = COPY[lang]
 
   useEffect(() => {
     const vars = dark ? DARK : LIGHT
@@ -540,6 +624,19 @@ export default function HomePage() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>CONNECTIVITY INTELLIGENCE</span>
+          {/* Language toggle */}
+          <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden" }}>
+            {(["en", "fi"] as const).map(l => (
+              <button key={l} onClick={() => setLang(l)} style={{
+                background: lang === l ? "var(--border2)" : "transparent",
+                border: "none", padding: "5px 10px", cursor: "pointer",
+                fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.08em",
+                color: lang === l ? "var(--text)" : "var(--text-muted)",
+                transition: "background 0.15s",
+              }}>{l.toUpperCase()}</button>
+            ))}
+          </div>
           <button
             onClick={() => setDark(d => !d)}
             title={dark ? "Switch to light mode" : "Switch to dark mode"}
@@ -557,7 +654,7 @@ export default function HomePage() {
             color: "#4FA8FF", textDecoration: "none",
             border: "1px solid rgba(79,168,255,0.3)",
             padding: "6px 14px", borderRadius: 5,
-          }}>Early access</a>
+          }}>{t.navCta}</a>
         </div>
       </header>
 
@@ -569,7 +666,7 @@ export default function HomePage() {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
               <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 8px #2ED47A" }} />
-              <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.14em" }}>EARLY ACCESS · NORDIC &amp; ARCTIC OPERATIONS</span>
+              <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
             </div>
 
             <h1 style={{
@@ -581,28 +678,28 @@ export default function HomePage() {
               color: "var(--text)",
               marginBottom: 20,
             }}>
-              Know which satellite<br />
-              provider to choose<br />
-              <span style={{ color: "#4FA8FF" }}>before it matters.</span>
+              {t.h1[0]}<br />
+              {t.h1[1]}<br />
+              <span style={{ color: "#4FA8FF" }}>{t.h1[2]}</span>
             </h1>
 
             <p style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 32, maxWidth: 440 }}>
-              GRYPS is a connectivity intelligence platform for industrial operators in maritime, forestry, Arctic, and mining environments. Enter your coordinates and operational requirements — get a ranked, data-backed recommendation with a Deployment Confidence score.
+              {t.sub}
             </p>
 
             {/* Stats */}
             <div style={{ display: "flex", gap: 36, marginBottom: 40, paddingBottom: 40, borderBottom: "1px solid var(--border)" }}>
-              <Stat value="120+" label="Providers indexed" />
-              <Stat value="LEO–MEO–GEO" label="All orbital types" />
-              <Stat value="70°N+" label="Polar coverage" />
+              <Stat value="120+" label={t.statsL1} />
+              <Stat value="LEO–MEO–GEO" label={t.statsL2} />
+              <Stat value="70°N+" label={t.statsL3} />
             </div>
 
             {/* Waitlist */}
             <div id="waitlist">
-              <p className="label" style={{ marginBottom: 12 }}>Request early access</p>
+              <p className="label" style={{ marginBottom: 12 }}>{t.waitlistL}</p>
               <WaitlistForm />
               <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", marginTop: 10 }}>
-                Direct founder access. No sales calls. No automated sequences.
+                {t.waitlistSub}
               </p>
             </div>
           </div>
@@ -698,7 +795,7 @@ export default function HomePage() {
       <section style={{ padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
         <p className="label" style={{ marginBottom: 8 }}>Pricing</p>
         <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 32, letterSpacing: "-0.01em" }}>
-          Two ways to buy intelligence.
+          {t.pricingL}
         </h2>
         <PricingTiers />
       </section>
@@ -711,10 +808,10 @@ export default function HomePage() {
       }}>
         <GrypsMark size={44} />
         <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", margin: "20px 0 10px", letterSpacing: "-0.01em" }}>
-          Built for operators, not marketers.
+          {t.ctaH2}
         </h2>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", marginBottom: 32, maxWidth: 480, margin: "0 auto 32px" }}>
-          Nordic and Arctic launch. Early access users get direct access to the founder and shape the scoring models.
+          {t.ctaSub}
         </p>
         <a href="#waitlist" style={{
           display: "inline-flex", alignItems: "center", gap: 8,
@@ -722,7 +819,7 @@ export default function HomePage() {
           fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
           padding: "12px 24px", borderRadius: 6, textDecoration: "none",
         }}>
-          Request early access <ArrowRight size={14} />
+          {t.ctaBtn} <ArrowRight size={14} />
         </a>
       </section>
 
