@@ -190,94 +190,110 @@ function TelemetryStream({ t }: { t: typeof COPY.en }) {
   )
 }
 
-// ── Polar map wireframe ───────────────────────────────────────────────────────
+// ── Polar map — live orbital animation ────────────────────────────────────────
 function PolarMap({ t }: { t: typeof COPY.en }) {
   const cx = 200, cy = 195, maxR = 160
+  const [tick, setTick] = useState(0)
 
-  const latLines = [90, 80, 70, 60, 50] // degrees N
+  useEffect(() => {
+    let raf: number
+    let start = performance.now()
+    function loop(now: number) {
+      setTick((now - start) / 1000)
+      raf = requestAnimationFrame(loop)
+    }
+    raf = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  const latLines = [90, 80, 70, 60, 50]
   const markers = [
-    { lat: 68.2, lon: 27.4,  label: "68.2°N",  active: true  },  // Finland forestry
-    { lat: 71.0, lon: 25.9,  label: "71.0°N",  active: false },  // Norway Arctic
-    { lat: 64.5, lon: -21.9, label: "64.5°N",  active: false },  // Iceland maritime
-    { lat: 78.2, lon: 15.6,  label: "78.2°N",  active: false },  // Svalbard
+    { lat: 68.2, lon: 27.4,  label: "68.2°N",  active: true  },
+    { lat: 71.0, lon: 25.9,  label: "71.0°N",  active: false },
+    { lat: 64.5, lon: -21.9, label: "64.5°N",  active: false },
+    { lat: 78.2, lon: 15.6,  label: "78.2°N",  active: false },
   ]
 
-  function latToR(lat: number) {
-    return ((90 - lat) / 50) * maxR
-  }
-
+  function latToR(lat: number) { return ((90 - lat) / 50) * maxR }
   function toXY(lat: number, lon: number) {
     const r = latToR(lat)
     const angle = (lon * Math.PI) / 180 - Math.PI / 2
     return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) }
   }
+  function satPos(r: number, speed: number, offset: number) {
+    const a = tick * speed + offset
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) }
+  }
+
+  // Three live satellites: Starlink (LEO fast), OneWeb (LEO medium), Iridium (polar)
+  const starlink = satPos(latToR(67), 1.5, 0)
+  const oneweb   = satPos(latToR(71), 1.1, 2.4)
+  const iridium  = satPos(latToR(74), 0.8, 4.7)
+
+  // Scan beam from active marker outward
+  const activePt = toXY(68.2, 27.4)
+  const pulsePct = (Math.sin(tick * 2.5) + 1) / 2
+  const pulseR   = 6 + pulsePct * 5
+
+  // Signal line from active marker to nearest sat
+  const dx = starlink.x - activePt.x, dy = starlink.y - activePt.y
+  const dist = Math.sqrt(dx * dx + dy * dy)
+  const signalOpacity = 0.15 + 0.2 * ((Math.sin(tick * 3) + 1) / 2)
 
   return (
     <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 16px", borderBottom: "1px solid var(--border)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid var(--border)" }}>
         <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>{t.polarHeader}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 5px #2ED47A" }} />
+          <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "#2ED47A", letterSpacing: "0.08em" }}>LIVE</span>
+        </div>
       </div>
       <svg width="100%" viewBox="0 0 400 390" style={{ display: "block" }}>
         {/* Latitude rings */}
         {latLines.map(lat => (
-          <circle
-            key={lat}
-            cx={cx} cy={cy}
-            r={latToR(lat)}
-            fill="none"
-            stroke="var(--border)"
-            strokeWidth={lat === 70 ? 1.2 : 0.7}
-            strokeDasharray={lat === 70 ? "none" : "3 4"}
-          />
+          <circle key={lat} cx={cx} cy={cy} r={latToR(lat)} fill="none"
+            stroke="var(--border)" strokeWidth={lat === 70 ? 1.2 : 0.7}
+            strokeDasharray={lat === 70 ? "none" : "3 4"} />
         ))}
-
         {/* Meridian lines */}
         {[-90, -45, 0, 45, 90, 135].map(lon => {
           const angle = (lon * Math.PI) / 180 - Math.PI / 2
-          return (
-            <line
-              key={lon}
-              x1={cx} y1={cy}
-              x2={cx + maxR * Math.cos(angle)}
-              y2={cy + maxR * Math.sin(angle)}
-              stroke="var(--border)"
-              strokeWidth={0.6}
-              opacity={0.5}
-            />
-          )
+          return <line key={lon} x1={cx} y1={cy} x2={cx + maxR * Math.cos(angle)} y2={cy + maxR * Math.sin(angle)} stroke="var(--border)" strokeWidth={0.6} opacity={0.5} />
         })}
-
-        {/* 70°N label */}
+        {/* Ring labels */}
         <text x={cx + latToR(70) + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="var(--text-dim)">70°N</text>
         <text x={cx + latToR(60) + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="var(--text-dim)">60°N</text>
-
-        {/* Coverage shading — LEO constellation zone */}
+        {/* Coverage shading */}
         <circle cx={cx} cy={cy} r={latToR(50)} fill="rgba(79,168,255,0.04)" />
         <circle cx={cx} cy={cy} r={latToR(70)} fill="rgba(110,231,249,0.05)" />
-
+        {/* Signal line: active site → Starlink */}
+        <line x1={activePt.x} y1={activePt.y} x2={starlink.x} y2={starlink.y}
+          stroke="#4FA8FF" strokeWidth={0.8} strokeDasharray="4 3" opacity={signalOpacity} />
         {/* Location markers */}
         {markers.map((m, i) => {
           const pos = toXY(m.lat, m.lon)
           return (
             <g key={i}>
-              {m.active && (
-                <circle cx={pos.x} cy={pos.y} r={8} fill="rgba(79,168,255,0.12)" />
-              )}
-              <circle
-                cx={pos.x} cy={pos.y} r={m.active ? 3 : 2}
-                fill={m.active ? "#4FA8FF" : "var(--text-dim)"}
-              />
-              {m.active && (
-                <text
-                  x={pos.x + 6} y={pos.y - 4}
-                  style={{ fontFamily: "var(--font-data)", fontSize: 8 }}
-                  fill="#4FA8FF"
-                >{m.label}</text>
-              )}
+              {m.active && <circle cx={pos.x} cy={pos.y} r={pulseR} fill="rgba(79,168,255,0.08)" />}
+              {m.active && <circle cx={pos.x} cy={pos.y} r={pulseR + 4} fill="none" stroke="rgba(79,168,255,0.06)" strokeWidth={1} />}
+              <circle cx={pos.x} cy={pos.y} r={m.active ? 3 : 2} fill={m.active ? "#4FA8FF" : "var(--text-dim)"} />
+              {m.active && <text x={pos.x + 6} y={pos.y - 5} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="#4FA8FF">{m.label}</text>}
             </g>
           )
         })}
-
+        {/* Live satellite — Starlink */}
+        <circle cx={starlink.x} cy={starlink.y} r={5} fill="rgba(79,168,255,0.15)" />
+        <circle cx={starlink.x} cy={starlink.y} r={2.5} fill="#4FA8FF" />
+        <text x={starlink.x + 5} y={starlink.y - 4} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="#4FA8FF">SL</text>
+        {/* Live satellite — OneWeb */}
+        <circle cx={oneweb.x} cy={oneweb.y} r={4} fill="rgba(110,231,249,0.12)" />
+        <circle cx={oneweb.x} cy={oneweb.y} r={2} fill="#6EE7F9" />
+        <text x={oneweb.x + 4} y={oneweb.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="#6EE7F9">OW</text>
+        {/* Live satellite — Iridium */}
+        <circle cx={iridium.x} cy={iridium.y} r={3.5} fill="rgba(245,184,74,0.12)" />
+        <circle cx={iridium.x} cy={iridium.y} r={1.8} fill="#F5B84A" />
+        <text x={iridium.x + 4} y={iridium.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="#F5B84A">IR</text>
         {/* North pole */}
         <circle cx={cx} cy={cy} r={2} fill="var(--text-dim)" />
         <text x={cx + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 9 }} fill="var(--text-dim)">N</text>
@@ -470,7 +486,14 @@ function AdvisorPreview({ t }: { t: typeof COPY.en }) {
                   <div style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text)" }}>{p.uptime}</div>
                 </div>
               </div>
-              <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6, borderTop: "1px solid var(--border)", paddingTop: 8 }}>{tr.rationale}</p>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: 8, display: "flex", gap: 8, alignItems: "flex-start" }}>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6, flex: 1 }}>{tr.rationale}</p>
+                <span title="EU AI Act Art. 50 — AI-generated analytical summary. Not a guarantee of network availability." style={{
+                  flexShrink: 0, fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)",
+                  border: "1px solid var(--border)", borderRadius: 3, padding: "2px 5px",
+                  letterSpacing: "0.06em", cursor: "help",
+                }}>AI</span>
+              </div>
             </div>
           )
         })}
@@ -642,119 +665,332 @@ const COPY = {
   },
 }
 
+// ── Demo reel scene visualizations ───────────────────────────────────────────
+const PROVIDER_NAMES = ["Starlink", "OneWeb", "Iridium", "Inmarsat", "Viasat", "SES", "Telesat", "Hughes", "Eutelsat"]
+const SCENE_POSITIONS = [
+  [8,30],[22,8],[38,20],[55,6],[70,25],[12,52],[28,45],[47,55],[65,48],
+]
+
+function SceneViz0() {
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
+      {PROVIDER_NAMES.map((name, i) => (
+        <div key={name} style={{
+          position: "absolute",
+          left: `${SCENE_POSITIONS[i][0]}%`,
+          top: `${SCENE_POSITIONS[i][1]}%`,
+          backgroundColor: "var(--surface2)",
+          border: "1px solid var(--border)",
+          borderRadius: 4,
+          padding: "4px 8px",
+          fontFamily: "var(--font-data)",
+          fontSize: 10,
+          color: "var(--text-muted)",
+          animation: `drift${i % 4} ${2.2 + i * 0.25}s ease-in-out infinite alternate`,
+          animationDelay: `${i * 0.18}s`,
+        }}>{name}</div>
+      ))}
+      <div style={{
+        position: "absolute", inset: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        pointerEvents: "none",
+      }}>
+        <span style={{ fontFamily: "var(--font-data)", fontSize: 96, fontWeight: 900, color: "rgba(79,168,255,0.07)", lineHeight: 1 }}>?</span>
+      </div>
+    </div>
+  )
+}
+
+function SceneViz1() {
+  const COORDS = "68.2°N · 27.4°E"
+  const [typed, setTyped] = useState(0)
+  const [step, setStep]   = useState(0)
+
+  useEffect(() => {
+    setTyped(0); setStep(0)
+  }, [])
+
+  useEffect(() => {
+    if (step === 0) {
+      if (typed < COORDS.length) {
+        const id = setTimeout(() => setTyped(c => c + 1), 75)
+        return () => clearTimeout(id)
+      }
+      const id = setTimeout(() => setStep(1), 500)
+      return () => clearTimeout(id)
+    }
+    if (step === 1) { const id = setTimeout(() => setStep(2), 900); return () => clearTimeout(id) }
+    if (step === 2) { const id = setTimeout(() => setStep(3), 800); return () => clearTimeout(id) }
+  }, [typed, step])
+
+  const field = (label: string, value: string, active: boolean, filled: boolean) => (
+    <div>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 4 }}>{label}</p>
+      <div style={{
+        backgroundColor: "var(--surface2)",
+        border: `1px solid ${active ? "rgba(79,168,255,0.5)" : filled ? "rgba(79,168,255,0.2)" : "var(--border)"}`,
+        borderRadius: 6, padding: "9px 12px",
+        fontFamily: "var(--font-data)", fontSize: 12,
+        color: filled ? "var(--text)" : "var(--text-muted)",
+        transition: "border-color 0.3s",
+        minHeight: 38,
+      }}>
+        {value}{active && <span style={{ borderRight: "1.5px solid #4FA8FF", marginLeft: 1, animation: "blink 0.9s infinite" }}>&nbsp;</span>}
+      </div>
+    </div>
+  )
+
+  return (
+    <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 12, justifyContent: "center", height: "100%" }}>
+      {field("COORDINATES", COORDS.slice(0, typed), step === 0, step > 0)}
+      {field("SECTOR", step >= 1 ? "Forestry / Metsätalous" : "", step === 1, step > 1)}
+      {field("PRIORITY WEIGHT", step >= 2 ? "Uptime  ████████░░  80%" : "", step === 2, step > 2)}
+      {step >= 3 && (
+        <div style={{
+          backgroundColor: "rgba(79,168,255,0.08)", border: "1px solid rgba(79,168,255,0.2)",
+          borderRadius: 6, padding: "10px 12px",
+          fontFamily: "var(--font-data)", fontSize: 11, color: "#4FA8FF",
+          display: "flex", alignItems: "center", gap: 8,
+          animation: "fadeInScene 0.4s ease",
+        }}>
+          <span>▶</span> Running analysis…
+        </div>
+      )}
+    </div>
+  )
+}
+
+function SceneViz2() {
+  const [visible, setVisible] = useState(0)
+  useEffect(() => {
+    if (visible < TELEMETRY_LINES.length) {
+      const id = setTimeout(() => setVisible(v => v + 1), 950)
+      return () => clearTimeout(id)
+    }
+  }, [visible])
+  return (
+    <div style={{ padding: "16px 20px", fontFamily: "var(--font-data)", fontSize: 10, lineHeight: 1.9, height: "100%", overflowY: "hidden" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, paddingBottom: 8, borderBottom: "1px solid var(--border)" }}>
+        <div style={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 5px #2ED47A" }} />
+        <span style={{ color: "var(--text-muted)", letterSpacing: "0.1em", fontSize: 9 }}>ORBITAL INTELLIGENCE ENGINE</span>
+      </div>
+      {TELEMETRY_LINES.map((line, i) => (
+        <div key={i} style={{
+          display: "flex", gap: 10, whiteSpace: "nowrap", overflow: "hidden",
+          opacity: i < visible ? (i === visible - 1 ? 1 : 0.4) : 0,
+          transition: "opacity 0.3s",
+        }}>
+          <span style={{ color: line.color, minWidth: 72, flexShrink: 0 }}>[{line.tag}]</span>
+          <span style={{ color: i === visible - 1 ? "var(--text)" : "var(--text-muted)" }}>{line.text}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SceneViz3() {
+  const PROVIDERS3 = [
+    { name: "Starlink",       target: 94, color: "#4FA8FF", type: "LEO Constellation" },
+    { name: "OneWeb",         target: 81, color: "#6EE7F9", type: "LEO Constellation" },
+    { name: "Iridium Certus", target: 67, color: "#F5B84A", type: "LEO — Polar orbit" },
+  ]
+  const [scores, setScores] = useState([0, 0, 0])
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setScores(prev => {
+        const next = prev.map((s, i) => Math.min(s + 1.8, PROVIDERS3[i].target))
+        if (next.every((s, i) => s >= PROVIDERS3[i].target)) clearInterval(id)
+        return next
+      })
+    }, 25)
+    return () => clearInterval(id)
+  }, [])
+
+  return (
+    <div style={{ padding: "18px 22px", display: "flex", flexDirection: "column", gap: 14, justifyContent: "center", height: "100%" }}>
+      {PROVIDERS3.map((p, i) => (
+        <div key={p.name}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+            <div>
+              <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{p.name}</span>
+              <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", marginLeft: 8 }}>{p.type}</span>
+            </div>
+            <span style={{ fontFamily: "var(--font-data)", fontWeight: 700, fontSize: 16, color: p.color, letterSpacing: "-0.02em" }}>
+              {Math.round(scores[i])}<span style={{ fontSize: 10, color: "var(--text-muted)" }}>%</span>
+            </span>
+          </div>
+          <div style={{ height: 5, backgroundColor: "var(--surface2)", borderRadius: 3, overflow: "hidden" }}>
+            <div style={{
+              height: "100%", width: `${scores[i]}%`, borderRadius: 3,
+              backgroundColor: p.color,
+              boxShadow: scores[i] > 10 ? `0 0 6px ${p.color}55` : "none",
+              transition: "width 0.025s linear, box-shadow 0.3s",
+            }} />
+          </div>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", marginTop: 3, letterSpacing: "0.06em" }}>DEPLOYMENT CONFIDENCE</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SceneViz4() {
+  const [step, setStep] = useState(0)
+  const checks = [
+    "Satellite rankings compiled",
+    "Deployment Confidence scores locked",
+    "Plain-language rationale generated",
+    "Executive PDF — board-ready",
+  ]
+  useEffect(() => {
+    const timers = checks.map((_, i) => setTimeout(() => setStep(s => Math.max(s, i + 1)), i * 900 + 400))
+    return () => timers.forEach(clearTimeout)
+  }, [])
+
+  return (
+    <div style={{ padding: "18px 22px", display: "flex", flexDirection: "column", alignItems: "center", gap: 16, justifyContent: "center", height: "100%" }}>
+      {/* Document */}
+      <div style={{
+        width: 72, height: 88,
+        backgroundColor: "var(--surface2)", border: `1px solid ${step >= 4 ? "rgba(46,212,122,0.4)" : "var(--border)"}`,
+        borderRadius: 6, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", gap: 6,
+        transition: "border-color 0.4s",
+      }}>
+        <GrypsMark size={28} />
+        {step >= 4 && (
+          <div style={{
+            backgroundColor: "#2ED47A", borderRadius: 10, padding: "2px 6px",
+            fontFamily: "var(--font-data)", fontSize: 8, color: "#070B12", fontWeight: 700,
+            animation: "fadeInScene 0.3s ease",
+          }}>PDF</div>
+        )}
+      </div>
+      {/* Checklist */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%" }}>
+        {checks.map((c, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{
+              width: 16, height: 16, borderRadius: "50%", flexShrink: 0,
+              backgroundColor: i < step ? "#2ED47A" : "var(--surface2)",
+              border: `1px solid ${i < step ? "#2ED47A" : "var(--border)"}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              transition: "all 0.3s",
+            }}>
+              {i < step && <span style={{ color: "#070B12", fontSize: 9, fontWeight: 900 }}>✓</span>}
+            </div>
+            <span style={{
+              fontFamily: "var(--font-ui)", fontSize: 11,
+              color: i < step ? "var(--text)" : "var(--text-dim)",
+              transition: "color 0.3s",
+            }}>{c}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ── Product demo reel ────────────────────────────────────────────────────────
 function DemoReel({ t }: { t: typeof COPY.en }) {
   const [scene, setScene] = useState(0)
   const [progress, setProgress] = useState(0)
-  const SCENE_MS = 12000
+  const SCENE_MS = 13000
   const scenes = t.demoScenes
 
   useEffect(() => {
     setProgress(0)
     const start = Date.now()
-    const tick = setInterval(() => {
-      const elapsed = Date.now() - start
-      const pct = Math.min(elapsed / SCENE_MS, 1)
+    const id = setInterval(() => {
+      const pct = Math.min((Date.now() - start) / SCENE_MS, 1)
       setProgress(pct)
-      if (pct >= 1) {
-        clearInterval(tick)
-        setScene(s => (s + 1) % scenes.length)
-      }
+      if (pct >= 1) { clearInterval(id); setScene(s => (s + 1) % scenes.length) }
     }, 50)
-    return () => clearInterval(tick)
+    return () => clearInterval(id)
   }, [scene, scenes.length])
 
-  const SCENE_ICONS = [
-    <Globe2 key="g" size={32} color="#4FA8FF" />,
-    <MapPin key="m" size={32} color="#6EE7F9" />,
-    <Radio key="r" size={32} color="#4FA8FF" />,
-    <Zap key="z" size={32} color="#6EE7F9" />,
-    <Shield key="s" size={32} color="#2ED47A" />,
+  const VIZS = [
+    <SceneViz0 key="v0" />,
+    <SceneViz1 key="v1" />,
+    <SceneViz2 key="v2" />,
+    <SceneViz3 key="v3" />,
+    <SceneViz4 key="v4" />,
   ]
-
   const current = scenes[scene]
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+    <div>
       {/* Main display */}
       <div style={{
+        display: "grid", gridTemplateColumns: "1fr 1fr",
         backgroundColor: "var(--surface)",
         border: "1px solid var(--border)",
         borderRadius: "10px 10px 0 0",
         overflow: "hidden",
-        position: "relative",
-        aspectRatio: "16 / 7",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        minHeight: 320,
       }}>
-        {/* Background grid */}
-        <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.04 }} xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-              <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#4FA8FF" strokeWidth="0.5"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
+        {/* Left: animated viz */}
+        <div key={`viz-${scene}`} style={{
+          borderRight: "1px solid var(--border)",
+          backgroundColor: "var(--surface2)",
+          position: "relative",
+          overflow: "hidden",
+          animation: "fadeInScene 0.4s ease",
+        }}>
+          {/* Corner HUD */}
+          <span style={{ position: "absolute", top: 10, left: 12, fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em", zIndex: 2 }}>SCENE {String(scene + 1).padStart(2, "0")} / {String(scenes.length).padStart(2, "0")}</span>
+          {VIZS[scene]}
+        </div>
 
-        {/* Corner coords */}
-        <span style={{ position: "absolute", top: 14, left: 16, fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em" }}>68.2°N · 27.4°E</span>
-        <span style={{ position: "absolute", top: 14, right: 16, fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em" }}>SCENE {String(scene + 1).padStart(2, "0")} / {String(scenes.length).padStart(2, "0")}</span>
-
-        {/* Content */}
-        <div key={scene} style={{
-          textAlign: "center",
-          padding: "0 48px",
+        {/* Right: text */}
+        <div key={`text-${scene}`} style={{
+          padding: "32px 28px",
+          display: "flex", flexDirection: "column", justifyContent: "center",
           animation: "fadeInScene 0.5s ease",
         }}>
-          <div style={{ marginBottom: 20, display: "flex", justifyContent: "center" }}>{SCENE_ICONS[scene]}</div>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--primary)", letterSpacing: "0.12em", marginBottom: 14 }}>{current.label}</p>
-          <h3 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(18px, 2.5vw, 28px)", fontWeight: 700, color: "var(--text)", lineHeight: 1.15, letterSpacing: "-0.02em", marginBottom: 16, maxWidth: 640, margin: "0 auto 16px" }}>{current.headline}</h3>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(12px, 1.2vw, 14px)", color: "var(--text-muted)", lineHeight: 1.7, maxWidth: 560, margin: "0 auto" }}>{current.body}</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "#4FA8FF", letterSpacing: "0.14em", marginBottom: 14 }}>{current.label}</p>
+          <h3 style={{
+            fontFamily: "var(--font-ui)", fontSize: "clamp(16px, 1.8vw, 22px)", fontWeight: 700,
+            color: "var(--text)", lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 14,
+          }}>{current.headline}</h3>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.75 }}>{current.body}</p>
         </div>
       </div>
 
-      {/* Progress + chapter nav */}
+      {/* Progress bar + chapter nav */}
       <div style={{
-        backgroundColor: "var(--surface2)",
-        border: "1px solid var(--border)",
-        borderTop: "none",
-        borderRadius: "0 0 10px 10px",
-        padding: "0",
-        overflow: "hidden",
+        backgroundColor: "var(--surface2)", border: "1px solid var(--border)",
+        borderTop: "none", borderRadius: "0 0 10px 10px", overflow: "hidden",
       }}>
-        {/* Progress bar */}
         <div style={{ height: 2, backgroundColor: "var(--border)" }}>
-          <div style={{
-            height: "100%",
-            width: `${((scene + progress) / scenes.length) * 100}%`,
-            backgroundColor: "#4FA8FF",
-            transition: "width 0.05s linear",
-          }} />
+          <div style={{ height: "100%", width: `${((scene + progress) / scenes.length) * 100}%`, backgroundColor: "#4FA8FF", transition: "width 0.05s linear" }} />
         </div>
-        {/* Chapter pills */}
         <div style={{ display: "flex" }}>
           {scenes.map((s, i) => (
-            <button
-              key={i}
-              onClick={() => setScene(i)}
-              style={{
-                flex: 1, padding: "10px 8px", border: "none", borderRight: i < scenes.length - 1 ? "1px solid var(--border)" : "none",
-                backgroundColor: i === scene ? "rgba(79,168,255,0.08)" : "transparent",
-                cursor: "pointer", textAlign: "center",
-                fontFamily: "var(--font-data)", fontSize: 9, letterSpacing: "0.06em",
-                color: i === scene ? "var(--primary)" : "var(--text-dim)",
-                transition: "background 0.15s",
-              }}
-            >
+            <button key={i} onClick={() => setScene(i)} style={{
+              flex: 1, padding: "10px 8px", border: "none",
+              borderRight: i < scenes.length - 1 ? "1px solid var(--border)" : "none",
+              backgroundColor: i === scene ? "rgba(79,168,255,0.08)" : "transparent",
+              cursor: "pointer", textAlign: "center",
+              fontFamily: "var(--font-data)", fontSize: 9, letterSpacing: "0.06em",
+              color: i === scene ? "#4FA8FF" : "var(--text-dim)",
+              transition: "background 0.15s",
+            }}>
               {s.label.split(" · ")[0]}
             </button>
           ))}
         </div>
       </div>
 
-      <style>{`@keyframes fadeInScene { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <style>{`
+        @keyframes fadeInScene { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes drift0 { from { transform:translate(0,0); } to { transform:translate(5px,-7px); } }
+        @keyframes drift1 { from { transform:translate(0,0); } to { transform:translate(-6px,5px); } }
+        @keyframes drift2 { from { transform:translate(0,0); } to { transform:translate(7px,4px); } }
+        @keyframes drift3 { from { transform:translate(0,0); } to { transform:translate(-4px,-6px); } }
+        @keyframes blink  { 0%,100% { opacity:1; } 50% { opacity:0; } }
+      `}</style>
     </div>
   )
 }
