@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle, Sun, Moon } from "lucide-react"
 
 // ── GRYPS Mark ────────────────────────────────────────────────────────────────
@@ -1102,6 +1103,17 @@ export default function HomePage() {
               <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", marginTop: 10 }}>
                 {t.waitlistSub}
               </p>
+              <div style={{ marginTop: 16, display: "flex", alignItems: "flex-start", gap: 8 }}>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", border: "1px solid var(--border)", borderRadius: 3, padding: "2px 5px", flexShrink: 0, marginTop: 1 }}>AI</span>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
+                  {lang === "en"
+                    ? "The Connectivity Advisor is an automated analytical model. Scores are predictive outputs, not operational guarantees. "
+                    : "Connectivity Advisor on automatisoitu analyyttinen malli. Pisteet ovat ennusteita, ei operatiivisia takuita. "}
+                  <Link href="/legal/terms#section-04" style={{ color: "var(--text-dim)", textDecoration: "underline" }}>
+                    {lang === "en" ? "Art. 50 EU AI Act" : "50 art. EU:n tekoälylaki"}
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
 
@@ -1232,7 +1244,11 @@ export default function HomePage() {
           <GrypsMark size={18} />
           <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS</span>
         </div>
-        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>{t.footerRights}</span>
+        <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+          <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>{t.footerRights}</span>
+          <Link href="/legal/terms" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>{lang === "en" ? "Terms" : "Ehdot"}</Link>
+          <Link href="/legal/privacy" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>{lang === "en" ? "Privacy" : "Tietosuoja"}</Link>
+        </div>
         <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>{t.footerTag}</span>
       </footer>
     </div>

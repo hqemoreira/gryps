@@ -1,0 +1,443 @@
+"use client"
+import { useState } from "react"
+import Link from "next/link"
+
+const COPY = {
+  en: {
+    title: "Privacy Policy",
+    effective: "Effective date: 29 June 2026",
+    controller: "Data Controller: Henrique Moreira · Joroinen, Finland · hqe.moreira@gmail.com",
+    intro: "This Privacy Policy explains how GRYPS collects, processes, and protects personal data in connection with the GRYPS satellite connectivity intelligence platform. GRYPS is committed to full compliance with the EU General Data Protection Regulation (GDPR) and applicable Finnish data protection law.",
+    sections: [
+      {
+        id: "01",
+        title: "Who We Are",
+        body: [
+          "GRYPS is a satellite connectivity intelligence platform operated by Henrique Moreira as a sole trader based in Joroinen, Finland. For the purposes of the GDPR, Henrique Moreira is the data controller responsible for personal data processed through the GRYPS platform.",
+          "Contact for all data protection matters: hqe.moreira@gmail.com",
+        ],
+      },
+      {
+        id: "02",
+        title: "Data We Collect",
+        subsections: [
+          {
+            label: "Waitlist & Account Data",
+            body: "When you submit a request for early access, GRYPS collects your email address and the operational sector you identified (e.g. Maritime, Forestry, Mining). This data is collected for the sole purpose of contacting you regarding GRYPS early access and is not used for advertising, profiling, or sold to third parties.",
+          },
+          {
+            label: "Geospatial Input Data",
+            body: "When you use the Connectivity Advisor, you provide geographic coordinates, a sector classification, and operational priority weights. GRYPS treats coordinate inputs as functionally sensitive data. Coordinates are passed through a data-minimisation filter: they are used to compute orbital coverage and provider scoring, but are not persistently linked to your corporate identity, email address, or account profile in GRYPS's primary data tables. Analysis inputs are not retained beyond the session unless you explicitly save or export the report.",
+          },
+          {
+            label: "Platform Analytics",
+            body: "GRYPS uses Vercel Analytics to collect anonymised, aggregated usage statistics (page views, session duration, geographic region at country level). No individual-level tracking cookies are used. No cross-site tracking is performed. Vercel Analytics is compliant with GDPR and does not process personally identifiable information.",
+          },
+          {
+            label: "API Usage Logs",
+            body: "API tier subscribers generate server-side logs that include request timestamps, endpoint paths, response codes, and payload sizes. These logs do not contain the content of analysis inputs (coordinates, sector, priorities) beyond what is necessary for rate limiting and abuse prevention. Logs are retained for a maximum of 90 days.",
+          },
+        ],
+      },
+      {
+        id: "03",
+        title: "Legal Basis for Processing",
+        body: [
+          "Waitlist data (email + sector): Consent — you voluntarily submit this data when requesting early access. You may withdraw consent at any time by emailing hqe.moreira@gmail.com.",
+          "Platform analytics: Legitimate interest — anonymised aggregate analytics are used to improve the platform. No individual profiling is performed.",
+          "API logs: Legitimate interest — retained for security, rate limiting, and service integrity purposes.",
+          "Analysis inputs (coordinates, sector, priorities): Contract performance — processing is necessary to deliver the service you have requested.",
+        ],
+      },
+      {
+        id: "04",
+        title: "Data Sovereignty & EU Storage",
+        body: [
+          "GRYPS is built on infrastructure that operates within European Union jurisdiction:",
+          "Vercel (hosting & analytics): EU-region deployment (Frankfurt, Germany — iad1/fra1). Production deployments are configured to prioritise EU edge nodes. Vercel's EU data processing addendum is available at vercel.com/legal/dpa.",
+          "Neon (database): PostgreSQL serverless database. GRYPS uses the EU (Frankfurt) region for all database instances. Customer waitlist data, analysis session records, and API logs are stored exclusively within EU-region Neon infrastructure.",
+          "Resend (transactional email): Used only to send notification emails to GRYPS's founder when a new waitlist submission is received. No customer data is retained within Resend beyond the transactional payload. Resend is SOC 2 Type II certified.",
+          "GRYPS does not transfer personal data to third countries (outside the EU/EEA) without an adequate legal mechanism in place.",
+        ],
+      },
+      {
+        id: "05",
+        title: "Geospatial Data — Special Handling",
+        body: [
+          "GRYPS processes geospatial location data — coordinates, route paths, site identifiers — that may be commercially sensitive or operationally confidential for your organisation.",
+          "Data minimisation: Coordinates submitted to the Connectivity Advisor are used only to compute orbital pass density, horizon angles, coverage zone classification, and provider scoring. They are not enriched with third-party company data, satellite imagery, or corporate directory lookups.",
+          "No secondary profiling: GRYPS does not correlate submitted coordinates across different users or sessions to build geographic profiles of client operations, fleet movements, or site inventories.",
+          "Report confidentiality: PDF reports generated by GRYPS are delivered directly to the requesting user and are not stored on GRYPS servers beyond the generation session. If cloud report storage is introduced in a future product tier, it will be opt-in and disclosed.",
+        ],
+      },
+      {
+        id: "06",
+        title: "Data Retention",
+        body: [
+          "Waitlist submissions (email + sector): Retained until you request deletion or GRYPS is discontinued, whichever comes first.",
+          "Analysis inputs (coordinates, sector, priorities): Not retained beyond the active session unless you explicitly export a report.",
+          "Platform analytics: Aggregated and anonymised; no individual retention limit applies.",
+          "API logs: Retained for a maximum of 90 days, then automatically purged.",
+          "Exported PDF reports: Stored on your device. GRYPS does not maintain copies of exported reports on its servers.",
+        ],
+      },
+      {
+        id: "07",
+        title: "Your GDPR Rights",
+        body: [
+          "As a data subject under the GDPR, you have the following rights with respect to personal data processed by GRYPS:",
+          "Right of access (Art. 15): You may request a copy of the personal data GRYPS holds about you.",
+          "Right to rectification (Art. 16): You may request correction of inaccurate personal data.",
+          "Right to erasure (Art. 17): You may request deletion of your personal data, subject to legal retention obligations.",
+          "Right to restrict processing (Art. 18): You may request that processing of your data be limited in certain circumstances.",
+          "Right to data portability (Art. 20): You may request your data in a structured, machine-readable format.",
+          "Right to object (Art. 21): You may object to processing based on legitimate interest.",
+          "To exercise any of these rights, contact: hqe.moreira@gmail.com. GRYPS will respond within 30 days.",
+          "If you believe your rights have been violated, you have the right to lodge a complaint with the Finnish Data Protection Ombudsman (tietosuoja.fi) or the supervisory authority in your EU member state.",
+        ],
+      },
+      {
+        id: "08",
+        title: "Third-Party Processors",
+        rows: [
+          { processor: "Vercel", role: "Hosting, edge delivery, analytics", region: "EU (Frankfurt)", lawfulBasis: "DPA — vercel.com/legal/dpa" },
+          { processor: "Neon", role: "PostgreSQL serverless database", region: "EU (Frankfurt)", lawfulBasis: "DPA — neon.tech/privacy" },
+          { processor: "Resend", role: "Transactional email (founder notification)", region: "US (SOC 2)", lawfulBasis: "Standard contractual clauses" },
+        ],
+      },
+      {
+        id: "09",
+        title: "Cookies & Tracking",
+        body: [
+          "GRYPS does not use advertising cookies, cross-site tracking pixels, or third-party retargeting scripts.",
+          "Vercel Analytics uses a privacy-first, cookieless approach to aggregate traffic measurement. No consent banner is required for Vercel Analytics under the GDPR's legitimate interest basis, as no individual-level tracking occurs.",
+          "Session storage may be used to temporarily hold analysis inputs during an active Advisor session. This data is cleared when the session ends and is never transmitted to third parties.",
+        ],
+      },
+      {
+        id: "10",
+        title: "Changes to This Policy",
+        body: [
+          "This Privacy Policy may be updated to reflect changes in GRYPS's data processing practices, new regulatory requirements, or new product features. The effective date at the top of this page will be updated accordingly.",
+          "Material changes — such as the introduction of new data categories, new third-party processors, or changes to retention periods — will be communicated to registered users by email with at least 14 days notice.",
+        ],
+      },
+      {
+        id: "11",
+        title: "Contact",
+        body: [
+          "Data Controller: Henrique Moreira",
+          "Platform: gryps.vercel.app",
+          "Email: hqe.moreira@gmail.com",
+          "Location: Joroinen, Finland — European Union",
+        ],
+      },
+    ],
+  },
+  fi: {
+    title: "Tietosuojakäytäntö",
+    effective: "Voimaantulopäivä: 29. kesäkuuta 2026",
+    controller: "Rekisterinpitäjä: Henrique Moreira · Joroinen, Suomi · hqe.moreira@gmail.com",
+    intro: "Tämä tietosuojakäytäntö selittää, miten GRYPS kerää, käsittelee ja suojaa henkilötietoja GRYPS-satelliittiyhteysintelligenssiplatformin yhteydessä. GRYPS on sitoutunut täydelliseen vaatimustenmukaisuuteen EU:n yleisen tietosuoja-asetuksen (GDPR) ja sovellettavan suomalaisen tietosuojalain kanssa.",
+    sections: [
+      {
+        id: "01",
+        title: "Keitä me olemme",
+        body: [
+          "GRYPS on satelliittiyhteysintelligenssiplatforma, jota Henrique Moreira operoi yksityisyrittäjänä Joroisissa, Suomessa. GDPR:n tarkoituksiin Henrique Moreira on rekisterinpitäjä, joka vastaa GRYPS-platformin kautta käsitellyistä henkilötiedoista.",
+          "Yhteystiedot kaikissa tietosuoja-asioissa: hqe.moreira@gmail.com",
+        ],
+      },
+      {
+        id: "02",
+        title: "Keräämämme tiedot",
+        subsections: [
+          {
+            label: "Jonotuslistaus ja tilitiedot",
+            body: "Kun lähetät varhaista pääsyä koskevan pyynnön, GRYPS kerää sähköpostiosoitteesi ja tunnistamasi toimialan. Tätä tietoa käytetään yksinomaan GRYPS:n varhaisen pääsyn yhteydenpitoon.",
+          },
+          {
+            label: "Geospatiaaliset syöttötiedot",
+            body: "Kun käytät Connectivity Advisoria, annat maantieteelliset koordinaatit, toimialaluokituksen ja operatiiviset prioriteettipainot. GRYPS käsittelee koordinaattisyöttöjä toiminnallisesti arkaluonteisina tietoina. Koordinaatteja käytetään orbitaalikattavuuden ja toimittajapisteytysten laskemiseen, mutta niitä ei säilytetä pysyvästi yhdistettynä yritysidentiteettiisi.",
+          },
+          {
+            label: "Platformin analytiikka",
+            body: "GRYPS käyttää Vercel Analyticsiä anonymisoitujen, aggregoitujen käyttötilastojen keräämiseen. Yksilötason seurantaevästeitä ei käytetä. Vercel Analytics on GDPR-vaatimusten mukainen.",
+          },
+          {
+            label: "API-käyttölokit",
+            body: "API-tason tilaajat tuottavat palvelinpuolen lokeja, jotka sisältävät pyyntöjen aikaleimat, päätepisteen polut, vastauskoodit ja hyötykuormakoot. Lokeja säilytetään enintään 90 päivää.",
+          },
+        ],
+      },
+      {
+        id: "03",
+        title: "Käsittelyn oikeudellinen peruste",
+        body: [
+          "Jonotuslistan tiedot (sähköposti + toimiala): Suostumus — toimitat nämä tiedot vapaaehtoisesti varhaista pääsyä pyytäessäsi.",
+          "Platformin analytiikka: Oikeutettu etu — anonymisoitua aggregaattianalytiikkaa käytetään platformin kehittämiseen.",
+          "API-lokit: Oikeutettu etu — säilytetään turvallisuus-, nopeusrajoitus- ja palvelun eheystarkoituksiin.",
+          "Analyysisyötteet (koordinaatit, toimiala, prioriteetit): Sopimuksen täytäntöönpano — käsittely on välttämätöntä pyydetyn palvelun toimittamiseksi.",
+        ],
+      },
+      {
+        id: "04",
+        title: "Tietosuvereniteetti ja EU-tallennus",
+        body: [
+          "GRYPS on rakennettu infrastruktuurille, joka toimii Euroopan unionin lainkäyttöalueella:",
+          "Vercel (hosting ja analytiikka): EU-alueen käyttöönotto (Frankfurt, Saksa). Tuotantokäyttöönotot on konfiguroitu priorisoimaan EU:n reunasolmuja.",
+          "Neon (tietokanta): PostgreSQL-palvelimetonta tietokantaa käytetään EU (Frankfurt) -alueella kaikissa tietokantainstansseissa.",
+          "Resend (transaktiosähköposti): Käytetään vain ilmoitussähköpostien lähettämiseen GRYPS:n perustajalle, kun uusi jonotuslistatoimitus vastaanotetaan.",
+          "GRYPS ei siirrä henkilötietoja kolmansiin maihin (EU/ETA:n ulkopuolelle) ilman asianmukaista oikeusmekanismia.",
+        ],
+      },
+      {
+        id: "05",
+        title: "Geospatiaaliset tiedot — erityinen käsittely",
+        body: [
+          "GRYPS käsittelee geospatiaallisia sijaintitietoja — koordinaatteja, reittejä, sivustoidentifioijia — jotka voivat olla kaupallisesti arkaluonteisia tai operatiivisesti luottamuksellisia.",
+          "Tietojen minimointi: Connectivity Advisorille toimitetut koordinaatit käytetään vain orbitaalipassitiheyden, horisonttikulmien, kattavuusalueen luokituksen ja toimittajapisteytysten laskemiseen.",
+          "Ei toissijaista profilointia: GRYPS ei korreloi toimitettujen koordinaattien välillä eri käyttäjien tai istuntojen kesken.",
+        ],
+      },
+      {
+        id: "06",
+        title: "Tietojen säilyttäminen",
+        body: [
+          "Jonotuslistan lähetykset (sähköposti + toimiala): Säilytetään, kunnes pyydät poistamista tai GRYPS lopetetaan.",
+          "Analyysisyötteet (koordinaatit, toimiala, prioriteetit): Ei säilytetä aktiivisen istunnon jälkeen, ellei raporttia nimenomaisesti viedä.",
+          "API-lokit: Säilytetään enintään 90 päivää, sitten poistetaan automaattisesti.",
+        ],
+      },
+      {
+        id: "07",
+        title: "GDPR-oikeutesi",
+        body: [
+          "GDPR:n mukaisena rekisteröitynä sinulla on seuraavat oikeudet:",
+          "Oikeus tutustua tietoihin (15 artikla): Voit pyytää kopiota GRYPS:n sinusta pitämistä henkilötiedoista.",
+          "Oikeus tietojen oikaisemiseen (16 artikla): Voit pyytää virheellisten henkilötietojen korjaamista.",
+          "Oikeus tietojen poistamiseen (17 artikla): Voit pyytää henkilötietojesi poistamista.",
+          "Oikeus käsittelyn rajoittamiseen (18 artikla): Voit pyytää, että tietojesi käsittelyä rajoitetaan tietyissä olosuhteissa.",
+          "Vastausoikeus (21 artikla): Voit vastustaa oikeutettuun etuun perustuvaa käsittelyä.",
+          "Ottaaksesi käyttöön näitä oikeuksia, ota yhteyttä: hqe.moreira@gmail.com",
+          "Jos uskot, että oikeuksiasi on rikottu, voit tehdä valituksen tietosuojavaltuutetulle (tietosuoja.fi).",
+        ],
+      },
+      {
+        id: "08",
+        title: "Kolmannen osapuolen käsittelijät",
+        rows: [
+          { processor: "Vercel", role: "Hosting, reunatoimitus, analytiikka", region: "EU (Frankfurt)", lawfulBasis: "DPA — vercel.com/legal/dpa" },
+          { processor: "Neon", role: "PostgreSQL-palvelimeton tietokanta", region: "EU (Frankfurt)", lawfulBasis: "DPA — neon.tech/privacy" },
+          { processor: "Resend", role: "Transaktiosähköposti (perustajan ilmoitus)", region: "US (SOC 2)", lawfulBasis: "Vakiosopimuslausekkeet" },
+        ],
+      },
+      {
+        id: "09",
+        title: "Evästeet ja seuranta",
+        body: [
+          "GRYPS ei käytä mainontaevästeitä, sivustojen välisiä seurantapikseleitä tai kolmannen osapuolen uudelleenkohdentamisskriptejä.",
+          "Vercel Analytics käyttää yksityisyydensuojaa korostavaa, evästeettömästi menetelmää liikenteen aggregaattimittaukseen.",
+        ],
+      },
+      {
+        id: "10",
+        title: "Muutokset tähän käytäntöön",
+        body: [
+          "Tätä tietosuojakäytäntöä voidaan päivittää vastaamaan muutoksia GRYPS:n tietojenkäsittelykäytännöissä tai uusissa sääntelyvaatimuksissa.",
+          "Olennaisista muutoksista ilmoitetaan rekisteröityneille käyttäjille sähköpostitse vähintään 14 päivää etukäteen.",
+        ],
+      },
+      {
+        id: "11",
+        title: "Yhteystiedot",
+        body: [
+          "Rekisterinpitäjä: Henrique Moreira",
+          "Platforma: gryps.vercel.app",
+          "Sähköposti: hqe.moreira@gmail.com",
+          "Sijainti: Joroinen, Suomi — Euroopan unioni",
+        ],
+      },
+    ],
+  },
+}
+
+export default function PrivacyPage() {
+  const [lang, setLang] = useState<"en" | "fi">("en")
+  const t = COPY[lang]
+
+  const renderSection = (s: typeof COPY.en.sections[0]) => {
+    const hasSubsections = "subsections" in s && s.subsections
+    const hasRows = "rows" in s && s.rows
+    const hasBody = "body" in s && s.body
+
+    return (
+      <div key={s.id} id={`section-${s.id}`} style={{ scrollMarginTop: 72 }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
+          <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", minWidth: 24 }}>{s.id}</span>
+          <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 18, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.01em" }}>{s.title}</h2>
+        </div>
+
+        {/* Data sovereignty highlight */}
+        {s.id === "04" && (
+          <div style={{
+            backgroundColor: "rgba(46,212,122,0.05)", border: "1px solid rgba(46,212,122,0.2)",
+            borderRadius: 6, padding: "10px 14px", marginBottom: 16,
+            display: "flex", alignItems: "center", gap: 10,
+          }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", flexShrink: 0 }} />
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "#2ED47A", lineHeight: 1.5 }}>
+              {lang === "en"
+                ? "All customer data is processed and stored within EU-region infrastructure (Frankfurt, Germany)."
+                : "Kaikki asiakastiedot käsitellään ja tallennetaan EU-alueen infrastruktuurissa (Frankfurt, Saksa)."}
+            </p>
+          </div>
+        )}
+
+        <div style={{ borderLeft: "2px solid var(--border)", paddingLeft: 24 }}>
+          {hasBody && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {(s as { body: string[] }).body.map((para, pi) => (
+                <p key={pi} style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.8 }}>{para}</p>
+              ))}
+            </div>
+          )}
+
+          {hasSubsections && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {(s as { subsections: { label: string; body: string }[] }).subsections.map((sub, si) => (
+                <div key={si}>
+                  <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)", marginBottom: 8 }}>{sub.label}</p>
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.8 }}>{sub.body}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {hasRows && (
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-ui)", fontSize: 13 }}>
+                <thead>
+                  <tr>
+                    {["Processor", "Role", "Region", "Compliance basis"].map(h => (
+                      <th key={h} style={{
+                        textAlign: "left", padding: "8px 12px",
+                        fontFamily: "var(--font-data)", fontSize: 9, letterSpacing: "0.1em",
+                        color: "var(--text-dim)", borderBottom: "1px solid var(--border)",
+                        fontWeight: 400,
+                      }}>{h.toUpperCase()}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {(s as { rows: { processor: string; role: string; region: string; lawfulBasis: string }[] }).rows.map((row, ri) => (
+                    <tr key={ri} style={{ borderBottom: "1px solid var(--border)" }}>
+                      <td style={{ padding: "10px 12px", color: "var(--text)", fontWeight: 600 }}>{row.processor}</td>
+                      <td style={{ padding: "10px 12px", color: "var(--text-muted)" }}>{row.role}</td>
+                      <td style={{ padding: "10px 12px", color: "var(--text-muted)", fontFamily: "var(--font-data)", fontSize: 11 }}>{row.region}</td>
+                      <td style={{ padding: "10px 12px", color: "var(--text-dim)", fontFamily: "var(--font-data)", fontSize: 11 }}>{row.lawfulBasis}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ maxWidth: 800, margin: "0 auto", padding: "56px 32px 0" }}>
+      {/* Header */}
+      <div style={{ marginBottom: 48, paddingBottom: 32, borderBottom: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>GRYPS · LEGAL</p>
+          <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden" }}>
+            {(["en", "fi"] as const).map(l => (
+              <button key={l} onClick={() => setLang(l)} style={{
+                background: lang === l ? "var(--border2)" : "transparent",
+                border: "none", padding: "5px 10px", cursor: "pointer",
+                fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.08em",
+                color: lang === l ? "var(--text)" : "var(--text-muted)",
+              }}>{l.toUpperCase()}</button>
+            ))}
+          </div>
+        </div>
+        <h1 style={{
+          fontFamily: "var(--font-ui)", fontSize: 36, fontWeight: 700,
+          color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 12,
+        }}>{t.title}</h1>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", marginBottom: 8 }}>{t.effective}</p>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)", marginBottom: 20 }}>{t.controller}</p>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.75 }}>{t.intro}</p>
+      </div>
+
+      {/* GDPR quick-reference */}
+      <div style={{
+        display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 48,
+      }}>
+        {[
+          { label: "Regulation", value: "GDPR (EU 2016/679)" },
+          { label: "Data storage", value: "EU (Frankfurt)" },
+          { label: "Supervisory authority", value: "tietosuoja.fi" },
+        ].map(item => (
+          <div key={item.label} style={{
+            backgroundColor: "var(--surface)", border: "1px solid var(--border)",
+            borderRadius: 8, padding: "14px 16px",
+          }}>
+            <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{item.label.toUpperCase()}</p>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--text)" }}>{item.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Table of contents */}
+      <div style={{
+        backgroundColor: "var(--surface)", border: "1px solid var(--border)",
+        borderRadius: 8, padding: "20px 24px", marginBottom: 48,
+      }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 14 }}>TABLE OF CONTENTS</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {t.sections.map(s => (
+            <a key={s.id} href={`#section-${s.id}`} style={{ display: "flex", gap: 12, textDecoration: "none" }}>
+              <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", minWidth: 20 }}>{s.id}</span>
+              <span style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)" }}>{s.title}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Sections */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
+        {t.sections.map((s, i) => (
+          <div key={s.id}>
+            {renderSection(s)}
+            {i < t.sections.length - 1 && <div style={{ borderBottom: "1px solid var(--border)", marginTop: 48 }} />}
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom nav */}
+      <div style={{
+        marginTop: 64, padding: "24px 0",
+        borderTop: "1px solid var(--border)",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <Link href="/legal/terms" style={{
+          fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
+          color: "#4FA8FF", textDecoration: "none",
+        }}>
+          {lang === "en" ? "← Terms & Conditions" : "← Käyttöehdot"}
+        </Link>
+        <Link href="/" style={{
+          fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
+          color: "var(--text-muted)", textDecoration: "none",
+        }}>
+          {lang === "en" ? "Back to GRYPS →" : "Takaisin GRYPS:iin →"}
+        </Link>
+      </div>
+    </div>
+  )
+}
