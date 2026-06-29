@@ -33,7 +33,13 @@ function WaitlistForm() {
     e.preventDefault()
     if (!email || !vertical) return
     setLoading(true)
-    await new Promise(r => setTimeout(r, 800))
+    try {
+      await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, vertical }),
+      })
+    } catch {}
     setSubmitted(true)
     setLoading(false)
   }
@@ -149,7 +155,7 @@ function AdvisorPreview() {
       name: "Starlink",
       type: "LEO Constellation",
       confidence: 94,
-      latency: "25–45 ms",
+      latency: "25–45ms",
       uptime: "99.3%",
       status: "Recommended",
       statusColor: "#2ED47A",
@@ -160,7 +166,7 @@ function AdvisorPreview() {
       name: "OneWeb",
       type: "LEO Constellation",
       confidence: 81,
-      latency: "35–70 ms",
+      latency: "35–70ms",
       uptime: "98.7%",
       status: "Strong alternative",
       statusColor: "#4FA8FF",
@@ -171,7 +177,7 @@ function AdvisorPreview() {
       name: "Iridium Certus",
       type: "LEO — Polar orbit",
       confidence: 67,
-      latency: "150–300 ms",
+      latency: "150–300ms",
       uptime: "99.9%",
       status: "Redundancy only",
       statusColor: "#F5B84A",
@@ -198,7 +204,7 @@ function AdvisorPreview() {
           <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 6px #2ED47A" }} />
           <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.08em" }}>ADVISOR · MISSION ANALYSIS</span>
         </div>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>68.2°N 27.4°E · FORESTRY · UPTIME</span>
+        <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>68.2°N · 27.4°E — FORESTRY — UPTIME</span>
       </div>
 
       {/* Providers */}
@@ -333,7 +339,7 @@ export default function HomePage() {
             {/* Stats */}
             <div style={{ display: "flex", gap: 36, marginBottom: 40, paddingBottom: 40, borderBottom: "1px solid var(--border)" }}>
               <Stat value="120+" label="Providers indexed" />
-              <Stat value="LEO · MEO · GEO" label="All orbital types" />
+              <Stat value="LEO–MEO–GEO" label="All orbital types" />
               <Stat value="70°N+" label="Polar coverage" />
             </div>
 
@@ -372,7 +378,7 @@ export default function HomePage() {
               {
                 icon: <Globe2 size={16} color="#4FA8FF" />,
                 title: "The market is fragmented",
-                body: "Starlink, OneWeb, Iridium, Inmarsat, Viasat, and dozens of regional providers — each with different orbital types, coverage claims, and pricing. Procurement teams are navigating this alone."
+                body: "Starlink, OneWeb, Iridium, Inmarsat, Viasat, and dozens of regional providers—each with different orbital types, coverage claims, and pricing. Procurement teams are navigating this alone."
               },
               {
                 icon: <AlertTriangle size={16} color="#F5B84A" />,
@@ -382,7 +388,7 @@ export default function HomePage() {
               {
                 icon: <Shield size={16} color="#6EE7F9" />,
                 title: "No neutral intelligence exists",
-                body: "Provider sales reps are conflicted. Consultants are generalists. Peer recommendations are anecdotal. There is no tool that answers: for my location, my use case — which provider gives me the best chance of staying connected?"
+                body: "Provider sales reps are conflicted. Consultants are generalists. Peer recommendations are anecdotal. There is no tool that answers: for my location, my use case—which provider gives me the best chance of staying connected?"
               },
             ].map((item, i) => (
               <div key={i} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
