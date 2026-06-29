@@ -70,6 +70,7 @@ function WaitlistForm() {
         <input
           type="email"
           placeholder="your@company.com"
+          title="Please enter your corporate email address"
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
@@ -134,6 +135,259 @@ function WaitlistForm() {
         {loading ? "Requesting access…" : <>Request early access <ArrowRight size={14} /></>}
       </button>
     </form>
+  )
+}
+
+// ── Telemetry stream ──────────────────────────────────────────────────────────
+const TELEMETRY_LINES = [
+  { tag: "GRYPS-INIT", color: "#4FA8FF",  text: "Ingesting orbital telemetry for 68.2°N · 27.4°E…" },
+  { tag: "LEO-SCAN",   color: "#6EE7F9",  text: "Starlink Shell-4 pass density: 94.2%  [OPTIMAL]" },
+  { tag: "GEO-CHECK",  color: "#F5B84A",  text: "Viasat ViaSat-3 horizon angle: 8.3°   [HIGH ATTENUATION RISK]" },
+  { tag: "MEO-EVAL",   color: "#6EE7F9",  text: "OneWeb elevation window: 62°–89°      [STRONG]" },
+  { tag: "CANOPY",     color: "#F5B84A",  text: "Pine canopy blockage penalty applied: –6.2 dB" },
+  { tag: "REDUND",     color: "#4FA8FF",  text: "Dual-orbit redundancy path: Starlink + Iridium NEXT" },
+  { tag: "SCORE",      color: "#2ED47A",  text: "Deployment Confidence computed: 94 · 81 · 67" },
+  { tag: "REPORT",     color: "#2ED47A",  text: "Resilience signature generated — ready for export" },
+]
+
+function TelemetryStream() {
+  const [visible, setVisible] = useState(1)
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setVisible(v => v < TELEMETRY_LINES.length ? v + 1 : 1)
+    }, 900)
+    return () => clearInterval(id)
+  }, [])
+
+  return (
+    <div style={{
+      backgroundColor: "var(--surface)",
+      border: "1px solid var(--border)",
+      borderRadius: 8,
+      padding: "16px 18px",
+      fontFamily: "var(--font-data)",
+      fontSize: 11,
+      lineHeight: 2,
+      overflow: "hidden",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 10, borderBottom: "1px solid var(--border)" }}>
+        <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 6px #2ED47A" }} />
+        <span style={{ color: "var(--text-muted)", fontSize: 10, letterSpacing: "0.1em" }}>ORBITAL INTELLIGENCE ENGINE · LIVE</span>
+      </div>
+      {TELEMETRY_LINES.map((line, i) => (
+        <div key={i} style={{
+          display: "flex", gap: 12,
+          opacity: i < visible ? (i === visible - 1 ? 1 : 0.45) : 0,
+          transition: "opacity 0.4s ease",
+          whiteSpace: "nowrap", overflow: "hidden",
+        }}>
+          <span style={{ color: line.color, minWidth: 80, flexShrink: 0 }}>[{line.tag}]</span>
+          <span style={{ color: i === visible - 1 ? "var(--text)" : "var(--text-muted)" }}>{line.text}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ── Polar map wireframe ───────────────────────────────────────────────────────
+function PolarMap() {
+  const cx = 160, cy = 155, maxR = 130
+
+  const latLines = [90, 80, 70, 60, 50] // degrees N
+  const markers = [
+    { lat: 68.2, lon: 27.4,  label: "68.2°N",  active: true  },  // Finland forestry
+    { lat: 71.0, lon: 25.9,  label: "71.0°N",  active: false },  // Norway Arctic
+    { lat: 64.5, lon: -21.9, label: "64.5°N",  active: false },  // Iceland maritime
+    { lat: 78.2, lon: 15.6,  label: "78.2°N",  active: false },  // Svalbard
+  ]
+
+  function latToR(lat: number) {
+    return ((90 - lat) / 50) * maxR
+  }
+
+  function toXY(lat: number, lon: number) {
+    const r = latToR(lat)
+    const angle = (lon * Math.PI) / 180 - Math.PI / 2
+    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) }
+  }
+
+  return (
+    <div style={{ position: "relative" }}>
+      <div className="label" style={{ marginBottom: 10 }}>Coverage zone — Nordic &amp; Arctic</div>
+      <svg width="320" height="200" viewBox="0 0 320 200" style={{ display: "block" }}>
+        {/* Latitude rings */}
+        {latLines.map(lat => (
+          <circle
+            key={lat}
+            cx={cx} cy={cy}
+            r={latToR(lat)}
+            fill="none"
+            stroke="var(--border)"
+            strokeWidth={lat === 70 ? 1.2 : 0.7}
+            strokeDasharray={lat === 70 ? "none" : "3 4"}
+          />
+        ))}
+
+        {/* Meridian lines */}
+        {[-90, -45, 0, 45, 90, 135].map(lon => {
+          const angle = (lon * Math.PI) / 180 - Math.PI / 2
+          return (
+            <line
+              key={lon}
+              x1={cx} y1={cy}
+              x2={cx + maxR * Math.cos(angle)}
+              y2={cy + maxR * Math.sin(angle)}
+              stroke="var(--border)"
+              strokeWidth={0.6}
+              opacity={0.5}
+            />
+          )
+        })}
+
+        {/* 70°N label */}
+        <text x={cx + latToR(70) + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="var(--text-dim)">70°N</text>
+        <text x={cx + latToR(60) + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="var(--text-dim)">60°N</text>
+
+        {/* Coverage shading — LEO constellation zone */}
+        <circle cx={cx} cy={cy} r={latToR(50)} fill="rgba(79,168,255,0.04)" />
+        <circle cx={cx} cy={cy} r={latToR(70)} fill="rgba(110,231,249,0.05)" />
+
+        {/* Location markers */}
+        {markers.map((m, i) => {
+          const pos = toXY(m.lat, m.lon)
+          return (
+            <g key={i}>
+              {m.active && (
+                <circle cx={pos.x} cy={pos.y} r={8} fill="rgba(79,168,255,0.12)" />
+              )}
+              <circle
+                cx={pos.x} cy={pos.y} r={m.active ? 3 : 2}
+                fill={m.active ? "#4FA8FF" : "var(--text-dim)"}
+              />
+              {m.active && (
+                <text
+                  x={pos.x + 6} y={pos.y - 4}
+                  style={{ fontFamily: "var(--font-data)", fontSize: 8 }}
+                  fill="#4FA8FF"
+                >{m.label}</text>
+              )}
+            </g>
+          )
+        })}
+
+        {/* North pole */}
+        <circle cx={cx} cy={cy} r={2} fill="var(--text-dim)" />
+        <text x={cx + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="var(--text-dim)">N</text>
+      </svg>
+    </div>
+  )
+}
+
+// ── Pricing ───────────────────────────────────────────────────────────────────
+function PricingTiers() {
+  const tiers = [
+    {
+      name: "Report",
+      price: "€250",
+      unit: "per analysis",
+      color: "var(--text)",
+      accent: "var(--border2)",
+      description: "Single-location suitability report for procurement teams.",
+      features: [
+        "One coordinate analysis",
+        "Top 3 provider ranking",
+        "Deployment Confidence scores",
+        "Plain-language rationale",
+        "Executive PDF — board-ready",
+      ],
+      cta: "Join waitlist",
+      highlight: false,
+    },
+    {
+      name: "Platform",
+      price: "€490",
+      unit: "per month",
+      color: "#4FA8FF",
+      accent: "rgba(79,168,255,0.2)",
+      description: "Unlimited analyses for operations teams managing multiple sites.",
+      features: [
+        "Unlimited location analyses",
+        "All verticals and orbital types",
+        "Priority scoring configuration",
+        "Historical comparison",
+        "Team access · CSV export",
+      ],
+      cta: "Join waitlist",
+      highlight: true,
+    },
+    {
+      name: "API",
+      price: "Custom",
+      unit: "usage-based",
+      color: "#6EE7F9",
+      accent: "rgba(110,231,249,0.15)",
+      description: "Direct API access for systems integrators and fleet platforms.",
+      features: [
+        "REST API — full scoring engine",
+        "Webhook provider alerts",
+        "Custom vertical weights",
+        "SLA-backed uptime",
+        "Dedicated integration support",
+      ],
+      cta: "Contact us",
+      highlight: false,
+    },
+  ]
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+      {tiers.map((t) => (
+        <div key={t.name} style={{
+          backgroundColor: "var(--surface)",
+          border: `1px solid ${t.highlight ? t.accent : "var(--border)"}`,
+          borderRadius: 10,
+          padding: "24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+          position: "relative",
+        }}>
+          {t.highlight && (
+            <div style={{
+              position: "absolute", top: -1, left: 24, right: 24,
+              height: 2, backgroundColor: "#4FA8FF", borderRadius: "0 0 2px 2px",
+            }} />
+          )}
+          <div>
+            <p className="label" style={{ marginBottom: 8 }}>{t.name}</p>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+              <span style={{ fontFamily: "var(--font-data)", fontSize: 28, fontWeight: 700, color: t.color, letterSpacing: "-0.02em" }}>{t.price}</span>
+              <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{t.unit}</span>
+            </div>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", marginTop: 8, lineHeight: 1.5 }}>{t.description}</p>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+            {t.features.map((f, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ width: 4, height: 4, borderRadius: "50%", backgroundColor: t.color, flexShrink: 0 }} />
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)" }}>{f}</span>
+              </div>
+            ))}
+          </div>
+          <a href="#waitlist" style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+            backgroundColor: t.highlight ? "#4FA8FF" : "var(--surface2)",
+            color: t.highlight ? "#070B12" : "var(--text-muted)",
+            border: `1px solid ${t.highlight ? "#4FA8FF" : "var(--border2)"}`,
+            borderRadius: 6, padding: "10px", textDecoration: "none",
+            fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12,
+          }}>
+            {t.cta} <ArrowRight size={12} />
+          </a>
+        </div>
+      ))}
+    </div>
   )
 }
 
@@ -353,15 +607,25 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right — Advisor preview */}
-          <div>
-            <div style={{ marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
+          {/* Right — Advisor preview + polar map */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <div style={{ marginBottom: 2, display: "flex", alignItems: "center", gap: 6 }}>
               <AlertTriangle size={11} color="var(--text-dim)" />
               <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>SAMPLE OUTPUT — ILLUSTRATIVE DATA</span>
             </div>
             <AdvisorPreview />
+            <PolarMap />
           </div>
         </div>
+      </section>
+
+      {/* Telemetry stream */}
+      <section style={{ padding: "0 32px 64px", maxWidth: 1200, margin: "0 auto" }}>
+        <div style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
+          <AlertTriangle size={11} color="var(--text-dim)" />
+          <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>ILLUSTRATIVE ENGINE OUTPUT — NOT LIVE DATA</span>
+        </div>
+        <TelemetryStream />
       </section>
 
       {/* Problem strip */}
@@ -383,7 +647,7 @@ export default function HomePage() {
               {
                 icon: <AlertTriangle size={16} color="#F5B84A" />,
                 title: "The stakes are operational",
-                body: "A lost IoT signal from a harvester at -30°C. A dropped safety check-in from an offshore platform. Connectivity failures in these environments are not inconveniences — they are safety events."
+                body: "A lost IoT signal from a harvester at −30°C. A dropped safety check-in from an offshore platform. Connectivity failures in these environments are not inconveniences—they are safety events."
               },
               {
                 icon: <Shield size={16} color="#6EE7F9" />,
@@ -430,6 +694,15 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section style={{ padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
+        <p className="label" style={{ marginBottom: 8 }}>Pricing</p>
+        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 32, letterSpacing: "-0.01em" }}>
+          Two ways to buy intelligence.
+        </h2>
+        <PricingTiers />
+      </section>
+
       {/* CTA */}
       <section style={{
         borderTop: "1px solid var(--border)",
@@ -466,7 +739,7 @@ export default function HomePage() {
           <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS</span>
         </div>
         <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>© 2026 GRYPS — All rights reserved</span>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>Espoo, Finland</span>
+        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>Designed &amp; engineered in Finland for high-latitude resilience.</span>
       </footer>
     </div>
   )
