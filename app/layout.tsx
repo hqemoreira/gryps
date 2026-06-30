@@ -50,7 +50,8 @@ export const metadata: Metadata = {
     title: "GRYPS — Satellite Connectivity Intelligence",
     description: "Know which satellite provider to choose before your deployment depends on it.",
   },
-  robots: { index: true, follow: true },
+   robots: { index: true, follow: true },
+  verification: { google: "vbGW3-1oXwqBQl7NlA461C2enz8BtVkFOPqW0SiJVy0" },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
