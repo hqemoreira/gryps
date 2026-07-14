@@ -52,12 +52,14 @@ export async function POST(req: NextRequest) {
   let output: object
   try {
     output = await callMistral(input)
-  } catch {
+  } catch (firstErr) {
+    console.error("Mistral first attempt:", firstErr)
     try {
       output = await callMistral(input)
     } catch (err) {
-      console.error("Mistral failed after retry:", err)
-      return NextResponse.json({ error: "Analysis engine unavailable" }, { status: 502 })
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error("Mistral failed after retry:", msg)
+      return NextResponse.json({ error: "Analysis engine unavailable", detail: msg }, { status: 502 })
     }
   }
 
