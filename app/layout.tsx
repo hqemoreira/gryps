@@ -20,8 +20,8 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "GRYPS",
-  "url": "https://gryps.io",
-  "description": "Satellite connectivity intelligence for mission-critical operations. Know which provider to choose before your deployment depends on it.",
+  "url": "https://gryps.vercel.app",
+  "description": "Compare satellite providers for maritime, Arctic, forestry, and mining operations. GRYPS maps coverage, latency, and SLA data so you choose the right provider before your mission depends on it.",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
   "audience": {
@@ -30,27 +30,29 @@ const jsonLd = {
   },
   "author": {
     "@type": "Organization",
-    "name": "GRYPS Research Project",
+    "name": "GRYPS",
     "url": "https://gryps.vercel.app"
   }
 }
 
 export const metadata: Metadata = {
-  title: "GRYPS — Satellite Connectivity Intelligence",
-  description: "Know which satellite provider to choose before your deployment depends on it. Connectivity intelligence for maritime, Arctic, forestry, and mining operations.",
+  title: "Satellite Connectivity Comparison — Starlink vs OneWeb vs Iridium | GRYPS",
+  description: "Compare satellite providers for maritime, Arctic, forestry, and mining operations. GRYPS maps coverage, latency, and SLA data so you choose the right provider before your mission depends on it.",
+  keywords: "satellite connectivity comparison, Starlink maritime, OneWeb Arctic, Iridium satellite, satellite internet mining, remote connectivity, satellite provider comparison",
   metadataBase: new URL("https://gryps.vercel.app"),
   alternates: { canonical: "https://gryps.vercel.app" },
   openGraph: {
-    title: "GRYPS — Satellite Connectivity Intelligence",
-    description: "Know which satellite provider to choose before your deployment depends on it.",
+    title: "Satellite Connectivity Comparison — Starlink vs OneWeb vs Iridium | GRYPS",
+    description: "Compare satellite providers for maritime, Arctic, forestry, and mining operations. Coverage, latency, and SLA data before your mission depends on it.",
     type: "website",
+    siteName: "GRYPS",
   },
   twitter: {
     card: "summary_large_image",
-    title: "GRYPS — Satellite Connectivity Intelligence",
-    description: "Know which satellite provider to choose before your deployment depends on it.",
+    title: "Satellite Connectivity Comparison | GRYPS",
+    description: "Compare Starlink, OneWeb, and Iridium for maritime, Arctic, and mining operations. Choose the right provider before your mission depends on it.",
   },
-   robots: { index: true, follow: true },
+  robots: { index: true, follow: true },
   verification: { google: "vbGW3-1oXwqBQl7NlA461C2enz8BtVkFOPqW0SiJVy0" },
 }
 
