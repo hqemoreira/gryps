@@ -44,3 +44,26 @@ body {
   text-transform: uppercase;
   color: var(--text-muted);
 }
+
+/* ── Responsive overrides — inline styles above are the desktop baseline ── */
+@media (max-width: 900px) {
+  .gryps-hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .gryps-problem-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
+  .gryps-steps-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .gryps-output-grid { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 640px) {
+  .gryps-nav-label { display: none !important; }
+  .gryps-nav-inner { padding: 0 16px !important; }
+  .gryps-banner { font-size: 8px !important; letter-spacing: 0.03em !important; padding: 6px 12px !important; }
+  .gryps-section-pad { padding-left: 20px !important; padding-right: 20px !important; }
+  .gryps-hero-h1 { font-size: 30px !important; }
+  .gryps-hero-sub { font-size: 14px !important; max-width: 100% !important; }
+  .gryps-stats-row { gap: 20px !important; flex-wrap: wrap !important; }
+  .gryps-steps-grid { grid-template-columns: 1fr !important; }
+  .gryps-form-row { grid-template-columns: 1fr !important; }
+  .gryps-footer { flex-direction: column !important; gap: 10px !important; text-align: center !important; }
+  .gryps-signature-card { flex-direction: column !important; text-align: center !important; }
+  .gryps-signature-divider { display: none !important; }
+}

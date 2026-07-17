@@ -8,20 +8,25 @@ export function AnimatedFavicon() {
     canvas.height = 32
     const ctx = canvas.getContext("2d")!
 
-    let frame = 0
     let raf: number
+    let lastUpdate = 0
+    const start = performance.now()
+    const UPDATE_INTERVAL = 100 // ms — browsers throttle/ignore favicon updates faster than this
 
-    // Find or create the favicon link element
-    let link = document.querySelector<HTMLLinkElement>("link[rel='icon'][type='image/png']")
-    if (!link) {
-      link = document.createElement("link")
-      link.rel = "icon"
-      link.type = "image/png"
-      document.head.appendChild(link)
-    }
+    // Remove any static favicon links Next.js may have injected, then create our own.
+    // A duplicate static <link rel="icon"> can win over our dynamically updated one.
+    document.querySelectorAll<HTMLLinkElement>("link[rel='icon']").forEach(el => el.remove())
+    const link = document.createElement("link")
+    link.rel = "icon"
+    link.type = "image/png"
+    document.head.appendChild(link)
 
-    function draw() {
-      const t = frame / 60 // time in seconds at ~60fps
+    function draw(now: number) {
+      raf = requestAnimationFrame(draw)
+      if (now - lastUpdate < UPDATE_INTERVAL) return
+      lastUpdate = now
+
+      const t = (now - start) / 1000 // seconds elapsed
       ctx.clearRect(0, 0, 32, 32)
 
       // Background
@@ -37,17 +42,19 @@ export function AnimatedFavicon() {
       const cycle = 2.4
       const phase = (t % cycle) / cycle // 0..1
 
-      // Smooth triangular envelope peaking at `peak` (0..1), base level `base`
-      function envelope(peak: number, base: number, width = 0.28) {
+      // Smooth triangular envelope peaking at `peak` (0..1), base level `base`.
+      // Narrow width so each arc's bright phase is distinct — not overlapping —
+      // which is what makes the broadcast read as sequential rather than a shimmer.
+      function envelope(peak: number, base: number, width = 0.09) {
         const d = Math.abs(phase - peak)
         const wrapped = Math.min(d, 1 - d)
         const x = Math.max(0, 1 - wrapped / width)
         return base + (1 - base) * x
       }
 
-      const leoPulse = envelope(0.0, 0.55)
-      const meoPulse = envelope(0.22, 0.4)
-      const geoPulse = envelope(0.44, 0.25)
+      const leoPulse = envelope(0.0, 0.2)
+      const meoPulse = envelope(0.16, 0.25)
+      const geoPulse = envelope(0.32, 0.3)
 
       // GEO — outermost
       ctx.beginPath()
@@ -108,9 +115,7 @@ export function AnimatedFavicon() {
       ctx.fillStyle = `rgba(79,168,255,${0.7 + 0.3 * originPulse})`
       ctx.fill()
 
-      link!.href = canvas.toDataURL("image/png")
-      frame++
-      raf = requestAnimationFrame(draw)
+      link.href = canvas.toDataURL("image/png")
     }
 
     raf = requestAnimationFrame(draw)

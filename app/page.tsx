@@ -18,9 +18,9 @@ function GrypsMark({ size = 36, animate = false }: { size?: number; animate?: bo
       <circle cx="18" cy="21" r="1.5" fill="#4FA8FF"/>
       {animate && (
         <style>{`
-          @keyframes gryps-broadcast-leo { 0%, 100% { opacity: 1; } 15% { opacity: 1; filter: drop-shadow(0 0 2px #4FA8FF); } 40% { opacity: 0.55; } }
-          @keyframes gryps-broadcast-meo { 0%, 100% { opacity: 0.75; } 15% { opacity: 0.75; } 30% { opacity: 1; filter: drop-shadow(0 0 2px #6EE7F9); } 55% { opacity: 0.4; } }
-          @keyframes gryps-broadcast-geo { 0%, 100% { opacity: 0.5; } 30% { opacity: 0.5; } 60% { opacity: 0.9; filter: drop-shadow(0 0 2px #4FA8FF); } 85% { opacity: 0.25; } }
+          @keyframes gryps-broadcast-leo { 0% { opacity: 1; filter: drop-shadow(0 0 3px #4FA8FF); } 12%, 100% { opacity: 0.2; } }
+          @keyframes gryps-broadcast-meo { 0%, 12% { opacity: 0.25; } 16% { opacity: 1; filter: drop-shadow(0 0 3px #6EE7F9); } 28%, 100% { opacity: 0.25; } }
+          @keyframes gryps-broadcast-geo { 0%, 28% { opacity: 0.3; } 32% { opacity: 1; filter: drop-shadow(0 0 3px #4FA8FF); } 44%, 100% { opacity: 0.3; } }
           .gryps-arc-leo { animation: gryps-broadcast-leo 2.4s ease-in-out infinite; }
           .gryps-arc-meo { animation: gryps-broadcast-meo 2.4s ease-in-out infinite; }
           .gryps-arc-geo { animation: gryps-broadcast-geo 2.4s ease-in-out infinite; }
@@ -56,7 +56,7 @@ function ResilienceOutput({ result }: { result: AdvisoryResult }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
       {/* Signature score */}
-      <div style={{
+      <div className="gryps-signature-card" style={{
         backgroundColor: "var(--surface)",
         border: `1px solid ${gc}44`,
         borderRadius: 12,
@@ -69,7 +69,7 @@ function ResilienceOutput({ result }: { result: AdvisoryResult }) {
           </div>
           <div style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.12em", marginTop: 4 }}>RESILIENCE SCORE</div>
         </div>
-        <div style={{ width: 1, height: 64, backgroundColor: "var(--border)", flexShrink: 0 }} />
+        <div className="gryps-signature-divider" style={{ width: 1, height: 64, backgroundColor: "var(--border)", flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
             <span style={{
@@ -92,7 +92,7 @@ function ResilienceOutput({ result }: { result: AdvisoryResult }) {
       </div>
 
       {/* Risk factors + Redundancy gaps */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div className="gryps-output-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
           <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>RISK FACTORS</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -242,7 +242,7 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       {/* Coordinates row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         <div>
           <label style={labelStyle}>LATITUDE (optional)</label>
           <input type="number" step="any" placeholder="68.2" value={lat} onChange={e => setLat(e.target.value)} style={inputStyle} />
@@ -254,7 +254,7 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
       </div>
 
       {/* Vertical + autonomy row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         <div>
           <label style={labelStyle}>{t.sectorLabel} *</label>
           <select value={vertical} onChange={e => setVertical(e.target.value)} required style={{ ...selectStyle, color: vertical ? "var(--text)" : "var(--text-muted)" }}>
@@ -608,7 +608,7 @@ export default function HomePage() {
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
 
       {/* Non-commercial banner */}
-      <div style={{
+      <div className="gryps-banner" style={{
         backgroundColor: "rgba(245,184,74,0.06)",
         borderBottom: "1px solid rgba(245,184,74,0.2)",
         padding: "6px 32px",
@@ -624,7 +624,7 @@ export default function HomePage() {
       </div>
 
       {/* Nav */}
-      <header style={{
+      <header className="gryps-nav-inner" style={{
         position: "fixed", top: 28, left: 0, right: 0, zIndex: 100,
         borderBottom: "1px solid var(--border)",
         backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
@@ -638,7 +638,7 @@ export default function HomePage() {
           <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 15, letterSpacing: "0.12em", color: "var(--text)" }}>GRYPS</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>CONNECTIVITY INTELLIGENCE</span>
+          <span className="gryps-nav-label" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>CONNECTIVITY INTELLIGENCE</span>
           <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden" }}>
             {(["en", "fi"] as const).map(l => (
               <button key={l} onClick={() => setLang(l)} style={{
@@ -673,8 +673,8 @@ export default function HomePage() {
       </header>
 
       {/* Hero */}
-      <section style={{ paddingTop: 148, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+      <section className="gryps-section-pad" style={{ paddingTop: 148, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
+        <div className="gryps-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
 
           {/* Left */}
           <div>
@@ -683,7 +683,7 @@ export default function HomePage() {
               <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
             </div>
 
-            <h1 style={{
+            <h1 className="gryps-hero-h1" style={{
               fontFamily: "var(--font-ui)", fontSize: 44, fontWeight: 700,
               lineHeight: 1.1, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 20,
             }}>
@@ -691,7 +691,7 @@ export default function HomePage() {
               <span style={{ color: "#4FA8FF" }}>{t.h1[2]}</span>
             </h1>
 
-            <p style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 16, maxWidth: 440 }}>
+            <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 16, maxWidth: 440 }}>
               {t.sub}
             </p>
 
@@ -699,7 +699,7 @@ export default function HomePage() {
               {t.nis2line}
             </p>
 
-            <div style={{ display: "flex", gap: 36, marginBottom: 40, paddingBottom: 40, borderBottom: "1px solid var(--border)" }}>
+            <div className="gryps-stats-row" style={{ display: "flex", gap: 36, marginBottom: 40, paddingBottom: 40, borderBottom: "1px solid var(--border)" }}>
               <Stat value="120+" label={t.statsL1} />
               <Stat value="LEO–MEO–GEO" label={t.statsL2} />
               <Stat value="70°N+" label={t.statsL3} />
@@ -733,10 +733,10 @@ export default function HomePage() {
       </section>
 
       {/* Problem strip */}
-      <section style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", backgroundColor: "var(--surface)", padding: "48px 32px" }}>
+      <section className="gryps-section-pad" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", backgroundColor: "var(--surface)", padding: "48px 32px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p className="label" style={{ textAlign: "center", marginBottom: 32, fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>{t.problemL}</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
+          <div className="gryps-problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
             {t.problems.map((item, i) => (
               <div key={i} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -751,7 +751,7 @@ export default function HomePage() {
       </section>
 
       {/* Live Advisor */}
-      <section id="advisor" style={{ padding: "64px 32px", maxWidth: 900, margin: "0 auto", scrollMarginTop: 80 }}>
+      <section id="advisor" className="gryps-section-pad" style={{ padding: "64px 32px", maxWidth: 900, margin: "0 auto", scrollMarginTop: 80 }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>FREE RESILIENCE ADVISOR</p>
         <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", marginBottom: 8, letterSpacing: "-0.01em" }}>
           {t.advisorCta}
@@ -761,9 +761,9 @@ export default function HomePage() {
       </section>
 
       {/* How it works */}
-      <section style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
+      <section className="gryps-section-pad" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 32 }}>{t.howL}</p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
+        <div className="gryps-steps-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
           {t.steps.map((step, i) => {
             const icons = [<MapPin key="mp" size={16} color="#4FA8FF" />, <Radio key="r" size={16} color="#4FA8FF" />, <Zap key="z" size={16} color="#4FA8FF" />, <ChevronRight key="cr" size={16} color="#4FA8FF" />]
             return (
@@ -781,7 +781,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", textAlign: "center" }}>
+      <section className="gryps-section-pad" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", textAlign: "center" }}>
         <GrypsMark size={44} />
         <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", margin: "20px 0 10px", letterSpacing: "-0.01em" }}>
           {t.ctaH2}
@@ -800,7 +800,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ borderTop: "1px solid var(--border)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <footer className="gryps-footer gryps-section-pad" style={{ borderTop: "1px solid var(--border)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <GrypsMark size={18} />
           <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS</span>
