@@ -21,7 +21,7 @@ const jsonLd = {
   "@type": "SoftwareApplication",
   "name": "GRYPS",
   "url": "https://gryps.vercel.app",
-  "description": "Compare satellite providers for maritime, Arctic, forestry, and mining operations. GRYPS maps coverage, latency, and SLA data so you choose the right provider before your mission depends on it.",
+  "description": "GRYPS scores, documents, and monitors connectivity resilience for autonomous and remote operations in maritime, Arctic, forestry, and mining environments — NIS2/CER-aligned reporting for critical operators.",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
   "audience": {
@@ -36,21 +36,21 @@ const jsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "Satellite Connectivity Comparison — Starlink vs OneWeb vs Iridium | GRYPS",
-  description: "Compare satellite providers for maritime, Arctic, forestry, and mining operations. GRYPS maps coverage, latency, and SLA data so you choose the right provider before your mission depends on it.",
-  keywords: "satellite connectivity comparison, Starlink maritime, OneWeb Arctic, Iridium satellite, satellite internet mining, remote connectivity, satellite provider comparison",
+  title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
+  description: "GRYPS scores, documents, and monitors satellite connectivity resilience for autonomous fleets and remote sites in maritime, Arctic, forestry, and mining. Free Resilience Signature — NIS2/CER-aligned reporting.",
+  keywords: "connectivity resilience, autonomous operations connectivity, NIS2 connectivity risk, CER critical operator, satellite resilience Arctic, remote site connectivity risk, forestry autonomous fleet connectivity",
   metadataBase: new URL("https://gryps.vercel.app"),
   alternates: { canonical: "https://gryps.vercel.app" },
   openGraph: {
-    title: "Satellite Connectivity Comparison — Starlink vs OneWeb vs Iridium | GRYPS",
-    description: "Compare satellite providers for maritime, Arctic, forestry, and mining operations. Coverage, latency, and SLA data before your mission depends on it.",
+    title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
+    description: "Score, document, and monitor satellite connectivity risk for autonomous and remote operations. Free Resilience Signature — NIS2/CER-aligned reporting for Nordic and Arctic critical operators.",
     type: "website",
     siteName: "GRYPS",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Satellite Connectivity Comparison | GRYPS",
-    description: "Compare Starlink, OneWeb, and Iridium for maritime, Arctic, and mining operations. Choose the right provider before your mission depends on it.",
+    title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
+    description: "Free Resilience Signature for your site. Score, document, and monitor connectivity risk before it becomes a safety event.",
   },
   robots: { index: true, follow: true },
   verification: { google: "vbGW3-1oXwqBQl7NlA461C2enz8BtVkFOPqW0SiJVy0" },
