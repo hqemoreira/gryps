@@ -32,9 +32,24 @@ export function AnimatedFavicon() {
       const cx = 16
       const cy = 17
 
-      // ── Orbital arcs ────────────────────────────────────────────
-      // GEO — outermost, slow pulse
-      const geoPulse = 0.35 + 0.15 * Math.sin(t * 0.8)
+      // ── Orbital arcs — sequential broadcast, inner to outer ───────
+      // A signal sweeps outward every 2.4s: LEO fires first, then MEO, then GEO
+      const cycle = 2.4
+      const phase = (t % cycle) / cycle // 0..1
+
+      // Smooth triangular envelope peaking at `peak` (0..1), base level `base`
+      function envelope(peak: number, base: number, width = 0.28) {
+        const d = Math.abs(phase - peak)
+        const wrapped = Math.min(d, 1 - d)
+        const x = Math.max(0, 1 - wrapped / width)
+        return base + (1 - base) * x
+      }
+
+      const leoPulse = envelope(0.0, 0.55)
+      const meoPulse = envelope(0.22, 0.4)
+      const geoPulse = envelope(0.44, 0.25)
+
+      // GEO — outermost
       ctx.beginPath()
       ctx.arc(cx, cy, 12, Math.PI, 0)
       ctx.strokeStyle = `rgba(79,168,255,${geoPulse})`
@@ -42,16 +57,14 @@ export function AnimatedFavicon() {
       ctx.lineCap = "round"
       ctx.stroke()
 
-      // MEO — mid, medium pulse offset
-      const meoPulse = 0.6 + 0.25 * Math.sin(t * 1.2 + 1)
+      // MEO — mid
       ctx.beginPath()
       ctx.arc(cx, cy, 8.5, Math.PI, 0)
       ctx.strokeStyle = `rgba(110,231,249,${meoPulse})`
       ctx.lineWidth = 1.3
       ctx.stroke()
 
-      // LEO — inner, fastest pulse
-      const leoPulse = 0.8 + 0.2 * Math.sin(t * 2.0 + 2)
+      // LEO — inner
       ctx.beginPath()
       ctx.arc(cx, cy, 5, Math.PI, 0)
       ctx.strokeStyle = `rgba(79,168,255,${leoPulse})`
