@@ -782,7 +782,7 @@ export default function HomePage() {
 
       {/* CTA */}
       <section className="gryps-section-pad" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", textAlign: "center" }}>
-        <GrypsMark size={44} />
+        <GrypsMark size={44} animate />
         <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", margin: "20px 0 10px", letterSpacing: "-0.01em" }}>
           {t.ctaH2}
         </h2>
@@ -802,7 +802,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="gryps-footer gryps-section-pad" style={{ borderTop: "1px solid var(--border)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <GrypsMark size={18} />
+          <GrypsMark size={18} animate />
           <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS</span>
         </div>
         <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
