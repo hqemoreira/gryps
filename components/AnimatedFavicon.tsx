@@ -58,27 +58,6 @@ export function AnimatedFavicon() {
       ctx.lineWidth = 1.5
       ctx.stroke()
 
-      // ── Scanning dot on LEO arc ──────────────────────────────────
-      // A bright dot travels along the LEO arc (left to right, top half)
-      const scanAngle = Math.PI - (t * 1.4 % Math.PI)
-      const scanX = cx + 5 * Math.cos(scanAngle)
-      const scanY = cy + 5 * Math.sin(scanAngle)
-
-      // Glow
-      const grd = ctx.createRadialGradient(scanX, scanY, 0, scanX, scanY, 4)
-      grd.addColorStop(0, "rgba(110,231,249,0.9)")
-      grd.addColorStop(1, "rgba(110,231,249,0)")
-      ctx.beginPath()
-      ctx.arc(scanX, scanY, 4, 0, Math.PI * 2)
-      ctx.fillStyle = grd
-      ctx.fill()
-
-      // Dot
-      ctx.beginPath()
-      ctx.arc(scanX, scanY, 1.4, 0, Math.PI * 2)
-      ctx.fillStyle = "#6EE7F9"
-      ctx.fill()
-
       // ── North arrow ──────────────────────────────────────────────
       ctx.strokeStyle = "#6EE7F9"
       ctx.lineWidth = 1.4
