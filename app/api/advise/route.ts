@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
   // Store submission in Neon
   try {
-    const sql = neon(process.env.DATABASE_URL!)
+    const sql = neon(process.env.NEON_DATABASE_URL!)
     await sql`
       CREATE TABLE IF NOT EXISTS advisor_submissions (
         id                  SERIAL PRIMARY KEY,

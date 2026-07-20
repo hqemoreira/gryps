@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
   // ── Neon — store submission ────────────────────────────────────────────────
   try {
-    const sql = neon(process.env.DATABASE_URL!)
+    const sql = neon(process.env.NEON_DATABASE_URL!)
     await sql`
       CREATE TABLE IF NOT EXISTS gryps_waitlist (
         id         SERIAL PRIMARY KEY,
