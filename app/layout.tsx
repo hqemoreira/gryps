@@ -31,7 +31,8 @@ const jsonLd = {
   "author": {
     "@type": "Organization",
     "name": "GRYPS",
-    "url": "https://gryps.vercel.app"
+    "url": "https://gryps.vercel.app",
+    "email": "hello@gryps.fi"
   }
 }
 

@@ -6,15 +6,15 @@ const COPY = {
   en: {
     title: "Privacy Policy",
     effective: "Effective date: 29 June 2026",
-    controller: "Data Controller: GRYPS (research project) · Espoo, Finland · hqe.moreira@gmail.com",
+    controller: "Data Controller: GRYPS (research project) · Espoo, Finland · hello@gryps.fi",
     intro: "This Privacy Policy explains how GRYPS collects, processes, and protects personal data in connection with the GRYPS satellite connectivity intelligence platform. GRYPS is committed to full compliance with the EU General Data Protection Regulation (GDPR) and applicable Finnish data protection law.",
     sections: [
       {
         id: "01",
         title: "Who We Are",
         body: [
-          "GRYPS is a non-commercial research project based in Espoo, Finland. There is no registered company and no revenue. For the purposes of the GDPR, the researcher operating GRYPS (hqe.moreira@gmail.com) is the data controller responsible for personal data processed through the GRYPS platform.",
-          "Contact for all data protection matters: hqe.moreira@gmail.com",
+          "GRYPS is a non-commercial research project based in Espoo, Finland. There is no registered company and no revenue. For the purposes of the GDPR, the researcher operating GRYPS (hello@gryps.fi) is the data controller responsible for personal data processed through the GRYPS platform.",
+          "Contact for all data protection matters: hello@gryps.fi",
         ],
       },
       {
@@ -43,7 +43,7 @@ const COPY = {
         id: "03",
         title: "Legal Basis for Processing",
         body: [
-          "Waitlist data (email + sector): Consent — you voluntarily submit this data when requesting early access. You may withdraw consent at any time by emailing hqe.moreira@gmail.com.",
+          "Waitlist data (email + sector): Consent — you voluntarily submit this data when requesting early access. You may withdraw consent at any time by emailing hello@gryps.fi.",
           "Platform analytics: Legitimate interest — anonymised aggregate analytics are used to improve the platform. No individual profiling is performed.",
           "API logs: Legitimate interest — retained for security, rate limiting, and service integrity purposes.",
           "Analysis inputs (coordinates, sector, priorities): Contract performance — processing is necessary to deliver the service you have requested.",
@@ -92,7 +92,7 @@ const COPY = {
           "Right to restrict processing (Art. 18): You may request that processing of your data be limited in certain circumstances.",
           "Right to data portability (Art. 20): You may request your data in a structured, machine-readable format.",
           "Right to object (Art. 21): You may object to processing based on legitimate interest.",
-          "To exercise any of these rights, contact: hqe.moreira@gmail.com. GRYPS will respond within 30 days.",
+          "To exercise any of these rights, contact: hello@gryps.fi. GRYPS will respond within 30 days.",
           "If you believe your rights have been violated, you have the right to lodge a complaint with the Finnish Data Protection Ombudsman (tietosuoja.fi) or the supervisory authority in your EU member state.",
         ],
       },
@@ -128,7 +128,7 @@ const COPY = {
         body: [
           "Data Controller: GRYPS (research project)",
           "Platform: gryps.vercel.app",
-          "Email: hqe.moreira@gmail.com",
+          "Email: hello@gryps.fi",
           "Location: Espoo, Finland — European Union",
         ],
       },
@@ -137,15 +137,15 @@ const COPY = {
   fi: {
     title: "Tietosuojakäytäntö",
     effective: "Voimaantulopäivä: 29. kesäkuuta 2026",
-    controller: "Rekisterinpitäjä: GRYPS (tutkimusprojekti) · Espoo, Suomi · hqe.moreira@gmail.com",
+    controller: "Rekisterinpitäjä: GRYPS (tutkimusprojekti) · Espoo, Suomi · hello@gryps.fi",
     intro: "Tämä tietosuojakäytäntö selittää, miten GRYPS kerää, käsittelee ja suojaa henkilötietoja GRYPS-satelliittiyhteysintelligenssiplatformin yhteydessä. GRYPS on sitoutunut täydelliseen vaatimustenmukaisuuteen EU:n yleisen tietosuoja-asetuksen (GDPR) ja sovellettavan suomalaisen tietosuojalain kanssa.",
     sections: [
       {
         id: "01",
         title: "Keitä me olemme",
         body: [
-          "GRYPS on ei-kaupallinen tutkimusprojekti, jota operoidaan Espoosta, Suomesta. GDPR:n tarkoituksiin tutkija (hqe.moreira@gmail.com) on rekisterinpitäjä, joka vastaa GRYPS-platformin kautta käsitellyistä henkilötiedoista.",
-          "Yhteystiedot kaikissa tietosuoja-asioissa: hqe.moreira@gmail.com",
+          "GRYPS on ei-kaupallinen tutkimusprojekti, jota operoidaan Espoosta, Suomesta. GDPR:n tarkoituksiin tutkija (hello@gryps.fi) on rekisterinpitäjä, joka vastaa GRYPS-platformin kautta käsitellyistä henkilötiedoista.",
+          "Yhteystiedot kaikissa tietosuoja-asioissa: hello@gryps.fi",
         ],
       },
       {
@@ -219,7 +219,7 @@ const COPY = {
           "Oikeus tietojen poistamiseen (17 artikla): Voit pyytää henkilötietojesi poistamista.",
           "Oikeus käsittelyn rajoittamiseen (18 artikla): Voit pyytää, että tietojesi käsittelyä rajoitetaan tietyissä olosuhteissa.",
           "Vastausoikeus (21 artikla): Voit vastustaa oikeutettuun etuun perustuvaa käsittelyä.",
-          "Ottaaksesi käyttöön näitä oikeuksia, ota yhteyttä: hqe.moreira@gmail.com",
+          "Ottaaksesi käyttöön näitä oikeuksia, ota yhteyttä: hello@gryps.fi",
           "Jos uskot, että oikeuksiasi on rikottu, voit tehdä valituksen tietosuojavaltuutetulle (tietosuoja.fi).",
         ],
       },
@@ -254,7 +254,7 @@ const COPY = {
         body: [
           "Rekisterinpitäjä: GRYPS (tutkimusprojekti)",
           "Platforma: gryps.vercel.app",
-          "Sähköposti: hqe.moreira@gmail.com",
+          "Sähköposti: hello@gryps.fi",
           "Sijainti: Espoo, Suomi — Euroopan unioni",
         ],
       },

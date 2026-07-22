@@ -42,6 +42,10 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Resend — notify founder ────────────────────────────────────────────────
+  // TODO: gryps.fi registers early August — once DNS/email routing is live,
+  // switch from/to addresses to the gryps.fi domain (e.g. noreply@gryps.fi /
+  // hello@gryps.fi). Left on the working address until then since hello@gryps.fi
+  // cannot receive mail yet. Display copy already updated to hello@gryps.fi.
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
     await resend.emails.send({
