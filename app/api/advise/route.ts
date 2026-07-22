@@ -92,14 +92,11 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true, result: output })
 }
 
-// TEMP — Session 2 verification only, removed after confirming Neon insert
-export async function GET(req: NextRequest) {
+// TEMP — Session 2 cleanup only, removed next commit
+export async function DELETE(req: NextRequest) {
   const email = req.nextUrl.searchParams.get("email")
   if (!email) return NextResponse.json({ error: "email required" }, { status: 400 })
   const sql = neon(process.env.NEON_DATABASE_URL!)
-  const rows = await sql`
-    SELECT id, created_at, email, autonomy_level, criticality, lat, lng
-    FROM advisor_submissions WHERE email = ${email} ORDER BY created_at DESC LIMIT 1
-  `
-  return NextResponse.json({ rows })
+  const rows = await sql`DELETE FROM advisor_submissions WHERE email = ${email} RETURNING id`
+  return NextResponse.json({ deleted: rows })
 }
