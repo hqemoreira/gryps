@@ -204,7 +204,6 @@ export default function SignaturesPage() {
 
       <Footer
         lang={lang}
-        onLangChange={setLang}
         footerRights={t.footerRights}
         secondaryLink={{ href: "/", label: lang === "en" ? "Back to GRYPS" : "Takaisin GRYPS:iin" }}
       />

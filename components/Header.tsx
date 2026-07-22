@@ -27,7 +27,7 @@ export function Header({
 
   return (
     <header className="gryps-nav-inner" style={{
-      position: "fixed", top: topOffset, left: 0, right: 0, zIndex: 100,
+      position: "fixed", top: topOffset, left: 0, right: 0, zIndex: 1000,
       borderBottom: "1px solid var(--border)",
       backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
       backdropFilter: "blur(12px)",

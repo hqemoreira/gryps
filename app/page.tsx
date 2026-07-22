@@ -448,7 +448,7 @@ export default function HomePage() {
         fontSize: 9,
         color: "#D97706",
         letterSpacing: "0.07em",
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 200,
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 1010,
         backdropFilter: "blur(12px)",
       }}>
         R&D PROTOTYPE · EARLY ACCESS · {lang === "en" ? "ESPOO, FINLAND" : "ESPOO, SUOMI"}
@@ -593,7 +593,6 @@ export default function HomePage() {
 
       <Footer
         lang={lang}
-        onLangChange={setLang}
         footerRights={t.footerRights}
         footerTag={t.footerTag}
         secondaryLink={{ href: "/signatures", label: lang === "en" ? "Explore scored sites" : "Selaa pisteytettyjä kohteita" }}
