@@ -4,6 +4,9 @@ import dynamic from "next/dynamic"
 import Link from "next/link"
 import { ArrowRight, Map as MapIcon, List as ListIcon } from "lucide-react"
 import { gradeColor } from "@/components/ResilienceOutput"
+import { Header } from "@/components/Header"
+import { Footer } from "@/components/Footer"
+import { useTheme } from "@/context/ThemeContext"
 
 const SignaturesMap = dynamic(() => import("@/components/SignaturesMap").then(m => m.SignaturesMap), {
   ssr: false,
@@ -20,7 +23,40 @@ type SiteSummary = {
   score: number; grade: string; summary: string
 }
 
+const COPY = {
+  en: {
+    tagline:      "RESILIENCE SIGNATURES",
+    title:        "Scored connectivity resilience across the Nordic and Arctic",
+    disclosure:   "Illustrative, synthesized sites for demonstration — real coordinates, generated site profiles, and real Resilience Signature scores from the same scoring model as the live Advisor. R&D prototype.",
+    allSectors:   "All sectors", allAutonomy: "All autonomy levels", allCriticality: "All criticality",
+    map: "Map", list: "List",
+    loading: "LOADING SIGNATURES…", noMatch: "No sites match these filters.",
+    ctaHeading: "Score your own site",
+    ctaSub: "Get a free, real-time Resilience Signature for your own coordinates — the same model that scored every site above.",
+    ctaBtn: "Run the free Advisor",
+    navCta: "Score your site",
+    footerRights: "© 2026 GRYPS · Espoo, Finland · Non-commercial R&D prototype",
+  },
+  fi: {
+    tagline:      "RESILIENCE-SIGNATUURIT",
+    title:        "Pisteytetty yhteyden resilienssi Pohjoismaissa ja arktisella alueella",
+    disclosure:   "Havainnollistavia, synteettisiä kohteita esittelyyn — todelliset koordinaatit, luodut kohdeprofiilit ja todelliset Resilience Signature -pisteet samasta pisteytysmallista kuin live-Advisor. T&K-prototyyppi.",
+    allSectors:   "Kaikki toimialat", allAutonomy: "Kaikki autonomiatasot", allCriticality: "Kaikki kriittisyystasot",
+    map: "Kartta", list: "Lista",
+    loading: "LADATAAN SIGNATUUREITA…", noMatch: "Yksikään kohde ei vastaa suodattimia.",
+    ctaHeading: "Pisteytä oma kohteesi",
+    ctaSub: "Hanki ilmainen, reaaliaikainen Resilience Signature omille koordinaateillesi — sama malli, joka pisteytti jokaisen yllä olevan kohteen.",
+    ctaBtn: "Suorita ilmainen Advisor",
+    navCta: "Pisteytä kohteesi",
+    footerRights: "© 2026 GRYPS · Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi",
+  },
+}
+
 export default function SignaturesPage() {
+  const [lang, setLang] = useState<"en" | "fi">("en")
+  const { dark } = useTheme()
+  const t = COPY[lang]
+
   const [sites, setSites] = useState<SiteSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState<"map" | "list">("map")
@@ -48,66 +84,48 @@ export default function SignaturesPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)", paddingTop: 90 }}>
-      {/* Nav */}
-      <header style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        borderBottom: "1px solid var(--border)",
-        backgroundColor: "rgba(7,11,18,0.92)", backdropFilter: "blur(12px)",
-        padding: "0 32px", height: 52,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
-            <path d="M4 18 A14 14 0 0 1 32 18" stroke="#4FA8FF" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.5"/>
-            <path d="M8 18 A10 10 0 0 1 28 18" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.75"/>
-            <path d="M12 18 A6 6 0 0 1 24 18" stroke="#4FA8FF" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-            <line x1="18" y1="20" x2="18" y2="10" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round"/>
-            <path d="M15 13 L18 9 L21 13" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <circle cx="18" cy="21" r="1.5" fill="#4FA8FF"/>
-          </svg>
-          <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14, letterSpacing: "0.12em", color: "var(--text)" }}>GRYPS</span>
-        </Link>
-        <a href="/#advisor" style={{
-          fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700,
-          color: "#4FA8FF", textDecoration: "none",
-          border: "1px solid rgba(79,168,255,0.3)", padding: "6px 14px", borderRadius: 5,
-        }}>Score your site</a>
-      </header>
+    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
+      <Header
+        lang={lang}
+        onLangChange={setLang}
+        ctaHref="/#advisor"
+        ctaLabel={t.navCta}
+        extraLink={{ href: "/", label: lang === "en" ? "Home" : "Etusivu" }}
+      />
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 32px 80px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 32px 80px", paddingTop: 90 }}>
         {/* Title + disclosure */}
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>RESILIENCE SIGNATURES</p>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.tagline}</p>
         <h1 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", marginBottom: 12, letterSpacing: "-0.01em" }}>
-          Scored connectivity resilience across the Nordic and Arctic
+          {t.title}
         </h1>
         <div style={{
-          backgroundColor: "rgba(245,184,74,0.06)", border: "1px solid rgba(245,184,74,0.2)",
+          backgroundColor: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)",
           borderRadius: 6, padding: "10px 14px", marginBottom: 28, maxWidth: 640,
         }}>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "#F5B84A", lineHeight: 1.6 }}>
-            Illustrative, synthesized sites for demonstration — real coordinates, generated site profiles, and real Resilience Signature scores from the same scoring model as the live Advisor. R&D prototype.
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "#D97706", lineHeight: 1.6 }}>
+            {t.disclosure}
           </p>
         </div>
 
         {/* Filters + view toggle */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", marginBottom: 20 }}>
           <select value={sector} onChange={e => setSector(e.target.value)} style={selectStyle}>
-            <option value="">All sectors</option>
+            <option value="">{t.allSectors}</option>
             <option value="forestry">Forestry</option>
             <option value="mining">Mining</option>
             <option value="maritime">Maritime</option>
             <option value="arctic">Arctic</option>
           </select>
           <select value={autonomy} onChange={e => setAutonomy(e.target.value)} style={selectStyle}>
-            <option value="">All autonomy levels</option>
+            <option value="">{t.allAutonomy}</option>
             <option value="manual">Manual</option>
             <option value="remote-operated">Remote-operated</option>
             <option value="autonomous">Autonomous</option>
             <option value="mixed">Mixed</option>
           </select>
           <select value={criticality} onChange={e => setCriticality(e.target.value)} style={selectStyle}>
-            <option value="">All criticality</option>
+            <option value="">{t.allCriticality}</option>
             <option value="standard">Standard</option>
             <option value="high">High</option>
             <option value="safety-critical">Safety-critical</option>
@@ -119,20 +137,20 @@ export default function SignaturesPage() {
               background: view === "map" ? "var(--border2)" : "transparent",
               color: view === "map" ? "var(--text)" : "var(--text-muted)",
               fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700,
-            }}><MapIcon size={13} /> Map</button>
+            }}><MapIcon size={13} /> {t.map}</button>
             <button onClick={() => setView("list")} style={{
               display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "none", cursor: "pointer",
               background: view === "list" ? "var(--border2)" : "transparent",
               color: view === "list" ? "var(--text)" : "var(--text-muted)",
               fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700,
-            }}><ListIcon size={13} /> List</button>
+            }}><ListIcon size={13} /> {t.list}</button>
           </div>
         </div>
 
         {loading ? (
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)" }}>LOADING SIGNATURES…</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)" }}>{t.loading}</p>
         ) : view === "map" ? (
-          <SignaturesMap sites={filtered} />
+          <SignaturesMap sites={filtered} dark={dark} />
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {filtered.map(site => {
@@ -160,7 +178,7 @@ export default function SignaturesPage() {
               )
             })}
             {filtered.length === 0 && (
-              <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)" }}>No sites match these filters.</p>
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)" }}>{t.noMatch}</p>
             )}
           </div>
         )}
@@ -168,10 +186,10 @@ export default function SignaturesPage() {
         {/* CTA */}
         <div style={{ borderTop: "1px solid var(--border)", marginTop: 48, paddingTop: 40, textAlign: "center" }}>
           <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 10 }}>
-            Score your own site
+            {t.ctaHeading}
           </h2>
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", marginBottom: 24, maxWidth: 440, margin: "0 auto 24px" }}>
-            Get a free, real-time Resilience Signature for your own coordinates — the same model that scored every site above.
+            {t.ctaSub}
           </p>
           <a href="/#advisor" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
@@ -179,10 +197,17 @@ export default function SignaturesPage() {
             fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
             padding: "12px 24px", borderRadius: 6, textDecoration: "none",
           }}>
-            Run the free Advisor <ArrowRight size={14} />
+            {t.ctaBtn} <ArrowRight size={14} />
           </a>
         </div>
       </div>
+
+      <Footer
+        lang={lang}
+        onLangChange={setLang}
+        footerRights={t.footerRights}
+        secondaryLink={{ href: "/", label: lang === "en" ? "Back to GRYPS" : "Takaisin GRYPS:iin" }}
+      />
     </div>
   )
 }

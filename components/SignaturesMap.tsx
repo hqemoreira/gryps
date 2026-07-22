@@ -16,10 +16,10 @@ type SiteSummary = {
 }
 
 const GRADE_COLOR: Record<string, string> = {
-  A: "#2ED47A", B: "#4FA8FF", C: "#F5B84A", D: "#F5B84A", F: "#EF4444",
+  A: "#2ED47A", B: "#4FA8FF", C: "#D97706", D: "#D97706", F: "#EF4444",
 }
 
-export function SignaturesMap({ sites }: { sites: SiteSummary[] }) {
+export function SignaturesMap({ sites, dark = true }: { sites: SiteSummary[]; dark?: boolean }) {
   return (
     <MapContainer
       center={[67, 22]}
@@ -28,7 +28,7 @@ export function SignaturesMap({ sites }: { sites: SiteSummary[] }) {
       scrollWheelZoom={false}
     >
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        url={`https://{s}.basemaps.cartocdn.com/${dark ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`}
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
       {sites.map(site => (

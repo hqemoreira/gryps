@@ -1,35 +1,11 @@
 "use client"
 import { useState, useEffect } from "react"
-import Link from "next/link"
-import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle, Sun, Moon } from "lucide-react"
+import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle } from "lucide-react"
 import { ResilienceOutput, type AdvisoryResult } from "@/components/ResilienceOutput"
-
-// ── GRYPS Mark ────────────────────────────────────────────────────────────────
-function GrypsMark({ size = 36, animate = false }: { size?: number; animate?: boolean }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 18 A14 14 0 0 1 32 18" stroke="#4FA8FF" strokeWidth="1.5" strokeLinecap="round" fill="none"
-        className={animate ? "gryps-arc-geo" : undefined} opacity={animate ? undefined : 0.5} />
-      <path d="M8 18 A10 10 0 0 1 28 18" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round" fill="none"
-        className={animate ? "gryps-arc-meo" : undefined} opacity={animate ? undefined : 0.75} />
-      <path d="M12 18 A6 6 0 0 1 24 18" stroke="#4FA8FF" strokeWidth="1.5" strokeLinecap="round" fill="none"
-        className={animate ? "gryps-arc-leo" : undefined} />
-      <line x1="18" y1="20" x2="18" y2="10" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M15 13 L18 9 L21 13" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-      <circle cx="18" cy="21" r="1.5" fill="#4FA8FF"/>
-      {animate && (
-        <style>{`
-          @keyframes gryps-broadcast-leo { 0% { opacity: 1; filter: drop-shadow(0 0 3px #4FA8FF); } 12%, 100% { opacity: 0.2; } }
-          @keyframes gryps-broadcast-meo { 0%, 12% { opacity: 0.25; } 16% { opacity: 1; filter: drop-shadow(0 0 3px #6EE7F9); } 28%, 100% { opacity: 0.25; } }
-          @keyframes gryps-broadcast-geo { 0%, 28% { opacity: 0.3; } 32% { opacity: 1; filter: drop-shadow(0 0 3px #4FA8FF); } 44%, 100% { opacity: 0.3; } }
-          .gryps-arc-leo { animation: gryps-broadcast-leo 2.4s ease-in-out infinite; }
-          .gryps-arc-meo { animation: gryps-broadcast-meo 2.4s ease-in-out infinite; }
-          .gryps-arc-geo { animation: gryps-broadcast-geo 2.4s ease-in-out infinite; }
-        `}</style>
-      )}
-    </svg>
-  )
-}
+import { GrypsMark } from "@/components/GrypsMark"
+import { Header } from "@/components/Header"
+import { Footer } from "@/components/Footer"
+import { useTheme } from "@/context/ThemeContext"
 
 // ── Advisor form ──────────────────────────────────────────────────────────────
 function AdvisorForm({ t }: { t: typeof COPY.en }) {
@@ -227,9 +203,9 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
 const TELEMETRY_LINES = [
   { tag: "GRYPS-INIT", color: "#4FA8FF",  text: "Ingesting orbital telemetry for 68.2°N · 27.4°E…" },
   { tag: "LEO-SCAN",   color: "#6EE7F9",  text: "Starlink Shell-4 pass density: 94.2%  [OPTIMAL]" },
-  { tag: "GEO-CHECK",  color: "#F5B84A",  text: "Viasat ViaSat-3 horizon angle: 8.3°   [HIGH ATTENUATION RISK]" },
+  { tag: "GEO-CHECK",  color: "#D97706",  text: "Viasat ViaSat-3 horizon angle: 8.3°   [HIGH ATTENUATION RISK]" },
   { tag: "MEO-EVAL",   color: "#6EE7F9",  text: "OneWeb elevation window: 62°–89°      [STRONG]" },
-  { tag: "CANOPY",     color: "#F5B84A",  text: "Pine canopy blockage penalty applied: −6.2 dB" },
+  { tag: "CANOPY",     color: "#D97706",  text: "Pine canopy blockage penalty applied: −6.2 dB" },
   { tag: "REDUND",     color: "#4FA8FF",  text: "Dual-orbit redundancy path: Starlink + Iridium NEXT" },
   { tag: "SCORE",      color: "#2ED47A",  text: "Deployment Confidence computed: 94 · 81 · 67" },
   { tag: "REPORT",     color: "#2ED47A",  text: "Resilience signature generated — ready for export" },
@@ -344,8 +320,8 @@ function PolarMap({ t }: { t: typeof COPY.en }) {
         <circle cx={oneweb.x} cy={oneweb.y} r={2} fill="#6EE7F9" />
         <text x={oneweb.x + 4} y={oneweb.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="#6EE7F9">OW</text>
         <circle cx={iridium.x} cy={iridium.y} r={3.5} fill="rgba(245,184,74,0.12)" />
-        <circle cx={iridium.x} cy={iridium.y} r={1.8} fill="#F5B84A" />
-        <text x={iridium.x + 4} y={iridium.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="#F5B84A">IR</text>
+        <circle cx={iridium.x} cy={iridium.y} r={1.8} fill="#D97706" />
+        <text x={iridium.x + 4} y={iridium.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="#D97706">IR</text>
         <circle cx={cx} cy={cy} r={2} fill="var(--text-dim)" />
         <text x={cx + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 9 }} fill="var(--text-dim)">N</text>
       </svg>
@@ -361,17 +337,6 @@ function Stat({ value, label }: { value: string; label: string }) {
       <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.06em" }}>{label}</span>
     </div>
   )
-}
-
-const DARK: Record<string, string> = {
-  "--bg": "#070B12", "--surface": "#0B1220", "--surface2": "#111827",
-  "--border": "#1E293B", "--border2": "#253347",
-  "--text": "#F7FAFC", "--text-muted": "#64748B", "--text-dim": "#334155",
-}
-const LIGHT: Record<string, string> = {
-  "--bg": "#F4F6F9", "--surface": "#FFFFFF", "--surface2": "#EEF1F6",
-  "--border": "#DDE2EC", "--border2": "#C8D0DE",
-  "--text": "#0B1220", "--text-muted": "#5A6A84", "--text-dim": "#9AAABF",
 }
 
 // ── Copy (EN / FI) ───────────────────────────────────────────────────────────
@@ -466,14 +431,9 @@ const COPY = {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function HomePage() {
-  const [dark, setDark] = useState(true)
   const [lang, setLang] = useState<"en" | "fi">("en")
+  const { dark } = useTheme()
   const t = COPY[lang]
-
-  useEffect(() => {
-    const vars = dark ? DARK : LIGHT
-    Object.entries(vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v))
-  }, [dark])
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
@@ -486,7 +446,7 @@ export default function HomePage() {
         textAlign: "center",
         fontFamily: "var(--font-data)",
         fontSize: 9,
-        color: "#F5B84A",
+        color: "#D97706",
         letterSpacing: "0.07em",
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 200,
         backdropFilter: "blur(12px)",
@@ -494,57 +454,15 @@ export default function HomePage() {
         R&D PROTOTYPE · EARLY ACCESS · {lang === "en" ? "ESPOO, FINLAND" : "ESPOO, SUOMI"}
       </div>
 
-      {/* Nav */}
-      <header className="gryps-nav-inner" style={{
-        position: "fixed", top: 28, left: 0, right: 0, zIndex: 100,
-        borderBottom: "1px solid var(--border)",
-        backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
-        backdropFilter: "blur(12px)",
-        padding: "0 32px",
-        height: 52,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <GrypsMark size={28} animate />
-          <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 15, letterSpacing: "0.12em", color: "var(--text)" }}>GRYPS</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <span className="gryps-nav-label" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>CONNECTIVITY INTELLIGENCE</span>
-          <Link href="/signatures" className="gryps-nav-label" style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textDecoration: "none" }}>
-            {lang === "en" ? "Signatures map" : "Signature-kartta"}
-          </Link>
-          <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden" }}>
-            {(["en", "fi"] as const).map(l => (
-              <button key={l} onClick={() => setLang(l)} style={{
-                background: lang === l ? "var(--border2)" : "transparent",
-                border: "none", padding: "5px 10px", cursor: "pointer",
-                fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.08em",
-                color: lang === l ? "var(--text)" : "var(--text-muted)",
-                transition: "background 0.15s",
-              }}>{l.toUpperCase()}</button>
-            ))}
-          </div>
-          <button
-            onClick={() => setDark(d => !d)}
-            title={dark ? "Switch to light mode" : "Switch to dark mode"}
-            style={{
-              background: "var(--surface2)", border: "1px solid var(--border2)",
-              borderRadius: 6, width: 32, height: 32, cursor: "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "var(--text-muted)",
-            }}
-          >
-            {dark ? <Sun size={14} /> : <Moon size={14} />}
-          </button>
-          <a href="#advisor" style={{
-            fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700,
-            color: "#4FA8FF", textDecoration: "none",
-            border: "1px solid rgba(79,168,255,0.3)",
-            padding: "6px 14px", borderRadius: 5,
-          }}>{t.navCta}</a>
-        </div>
-      </header>
+      <Header
+        topOffset={28}
+        tagline="CONNECTIVITY INTELLIGENCE"
+        lang={lang}
+        onLangChange={setLang}
+        ctaHref="#advisor"
+        ctaLabel={t.navCta}
+        extraLink={{ href: "/signatures", label: lang === "en" ? "Signatures map" : "Signature-kartta" }}
+      />
 
       {/* Hero */}
       <section className="gryps-section-pad" style={{ paddingTop: 148, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
@@ -614,7 +532,7 @@ export default function HomePage() {
             {t.problems.map((item, i) => (
               <div key={i} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {[<Shield key="s" size={16} color="#4FA8FF" />, <AlertTriangle key="a" size={16} color="#F5B84A" />, <Globe2 key="g" size={16} color="#6EE7F9" />][i]}
+                  {[<Shield key="s" size={16} color="#4FA8FF" />, <AlertTriangle key="a" size={16} color="#D97706" />, <Globe2 key="g" size={16} color="#6EE7F9" />][i]}
                   <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{item.title}</span>
                 </div>
                 <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.7 }}>{item.body}</p>
@@ -673,20 +591,13 @@ export default function HomePage() {
         </a>
       </section>
 
-      {/* Footer */}
-      <footer className="gryps-footer gryps-section-pad" style={{ borderTop: "1px solid var(--border)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <GrypsMark size={18} animate />
-          <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS</span>
-        </div>
-        <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
-          <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>{t.footerRights}</span>
-          <Link href="/signatures" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>{lang === "en" ? "Explore scored sites" : "Selaa pisteytettyjä kohteita"}</Link>
-          <Link href="/legal/terms" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>{lang === "en" ? "Terms" : "Ehdot"}</Link>
-          <Link href="/legal/privacy" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>{lang === "en" ? "Privacy" : "Tietosuoja"}</Link>
-        </div>
-        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>{t.footerTag}</span>
-      </footer>
+      <Footer
+        lang={lang}
+        onLangChange={setLang}
+        footerRights={t.footerRights}
+        footerTag={t.footerTag}
+        secondaryLink={{ href: "/signatures", label: lang === "en" ? "Explore scored sites" : "Selaa pisteytettyjä kohteita" }}
+      />
     </div>
   )
 }

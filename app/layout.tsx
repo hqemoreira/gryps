@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { AnimatedFavicon } from "@/components/AnimatedFavicon"
+import { ThemeProvider } from "@/context/ThemeContext"
 import "./globals.css"
 
 const spaceGrotesk = Space_Grotesk({
@@ -65,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <AnimatedFavicon />
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
         <Analytics />
       </body>
     </html>

@@ -1,9 +1,10 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowRight } from "lucide-react"
 import { getSiteBySlug, getAllSites } from "@/lib/signatures-db"
 import { ResilienceOutput, gradeColor } from "@/components/ResilienceOutput"
+import { Header } from "@/components/Header"
+import { Footer } from "@/components/Footer"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -48,40 +49,22 @@ export default async function SignatureSitePage({ params }: Props) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)", paddingTop: 90 }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      {/* Nav */}
-      <header style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        borderBottom: "1px solid var(--border)",
-        backgroundColor: "rgba(7,11,18,0.92)", backdropFilter: "blur(12px)",
-        padding: "0 32px", height: 52,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
-            <path d="M4 18 A14 14 0 0 1 32 18" stroke="#4FA8FF" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.5"/>
-            <path d="M8 18 A10 10 0 0 1 28 18" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.75"/>
-            <path d="M12 18 A6 6 0 0 1 24 18" stroke="#4FA8FF" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-            <line x1="18" y1="20" x2="18" y2="10" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round"/>
-            <path d="M15 13 L18 9 L21 13" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <circle cx="18" cy="21" r="1.5" fill="#4FA8FF"/>
-          </svg>
-          <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14, letterSpacing: "0.12em", color: "var(--text)" }}>GRYPS</span>
-        </Link>
-        <Link href="/signatures" style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textDecoration: "none" }}>
-          ← All signatures
-        </Link>
-      </header>
+      <Header
+        ctaHref="/#advisor"
+        ctaLabel="Score your site"
+        extraLink={{ href: "/signatures", label: "← All signatures" }}
+      />
 
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 32px 80px" }}>
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 32px 80px", paddingTop: 90 }}>
         {/* Disclosure */}
         <div style={{
-          backgroundColor: "rgba(245,184,74,0.06)", border: "1px solid rgba(245,184,74,0.2)",
+          backgroundColor: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)",
           borderRadius: 6, padding: "8px 14px", marginBottom: 24,
         }}>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "#F5B84A" }}>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "#D97706" }}>
             Illustrative, synthesized site for demonstration — R&D prototype.
           </p>
         </div>
@@ -127,6 +110,11 @@ export default async function SignatureSitePage({ params }: Props) {
           </a>
         </div>
       </div>
+
+      <Footer
+        footerRights="© 2026 GRYPS · Espoo, Finland · Non-commercial R&D prototype"
+        secondaryLink={{ href: "/signatures", label: "All signatures" }}
+      />
     </div>
   )
 }

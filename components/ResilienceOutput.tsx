@@ -10,11 +10,11 @@ export type AdvisoryResult = {
 }
 
 export function gradeColor(grade: string) {
-  return { A: "#2ED47A", B: "#4FA8FF", C: "#F5B84A", D: "#F5B84A", F: "#EF4444" }[grade] ?? "#64748B"
+  return { A: "#2ED47A", B: "#4FA8FF", C: "#D97706", D: "#D97706", F: "#EF4444" }[grade] ?? "#64748B"
 }
 
 const SEV_COLOR: Record<string, string> = {
-  low: "#2ED47A", medium: "#F5B84A", high: "#F5B84A", critical: "#EF4444",
+  low: "#2ED47A", medium: "#D97706", high: "#D97706", critical: "#EF4444",
 }
 
 export function ResilienceOutput({ result }: { result: AdvisoryResult }) {
