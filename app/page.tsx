@@ -510,6 +510,9 @@ export default function HomePage() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <span className="gryps-nav-label" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>CONNECTIVITY INTELLIGENCE</span>
+          <Link href="/signatures" className="gryps-nav-label" style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textDecoration: "none" }}>
+            {lang === "en" ? "Signatures map" : "Signature-kartta"}
+          </Link>
           <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden" }}>
             {(["en", "fi"] as const).map(l => (
               <button key={l} onClick={() => setLang(l)} style={{
@@ -678,6 +681,7 @@ export default function HomePage() {
         </div>
         <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
           <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>{t.footerRights}</span>
+          <Link href="/signatures" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>{lang === "en" ? "Explore scored sites" : "Selaa pisteytettyjä kohteita"}</Link>
           <Link href="/legal/terms" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>{lang === "en" ? "Terms" : "Ehdot"}</Link>
           <Link href="/legal/privacy" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>{lang === "en" ? "Privacy" : "Tietosuoja"}</Link>
         </div>
