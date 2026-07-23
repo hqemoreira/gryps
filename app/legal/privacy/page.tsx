@@ -286,7 +286,7 @@ export default function PrivacyPage() {
             display: "flex", alignItems: "center", gap: 10,
           }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", flexShrink: 0 }} />
-            <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "#2ED47A", lineHeight: 1.5 }}>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-green)", lineHeight: 1.5 }}>
               {lang === "en"
                 ? "All customer data is processed and stored within EU-region infrastructure (Frankfurt, Germany)."
                 : "Kaikki asiakastiedot käsitellään ja tallennetaan EU-alueen infrastruktuurissa (Frankfurt, Saksa)."}
@@ -427,7 +427,7 @@ export default function PrivacyPage() {
       }}>
         <Link href="/legal/terms" style={{
           fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
-          color: "#4FA8FF", textDecoration: "none",
+          color: "var(--accent-blue)", textDecoration: "none",
         }}>
           {lang === "en" ? "← Terms & Conditions" : "← Käyttöehdot"}
         </Link>

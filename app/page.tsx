@@ -174,7 +174,7 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
 
       {error && (
         <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 6, padding: "10px 14px" }}>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "#EF4444" }}>{error}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-red)" }}>{error}</p>
         </div>
       )}
 
@@ -209,14 +209,14 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
 
 // ── Telemetry stream ──────────────────────────────────────────────────────────
 const TELEMETRY_LINES = [
-  { tag: "GRYPS-INIT", color: "#4FA8FF",  text: "Ingesting orbital telemetry for 68.2°N · 27.4°E…" },
-  { tag: "LEO-SCAN",   color: "#6EE7F9",  text: "Starlink Shell-4 pass density: 94.2%  [OPTIMAL]" },
-  { tag: "GEO-CHECK",  color: "#D97706",  text: "Viasat ViaSat-3 horizon angle: 8.3°   [HIGH ATTENUATION RISK]" },
-  { tag: "MEO-EVAL",   color: "#6EE7F9",  text: "OneWeb elevation window: 62°–89°      [STRONG]" },
-  { tag: "CANOPY",     color: "#D97706",  text: "Pine canopy blockage penalty applied: −6.2 dB" },
-  { tag: "REDUND",     color: "#4FA8FF",  text: "Dual-orbit redundancy path: Starlink + Iridium NEXT" },
-  { tag: "SCORE",      color: "#2ED47A",  text: "Deployment Confidence computed: 94 · 81 · 67" },
-  { tag: "REPORT",     color: "#2ED47A",  text: "Resilience signature generated — ready for export" },
+  { tag: "GRYPS-INIT", color: "var(--accent-blue)",  text: "Ingesting orbital telemetry for 68.2°N · 27.4°E…" },
+  { tag: "LEO-SCAN",   color: "var(--accent-cyan)",  text: "Starlink Shell-4 pass density: 94.2%  [OPTIMAL]" },
+  { tag: "GEO-CHECK",  color: "var(--accent-amber)", text: "Viasat ViaSat-3 horizon angle: 8.3°   [HIGH ATTENUATION RISK]" },
+  { tag: "MEO-EVAL",   color: "var(--accent-cyan)",  text: "OneWeb elevation window: 62°–89°      [STRONG]" },
+  { tag: "CANOPY",     color: "var(--accent-amber)", text: "Pine canopy blockage penalty applied: −6.2 dB" },
+  { tag: "REDUND",     color: "var(--accent-blue)",  text: "Dual-orbit redundancy path: Starlink + Iridium NEXT" },
+  { tag: "SCORE",      color: "var(--accent-green)", text: "Deployment Confidence computed: 94 · 81 · 67" },
+  { tag: "REPORT",     color: "var(--accent-green)", text: "Resilience signature generated — ready for export" },
 ]
 
 function TelemetryStream({ t }: { t: typeof COPY.en }) {
@@ -291,7 +291,7 @@ function PolarMap({ t }: { t: typeof COPY.en }) {
         <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>{t.polarHeader}</span>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <div style={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 5px #2ED47A" }} />
-          <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "#2ED47A", letterSpacing: "0.08em" }}>LIVE</span>
+          <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-green)", letterSpacing: "0.08em" }}>LIVE</span>
         </div>
       </div>
       <svg width="100%" viewBox="0 0 400 390" style={{ display: "block" }}>
@@ -317,19 +317,19 @@ function PolarMap({ t }: { t: typeof COPY.en }) {
               {m.active && <circle cx={pos.x} cy={pos.y} r={pulseR} fill="rgba(79,168,255,0.08)" />}
               {m.active && <circle cx={pos.x} cy={pos.y} r={pulseR + 4} fill="none" stroke="rgba(79,168,255,0.06)" strokeWidth={1} />}
               <circle cx={pos.x} cy={pos.y} r={m.active ? 3 : 2} fill={m.active ? "#4FA8FF" : "var(--text-dim)"} />
-              {m.active && <text x={pos.x + 6} y={pos.y - 5} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="#4FA8FF">{m.label}</text>}
+              {m.active && <text x={pos.x + 6} y={pos.y - 5} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="var(--accent-blue)">{m.label}</text>}
             </g>
           )
         })}
         <circle cx={starlink.x} cy={starlink.y} r={5} fill="rgba(79,168,255,0.15)" />
         <circle cx={starlink.x} cy={starlink.y} r={2.5} fill="#4FA8FF" />
-        <text x={starlink.x + 5} y={starlink.y - 4} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="#4FA8FF">SL</text>
+        <text x={starlink.x + 5} y={starlink.y - 4} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="var(--accent-blue)">SL</text>
         <circle cx={oneweb.x} cy={oneweb.y} r={4} fill="rgba(110,231,249,0.12)" />
         <circle cx={oneweb.x} cy={oneweb.y} r={2} fill="#6EE7F9" />
-        <text x={oneweb.x + 4} y={oneweb.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="#6EE7F9">OW</text>
+        <text x={oneweb.x + 4} y={oneweb.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="var(--accent-cyan)">OW</text>
         <circle cx={iridium.x} cy={iridium.y} r={3.5} fill="rgba(245,184,74,0.12)" />
         <circle cx={iridium.x} cy={iridium.y} r={1.8} fill="#D97706" />
-        <text x={iridium.x + 4} y={iridium.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="#D97706">IR</text>
+        <text x={iridium.x + 4} y={iridium.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="var(--accent-amber)">IR</text>
         <circle cx={cx} cy={cy} r={2} fill="var(--text-dim)" />
         <text x={cx + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 9 }} fill="var(--text-dim)">N</text>
       </svg>
@@ -350,7 +350,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 // ── Copy (EN / FI) ───────────────────────────────────────────────────────────
 const COPY = {
   en: {
-    tag:        "CONNECTIVITY RESILIENCE · NORDIC & ARCTIC OPERATIONS",
+    tag:        "CONNECTIVITY RESILIENCE · NORDIC, ARCTIC & ICELAND OPERATIONS",
     navCta:     "Free analysis",
     h1:         ["Connectivity resilience", "for autonomous and", "remote operations."],
     sub:        "Remote sites, autonomous fleets, and critical operations fail without connectivity. GRYPS scores, documents, and monitors that risk — giving you a Resilience Signature before deployment depends on it.",
@@ -385,15 +385,15 @@ const COPY = {
       { n: "03", title: "Set criticality",       body: "Standard, high, or safety-critical. A safety-critical autonomous site with no redundancy cannot score above 50." },
       { n: "04", title: "Get your Signature",   body: "Score, grade, risk factors, redundancy gaps, ranked providers, and plain-language recommendation — in seconds." },
     ],
-    polarHeader: "COVERAGE ZONE — NORDIC & ARCTIC",
+    polarHeader: "COVERAGE ZONE — NORDIC, ARCTIC & ICELAND",
     ctaH2:  "Resilience starts with knowing your score.",
-    ctaSub: "Free Resilience Signature for any Nordic or Arctic site. No account, no sales call — just your connectivity risk, scored and documented.",
+    ctaSub: "Free Resilience Signature for any Nordic, Arctic, or Icelandic site. No account, no sales call — just your connectivity risk, scored and documented.",
     ctaBtn: "Get your Resilience Signature",
     footerRights: "© 2026 GRYPS · Espoo, Finland · Non-commercial R&D prototype · No registered company · No revenue generated",
     footerTag:    "Built in Finland for high-latitude resilience.",
   },
   fi: {
-    tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT JA ARKTINEN",
+    tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT, ARKTINEN JA ISLANTI",
     navCta:     "Ilmainen analyysi",
     h1:         ["Yhteyden resilienssi", "autonomisille ja", "etätoiminnoille."],
     sub:        "Etäkohteet, autonomiset laivastot ja kriittiset toiminnot epäonnistuvat ilman yhteyttä. GRYPS pisteytyää, dokumentoi ja seuraa tätä riskiä — antaen sinulle Resilience Signature -todistuksen ennen kuin käyttöönotto siitä riippuu.",
@@ -428,9 +428,9 @@ const COPY = {
       { n: "03", title: "Aseta kriittisyys",        body: "Standardi, korkea tai turvallisuuskriittinen. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
       { n: "04", title: "Saat Signaturesi",        body: "Pisteet, arvosana, riskitekijät, redundanssiaukot, rankatut toimittajat ja selkokielinen suositus — sekunneissa." },
     ],
-    polarHeader: "KATTAVUUSALUE — POHJOISMAAT JA ARKTINEN",
+    polarHeader: "KATTAVUUSALUE — POHJOISMAAT, ARKTINEN JA ISLANTI",
     ctaH2:  "Resilienssi alkaa pisteidesi tuntemisesta.",
-    ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle tai arktiselle kohteelle. Ei tiliä, ei myyntipuheluita — vain yhteyksiriskisi pisteytettynä ja dokumentoituna.",
+    ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä, ei myyntipuheluita — vain yhteyksiriskisi pisteytettynä ja dokumentoituna.",
     ctaBtn: "Hanki Resilience Signature",
     footerRights: "© 2026 GRYPS · Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi · Ei rekisteröityä yritystä · Ei tuloja",
     footerTag:    "Rakennettu Suomessa korkean leveysasteen resilienssille.",
@@ -454,7 +454,7 @@ export default function HomePage() {
         textAlign: "center",
         fontFamily: "var(--font-data)",
         fontSize: 9,
-        color: "#D97706",
+        color: "var(--accent-amber)",
         letterSpacing: "0.07em",
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 1010,
         backdropFilter: "blur(12px)",
@@ -488,7 +488,7 @@ export default function HomePage() {
               lineHeight: 1.1, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 20,
             }}>
               {t.h1[0]}<br />{t.h1[1]}<br />
-              <span style={{ color: "#4FA8FF" }}>{t.h1[2]}</span>
+              <span style={{ color: "var(--accent-blue)" }}>{t.h1[2]}</span>
             </h1>
 
             <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 16, maxWidth: 440 }}>

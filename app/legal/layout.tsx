@@ -1,27 +1,12 @@
 "use client"
-import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-
-const DARK: Record<string, string> = {
-  "--bg": "#070B12", "--surface": "#0B1220", "--surface2": "#111827",
-  "--border": "#1E293B", "--border2": "#253347",
-  "--text": "#F7FAFC", "--text-muted": "#64748B", "--text-dim": "#334155",
-}
-const LIGHT: Record<string, string> = {
-  "--bg": "#F4F6F9", "--surface": "#FFFFFF", "--surface2": "#EEF1F6",
-  "--border": "#DDE2EC", "--border2": "#C8D0DE",
-  "--text": "#0B1220", "--text-muted": "#5A6A84", "--text-dim": "#9AAABF",
-}
+import { Sun, Moon } from "lucide-react"
+import { useTheme } from "@/context/ThemeContext"
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
-  const [dark, setDark] = useState(true)
+  const { dark, toggleDark } = useTheme()
   const pathname = usePathname()
-
-  useEffect(() => {
-    const vars = dark ? DARK : LIGHT
-    Object.entries(vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v))
-  }, [dark])
 
   const navLinks = [
     { href: "/legal/terms",   label: "Terms & Conditions" },
@@ -32,9 +17,9 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
       {/* Nav */}
       <header style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
         borderBottom: "1px solid var(--border)",
-        backgroundColor: "rgba(7,11,18,0.92)",
+        backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
         backdropFilter: "blur(12px)",
         padding: "0 32px", height: 52,
         display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -58,7 +43,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
                 fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600,
                 color: pathname === l.href ? "var(--text)" : "var(--text-muted)",
                 textDecoration: "none",
-                borderBottom: pathname === l.href ? "1px solid #4FA8FF" : "1px solid transparent",
+                borderBottom: pathname === l.href ? "1px solid var(--accent-blue)" : "1px solid transparent",
                 paddingBottom: 2,
               }}>{l.label}</Link>
             ))}
@@ -69,12 +54,18 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
             fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 600,
             color: "var(--text-muted)", textDecoration: "none",
           }}>← Back to GRYPS</Link>
-          <button onClick={() => setDark(d => !d)} style={{
-            background: "var(--surface2)", border: "1px solid var(--border2)",
-            borderRadius: 6, width: 30, height: 30, cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "var(--text-muted)", fontSize: 13,
-          }}>{dark ? "☀" : "☾"}</button>
+          <button
+            onClick={toggleDark}
+            title={dark ? "Switch to light mode" : "Switch to dark mode"}
+            style={{
+              background: "var(--surface2)", border: "1px solid var(--border2)",
+              borderRadius: 6, width: 30, height: 30, cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "var(--text-muted)",
+            }}
+          >
+            {dark ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
         </div>
       </header>
 

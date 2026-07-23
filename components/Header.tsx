@@ -75,7 +75,7 @@ export function Header({
         </button>
         <a href={ctaHref} style={{
           fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700,
-          color: "#4FA8FF", textDecoration: "none",
+          color: "var(--accent-blue)", textDecoration: "none",
           border: "1px solid rgba(79,168,255,0.3)",
           padding: "6px 14px", borderRadius: 5,
         }}>{ctaLabel}</a>

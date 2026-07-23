@@ -46,4 +46,8 @@ export const SEED_SITES: SeedSite[] = [
   { slug: "site-28-hamnoy-fishing-station", name: "Site 28 — Hamnøy Autonomous Fishing Station", lat: 67.93, lng: 13.08, sector: "maritime", autonomy_level: "autonomous", operation_criticality: "high", current_setup: "Starlink Maritime, single provider" },
   { slug: "site-29-malmberget-underground", name: "Site 29 — Malmberget Underground Mine Network", lat: 67.17, lng: 20.66, sector: "mining", autonomy_level: "autonomous", operation_criticality: "safety-critical", current_setup: "Leaky feeder + Iridium surface uplink" },
   { slug: "site-30-nuorgam-northernmost", name: "Site 30 — Nuorgam Northernmost Monitoring Post", lat: 70.08, lng: 27.83, sector: "arctic", autonomy_level: "manual", operation_criticality: "standard", current_setup: "Iridium satellite phone only" },
+  // Iceland
+  { slug: "site-31-straumsvik-aluminum-smelter", name: "Site 31 — Straumsvík Aluminum Smelter Grid", lat: 64.05, lng: -21.95, sector: "mining", autonomy_level: "autonomous", operation_criticality: "safety-critical", current_setup: "Starlink only, no redundancy" },
+  { slug: "site-32-akureyri-fishing-fleet", name: "Site 32 — Akureyri Fishing Fleet Coordination", lat: 65.68, lng: -18.09, sector: "maritime", autonomy_level: "remote-operated", operation_criticality: "high", current_setup: "VSAT primary, Iridium backup" },
+  { slug: "site-33-vestmannaeyjar-geothermal", name: "Site 33 — Vestmannaeyjar Geothermal Monitoring", lat: 63.44, lng: -20.27, sector: "arctic", autonomy_level: "manual", operation_criticality: "standard", current_setup: "Iridium Certus, satellite phone backup" },
 ]

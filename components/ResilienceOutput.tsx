@@ -18,12 +18,21 @@ export type AssessmentInputs = {
   current_setup?: string
 }
 
+// Vivid, theme-independent — for BACKGROUND fills (buttons, decorative dots) where
+// dark (#070B12) text sits permanently on top. Do not use for text drawn directly
+// on var(--surface)/var(--bg) — use gradeTextColor() below for that.
 export function gradeColor(grade: string) {
   return { A: "#2ED47A", B: "#4FA8FF", C: "#D97706", D: "#D97706", F: "#EF4444" }[grade] ?? "#64748B"
 }
 
+// Theme-aware — for grade/severity TEXT rendered directly on a surface. Resolves
+// to a CSS var so it automatically gets the light-mode-safe darker shade.
+export function gradeTextColor(grade: string) {
+  return { A: "var(--accent-green)", B: "var(--accent-blue)", C: "var(--accent-amber)", D: "var(--accent-amber)", F: "var(--accent-red)" }[grade] ?? "var(--text-muted)"
+}
+
 const SEV_COLOR: Record<string, string> = {
-  low: "#2ED47A", medium: "#D97706", high: "#D97706", critical: "#EF4444",
+  low: "var(--accent-green)", medium: "var(--accent-amber)", high: "var(--accent-amber)", critical: "var(--accent-red)",
 }
 
 function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
@@ -53,7 +62,7 @@ function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
             <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text)", textAlign: "right" }}>
               {row.value}
               {row.note && (
-                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "#D97706", marginLeft: 8 }}>↑ {row.note}</span>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-amber)", marginLeft: 8 }}>↑ {row.note}</span>
               )}
             </span>
           </div>
@@ -66,6 +75,7 @@ function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
 export function ResilienceOutput({ result, input }: { result: AdvisoryResult; input?: AssessmentInputs }) {
   const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats } = result
   const gc = gradeColor(sig.grade)
+  const gtc = gradeTextColor(sig.grade)
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
@@ -78,7 +88,7 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
         display: "flex", alignItems: "center", gap: 32,
       }}>
         <div style={{ textAlign: "center", flexShrink: 0 }}>
-          <div style={{ fontFamily: "var(--font-data)", fontSize: 72, fontWeight: 900, color: gc, lineHeight: 1, letterSpacing: "-0.04em" }}>
+          <div style={{ fontFamily: "var(--font-data)", fontSize: 72, fontWeight: 900, color: gtc, lineHeight: 1, letterSpacing: "-0.04em" }}>
             {sig.score}
           </div>
           <div style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.12em", marginTop: 4 }}>RESILIENCE SCORE</div>
@@ -87,7 +97,7 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
             <span style={{
-              fontFamily: "var(--font-data)", fontSize: 18, fontWeight: 900, color: gc,
+              fontFamily: "var(--font-data)", fontSize: 18, fontWeight: 900, color: gtc,
               border: `1px solid ${gc}55`, borderRadius: 6, padding: "2px 12px",
             }}>{sig.grade}</span>
             <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.1em" }}>RESILIENCE SIGNATURE</span>
@@ -104,7 +114,7 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
         backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
         borderRadius: 8, padding: "16px 20px",
       }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "#4FA8FF", letterSpacing: "0.12em", marginBottom: 8 }}>RECOMMENDATION</p>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 8 }}>RECOMMENDATION</p>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
       </div>
 
@@ -132,7 +142,7 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
               <div key={i}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{g.label}</span>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "#EF4444", marginLeft: "auto" }}>↓ SCORE IMPACT</span>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-red)", marginLeft: "auto" }}>↓ SCORE IMPACT</span>
                 </div>
                 <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{g.detail}</p>
               </div>
@@ -159,7 +169,7 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
                 <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{o.note}</p>
               </div>
               <div style={{ textAlign: "right", flexShrink: 0 }}>
-                <div style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: i === 0 ? "#4FA8FF" : "var(--text)", lineHeight: 1 }}>
+                <div style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: i === 0 ? "var(--accent-blue)" : "var(--text)", lineHeight: 1 }}>
                   {o.confidence}<span style={{ fontSize: 10, color: "var(--text-muted)" }}>%</span>
                 </div>
                 <div style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>CONFIDENCE</div>

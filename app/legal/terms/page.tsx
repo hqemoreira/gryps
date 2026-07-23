@@ -256,8 +256,8 @@ export default function TermsPage() {
                 borderRadius: 6, padding: "12px 16px", marginBottom: 16,
                 display: "flex", alignItems: "flex-start", gap: 12,
               }}>
-                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "#4FA8FF", border: "1px solid rgba(79,168,255,0.4)", borderRadius: 3, padding: "2px 5px", flexShrink: 0, marginTop: 2 }}>AI</span>
-                <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "#4FA8FF", lineHeight: 1.6 }}>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", border: "1px solid rgba(79,168,255,0.4)", borderRadius: 3, padding: "2px 5px", flexShrink: 0, marginTop: 2 }}>AI</span>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-blue)", lineHeight: 1.6 }}>
                   {lang === "en"
                     ? "AI-generated content within GRYPS is disclosed in compliance with EU AI Act Article 50 transparency requirements."
                     : "GRYPS:n tekoälyllä tuotettu sisältö ilmoitetaan EU:n tekoälylain 50 artiklan läpinäkyvyysvaatimusten mukaisesti."}
@@ -270,7 +270,7 @@ export default function TermsPage() {
                 backgroundColor: "rgba(245,184,74,0.06)", border: "1px solid rgba(245,184,74,0.2)",
                 borderRadius: 6, padding: "12px 16px", marginBottom: 16,
               }}>
-                <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "#F5B84A", lineHeight: 1.6 }}>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-amber)", lineHeight: 1.6 }}>
                   {lang === "en"
                     ? "GRYPS Deployment Confidence scores are predictive mathematical outputs. They do not constitute a guarantee of satellite network availability."
                     : "GRYPS Deployment Confidence -pisteet ovat ennustavia matemaattisia tuloksia. Ne eivät muodosta takausta satelliittiverkon saatavuudesta."}
@@ -297,7 +297,7 @@ export default function TermsPage() {
       }}>
         <Link href="/legal/privacy" style={{
           fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
-          color: "#4FA8FF", textDecoration: "none",
+          color: "var(--accent-blue)", textDecoration: "none",
         }}>
           {lang === "en" ? "Privacy Policy →" : "Tietosuojakäytäntö →"}
         </Link>

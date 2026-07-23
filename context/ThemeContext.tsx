@@ -1,15 +1,24 @@
 "use client"
 import { createContext, useContext, useEffect, useState } from "react"
 
+// Accent colors below are the same brand hues in both themes, but the DARK
+// values (tuned for near-black surfaces) fail WCAG AA when reused as text on
+// LIGHT mode's near-white surfaces — verified against --surface/--bg/--surface2,
+// see contrast-check.js. LIGHT accent values are deliberately darker variants
+// of the same hue, each ≥4.5:1 on all three light surfaces.
 const DARK: Record<string, string> = {
   "--bg": "#070B12", "--surface": "#0B1220", "--surface2": "#111827",
   "--border": "#1E293B", "--border2": "#253347",
   "--text": "#F7FAFC", "--text-muted": "#64748B", "--text-dim": "#334155",
+  "--accent-blue": "#4FA8FF", "--accent-cyan": "#6EE7F9", "--accent-green": "#2ED47A",
+  "--accent-amber": "#D97706", "--accent-red": "#EF4444",
 }
 const LIGHT: Record<string, string> = {
   "--bg": "#F4F6F9", "--surface": "#FFFFFF", "--surface2": "#EEF1F6",
   "--border": "#DDE2EC", "--border2": "#C8D0DE",
-  "--text": "#0B1220", "--text-muted": "#5A6A84", "--text-dim": "#9AAABF",
+  "--text": "#0B1220", "--text-muted": "#5A6A84", "--text-dim": "#586886",
+  "--accent-blue": "#0B5FBF", "--accent-cyan": "#0B7680", "--accent-green": "#146B3E",
+  "--accent-amber": "#9A4508", "--accent-red": "#C41E1E",
 }
 
 const STORAGE_KEY = "gryps-theme"

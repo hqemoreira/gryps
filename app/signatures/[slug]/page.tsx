@@ -64,7 +64,7 @@ export default async function SignatureSitePage({ params }: Props) {
           backgroundColor: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)",
           borderRadius: 6, padding: "8px 14px", marginBottom: 24,
         }}>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "#D97706" }}>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--accent-amber)" }}>
             Illustrative, synthesized site for demonstration — R&D prototype.
           </p>
         </div>

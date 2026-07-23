@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { ArrowRight, Map as MapIcon, List as ListIcon } from "lucide-react"
-import { gradeColor } from "@/components/ResilienceOutput"
+import { gradeTextColor } from "@/components/ResilienceOutput"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { useTheme } from "@/context/ThemeContext"
@@ -26,7 +26,7 @@ type SiteSummary = {
 const COPY = {
   en: {
     tagline:      "RESILIENCE SIGNATURES",
-    title:        "Scored connectivity resilience across the Nordic and Arctic",
+    title:        "Scored connectivity resilience across the Nordic, Arctic, and Iceland",
     disclosure:   "Illustrative, synthesized sites for demonstration — real coordinates, generated site profiles, and real Resilience Signature scores from the same scoring model as the live Advisor. R&D prototype.",
     allSectors:   "All sectors", allAutonomy: "All autonomy levels", allCriticality: "All criticality",
     map: "Map", list: "List",
@@ -39,7 +39,7 @@ const COPY = {
   },
   fi: {
     tagline:      "RESILIENCE-SIGNATUURIT",
-    title:        "Pisteytetty yhteyden resilienssi Pohjoismaissa ja arktisella alueella",
+    title:        "Pisteytetty yhteyden resilienssi Pohjoismaissa, arktisella alueella ja Islannissa",
     disclosure:   "Havainnollistavia, synteettisiä kohteita esittelyyn — todelliset koordinaatit, luodut kohdeprofiilit ja todelliset Resilience Signature -pisteet samasta pisteytysmallista kuin live-Advisor. T&K-prototyyppi.",
     allSectors:   "Kaikki toimialat", allAutonomy: "Kaikki autonomiatasot", allCriticality: "Kaikki kriittisyystasot",
     map: "Kartta", list: "Lista",
@@ -103,7 +103,7 @@ export default function SignaturesPage() {
           backgroundColor: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)",
           borderRadius: 6, padding: "10px 14px", marginBottom: 28, maxWidth: 640,
         }}>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "#D97706", lineHeight: 1.6 }}>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-amber)", lineHeight: 1.6 }}>
             {t.disclosure}
           </p>
         </div>
@@ -154,7 +154,7 @@ export default function SignaturesPage() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {filtered.map(site => {
-              const gc = gradeColor(site.grade)
+              const gc = gradeTextColor(site.grade)
               return (
                 <Link key={site.slug} href={`/signatures/${site.slug}`} style={{
                   display: "flex", alignItems: "center", gap: 16,
