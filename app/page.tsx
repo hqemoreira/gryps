@@ -474,50 +474,59 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="gryps-section-pad" style={{ paddingTop: 148, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
-        <div className="gryps-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+        <div className="gryps-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "stretch" }}>
 
-          {/* Left */}
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 8px #2ED47A" }} />
-              <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
+          {/* Left — three groups spread across the column's full height (matches the right column, no dead space) */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
+
+            {/* Group 1: eyebrow + headline + subhead */}
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 8px #2ED47A" }} />
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
+              </div>
+
+              <h1 className="gryps-hero-h1" style={{
+                fontFamily: "var(--font-ui)", fontSize: 44, fontWeight: 700,
+                lineHeight: 1.15, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 24,
+              }}>
+                {t.h1[0]}<br />{t.h1[1]}<br />
+                <span style={{ color: "var(--accent-blue)" }}>{t.h1[2]}</span>
+              </h1>
+
+              <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.85, maxWidth: 440 }}>
+                {t.sub}
+              </p>
             </div>
 
-            <h1 className="gryps-hero-h1" style={{
-              fontFamily: "var(--font-ui)", fontSize: 44, fontWeight: 700,
-              lineHeight: 1.1, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 20,
-            }}>
-              {t.h1[0]}<br />{t.h1[1]}<br />
-              <span style={{ color: "var(--accent-blue)" }}>{t.h1[2]}</span>
-            </h1>
+            {/* Group 2: NIS2 line + stat chips — sits between subhead and CTA, spaced generously */}
+            <div>
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 28 }}>
+                {t.nis2line}
+              </p>
 
-            <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 16, maxWidth: 440 }}>
-              {t.sub}
-            </p>
-
-            <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 32 }}>
-              {t.nis2line}
-            </p>
-
-            <div className="gryps-stats-row" style={{ display: "flex", gap: 36, marginBottom: 40, paddingBottom: 40, borderBottom: "1px solid var(--border)" }}>
-              <Stat value="120+" label={t.statsL1} />
-              <Stat value="LEO–MEO–GEO" label={t.statsL2} />
-              <Stat value="70°N+" label={t.statsL3} />
+              <div className="gryps-stats-row" style={{ display: "flex", gap: 56, paddingBottom: 28, borderBottom: "1px solid var(--border)" }}>
+                <Stat value="120+" label={t.statsL1} />
+                <Stat value="LEO–MEO–GEO" label={t.statsL2} />
+                <Stat value="70°N+" label={t.statsL3} />
+              </div>
             </div>
 
-            {/* Advisor CTA anchor */}
-            <a href="#advisor" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              backgroundColor: "#4FA8FF", color: "#070B12",
-              fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
-              padding: "12px 22px", borderRadius: 6, textDecoration: "none",
-              marginBottom: 10,
-            }}>
-              {t.advisorCta} <ArrowRight size={14} />
-            </a>
-            <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.06em" }}>
-              {t.advisorSub}
-            </p>
+            {/* Group 3: CTA */}
+            <div>
+              <a href="#advisor" style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                backgroundColor: "#4FA8FF", color: "#070B12",
+                fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
+                padding: "12px 22px", borderRadius: 6, textDecoration: "none",
+                marginBottom: 10,
+              }}>
+                {t.advisorCta} <ArrowRight size={14} />
+              </a>
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.06em" }}>
+                {t.advisorSub}
+              </p>
+            </div>
           </div>
 
           {/* Right — telemetry + polar map */}
