@@ -40,12 +40,12 @@ const jsonLd = {
 export const metadata: Metadata = {
   title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
   description: "GRYPS scores, documents, and monitors satellite connectivity resilience for autonomous fleets and remote sites in maritime, Arctic, forestry, and mining. Free Resilience Signature — NIS2/CER-aligned reporting.",
-  keywords: "connectivity resilience, autonomous operations connectivity, NIS2 connectivity risk, CER critical operator, satellite resilience Arctic, remote site connectivity risk, forestry autonomous fleet connectivity",
+  keywords: "connectivity resilience, autonomous operations connectivity, NIS2 connectivity risk, CER critical operator, satellite resilience Arctic, satellite resilience Iceland, remote site connectivity risk, forestry autonomous fleet connectivity",
   metadataBase: new URL("https://gryps.vercel.app"),
   alternates: { canonical: "https://gryps.vercel.app" },
   openGraph: {
     title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
-    description: "Score, document, and monitor satellite connectivity risk for autonomous and remote operations. Free Resilience Signature — NIS2/CER-aligned reporting for Nordic and Arctic critical operators.",
+    description: "Score, document, and monitor satellite connectivity risk for autonomous and remote operations. Free Resilience Signature — NIS2/CER-aligned reporting for Nordic, Arctic, and Icelandic critical operators.",
     type: "website",
     siteName: "GRYPS",
   },
