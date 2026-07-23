@@ -9,6 +9,15 @@ export type AdvisoryResult = {
   caveats: string[]
 }
 
+export type AssessmentInputs = {
+  lat?: number
+  lng?: number
+  sector: string
+  autonomy_level: string
+  operation_criticality: string
+  current_setup?: string
+}
+
 export function gradeColor(grade: string) {
   return { A: "#2ED47A", B: "#4FA8FF", C: "#D97706", D: "#D97706", F: "#EF4444" }[grade] ?? "#64748B"
 }
@@ -17,7 +26,44 @@ const SEV_COLOR: Record<string, string> = {
   low: "#2ED47A", medium: "#D97706", high: "#D97706", critical: "#EF4444",
 }
 
-export function ResilienceOutput({ result }: { result: AdvisoryResult }) {
+function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
+  const strictAutonomy = input.autonomy_level === "autonomous" || input.autonomy_level === "mixed"
+  const strictCriticality = input.operation_criticality === "safety-critical" || input.operation_criticality === "high"
+
+  const rows: { label: string; value: string; note?: string }[] = [
+    ...(input.lat != null && input.lng != null
+      ? [{ label: "COORDINATES", value: `${input.lat.toFixed(2)}°N · ${input.lng.toFixed(2)}°E` }]
+      : []),
+    { label: "SECTOR", value: input.sector },
+    { label: "AUTONOMY LEVEL", value: input.autonomy_level, note: strictAutonomy ? "stricter threshold applied" : undefined },
+    { label: "CRITICALITY", value: input.operation_criticality, note: strictCriticality ? "stricter threshold applied" : undefined },
+    ...(input.current_setup ? [{ label: "CURRENT SETUP", value: input.current_setup }] : []),
+  ]
+
+  return (
+    <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 4 }}>ASSESSMENT INPUTS</p>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14 }}>
+        The deterministic parameters provided for this scoring run.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {rows.map((row, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{row.label}</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text)", textAlign: "right" }}>
+              {row.value}
+              {row.note && (
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "#D97706", marginLeft: 8 }}>↑ {row.note}</span>
+              )}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function ResilienceOutput({ result, input }: { result: AdvisoryResult; input?: AssessmentInputs }) {
   const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats } = result
   const gc = gradeColor(sig.grade)
 
@@ -50,6 +96,9 @@ export function ResilienceOutput({ result }: { result: AdvisoryResult }) {
         </div>
       </div>
 
+      {/* Assessment inputs */}
+      {input && <AssessmentInputsPanel input={input} />}
+
       {/* Recommendation */}
       <div style={{
         backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
@@ -81,7 +130,10 @@ export function ResilienceOutput({ result }: { result: AdvisoryResult }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {redundancy_gaps.map((g, i) => (
               <div key={i}>
-                <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)", marginBottom: 4 }}>{g.label}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{g.label}</span>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "#EF4444", marginLeft: "auto" }}>↓ SCORE IMPACT</span>
+                </div>
                 <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{g.detail}</p>
               </div>
             ))}

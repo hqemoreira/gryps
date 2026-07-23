@@ -73,24 +73,21 @@ export default async function SignatureSitePage({ params }: Props) {
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>
           RESILIENCE SIGNATURE
         </p>
-        <h1 style={{ fontFamily: "var(--font-ui)", fontSize: 26, fontWeight: 700, color: "var(--text)", marginBottom: 12, letterSpacing: "-0.01em" }}>
+        <h1 style={{ fontFamily: "var(--font-ui)", fontSize: 26, fontWeight: 700, color: "var(--text)", marginBottom: 24, letterSpacing: "-0.01em" }}>
           {site.name}
         </h1>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 8 }}>
-          <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)" }}>
-            {site.lat.toFixed(2)}°N · {site.lng.toFixed(2)}°E
-          </span>
-          <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)" }}>
-            {site.sector.toUpperCase()} · {site.autonomy_level.toUpperCase()} · {site.operation_criticality.toUpperCase()}
-          </span>
-        </div>
-        {site.current_setup && (
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-dim)", marginBottom: 24 }}>
-            Current setup: {site.current_setup}
-          </p>
-        )}
 
-        <ResilienceOutput result={site.output} />
+        <ResilienceOutput
+          result={site.output}
+          input={{
+            lat: site.lat,
+            lng: site.lng,
+            sector: site.sector,
+            autonomy_level: site.autonomy_level,
+            operation_criticality: site.operation_criticality,
+            current_setup: site.current_setup ?? undefined,
+          }}
+        />
 
         {/* CTA */}
         <div style={{ borderTop: "1px solid var(--border)", marginTop: 48, paddingTop: 40, textAlign: "center" }}>

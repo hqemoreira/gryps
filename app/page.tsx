@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle } from "lucide-react"
-import { ResilienceOutput, type AdvisoryResult } from "@/components/ResilienceOutput"
+import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs } from "@/components/ResilienceOutput"
 import { GrypsMark } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
@@ -68,9 +68,17 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
   }
 
   if (result) {
+    const assessmentInputs: AssessmentInputs = {
+      lat: lat ? parseFloat(lat) : undefined,
+      lng: lng ? parseFloat(lng) : undefined,
+      sector: vertical,
+      autonomy_level: autonomy,
+      operation_criticality: criticality,
+      current_setup: setup || undefined,
+    }
     return (
       <div>
-        <ResilienceOutput result={result} />
+        <ResilienceOutput result={result} input={assessmentInputs} />
         <button
           onClick={() => { setResult(null); setLoading(false) }}
           style={{
