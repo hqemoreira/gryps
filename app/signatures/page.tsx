@@ -79,7 +79,7 @@ export default function SignaturesPage() {
 
   const selectStyle: React.CSSProperties = {
     backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
-    borderRadius: 6, padding: "8px 12px", fontFamily: "var(--font-data)",
+    borderRadius: 6, padding: "8px 12px", minHeight: 44, fontFamily: "var(--font-data)",
     fontSize: 11, color: "var(--text)", outline: "none", cursor: "pointer",
   }
 
@@ -109,37 +109,37 @@ export default function SignaturesPage() {
         </div>
 
         {/* Filters + view toggle */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", marginBottom: 20 }}>
-          <select value={sector} onChange={e => setSector(e.target.value)} style={selectStyle}>
+        <div className="gryps-filters-row" style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", marginBottom: 20 }}>
+          <select className="gryps-filter-select" value={sector} onChange={e => setSector(e.target.value)} style={selectStyle}>
             <option value="">{t.allSectors}</option>
             <option value="forestry">Forestry</option>
             <option value="mining">Mining</option>
             <option value="maritime">Maritime</option>
             <option value="arctic">Arctic</option>
           </select>
-          <select value={autonomy} onChange={e => setAutonomy(e.target.value)} style={selectStyle}>
+          <select className="gryps-filter-select" value={autonomy} onChange={e => setAutonomy(e.target.value)} style={selectStyle}>
             <option value="">{t.allAutonomy}</option>
             <option value="manual">Manual</option>
             <option value="remote-operated">Remote-operated</option>
             <option value="autonomous">Autonomous</option>
             <option value="mixed">Mixed</option>
           </select>
-          <select value={criticality} onChange={e => setCriticality(e.target.value)} style={selectStyle}>
+          <select className="gryps-filter-select" value={criticality} onChange={e => setCriticality(e.target.value)} style={selectStyle}>
             <option value="">{t.allCriticality}</option>
             <option value="standard">Standard</option>
             <option value="high">High</option>
             <option value="safety-critical">Safety-critical</option>
           </select>
 
-          <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden", marginLeft: "auto" }}>
+          <div className="gryps-view-toggle" style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden", marginLeft: "auto" }}>
             <button onClick={() => setView("map")} style={{
-              display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "none", cursor: "pointer",
+              flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "0 14px", minHeight: 44, border: "none", cursor: "pointer",
               background: view === "map" ? "var(--border2)" : "transparent",
               color: view === "map" ? "var(--text)" : "var(--text-muted)",
               fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700,
             }}><MapIcon size={13} /> {t.map}</button>
             <button onClick={() => setView("list")} style={{
-              display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "none", cursor: "pointer",
+              flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "0 14px", minHeight: 44, border: "none", cursor: "pointer",
               background: view === "list" ? "var(--border2)" : "transparent",
               color: view === "list" ? "var(--text)" : "var(--text-muted)",
               fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700,

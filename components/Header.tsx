@@ -52,7 +52,8 @@ export function Header({
             {(["en", "fi"] as const).map(l => (
               <button key={l} onClick={() => onLangChange(l)} style={{
                 background: lang === l ? "var(--border2)" : "transparent",
-                border: "none", padding: "5px 10px", cursor: "pointer",
+                border: "none", padding: "0 12px", minHeight: 44, cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
                 fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
                 letterSpacing: "0.08em",
                 color: lang === l ? "var(--text)" : "var(--text-muted)",
@@ -66,9 +67,9 @@ export function Header({
           title={dark ? "Switch to light mode" : "Switch to dark mode"}
           style={{
             background: "var(--surface2)", border: "1px solid var(--border2)",
-            borderRadius: 6, width: 32, height: 32, cursor: "pointer",
+            borderRadius: 6, width: 44, height: 44, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
-            color: "var(--text-muted)",
+            color: "var(--text-muted)", flexShrink: 0,
           }}
         >
           {dark ? <Sun size={14} /> : <Moon size={14} />}
@@ -77,7 +78,8 @@ export function Header({
           fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700,
           color: "var(--accent-blue)", textDecoration: "none",
           border: "1px solid rgba(79,168,255,0.3)",
-          padding: "6px 14px", borderRadius: 5,
+          padding: "0 16px", minHeight: 44,
+          display: "inline-flex", alignItems: "center", borderRadius: 5,
         }}>{ctaLabel}</a>
       </div>
     </header>

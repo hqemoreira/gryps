@@ -16,7 +16,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
       {/* Nav */}
-      <header style={{
+      <header className="gryps-nav-inner" style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
         borderBottom: "1px solid var(--border)",
         backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
@@ -50,18 +50,19 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <Link href="/" style={{
+          <Link href="/" className="gryps-nav-label" style={{
             fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 600,
             color: "var(--text-muted)", textDecoration: "none",
+            whiteSpace: "nowrap", flexShrink: 0,
           }}>← Back to GRYPS</Link>
           <button
             onClick={toggleDark}
             title={dark ? "Switch to light mode" : "Switch to dark mode"}
             style={{
               background: "var(--surface2)", border: "1px solid var(--border2)",
-              borderRadius: 6, width: 30, height: 30, cursor: "pointer",
+              borderRadius: 6, width: 44, height: 44, cursor: "pointer",
               display: "flex", alignItems: "center", justifyContent: "center",
-              color: "var(--text-muted)",
+              color: "var(--text-muted)", flexShrink: 0,
             }}
           >
             {dark ? <Sun size={14} /> : <Moon size={14} />}
@@ -74,9 +75,10 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
       </main>
 
       {/* Footer */}
-      <footer style={{
+      <footer className="gryps-footer gryps-section-pad" style={{
         borderTop: "1px solid var(--border)", padding: "20px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
+        flexWrap: "wrap", gap: 12,
         marginTop: 64,
       }}>
         <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS LEGAL</span>

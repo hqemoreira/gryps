@@ -54,6 +54,7 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
     border: "1px solid var(--border2)",
     borderRadius: 6,
     padding: "10px 14px",
+    minHeight: 44,
     fontFamily: "var(--font-data)",
     fontSize: 12,
     color: "var(--text)",
@@ -84,7 +85,7 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
           style={{
             marginTop: 20, display: "flex", alignItems: "center", gap: 6,
             backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
-            borderRadius: 6, padding: "9px 16px", cursor: "pointer",
+            borderRadius: 6, padding: "0 16px", minHeight: 44, cursor: "pointer",
             fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
           }}
         >

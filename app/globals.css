@@ -71,4 +71,6 @@ body {
   .gryps-footer { flex-direction: column !important; gap: 10px !important; text-align: center !important; }
   .gryps-signature-card { flex-direction: column !important; text-align: center !important; }
   .gryps-signature-divider { display: none !important; }
+  .gryps-filter-select { flex: 1 1 100% !important; width: 100% !important; }
+  .gryps-view-toggle { flex: 1 1 100% !important; margin-left: 0 !important; }
 }
