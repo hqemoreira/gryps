@@ -148,9 +148,9 @@ function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
 // labeled as such — never a fabricated or interpolated real-world-gap number.
 export type RealDataEvidence = {
   realDataScore: number
-  terrainPenaltyScore: number
-  elevationCenterM: number
-  elevationVarianceM: number
+  terrainPenaltyScore: number | null
+  elevationCenterM: number | null
+  elevationVarianceM: number | null
   realWorldGapScore: number | null
   municipality: string | null
   bittimittariPeriod: string | null
@@ -195,11 +195,17 @@ function RealDataEvidencePanel({ data }: { data: RealDataEvidence }) {
         <div style={{ borderLeft: "2px solid var(--border)", paddingLeft: 10 }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
             <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11, color: "var(--text)" }}>Terrain penalty (45%)</span>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text)" }}>{data.terrainPenaltyScore}</span>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text)" }}>{data.terrainPenaltyScore ?? "—"}</span>
           </div>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-muted)", lineHeight: 1.6 }}>
-            {data.elevationCenterM.toFixed(0)}m elevation, ±{data.elevationVarianceM.toFixed(1)}m variance across a ~5km sample
-          </p>
+          {data.terrainPenaltyScore != null && data.elevationCenterM != null && data.elevationVarianceM != null ? (
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-muted)", lineHeight: 1.6 }}>
+              {data.elevationCenterM.toFixed(0)}m elevation, ±{data.elevationVarianceM.toFixed(1)}m variance across a ~5km sample
+            </p>
+          ) : (
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
+              Not available — EU-DEM has a data gap at this location (likely open water).
+            </p>
+          )}
         </div>
       </div>
 

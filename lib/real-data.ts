@@ -88,7 +88,11 @@ export async function getBittimittariStatsForMunicipalities(
 }
 
 // ── Elevation / terrain (OpenTopoData, eudem25m — Copernicus/EEA) ──────────
-export type ElevationSample = { elevationCenterM: number; elevationVarianceM: number }
+// EU-DEM has occasional gaps (typically over water/fjords) where a sample
+// point legitimately returns null instead of a number — both fields here are
+// nullable rather than coerced to 0, so a data gap renders as "not available"
+// instead of a fabricated terrain reading.
+export type ElevationSample = { elevationCenterM: number | null; elevationVarianceM: number | null }
 
 /** Builds a 5-point cross sample (center + N/S/E/W ~5km offsets) per coordinate.
  *  Offsets are a fixed ~0.045° (lat) and a longitude offset scaled by cos(lat)
@@ -113,7 +117,7 @@ export async function getElevationSamples(
 ): Promise<ElevationSample[]> {
   const allPoints = coords.flatMap(c => sampleOffsets(c.lat, c.lng))
   const BATCH = 100
-  const elevations: number[] = []
+  const elevations: (number | null)[] = []
 
   for (let i = 0; i < allPoints.length; i += BATCH) {
     const batch = allPoints.slice(i, i + BATCH)
@@ -129,8 +133,14 @@ export async function getElevationSamples(
   const samples: ElevationSample[] = []
   for (let i = 0; i < coords.length; i++) {
     const group = elevations.slice(i * 5, i * 5 + 5)
-    const mean = group.reduce((a, b) => a + b, 0) / group.length
-    const variance = Math.sqrt(group.reduce((a, b) => a + (b - mean) ** 2, 0) / group.length)
+    const valid = group.filter((v): v is number => v != null)
+    let variance: number | null = null
+    if (valid.length >= 2) {
+      const mean = valid.reduce((a, b) => a + b, 0) / valid.length
+      variance = Math.sqrt(valid.reduce((a, b) => a + (b - mean) ** 2, 0) / valid.length)
+    } else if (valid.length === 1) {
+      variance = 0
+    }
     samples.push({ elevationCenterM: group[0], elevationVarianceM: variance })
   }
   return samples
@@ -146,10 +156,13 @@ export function scoreRealWorldGap(stats: BittimittariMunicipalityStats): number 
   return Math.round(0.6 * speedScore + 0.4 * latencyScore)
 }
 
-export function scoreTerrainPenalty(sample: ElevationSample): number {
+export function scoreTerrainPenalty(sample: ElevationSample): number | null {
   // ~50m of elevation variance within the 5km sample cross maps to 0 (heavily
   // rugged terrain — significant line-of-sight obstruction risk for satellite/
-  // fixed-wireless links); 0m variance (flat) maps to 100.
+  // fixed-wireless links); 0m variance (flat) maps to 100. Null when EU-DEM
+  // had a data gap across the whole sample (e.g. open water) — no penalty is
+  // fabricated in that case.
+  if (sample.elevationVarianceM == null) return null
   return Math.max(0, Math.min(100, Math.round(100 - sample.elevationVarianceM * 2)))
 }
 

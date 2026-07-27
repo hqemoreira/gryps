@@ -91,9 +91,9 @@ export default async function SignatureSitePage({ params }: Props) {
             }}
             realData={site.real_data_score != null ? {
               realDataScore: site.real_data_score,
-              terrainPenaltyScore: site.terrain_penalty_score!,
-              elevationCenterM: site.elevation_center_m!,
-              elevationVarianceM: site.elevation_variance_m!,
+              terrainPenaltyScore: site.terrain_penalty_score,
+              elevationCenterM: site.elevation_center_m,
+              elevationVarianceM: site.elevation_variance_m,
               realWorldGapScore: site.real_world_gap_score,
               municipality: site.municipality,
               bittimittariPeriod: site.bittimittari_period,

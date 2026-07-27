@@ -93,18 +93,22 @@ export async function POST(req: NextRequest) {
     try {
       const [elevation] = await getElevationSamples([{ lat, lng }])
       const terrainPenaltyScore = scoreTerrainPenalty(elevation)
-      realData = {
-        realDataScore: terrainPenaltyScore,
-        terrainPenaltyScore,
-        elevationCenterM: elevation.elevationCenterM,
-        elevationVarianceM: elevation.elevationVarianceM,
-        realWorldGapScore: null,
-        municipality: null,
-        bittimittariPeriod: null,
-        bittimittariSampleCount: null,
-        bittimittariMedianDownloadMbps: null,
-        bittimittariMedianLatencyMs: null,
+      if (terrainPenaltyScore != null) {
+        realData = {
+          realDataScore: terrainPenaltyScore,
+          terrainPenaltyScore,
+          elevationCenterM: elevation.elevationCenterM,
+          elevationVarianceM: elevation.elevationVarianceM,
+          realWorldGapScore: null,
+          municipality: null,
+          bittimittariPeriod: null,
+          bittimittariSampleCount: null,
+          bittimittariMedianDownloadMbps: null,
+          bittimittariMedianLatencyMs: null,
+        }
       }
+      // terrainPenaltyScore null (EU-DEM data gap, e.g. open water) — omit
+      // real-data evidence entirely rather than showing a fabricated score.
     } catch (err) {
       console.error("Live elevation fetch failed, omitting real-data evidence:", err)
     }

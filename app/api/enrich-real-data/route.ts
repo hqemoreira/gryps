@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 3. Compute scores per site and update each row.
-  const results: { slug: string; status: string; realDataScore?: number }[] = []
+  const results: { slug: string; status: string; realDataScore?: number | null }[] = []
 
   for (let i = 0; i < SEED_SITES.length; i++) {
     const site = SEED_SITES[i]
@@ -69,9 +69,16 @@ export async function POST(req: NextRequest) {
     const bittimittari = geo.municipality ? bittimittariByMuni[geo.municipality] : null
     const realWorldGapScore = bittimittari ? scoreRealWorldGap(bittimittari) : null
 
-    const realDataScore = realWorldGapScore != null
-      ? Math.round(0.55 * realWorldGapScore + 0.45 * terrainPenaltyScore)
-      : terrainPenaltyScore // terrain-only when Bittimittari coverage doesn't apply (non-Finnish sites)
+    // Both null: EU-DEM had a data gap AND Bittimittari doesn't apply — no
+    // evidence to show, real_data_score stays null (never fabricate a value).
+    let realDataScore: number | null
+    if (realWorldGapScore != null && terrainPenaltyScore != null) {
+      realDataScore = Math.round(0.55 * realWorldGapScore + 0.45 * terrainPenaltyScore)
+    } else if (realWorldGapScore != null) {
+      realDataScore = realWorldGapScore
+    } else {
+      realDataScore = terrainPenaltyScore
+    }
 
     try {
       await sql`
