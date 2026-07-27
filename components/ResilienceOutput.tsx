@@ -1,37 +1,14 @@
 "use client"
 import Link from "next/link"
 import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck, Download } from "lucide-react"
+import { gradeColor, gradeTextColor, type AdvisoryResult, type AssessmentInputs } from "@/lib/resilience-colors"
 
-export type AdvisoryResult = {
-  resilience_signature: { score: number; grade: string; summary: string }
-  risk_factors: { label: string; severity: string; detail: string }[]
-  redundancy_gaps: { label: string; detail: string }[]
-  connectivity_options: { provider: string; type: string; confidence: number; note: string }[]
-  recommendation: string
-  caveats: string[]
-}
-
-export type AssessmentInputs = {
-  lat?: number
-  lng?: number
-  sector: string
-  autonomy_level: string
-  operation_criticality: string
-  current_setup?: string
-}
-
-// Vivid, theme-independent — for BACKGROUND fills (buttons, decorative dots) where
-// dark (#070B12) text sits permanently on top. Do not use for text drawn directly
-// on var(--surface)/var(--bg) — use gradeTextColor() below for that.
-export function gradeColor(grade: string) {
-  return { A: "#2ED47A", B: "#4FA8FF", C: "#D97706", D: "#D97706", F: "#EF4444" }[grade] ?? "#64748B"
-}
-
-// Theme-aware — for grade/severity TEXT rendered directly on a surface. Resolves
-// to a CSS var so it automatically gets the light-mode-safe darker shade.
-export function gradeTextColor(grade: string) {
-  return { A: "var(--accent-green)", B: "var(--accent-blue)", C: "var(--accent-amber)", D: "var(--accent-amber)", F: "var(--accent-red)" }[grade] ?? "var(--text-muted)"
-}
+// Re-exported as TYPES only (types are erased at compile time, no client-boundary
+// issue). Do NOT re-export gradeColor/gradeTextColor themselves here — a Server
+// Component importing them from this "use client" file would hit the same
+// "call a client function from the server" build error. Import those two
+// directly from @/lib/resilience-colors instead.
+export type { AdvisoryResult, AssessmentInputs }
 
 const SEV_COLOR: Record<string, string> = {
   low: "var(--accent-green)", medium: "var(--accent-amber)", high: "var(--accent-amber)", critical: "var(--accent-red)",
