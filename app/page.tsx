@@ -161,9 +161,15 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
         />
       </div>
 
-      {/* Email */}
-      <div>
-        <label style={labelStyle}>EMAIL (optional)</label>
+      {/* Email — optional, but framed as a clear value exchange rather than a bare field */}
+      <div style={{
+        backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
+        borderRadius: 8, padding: "14px 16px",
+      }}>
+        <label style={{ ...labelStyle, color: "var(--accent-blue)", display: "block", marginBottom: 4 }}>{t.emailLabel}</label>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5, marginBottom: 10 }}>
+          {t.emailHint}
+        </p>
         <input
           type="email"
           placeholder="your@company.com"
@@ -171,8 +177,8 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
           onChange={e => setEmail(e.target.value)}
           style={inputStyle}
         />
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginTop: 6 }}>
-          {t.emailHint}
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", marginTop: 6 }}>
+          {t.emailOptionalNote}
         </p>
       </div>
 
@@ -371,7 +377,9 @@ const COPY = {
     autonomyPlaceholder:"Select autonomy level",
     criticalityLabel:   "OPERATION CRITICALITY",
     criticalityPlaceholder: "Select criticality",
-    emailHint:  "Get notified when conditions affecting your site change — seeds your monitoring profile at zero extra cost.",
+    emailLabel: "GET YOUR REPORT BY EMAIL",
+    emailHint:  "Enter your email to receive this report, plus get notified if your site's risk profile changes.",
+    emailOptionalNote: "Optional — you'll see your results either way.",
     runAdvisor: "Run resilience analysis",
     analysing:  "Analysing your site…",
     analyseAnother: "Analyse another site",
@@ -415,7 +423,9 @@ const COPY = {
     autonomyPlaceholder:"Valitse autonomiataso",
     criticalityLabel:   "TOIMINNAN KRIITTISYYS",
     criticalityPlaceholder: "Valitse kriittisyystaso",
-    emailHint:  "Saa ilmoitus, kun kohteesi olosuhteet muuttuvat — käynnistää seurantaprofiilin ilman lisäkustannuksia.",
+    emailLabel: "SAA RAPORTTI SÄHKÖPOSTIIN",
+    emailHint:  "Syötä sähköpostisi saadaksesi tämän raportin, ja saat ilmoituksen jos kohteesi riskiprofiili muuttuu.",
+    emailOptionalNote: "Valinnainen — näet tuloksesi joka tapauksessa.",
     runAdvisor: "Suorita resilienssianalyysi",
     analysing:  "Analysoidaan kohdetta…",
     analyseAnother: "Analysoi toinen kohde",

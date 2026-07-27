@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from "next/server"
 import { neon } from "@neondatabase/serverless"
 import { scoreSite } from "@/lib/scoring"
 
+const RATE_LIMIT_MAX = 5
+// Note: the "1 hour" window below is written directly into the SQL text, not
+// interpolated via this constant. Neon's sql`` tagged template turns every
+// ${} into a bound parameter, not literal text substitution -- INTERVAL '${x}'
+// would produce invalid SQL (the placeholder ends up trapped inside the quoted
+// literal). Since the window is a fixed constant we control, not user input,
+// hardcoding it directly in the query text is both correct and safe.
+
+function getClientIp(req: NextRequest): string {
+  // Vercel's edge sets x-forwarded-for; first entry is the original client.
+  const forwarded = req.headers.get("x-forwarded-for")
+  if (forwarded) return forwarded.split(",")[0].trim()
+  return req.headers.get("x-real-ip") ?? "unknown"
+}
+
 export async function POST(req: NextRequest) {
   const input = await req.json()
 
@@ -11,17 +26,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
   }
 
-  let output
-  try {
-    output = await scoreSite(input)
-  } catch (err) {
-    console.error("Mistral failed after retry:", err)
-    return NextResponse.json({ error: "Analysis engine unavailable" }, { status: 502 })
-  }
+  const ip = getClientIp(req)
+  const sql = neon(process.env.NEON_DATABASE_URL!)
 
-  // Store submission in Neon
+  // Ensure table + rate-limit column exist before anything else touches it.
   try {
-    const sql = neon(process.env.NEON_DATABASE_URL!)
     await sql`
       CREATE TABLE IF NOT EXISTS advisor_submissions (
         id                  SERIAL PRIMARY KEY,
@@ -35,11 +44,49 @@ export async function POST(req: NextRequest) {
         lng                 DOUBLE PRECISION
       )
     `
+    await sql`ALTER TABLE advisor_submissions ADD COLUMN IF NOT EXISTS ip TEXT`
+  } catch (err) {
+    console.error("Neon schema setup error:", err)
+    // Fail open — if the DB is unreachable we can neither rate-limit nor persist,
+    // but a real visitor should still get their free analysis rather than a
+    // hard block caused by an infra issue on our side.
+  }
+
+  // Rate limit — checked BEFORE the Mistral call, since the whole point is to
+  // cap API cost exposure, not just log abuse after already paying for it.
+  if (ip !== "unknown") {
+    try {
+      const rows = await sql`
+        SELECT COUNT(*)::int AS count FROM advisor_submissions
+        WHERE ip = ${ip} AND created_at > NOW() - INTERVAL '1 hour'
+      `
+      const count = rows[0]?.count ?? 0
+      if (count >= RATE_LIMIT_MAX) {
+        return NextResponse.json(
+          { error: "You've reached the free limit for now — try again in an hour." },
+          { status: 429 }
+        )
+      }
+    } catch (err) {
+      console.error("Rate limit check failed, proceeding (fail open):", err)
+    }
+  }
+
+  let output
+  try {
+    output = await scoreSite(input)
+  } catch (err) {
+    console.error("Mistral failed after retry:", err)
+    return NextResponse.json({ error: "Analysis engine unavailable" }, { status: 502 })
+  }
+
+  // Store submission in Neon
+  try {
     const lat = site_coordinates?.lat ?? null
     const lng = site_coordinates?.lng ?? null
     await sql`
-      INSERT INTO advisor_submissions (input, output, email, autonomy_level, criticality, lat, lng)
-      VALUES (${JSON.stringify(input)}, ${JSON.stringify(output)}, ${email ?? null}, ${autonomy_level}, ${operation_criticality}, ${lat}, ${lng})
+      INSERT INTO advisor_submissions (input, output, email, autonomy_level, criticality, lat, lng, ip)
+      VALUES (${JSON.stringify(input)}, ${JSON.stringify(output)}, ${email ?? null}, ${autonomy_level}, ${operation_criticality}, ${lat}, ${lng}, ${ip})
     `
   } catch (err) {
     console.error("Neon error:", err)

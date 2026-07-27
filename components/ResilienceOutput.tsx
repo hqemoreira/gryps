@@ -26,48 +26,79 @@ const SEV_ICON: Record<string, typeof ShieldAlert> = {
 }
 
 // General, publicly-known orbital-class characteristics — deliberately static,
-// not model-generated. Keyed by orbital class (detected from the "type" string
-// the model returns, e.g. "LEO Constellation", "GEO", "LEO — Polar orbit"), not
-// by named provider. These are physics/industry-convention facts about a class
-// of system, not claims about any specific company's current service, pricing,
-// or contractual terms. Never edit this to reference a specific SLA percentage
-// as if guaranteed by a named provider, or language implying partnership.
+// not model-generated. These are physics/industry-convention facts about a
+// class of system, not claims about any specific company's current service,
+// pricing, or contractual terms. Never edit this to reference a specific SLA
+// percentage as if guaranteed by a named provider, or language implying
+// partnership.
 type OrbitalCharacteristics = { latency: string; reliability: string; hardware: string }
 
+const GEO_CHARS: OrbitalCharacteristics = {
+  latency: "~500–700ms round-trip (typical for geostationary orbit, ~35,800km altitude)",
+  reliability: "Carrier-grade geostationary services typically target 99.9%+ availability as an industry norm",
+  hardware: "Fixed, precisely-aimed dish antenna with clear line-of-sight to the equatorial arc; higher power draw",
+}
+
+const POLAR_NARROWBAND_CHARS: OrbitalCharacteristics = {
+  latency: "~150–300ms round-trip (typical for polar-orbit narrowband constellations)",
+  reliability: "Polar-orbit constellations designed for global/high-latitude coverage typically emphasize continuous availability over throughput as an industry norm",
+  hardware: "Small omnidirectional or low-profile fixed antenna, modest power requirements, no steerable/tracking hardware needed",
+}
+
+const LEO_BROADBAND_CHARS: OrbitalCharacteristics = {
+  latency: "~20–50ms round-trip (typical for broadband LEO constellations, ~340–1,200km altitude)",
+  reliability: "Broadband LEO constellations typically target high availability via multi-satellite handoff and orbital redundancy as an industry norm",
+  hardware: "Compact, often self-orienting phased-array antenna requiring a clear view of the sky; moderate power requirements",
+}
+
+const MEO_CHARS: OrbitalCharacteristics = {
+  latency: "~100–150ms round-trip (typical for medium Earth orbit)",
+  reliability: "MEO constellations are typically positioned as a middle ground between GEO reliability and LEO latency as an industry norm",
+  hardware: "Steerable/tracking antenna required given the moving orbital path; larger aperture than typical LEO terminals",
+}
+
+// Provider-name -> orbital class, for well-known REAL providers whose actual
+// architecture is publicly documented and unambiguous. Checked BEFORE the
+// type-string fallback below, since Mistral's self-reported "type" field has
+// no enum constraint (lib/scoring.ts) and was observed to drift for the same
+// provider across queries (Inmarsat labeled GEO in one run, LEO in another,
+// within the same session) -- real-world provider identity is the more
+// reliable signal we actually have. Substring-matched, lowercase.
+const PROVIDER_ORBITAL_CLASS: { match: string; chars: OrbitalCharacteristics }[] = [
+  // Geostationary
+  { match: "inmarsat", chars: GEO_CHARS },
+  { match: "viasat", chars: GEO_CHARS },
+  { match: "ses", chars: GEO_CHARS },
+  { match: "eutelsat", chars: GEO_CHARS },
+  { match: "hughes", chars: GEO_CHARS },
+  { match: "intelsat", chars: GEO_CHARS },
+  { match: "yahsat", chars: GEO_CHARS },
+  { match: "thuraya", chars: GEO_CHARS },
+  // Broadband LEO
+  { match: "starlink", chars: LEO_BROADBAND_CHARS },
+  { match: "oneweb", chars: LEO_BROADBAND_CHARS },
+  { match: "telesat", chars: LEO_BROADBAND_CHARS },
+  { match: "kuiper", chars: LEO_BROADBAND_CHARS },
+  // Polar-orbit narrowband
+  { match: "iridium", chars: POLAR_NARROWBAND_CHARS },
+  { match: "certus", chars: POLAR_NARROWBAND_CHARS },
+  { match: "globalstar", chars: POLAR_NARROWBAND_CHARS },
+]
+
 function getOrbitalCharacteristics(type: string, provider: string): OrbitalCharacteristics | null {
-  const t = type.toLowerCase()
   const p = provider.toLowerCase()
-  if (t.includes("geo") && !t.includes("polar")) {
-    return {
-      latency: "~500–700ms round-trip (typical for geostationary orbit, ~35,800km altitude)",
-      reliability: "Carrier-grade geostationary services typically target 99.9%+ availability as an industry norm",
-      hardware: "Fixed, precisely-aimed dish antenna with clear line-of-sight to the equatorial arc; higher power draw",
-    }
-  }
-  // Iridium/Certus are always polar-orbit narrowband regardless of what the model
-  // labels the "type" field (often just "LEO") -- check the provider name, since
-  // that's the unambiguous, publicly-known signal for this architecture class.
-  if (t.includes("polar") || p.includes("iridium") || p.includes("certus")) {
-    return {
-      latency: "~150–300ms round-trip (typical for polar-orbit narrowband constellations)",
-      reliability: "Polar-orbit constellations designed for global/high-latitude coverage typically emphasize continuous availability over throughput as an industry norm",
-      hardware: "Small omnidirectional or low-profile fixed antenna, modest power requirements, no steerable/tracking hardware needed",
-    }
-  }
-  if (t.includes("leo")) {
-    return {
-      latency: "~20–50ms round-trip (typical for broadband LEO constellations, ~340–1,200km altitude)",
-      reliability: "Broadband LEO constellations typically target high availability via multi-satellite handoff and orbital redundancy as an industry norm",
-      hardware: "Compact, often self-orienting phased-array antenna requiring a clear view of the sky; moderate power requirements",
-    }
-  }
-  if (t.includes("meo")) {
-    return {
-      latency: "~100–150ms round-trip (typical for medium Earth orbit)",
-      reliability: "MEO constellations are typically positioned as a middle ground between GEO reliability and LEO latency as an industry norm",
-      hardware: "Steerable/tracking antenna required given the moving orbital path; larger aperture than typical LEO terminals",
-    }
-  }
+
+  // 1. Known real provider name — trust this over whatever the model self-reports.
+  const known = PROVIDER_ORBITAL_CLASS.find(entry => p.includes(entry.match))
+  if (known) return known.chars
+
+  // 2. Unrecognized provider name (synthetic/generic, e.g. seed-data placeholders,
+  //    or a real provider not yet in the table) — fall back to the type string.
+  const t = type.toLowerCase()
+  if (t.includes("geo") && !t.includes("polar")) return GEO_CHARS
+  if (t.includes("polar")) return POLAR_NARROWBAND_CHARS
+  if (t.includes("leo")) return LEO_BROADBAND_CHARS
+  if (t.includes("meo")) return MEO_CHARS
   return null // terrestrial/fiber/microwave options — no orbital class applies
 }
 
