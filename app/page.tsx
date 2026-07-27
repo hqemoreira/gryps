@@ -79,8 +79,11 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
     }
     return (
       <div>
-        <ResilienceOutput result={result} input={assessmentInputs} />
+        <div className="gryps-print-target">
+          <ResilienceOutput result={result} input={assessmentInputs} />
+        </div>
         <button
+          className="gryps-no-print"
           onClick={() => { setResult(null); setLoading(false) }}
           style={{
             marginTop: 20, display: "flex", alignItems: "center", gap: 6,

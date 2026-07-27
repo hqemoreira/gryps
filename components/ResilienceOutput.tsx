@@ -1,5 +1,6 @@
+"use client"
 import Link from "next/link"
-import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck } from "lucide-react"
+import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck, Download } from "lucide-react"
 
 export type AdvisoryResult = {
   resilience_signature: { score: number; grade: string; summary: string }
@@ -91,6 +92,20 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
+      {/* Download PDF — hidden in the printed output itself */}
+      <button
+        className="gryps-no-print"
+        onClick={() => window.print()}
+        style={{
+          alignSelf: "flex-end", display: "inline-flex", alignItems: "center", gap: 6,
+          backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
+          borderRadius: 6, padding: "8px 14px", cursor: "pointer",
+          fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
+        }}
+      >
+        <Download size={13} /> Download PDF
+      </button>
+
       {/* Signature score */}
       <div className="gryps-signature-card" style={{
         backgroundColor: "var(--surface)",
@@ -209,6 +224,13 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
         <span style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", border: "1px solid var(--border)", borderRadius: 3, padding: "2px 5px", flexShrink: 0, marginTop: 2 }}>AI</span>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.6 }}>
           {caveats.join(" · ")} · <Link href="/legal/terms#section-04" style={{ color: "var(--text-dim)", textDecoration: "underline" }}>Art. 50 EU AI Act</Link>
+        </p>
+      </div>
+
+      {/* Print-only — generated date + attribution, invisible on screen */}
+      <div className="gryps-print-only" style={{ borderTop: "1px solid var(--border)", paddingTop: 12, marginTop: 4 }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>
+          Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })} · GRYPS — Connectivity Resilience Advisor · gryps.vercel.app
         </p>
       </div>
     </div>

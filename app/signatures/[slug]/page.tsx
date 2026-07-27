@@ -69,25 +69,27 @@ export default async function SignatureSitePage({ params }: Props) {
           </p>
         </div>
 
-        {/* Site header */}
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>
-          RESILIENCE SIGNATURE
-        </p>
-        <h1 style={{ fontFamily: "var(--font-ui)", fontSize: 26, fontWeight: 700, color: "var(--text)", marginBottom: 24, letterSpacing: "-0.01em" }}>
-          {site.name}
-        </h1>
+        <div className="gryps-print-target">
+          {/* Site header */}
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>
+            RESILIENCE SIGNATURE
+          </p>
+          <h1 style={{ fontFamily: "var(--font-ui)", fontSize: 26, fontWeight: 700, color: "var(--text)", marginBottom: 24, letterSpacing: "-0.01em" }}>
+            {site.name}
+          </h1>
 
-        <ResilienceOutput
-          result={site.output}
-          input={{
-            lat: site.lat,
-            lng: site.lng,
-            sector: site.sector,
-            autonomy_level: site.autonomy_level,
-            operation_criticality: site.operation_criticality,
-            current_setup: site.current_setup ?? undefined,
-          }}
-        />
+          <ResilienceOutput
+            result={site.output}
+            input={{
+              lat: site.lat,
+              lng: site.lng,
+              sector: site.sector,
+              autonomy_level: site.autonomy_level,
+              operation_criticality: site.operation_criticality,
+              current_setup: site.current_setup ?? undefined,
+            }}
+          />
+        </div>
 
         {/* CTA */}
         <div style={{ borderTop: "1px solid var(--border)", marginTop: 48, paddingTop: 40, textAlign: "center" }}>

@@ -41,6 +41,7 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
 .mono { font-family: var(--font-data); }
+.gryps-print-only { display: none; }
 .label {
   font-family: var(--font-ui);
   font-size: 10px;
@@ -74,3 +75,46 @@ body {
   .gryps-filter-select { flex: 1 1 100% !important; width: 100% !important; }
   .gryps-view-toggle { flex: 1 1 100% !important; margin-left: 0 !important; }
 }
+
+/* ── Print — Resilience Signature PDF export ──────────────────────────────── */
+@media print {
+  /* Force print-safe light values through every var(--*) usage app-wide —
+     !important on a custom property beats non-important inline styles in the
+     cascade, so this alone repaints every var(--text)/var(--surface)/etc.
+     consumer without touching component code. */
+  :root {
+    --bg: #ffffff !important;
+    --surface: #ffffff !important;
+    --surface2: #f4f4f4 !important;
+    --border: #cccccc !important;
+    --border2: #cccccc !important;
+    --text: #000000 !important;
+    --text-muted: #333333 !important;
+    --text-dim: #555555 !important;
+    --accent-blue: #0B5FBF !important;
+    --accent-cyan: #0B7680 !important;
+    --accent-green: #146B3E !important;
+    --accent-amber: #9A4508 !important;
+    --accent-red: #C41E1E !important;
+  }
+
+  /* Hide everything except the printable target, regardless of DOM depth/siblings */
+  body * { visibility: hidden; }
+  .gryps-print-target, .gryps-print-target * { visibility: visible; }
+  .gryps-print-target {
+    position: absolute; left: 0; top: 0; width: 100%;
+    margin: 0; padding: 24px;
+  }
+
+  /* Buttons/toggles/interactive chrome that would otherwise sit inside the target */
+  .gryps-no-print { display: none !important; }
+
+  /* Attribution/date block — hidden on screen, shown only when printed */
+  .gryps-print-only { display: block !important; }
+
+  /* Keep each card/section from splitting awkwardly across a page break */
+  .gryps-print-target > * { break-inside: avoid; }
+
+  a { text-decoration: none !important; color: inherit !important; }
+}
+
