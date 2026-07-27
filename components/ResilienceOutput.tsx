@@ -58,7 +58,7 @@ function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
     { label: "SECTOR", value: input.sector },
     { label: "AUTONOMY LEVEL", value: input.autonomy_level, note: strictAutonomy ? "stricter threshold applied" : undefined },
     { label: "CRITICALITY", value: input.operation_criticality, note: strictCriticality ? "stricter threshold applied" : undefined },
-    ...(input.current_setup ? [{ label: "CURRENT SETUP", value: input.current_setup }] : []),
+    { label: "CURRENT SETUP", value: input.current_setup?.trim() ? input.current_setup : "Not specified" },
   ]
 
   return (
