@@ -34,8 +34,9 @@ const SEV_ICON: Record<string, typeof ShieldAlert> = {
 // as if guaranteed by a named provider, or language implying partnership.
 type OrbitalCharacteristics = { latency: string; reliability: string; hardware: string }
 
-function getOrbitalCharacteristics(type: string): OrbitalCharacteristics | null {
+function getOrbitalCharacteristics(type: string, provider: string): OrbitalCharacteristics | null {
   const t = type.toLowerCase()
+  const p = provider.toLowerCase()
   if (t.includes("geo") && !t.includes("polar")) {
     return {
       latency: "~500–700ms round-trip (typical for geostationary orbit, ~35,800km altitude)",
@@ -43,7 +44,10 @@ function getOrbitalCharacteristics(type: string): OrbitalCharacteristics | null 
       hardware: "Fixed, precisely-aimed dish antenna with clear line-of-sight to the equatorial arc; higher power draw",
     }
   }
-  if (t.includes("polar") || (t.includes("leo") && (t.includes("iridium") || t.includes("certus")))) {
+  // Iridium/Certus are always polar-orbit narrowband regardless of what the model
+  // labels the "type" field (often just "LEO") -- check the provider name, since
+  // that's the unambiguous, publicly-known signal for this architecture class.
+  if (t.includes("polar") || p.includes("iridium") || p.includes("certus")) {
     return {
       latency: "~150–300ms round-trip (typical for polar-orbit narrowband constellations)",
       reliability: "Polar-orbit constellations designed for global/high-latitude coverage typically emphasize continuous availability over throughput as an industry norm",
@@ -215,7 +219,7 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
         <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>CONNECTIVITY OPTIONS</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {connectivity_options.map((o, i) => {
-            const tech = getOrbitalCharacteristics(o.type)
+            const tech = getOrbitalCharacteristics(o.type, o.provider)
             return (
               <div key={i} style={{
                 backgroundColor: "var(--surface2)", border: `1px solid ${i === 0 ? "rgba(79,168,255,0.2)" : "var(--border)"}`,
