@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck } from "lucide-react"
 
 export type AdvisoryResult = {
   resilience_signature: { score: number; grade: string; summary: string }
@@ -33,6 +34,17 @@ export function gradeTextColor(grade: string) {
 
 const SEV_COLOR: Record<string, string> = {
   low: "var(--accent-green)", medium: "var(--accent-amber)", high: "var(--accent-amber)", critical: "var(--accent-red)",
+}
+
+// Vivid, theme-independent — same pattern as gradeColor(), needed for alpha-blended
+// tint backgrounds/borders (string-concatenated hex+alpha), which can't be built
+// from a CSS var since its resolved value isn't known at string-concat time.
+const SEV_COLOR_VIVID: Record<string, string> = {
+  low: "#2ED47A", medium: "#D97706", high: "#D97706", critical: "#EF4444",
+}
+
+const SEV_ICON: Record<string, typeof ShieldAlert> = {
+  critical: ShieldAlert, high: AlertTriangle, medium: AlertCircle, low: ShieldCheck,
 }
 
 function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
@@ -122,17 +134,30 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
       <div className="gryps-output-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
           <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>RISK FACTORS</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {risk_factors.map((r, i) => (
-              <div key={i}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: SEV_COLOR[r.severity] ?? "#64748B", flexShrink: 0 }} />
-                  <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{r.label}</span>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: SEV_COLOR[r.severity] ?? "#64748B", marginLeft: "auto" }}>{r.severity.toUpperCase()}</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {risk_factors.map((r, i) => {
+              const vivid = SEV_COLOR_VIVID[r.severity] ?? "#64748B"
+              const textColor = SEV_COLOR[r.severity] ?? "var(--text-muted)"
+              const Icon = SEV_ICON[r.severity] ?? AlertCircle
+              return (
+                <div key={i} style={{
+                  display: "flex", gap: 10,
+                  backgroundColor: `${vivid}14`,
+                  border: `1px solid ${vivid}40`,
+                  borderLeft: `3px solid ${vivid}`,
+                  borderRadius: 6, padding: "10px 12px",
+                }}>
+                  <Icon size={16} color={vivid} style={{ flexShrink: 0, marginTop: 1 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{r.label}</span>
+                      <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: textColor, marginLeft: "auto", flexShrink: 0 }}>{r.severity.toUpperCase()}</span>
+                    </div>
+                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{r.detail}</p>
+                  </div>
                 </div>
-                <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6, paddingLeft: 14 }}>{r.detail}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
         <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>

@@ -359,6 +359,7 @@ const COPY = {
     statsL1:    "Providers indexed",
     statsL2:    "All orbital types",
     statsL3:    "Polar coverage",
+    liveCounter: "sites monitored across the Nordics & Arctic",
     advisorCta: "Get your site's Resilience Signature",
     advisorSub: "Free · Takes 60 seconds · No account needed",
     sectorLabel:        "OPERATIONAL SECTOR",
@@ -402,6 +403,7 @@ const COPY = {
     statsL1:    "Palveluntarjoajaa indeksoitu",
     statsL2:    "Kaikki orbitaalityypit",
     statsL3:    "Napapiirin kattavuus",
+    liveCounter: "kohdetta seurannassa Pohjoismaissa ja arktisella alueella",
     advisorCta: "Hanki kohteesi Resilience Signature",
     advisorSub: "Ilmainen · 60 sekuntia · Ei tiliä tarvita",
     sectorLabel:        "TOIMIALA",
@@ -441,8 +443,16 @@ const COPY = {
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const [lang, setLang] = useState<"en" | "fi">("en")
+  const [siteCount, setSiteCount] = useState<number | null>(null)
   const { dark } = useTheme()
   const t = COPY[lang]
+
+  useEffect(() => {
+    fetch("/api/signatures")
+      .then(r => r.json())
+      .then(d => setSiteCount(Array.isArray(d.sites) ? d.sites.length : null))
+      .catch(() => setSiteCount(null))
+  }, [])
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
@@ -502,9 +512,18 @@ export default function HomePage() {
 
             {/* Group 2: NIS2 line + stat chips — sits between subhead and CTA, spaced generously */}
             <div>
-              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 28 }}>
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 16 }}>
                 {t.nis2line}
               </p>
+
+              {siteCount !== null && (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 8px #2ED47A" }} />
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--accent-green)", letterSpacing: "0.04em" }}>
+                    {siteCount} {t.liveCounter}
+                  </span>
+                </div>
+              )}
 
               <div className="gryps-stats-row" style={{ display: "flex", gap: 56, paddingBottom: 28, borderBottom: "1px solid var(--border)" }}>
                 <Stat value="120+" label={t.statsL1} />
