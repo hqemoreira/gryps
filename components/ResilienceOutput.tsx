@@ -147,7 +147,7 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
                   borderLeft: `3px solid ${vivid}`,
                   borderRadius: 6, padding: "10px 12px",
                 }}>
-                  <Icon size={16} color={vivid} style={{ flexShrink: 0, marginTop: 1 }} />
+                  <Icon size={16} color={textColor} style={{ flexShrink: 0, marginTop: 1 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                       <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{r.label}</span>
