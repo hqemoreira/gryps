@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle } from "lucide-react"
-import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs } from "@/components/ResilienceOutput"
+import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
 import { GrypsMark } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
@@ -18,6 +18,7 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
   const [email, setEmail]     = useState("")
   const [loading, setLoading] = useState(false)
   const [result, setResult]   = useState<AdvisoryResult | null>(null)
+  const [realData, setRealData] = useState<RealDataEvidence | undefined>(undefined)
   const [error, setError]     = useState("")
 
   async function handleSubmit(e: React.FormEvent) {
@@ -26,6 +27,7 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
     setLoading(true)
     setError("")
     setResult(null)
+    setRealData(undefined)
     try {
       const res = await fetch("/api/advise", {
         method: "POST",
@@ -42,6 +44,7 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
       const data = await res.json()
       if (!res.ok || !data.result) throw new Error(data.error ?? "Analysis failed")
       setResult(data.result as AdvisoryResult)
+      setRealData(data.realData ?? undefined)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Analysis failed")
     } finally {
@@ -80,11 +83,11 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
     return (
       <div>
         <div className="gryps-print-target">
-          <ResilienceOutput result={result} input={assessmentInputs} />
+          <ResilienceOutput result={result} input={assessmentInputs} realData={realData} />
         </div>
         <button
           className="gryps-no-print"
-          onClick={() => { setResult(null); setLoading(false) }}
+          onClick={() => { setResult(null); setRealData(undefined); setLoading(false) }}
           style={{
             marginTop: 20, display: "flex", alignItems: "center", gap: 6,
             backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",

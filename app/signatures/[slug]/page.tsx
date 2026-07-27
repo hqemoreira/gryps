@@ -89,6 +89,18 @@ export default async function SignatureSitePage({ params }: Props) {
               operation_criticality: site.operation_criticality,
               current_setup: site.current_setup ?? undefined,
             }}
+            realData={site.real_data_score != null ? {
+              realDataScore: site.real_data_score,
+              terrainPenaltyScore: site.terrain_penalty_score!,
+              elevationCenterM: site.elevation_center_m!,
+              elevationVarianceM: site.elevation_variance_m!,
+              realWorldGapScore: site.real_world_gap_score,
+              municipality: site.municipality,
+              bittimittariPeriod: site.bittimittari_period,
+              bittimittariSampleCount: site.bittimittari_sample_count,
+              bittimittariMedianDownloadMbps: site.bittimittari_median_download_mbps,
+              bittimittariMedianLatencyMs: site.bittimittari_median_latency_ms,
+            } : undefined}
           />
         </div>
 

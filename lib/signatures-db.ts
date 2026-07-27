@@ -13,6 +13,20 @@ export type SignatureSiteRow = {
   current_setup: string | null
   output: AdvisoryResult
   last_scored_at: string
+  // Real-data enrichment layer — see lib/real-data.ts. Nullable: not every
+  // site has Finnish (Bittimittari) coverage, and rows created before the
+  // enrichment ran will have these as null.
+  municipality: string | null
+  country: string | null
+  bittimittari_period: string | null
+  bittimittari_sample_count: number | null
+  bittimittari_median_download_mbps: number | null
+  bittimittari_median_latency_ms: number | null
+  real_world_gap_score: number | null
+  elevation_center_m: number | null
+  elevation_variance_m: number | null
+  terrain_penalty_score: number | null
+  real_data_score: number | null
 }
 
 export async function getAllSites(): Promise<SignatureSiteRow[]> {

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { neon } from "@neondatabase/serverless"
 import { scoreSite } from "@/lib/scoring"
+import { getElevationSamples, scoreTerrainPenalty } from "@/lib/real-data"
+import type { RealDataEvidence } from "@/components/ResilienceOutput"
 
 const RATE_LIMIT_MAX = 5
 // Note: the "1 hour" window below is written directly into the SQL text, not
@@ -80,10 +82,36 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Analysis engine unavailable" }, { status: 502 })
   }
 
+  // Live real-data evidence — terrain-only. Ad-hoc submitted coordinates have
+  // no vetted municipality lookup (that's hardcoded for the 33 seed sites
+  // only), so Bittimittari/real-world-gap doesn't apply here; OpenTopoData
+  // works for any global coordinate, so we compute terrain penalty live.
+  let realData: RealDataEvidence | undefined
+  const lat = site_coordinates?.lat ?? null
+  const lng = site_coordinates?.lng ?? null
+  if (lat != null && lng != null) {
+    try {
+      const [elevation] = await getElevationSamples([{ lat, lng }])
+      const terrainPenaltyScore = scoreTerrainPenalty(elevation)
+      realData = {
+        realDataScore: terrainPenaltyScore,
+        terrainPenaltyScore,
+        elevationCenterM: elevation.elevationCenterM,
+        elevationVarianceM: elevation.elevationVarianceM,
+        realWorldGapScore: null,
+        municipality: null,
+        bittimittariPeriod: null,
+        bittimittariSampleCount: null,
+        bittimittariMedianDownloadMbps: null,
+        bittimittariMedianLatencyMs: null,
+      }
+    } catch (err) {
+      console.error("Live elevation fetch failed, omitting real-data evidence:", err)
+    }
+  }
+
   // Store submission in Neon
   try {
-    const lat = site_coordinates?.lat ?? null
-    const lng = site_coordinates?.lng ?? null
     await sql`
       INSERT INTO advisor_submissions (input, output, email, autonomy_level, criticality, lat, lng, ip)
       VALUES (${JSON.stringify(input)}, ${JSON.stringify(output)}, ${email ?? null}, ${autonomy_level}, ${operation_criticality}, ${lat}, ${lng}, ${ip})
@@ -93,5 +121,5 @@ export async function POST(req: NextRequest) {
     // Don't fail the request — output still returned
   }
 
-  return NextResponse.json({ ok: true, result: output })
+  return NextResponse.json({ ok: true, result: output, realData: realData ?? null })
 }

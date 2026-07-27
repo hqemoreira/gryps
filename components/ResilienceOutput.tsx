@@ -139,7 +139,78 @@ function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
   )
 }
 
-export function ResilienceOutput({ result, input }: { result: AdvisoryResult; input?: AssessmentInputs }) {
+// Real, measured data — deliberately separate from and never blended into the
+// Mistral-generated resilience_signature score above. Two independent inputs:
+// Bittimittari real-world speed/latency (Finland only — Traficom's dataset has
+// no coverage outside Finland) and EU-DEM terrain variance (works globally).
+// When Bittimittari doesn't apply (non-Finnish site, or a live ad-hoc query
+// where no municipality can be resolved), this shows terrain only, clearly
+// labeled as such — never a fabricated or interpolated real-world-gap number.
+export type RealDataEvidence = {
+  realDataScore: number
+  terrainPenaltyScore: number
+  elevationCenterM: number
+  elevationVarianceM: number
+  realWorldGapScore: number | null
+  municipality: string | null
+  bittimittariPeriod: string | null
+  bittimittariSampleCount: number | null
+  bittimittariMedianDownloadMbps: number | null
+  bittimittariMedianLatencyMs: number | null
+}
+
+function RealDataEvidencePanel({ data }: { data: RealDataEvidence }) {
+  const scoreColor = data.realDataScore >= 70 ? "var(--accent-green)" : data.realDataScore >= 40 ? "var(--accent-amber)" : "var(--accent-red)"
+
+  return (
+    <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em" }}>REAL-DATA EVIDENCE</p>
+        <span style={{ fontFamily: "var(--font-data)", fontSize: 20, fontWeight: 900, color: scoreColor }}>{data.realDataScore}</span>
+      </div>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14 }}>
+        Deterministic score from measured third-party data — not model-generated, and not blended into the score above.
+      </p>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {/* Real-world gap */}
+        <div style={{ borderLeft: "2px solid var(--border)", paddingLeft: 10 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11, color: "var(--text)" }}>Real-world gap (55%)</span>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text)" }}>{data.realWorldGapScore ?? "—"}</span>
+          </div>
+          {data.realWorldGapScore != null ? (
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-muted)", lineHeight: 1.6 }}>
+              {data.municipality} · measured {data.bittimittariMedianDownloadMbps?.toFixed(1)} Mbit/s median download, {data.bittimittariMedianLatencyMs?.toFixed(0)}ms median latency
+              ({data.bittimittariSampleCount} measurements, {data.bittimittariPeriod})
+            </p>
+          ) : (
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
+              Not available — Bittimittari (Traficom) covers Finland only{data.municipality === null ? "" : ` (no data for ${data.municipality})`}.
+            </p>
+          )}
+        </div>
+
+        {/* Terrain penalty */}
+        <div style={{ borderLeft: "2px solid var(--border)", paddingLeft: 10 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11, color: "var(--text)" }}>Terrain penalty (45%)</span>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text)" }}>{data.terrainPenaltyScore}</span>
+          </div>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-muted)", lineHeight: 1.6 }}>
+            {data.elevationCenterM.toFixed(0)}m elevation, ±{data.elevationVarianceM.toFixed(1)}m variance across a ~5km sample
+          </p>
+        </div>
+      </div>
+
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 9, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+        Real-world speed: Bittimittari (Traficom), licensed under CC BY 4.0 · Terrain: Produced using Copernicus data and information funded by the European Union — EU-DEM layers.
+      </p>
+    </div>
+  )
+}
+
+export function ResilienceOutput({ result, input, realData }: { result: AdvisoryResult; input?: AssessmentInputs; realData?: RealDataEvidence }) {
   const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats } = result
   const gc = gradeColor(sig.grade)
   const gtc = gradeTextColor(sig.grade)
@@ -189,6 +260,9 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
 
       {/* Assessment inputs */}
       {input && <AssessmentInputsPanel input={input} />}
+
+      {/* Real-data evidence — deterministic, kept separate from the Mistral narrative */}
+      {realData && <RealDataEvidencePanel data={realData} />}
 
       {/* Recommendation */}
       <div style={{
