@@ -25,6 +25,48 @@ const SEV_ICON: Record<string, typeof ShieldAlert> = {
   critical: ShieldAlert, high: AlertTriangle, medium: AlertCircle, low: ShieldCheck,
 }
 
+// General, publicly-known orbital-class characteristics — deliberately static,
+// not model-generated. Keyed by orbital class (detected from the "type" string
+// the model returns, e.g. "LEO Constellation", "GEO", "LEO — Polar orbit"), not
+// by named provider. These are physics/industry-convention facts about a class
+// of system, not claims about any specific company's current service, pricing,
+// or contractual terms. Never edit this to reference a specific SLA percentage
+// as if guaranteed by a named provider, or language implying partnership.
+type OrbitalCharacteristics = { latency: string; reliability: string; hardware: string }
+
+function getOrbitalCharacteristics(type: string): OrbitalCharacteristics | null {
+  const t = type.toLowerCase()
+  if (t.includes("geo") && !t.includes("polar")) {
+    return {
+      latency: "~500–700ms round-trip (typical for geostationary orbit, ~35,800km altitude)",
+      reliability: "Carrier-grade geostationary services typically target 99.9%+ availability as an industry norm",
+      hardware: "Fixed, precisely-aimed dish antenna with clear line-of-sight to the equatorial arc; higher power draw",
+    }
+  }
+  if (t.includes("polar") || (t.includes("leo") && (t.includes("iridium") || t.includes("certus")))) {
+    return {
+      latency: "~150–300ms round-trip (typical for polar-orbit narrowband constellations)",
+      reliability: "Polar-orbit constellations designed for global/high-latitude coverage typically emphasize continuous availability over throughput as an industry norm",
+      hardware: "Small omnidirectional or low-profile fixed antenna, modest power requirements, no steerable/tracking hardware needed",
+    }
+  }
+  if (t.includes("leo")) {
+    return {
+      latency: "~20–50ms round-trip (typical for broadband LEO constellations, ~340–1,200km altitude)",
+      reliability: "Broadband LEO constellations typically target high availability via multi-satellite handoff and orbital redundancy as an industry norm",
+      hardware: "Compact, often self-orienting phased-array antenna requiring a clear view of the sky; moderate power requirements",
+    }
+  }
+  if (t.includes("meo")) {
+    return {
+      latency: "~100–150ms round-trip (typical for medium Earth orbit)",
+      reliability: "MEO constellations are typically positioned as a middle ground between GEO reliability and LEO latency as an industry norm",
+      hardware: "Steerable/tracking antenna required given the moving orbital path; larger aperture than typical LEO terminals",
+    }
+  }
+  return null // terrestrial/fiber/microwave options — no orbital class applies
+}
+
 function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
   const strictAutonomy = input.autonomy_level === "autonomous" || input.autonomy_level === "mixed"
   const strictCriticality = input.operation_criticality === "safety-critical" || input.operation_criticality === "high"
@@ -172,28 +214,48 @@ export function ResilienceOutput({ result, input }: { result: AdvisoryResult; in
       <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>CONNECTIVITY OPTIONS</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {connectivity_options.map((o, i) => (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", gap: 16,
-              backgroundColor: "var(--surface2)", border: `1px solid ${i === 0 ? "rgba(79,168,255,0.2)" : "var(--border)"}`,
-              borderRadius: 6, padding: "10px 14px",
-            }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
-                  <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{o.provider}</span>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--border)", padding: "1px 6px", borderRadius: 3 }}>{o.type}</span>
+          {connectivity_options.map((o, i) => {
+            const tech = getOrbitalCharacteristics(o.type)
+            return (
+              <div key={i} style={{
+                backgroundColor: "var(--surface2)", border: `1px solid ${i === 0 ? "rgba(79,168,255,0.2)" : "var(--border)"}`,
+                borderRadius: 6, padding: "10px 14px",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
+                      <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{o.provider}</span>
+                      <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--border)", padding: "1px 6px", borderRadius: 3 }}>{o.type}</span>
+                    </div>
+                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{o.note}</p>
+                  </div>
+                  <div style={{ textAlign: "right", flexShrink: 0 }}>
+                    <div style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: i === 0 ? "var(--accent-blue)" : "var(--text)", lineHeight: 1 }}>
+                      {o.confidence}<span style={{ fontSize: 10, color: "var(--text-muted)" }}>%</span>
+                    </div>
+                    <div style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>CONFIDENCE</div>
+                  </div>
                 </div>
-                <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{o.note}</p>
+                {tech && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
+                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>LATENCY </span>{tech.latency}
+                    </p>
+                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
+                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>RELIABILITY </span>{tech.reliability}
+                    </p>
+                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
+                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>HARDWARE </span>{tech.hardware}
+                    </p>
+                  </div>
+                )}
               </div>
-              <div style={{ textAlign: "right", flexShrink: 0 }}>
-                <div style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: i === 0 ? "var(--accent-blue)" : "var(--text)", lineHeight: 1 }}>
-                  {o.confidence}<span style={{ fontSize: 10, color: "var(--text-muted)" }}>%</span>
-                </div>
-                <div style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>CONFIDENCE</div>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+          General technical characteristics based on publicly available industry information — not official provider specifications, current commercial terms, or an endorsement of any provider. GRYPS has no commercial relationship with the providers listed.
+        </p>
       </div>
 
       {/* Caveats */}

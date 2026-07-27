@@ -61,7 +61,7 @@ export default async function SignatureSitePage({ params }: Props) {
 
       <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 32px 80px", paddingTop: 90 }}>
         {/* Disclosure */}
-        <div style={{
+        <div className="gryps-no-print" style={{
           backgroundColor: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)",
           borderRadius: 6, padding: "8px 14px", marginBottom: 24,
         }}>
@@ -93,7 +93,7 @@ export default async function SignatureSitePage({ params }: Props) {
         </div>
 
         {/* CTA */}
-        <div style={{ borderTop: "1px solid var(--border)", marginTop: 48, paddingTop: 40, textAlign: "center" }}>
+        <div className="gryps-no-print" style={{ borderTop: "1px solid var(--border)", marginTop: 48, paddingTop: 40, textAlign: "center" }}>
           <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 10 }}>
             Score your own site
           </h2>

@@ -98,16 +98,14 @@ body {
     --accent-red: #C41E1E !important;
   }
 
-  /* Hide everything except the printable target, regardless of DOM depth/siblings */
-  body * { visibility: hidden; }
-  .gryps-print-target, .gryps-print-target * { visibility: visible; }
-  .gryps-print-target {
-    position: absolute; left: 0; top: 0; width: 100%;
-    margin: 0; padding: 24px;
-  }
+  /* Explicit display:none on every non-report element, not visibility:hidden --
+     visibility preserves layout height, so hidden siblings still reserved their
+     original vertical space in the print flow, producing extra blank pages
+     (the browser paginated the *original* full document height, not just the
+     visible content). display:none fully collapses that space. */
+  header, footer, .gryps-no-print { display: none !important; }
 
-  /* Buttons/toggles/interactive chrome that would otherwise sit inside the target */
-  .gryps-no-print { display: none !important; }
+  .gryps-print-target { margin: 0; padding: 24px; }
 
   /* Attribution/date block — hidden on screen, shown only when printed */
   .gryps-print-only { display: block !important; }

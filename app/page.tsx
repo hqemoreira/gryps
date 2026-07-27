@@ -461,7 +461,7 @@ export default function HomePage() {
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
 
       {/* Non-commercial banner */}
-      <div className="gryps-banner" style={{
+      <div className="gryps-banner gryps-no-print" style={{
         backgroundColor: "rgba(245,184,74,0.06)",
         borderBottom: "1px solid rgba(245,184,74,0.2)",
         padding: "6px 32px",
@@ -487,7 +487,7 @@ export default function HomePage() {
       />
 
       {/* Hero */}
-      <section className="gryps-section-pad" style={{ paddingTop: 148, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
+      <section className="gryps-section-pad gryps-no-print" style={{ paddingTop: 148, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
         <div className="gryps-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "stretch" }}>
 
           {/* Left — three groups spread across the column's full height (matches the right column, no dead space) */}
@@ -565,7 +565,7 @@ export default function HomePage() {
       </section>
 
       {/* Problem strip */}
-      <section className="gryps-section-pad" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", backgroundColor: "var(--surface)", padding: "48px 32px" }}>
+      <section className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", backgroundColor: "var(--surface)", padding: "48px 32px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p className="label" style={{ textAlign: "center", marginBottom: 32, fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>{t.problemL}</p>
           <div className="gryps-problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
@@ -584,16 +584,16 @@ export default function HomePage() {
 
       {/* Live Advisor */}
       <section id="advisor" className="gryps-section-pad" style={{ padding: "64px 32px", maxWidth: 900, margin: "0 auto", scrollMarginTop: 80 }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>FREE RESILIENCE ADVISOR</p>
-        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", marginBottom: 8, letterSpacing: "-0.01em" }}>
+        <p className="gryps-no-print" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>FREE RESILIENCE ADVISOR</p>
+        <h2 className="gryps-no-print" style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", marginBottom: 8, letterSpacing: "-0.01em" }}>
           {t.advisorCta}
         </h2>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", marginBottom: 32 }}>{t.advisorSub}</p>
+        <p className="gryps-no-print" style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", marginBottom: 32 }}>{t.advisorSub}</p>
         <AdvisorForm t={t} />
       </section>
 
       {/* How it works */}
-      <section className="gryps-section-pad" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
+      <section className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 32 }}>{t.howL}</p>
         <div className="gryps-steps-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
           {t.steps.map((step, i) => {
@@ -613,7 +613,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="gryps-section-pad" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", textAlign: "center" }}>
+      <section className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", textAlign: "center" }}>
         <GrypsMark size={44} animate />
         <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", margin: "20px 0 10px", letterSpacing: "-0.01em" }}>
           {t.ctaH2}
