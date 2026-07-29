@@ -76,6 +76,13 @@ body {
   .gryps-view-toggle { flex: 1 1 100% !important; margin-left: 0 !important; }
 }
 
+/* Banner disclosure text is longer than the 640px breakpoint accounts for --
+   shrink further on narrow phones so it stays on one line (Header's fixed
+   top offset assumes a single-line banner height). */
+@media (max-width: 400px) {
+  .gryps-banner { font-size: 7px !important; letter-spacing: 0.01em !important; }
+}
+
 /* ── Print — Resilience Signature PDF export ──────────────────────────────── */
 @media print {
   /* Force print-safe light values through every var(--*) usage app-wide —

@@ -486,7 +486,7 @@ export default function HomePage() {
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 1010,
         backdropFilter: "blur(12px)",
       }}>
-        R&D PROTOTYPE · EARLY ACCESS · {lang === "en" ? "ESPOO, FINLAND" : "ESPOO, SUOMI"}
+        R&D PROTOTYPE · NON-COMMERCIAL RESEARCH PROJECT · EARLY ACCESS · {lang === "en" ? "ESPOO, FINLAND" : "ESPOO, SUOMI"}
       </div>
 
       <Header
