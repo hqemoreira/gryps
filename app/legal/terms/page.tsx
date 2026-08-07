@@ -94,7 +94,7 @@ const COPY = {
         id: "10",
         title: "Contact",
         body: [
-          "For questions relating to these Terms, including licensing inquiries and API access requests, contact: hello@gryps.fi",
+          "For questions relating to these Terms, including licensing inquiries and API access requests, contact: hello@gryps.eu",
           "GRYPS — non-commercial research project · Espoo, Finland.",
         ],
       },
@@ -184,7 +184,7 @@ const COPY = {
         id: "10",
         title: "Yhteystiedot",
         body: [
-          "Näihin ehtoihin liittyvät kysymykset: hello@gryps.fi",
+          "Näihin ehtoihin liittyvät kysymykset: hello@gryps.eu",
           "GRYPS — ei-kaupallinen tutkimusprojekti · Espoo, Suomi.",
         ],
       },

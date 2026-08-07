@@ -40,7 +40,7 @@ export default async function SignatureSitePage({ params }: Props) {
     "@type": "Dataset",
     "name": `${site.name} — Resilience Signature`,
     "description": site.output.resilience_signature.summary,
-    "creator": { "@type": "Organization", "name": "GRYPS", "url": "https://gryps.vercel.app", "email": "hello@gryps.fi" },
+    "creator": { "@type": "Organization", "name": "GRYPS", "url": "https://gryps.vercel.app", "email": "hello@gryps.eu" },
     "spatialCoverage": {
       "@type": "Place",
       "geo": { "@type": "GeoCoordinates", "latitude": site.lat, "longitude": site.lng },

@@ -33,7 +33,7 @@ const jsonLd = {
     "@type": "Organization",
     "name": "GRYPS",
     "url": "https://gryps.vercel.app",
-    "email": "hello@gryps.fi"
+    "email": "hello@gryps.eu"
   }
 }
 

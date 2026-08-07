@@ -6,25 +6,21 @@ const COPY = {
   en: {
     title: "Privacy Policy",
     effective: "Effective date: 29 June 2026",
-    controller: "Data Controller: GRYPS (research project) · Espoo, Finland · hello@gryps.fi",
+    controller: "Data Controller: GRYPS (research project) · Espoo, Finland · hello@gryps.eu",
     intro: "This Privacy Policy explains how GRYPS collects, processes, and protects personal data in connection with the GRYPS satellite connectivity intelligence platform. GRYPS is committed to full compliance with the EU General Data Protection Regulation (GDPR) and applicable Finnish data protection law.",
     sections: [
       {
         id: "01",
         title: "Who We Are",
         body: [
-          "GRYPS is a non-commercial research project based in Espoo, Finland. There is no registered company and no revenue. For the purposes of the GDPR, the researcher operating GRYPS (hello@gryps.fi) is the data controller responsible for personal data processed through the GRYPS platform.",
-          "Contact for all data protection matters: hello@gryps.fi",
+          "GRYPS is a non-commercial research project based in Espoo, Finland. There is no registered company and no revenue. For the purposes of the GDPR, the researcher operating GRYPS (hello@gryps.eu) is the data controller responsible for personal data processed through the GRYPS platform.",
+          "Contact for all data protection matters: hello@gryps.eu",
         ],
       },
       {
         id: "02",
         title: "Data We Collect",
         subsections: [
-          {
-            label: "Waitlist & Account Data",
-            body: "When you submit a request for early access, GRYPS collects your email address and the operational sector you identified (e.g. Maritime, Forestry, Mining). This data is collected for the sole purpose of contacting you regarding GRYPS early access and is not used for advertising, profiling, or sold to third parties.",
-          },
           {
             label: "Geospatial Input Data",
             body: "When you use the Connectivity Advisor, you provide geographic coordinates, a sector classification, and operational priority weights. GRYPS treats coordinate inputs as functionally sensitive data. Coordinates are passed through a data-minimisation filter: they are used to compute orbital coverage and provider scoring, but are not persistently linked to your corporate identity, email address, or account profile in GRYPS's primary data tables. Analysis inputs are not retained beyond the session unless you explicitly save or export the report.",
@@ -43,7 +39,6 @@ const COPY = {
         id: "03",
         title: "Legal Basis for Processing",
         body: [
-          "Waitlist data (email + sector): Consent — you voluntarily submit this data when requesting early access. You may withdraw consent at any time by emailing hello@gryps.fi.",
           "Platform analytics: Legitimate interest — anonymised aggregate analytics are used to improve the platform. No individual profiling is performed.",
           "API logs: Legitimate interest — retained for security, rate limiting, and service integrity purposes.",
           "Analysis inputs (coordinates, sector, priorities): Contract performance — processing is necessary to deliver the service you have requested.",
@@ -55,8 +50,7 @@ const COPY = {
         body: [
           "GRYPS is built on infrastructure that operates within European Union jurisdiction:",
           "Vercel (hosting & analytics): EU-region deployment (Frankfurt, Germany — iad1/fra1). Production deployments are configured to prioritise EU edge nodes. Vercel's EU data processing addendum is available at vercel.com/legal/dpa.",
-          "Neon (database): PostgreSQL serverless database. GRYPS uses the EU (Frankfurt) region for all database instances. Customer waitlist data, analysis session records, and API logs are stored exclusively within EU-region Neon infrastructure.",
-          "Resend (transactional email): Used only to send notification emails to the GRYPS researcher when a new waitlist submission is received. No customer data is retained within Resend beyond the transactional payload. Resend is SOC 2 Type II certified.",
+          "Neon (database): PostgreSQL serverless database. GRYPS uses the EU (Frankfurt) region for all database instances. Analysis session records and API logs are stored exclusively within EU-region Neon infrastructure.",
           "GRYPS does not transfer personal data to third countries (outside the EU/EEA) without an adequate legal mechanism in place.",
         ],
       },
@@ -74,7 +68,6 @@ const COPY = {
         id: "06",
         title: "Data Retention",
         body: [
-          "Waitlist submissions (email + sector): Retained until you request deletion or GRYPS is discontinued, whichever comes first.",
           "Analysis inputs (coordinates, sector, priorities): Not retained beyond the active session unless you explicitly export a report.",
           "Platform analytics: Aggregated and anonymised; no individual retention limit applies.",
           "API logs: Retained for a maximum of 90 days, then automatically purged.",
@@ -92,7 +85,7 @@ const COPY = {
           "Right to restrict processing (Art. 18): You may request that processing of your data be limited in certain circumstances.",
           "Right to data portability (Art. 20): You may request your data in a structured, machine-readable format.",
           "Right to object (Art. 21): You may object to processing based on legitimate interest.",
-          "To exercise any of these rights, contact: hello@gryps.fi. GRYPS will respond within 30 days.",
+          "To exercise any of these rights, contact: hello@gryps.eu. GRYPS will respond within 30 days.",
           "If you believe your rights have been violated, you have the right to lodge a complaint with the Finnish Data Protection Ombudsman (tietosuoja.fi) or the supervisory authority in your EU member state.",
         ],
       },
@@ -102,7 +95,6 @@ const COPY = {
         rows: [
           { processor: "Vercel", role: "Hosting, edge delivery, analytics", region: "EU (Frankfurt)", lawfulBasis: "DPA — vercel.com/legal/dpa" },
           { processor: "Neon", role: "PostgreSQL serverless database", region: "EU (Frankfurt)", lawfulBasis: "DPA — neon.tech/privacy" },
-          { processor: "Resend", role: "Transactional email (waitlist notification)", region: "US (SOC 2)", lawfulBasis: "Standard contractual clauses" },
         ],
       },
       {
@@ -128,7 +120,7 @@ const COPY = {
         body: [
           "Data Controller: GRYPS (research project)",
           "Platform: gryps.vercel.app",
-          "Email: hello@gryps.fi",
+          "Email: hello@gryps.eu",
           "Location: Espoo, Finland — European Union",
         ],
       },
@@ -137,25 +129,21 @@ const COPY = {
   fi: {
     title: "Tietosuojakäytäntö",
     effective: "Voimaantulopäivä: 29. kesäkuuta 2026",
-    controller: "Rekisterinpitäjä: GRYPS (tutkimusprojekti) · Espoo, Suomi · hello@gryps.fi",
+    controller: "Rekisterinpitäjä: GRYPS (tutkimusprojekti) · Espoo, Suomi · hello@gryps.eu",
     intro: "Tämä tietosuojakäytäntö selittää, miten GRYPS kerää, käsittelee ja suojaa henkilötietoja GRYPS-satelliittiyhteysintelligenssiplatformin yhteydessä. GRYPS on sitoutunut täydelliseen vaatimustenmukaisuuteen EU:n yleisen tietosuoja-asetuksen (GDPR) ja sovellettavan suomalaisen tietosuojalain kanssa.",
     sections: [
       {
         id: "01",
         title: "Keitä me olemme",
         body: [
-          "GRYPS on ei-kaupallinen tutkimusprojekti, jota operoidaan Espoosta, Suomesta. GDPR:n tarkoituksiin tutkija (hello@gryps.fi) on rekisterinpitäjä, joka vastaa GRYPS-platformin kautta käsitellyistä henkilötiedoista.",
-          "Yhteystiedot kaikissa tietosuoja-asioissa: hello@gryps.fi",
+          "GRYPS on ei-kaupallinen tutkimusprojekti, jota operoidaan Espoosta, Suomesta. GDPR:n tarkoituksiin tutkija (hello@gryps.eu) on rekisterinpitäjä, joka vastaa GRYPS-platformin kautta käsitellyistä henkilötiedoista.",
+          "Yhteystiedot kaikissa tietosuoja-asioissa: hello@gryps.eu",
         ],
       },
       {
         id: "02",
         title: "Keräämämme tiedot",
         subsections: [
-          {
-            label: "Jonotuslistaus ja tilitiedot",
-            body: "Kun lähetät varhaista pääsyä koskevan pyynnön, GRYPS kerää sähköpostiosoitteesi ja tunnistamasi toimialan. Tätä tietoa käytetään yksinomaan GRYPS:n varhaisen pääsyn yhteydenpitoon.",
-          },
           {
             label: "Geospatiaaliset syöttötiedot",
             body: "Kun käytät Connectivity Advisoria, annat maantieteelliset koordinaatit, toimialaluokituksen ja operatiiviset prioriteettipainot. GRYPS käsittelee koordinaattisyöttöjä toiminnallisesti arkaluonteisina tietoina. Koordinaatteja käytetään orbitaalikattavuuden ja toimittajapisteytysten laskemiseen, mutta niitä ei säilytetä pysyvästi yhdistettynä yritysidentiteettiisi.",
@@ -174,7 +162,6 @@ const COPY = {
         id: "03",
         title: "Käsittelyn oikeudellinen peruste",
         body: [
-          "Jonotuslistan tiedot (sähköposti + toimiala): Suostumus — toimitat nämä tiedot vapaaehtoisesti varhaista pääsyä pyytäessäsi.",
           "Platformin analytiikka: Oikeutettu etu — anonymisoitua aggregaattianalytiikkaa käytetään platformin kehittämiseen.",
           "API-lokit: Oikeutettu etu — säilytetään turvallisuus-, nopeusrajoitus- ja palvelun eheystarkoituksiin.",
           "Analyysisyötteet (koordinaatit, toimiala, prioriteetit): Sopimuksen täytäntöönpano — käsittely on välttämätöntä pyydetyn palvelun toimittamiseksi.",
@@ -187,7 +174,6 @@ const COPY = {
           "GRYPS on rakennettu infrastruktuurille, joka toimii Euroopan unionin lainkäyttöalueella:",
           "Vercel (hosting ja analytiikka): EU-alueen käyttöönotto (Frankfurt, Saksa). Tuotantokäyttöönotot on konfiguroitu priorisoimaan EU:n reunasolmuja.",
           "Neon (tietokanta): PostgreSQL-palvelimetonta tietokantaa käytetään EU (Frankfurt) -alueella kaikissa tietokantainstansseissa.",
-          "Resend (transaktiosähköposti): Käytetään vain ilmoitussähköpostien lähettämiseen GRYPS-tutkijalle, kun uusi jonotuslistatoimitus vastaanotetaan.",
           "GRYPS ei siirrä henkilötietoja kolmansiin maihin (EU/ETA:n ulkopuolelle) ilman asianmukaista oikeusmekanismia.",
         ],
       },
@@ -204,7 +190,6 @@ const COPY = {
         id: "06",
         title: "Tietojen säilyttäminen",
         body: [
-          "Jonotuslistan lähetykset (sähköposti + toimiala): Säilytetään, kunnes pyydät poistamista tai GRYPS lopetetaan.",
           "Analyysisyötteet (koordinaatit, toimiala, prioriteetit): Ei säilytetä aktiivisen istunnon jälkeen, ellei raporttia nimenomaisesti viedä.",
           "API-lokit: Säilytetään enintään 90 päivää, sitten poistetaan automaattisesti.",
         ],
@@ -219,7 +204,7 @@ const COPY = {
           "Oikeus tietojen poistamiseen (17 artikla): Voit pyytää henkilötietojesi poistamista.",
           "Oikeus käsittelyn rajoittamiseen (18 artikla): Voit pyytää, että tietojesi käsittelyä rajoitetaan tietyissä olosuhteissa.",
           "Vastausoikeus (21 artikla): Voit vastustaa oikeutettuun etuun perustuvaa käsittelyä.",
-          "Ottaaksesi käyttöön näitä oikeuksia, ota yhteyttä: hello@gryps.fi",
+          "Ottaaksesi käyttöön näitä oikeuksia, ota yhteyttä: hello@gryps.eu",
           "Jos uskot, että oikeuksiasi on rikottu, voit tehdä valituksen tietosuojavaltuutetulle (tietosuoja.fi).",
         ],
       },
@@ -229,7 +214,6 @@ const COPY = {
         rows: [
           { processor: "Vercel", role: "Hosting, reunatoimitus, analytiikka", region: "EU (Frankfurt)", lawfulBasis: "DPA — vercel.com/legal/dpa" },
           { processor: "Neon", role: "PostgreSQL-palvelimeton tietokanta", region: "EU (Frankfurt)", lawfulBasis: "DPA — neon.tech/privacy" },
-          { processor: "Resend", role: "Transaktiosähköposti (perustajan ilmoitus)", region: "US (SOC 2)", lawfulBasis: "Vakiosopimuslausekkeet" },
         ],
       },
       {
@@ -254,7 +238,7 @@ const COPY = {
         body: [
           "Rekisterinpitäjä: GRYPS (tutkimusprojekti)",
           "Platforma: gryps.vercel.app",
-          "Sähköposti: hello@gryps.fi",
+          "Sähköposti: hello@gryps.eu",
           "Sijainti: Espoo, Suomi — Euroopan unioni",
         ],
       },
