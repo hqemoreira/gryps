@@ -1,7 +1,7 @@
 # GRYPS — Codebook
 
 > Satellite connectivity intelligence platform for Nordic/Arctic industrial operators.
-> Stack: Next.js 16 App Router · TypeScript · CSS custom properties · Neon (PostgreSQL) · Resend · Vercel
+> Stack: Next.js 16 App Router · TypeScript · CSS custom properties · Neon (PostgreSQL) · Vercel
 
 ---
 
@@ -13,7 +13,6 @@
 | Styling | CSS custom properties (no Tailwind) | Theme switching via `document.documentElement.style.setProperty` — zero runtime overhead |
 | Fonts | `next/font/google` — Space Grotesk + JetBrains Mono | Eliminates render-blocking Google Fonts import |
 | Database | Neon serverless PostgreSQL (EU Frankfurt) | EU data residency for Nordic operators |
-| Email | Resend | Transactional notifications, lazy instantiation avoids build-time key errors |
 | Analytics | Vercel Analytics | Cookieless, GDPR-compliant by default |
 | Deployment | Vercel | ~30s deploys from git push |
 
@@ -184,44 +183,12 @@ transition: "opacity 0.4s ease",
 
 ---
 
-## Waitlist API route (Neon + Resend)
-
-```ts
-// app/api/waitlist/route.ts
-export async function POST(req: NextRequest) {
-  const { email, vertical } = await req.json()
-
-  // Neon — idempotent upsert
-  const sql = neon(process.env.DATABASE_URL!)
-  await sql`
-    CREATE TABLE IF NOT EXISTS gryps_waitlist (
-      id SERIAL PRIMARY KEY, email TEXT NOT NULL,
-      vertical TEXT NOT NULL, created_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `
-  await sql`
-    INSERT INTO gryps_waitlist (email, vertical)
-    VALUES (${email}, ${vertical})
-    ON CONFLICT DO NOTHING
-  `
-
-  // Resend — lazy instantiation (avoids build-time key error)
-  const resend = new Resend(process.env.RESEND_API_KEY)
-  await resend.emails.send({ from: "GRYPS <noreply@henriquemoreira.eu>", to: "hqe.moreira@gmail.com", ... })
-
-  // Always return ok — submission saved even if email fails
-  return NextResponse.json({ ok: true, warnings: errors })
-}
-```
-
----
-
 ## Scroll anchor behind fixed header
 
 Fixed header is 72px tall. Without `scrollMarginTop`, clicking a nav link scrolls the target element to the top of the viewport, hiding it behind the header.
 
 ```tsx
-<div id="waitlist" style={{ scrollMarginTop: 72 }}>
+<div id="advisor" style={{ scrollMarginTop: 72 }}>
 ```
 
 ---
@@ -276,8 +243,6 @@ gryps/
 │   ├── layout.tsx              # Root layout — fonts, JSON-LD, AnimatedFavicon
 │   ├── page.tsx                # Entire landing page — all components in one file
 │   ├── icon.tsx                # Static PNG favicon (32×32) via ImageResponse
-│   ├── api/
-│   │   └── waitlist/route.ts   # POST — Neon insert + Resend notification
 │   └── legal/
 │       ├── layout.tsx          # Shared legal nav + footer
 │       ├── terms/page.tsx      # T&C — 10 sections, EN/FI
@@ -288,11 +253,36 @@ gryps/
 
 ---
 
+## Testing convention
+
+Manual test submissions against the live Advisor (or any form that captures an
+email) should use the shared portfolio-wide address
+`henrique+test@henriquemoreira.eu`, not a personal or throwaway address.
+
+There is no write-time tagging of test submissions in this repo —
+`advisor_submissions` has no generic "source" column suited to that, and this
+codebase has no `/api/advise`-side concept of test vs. real traffic. Exclusion
+from Forge's `/products` view is handled entirely on Forge's side, via its own
+`TEST_EMAIL_PATTERN` filter (added separately in the forge repo) matching on
+the `+test@` convention above. No code change is needed in this repo for that
+filtering to work — using the address is the only requirement.
+
+**Flagged, not fixed in this pass:** Forge's `product-users.ts` queries a
+`gryps_waitlist` table, but no code in this repository creates or writes to a
+table by that name (the only endpoint that ever did, `/api/waitlist`, was
+removed — see git history). Whether `gryps_waitlist` still exists in this
+product's Neon database is unconfirmed from this repo alone; if it does, it
+either predates the current codebase or was created out-of-band. This is a
+pre-existing discrepancy between Forge's assumptions and this repo, not
+something addressed here.
+
+---
+
 ## Environment variables
 
 | Key | Used in | Purpose |
 |---|---|---|
-| `DATABASE_URL` | `api/waitlist/route.ts` | Neon PostgreSQL connection string |
-| `RESEND_API_KEY` | `api/waitlist/route.ts` | Resend transactional email |
+| `NEON_DATABASE_URL` | `api/advise/route.ts`, `lib/signatures-db.ts` | Neon PostgreSQL connection string |
+| `MISTRAL_API_KEY` | `lib/scoring.ts` | Mistral AI resilience scoring |
 
 Set in: Vercel → gryps project → Settings → Environment Variables
