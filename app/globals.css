@@ -74,6 +74,8 @@ body {
   .gryps-signature-divider { display: none !important; }
   .gryps-filter-select { flex: 1 1 100% !important; width: 100% !important; }
   .gryps-view-toggle { flex: 1 1 100% !important; margin-left: 0 !important; }
+  .gryps-capacity-grid { grid-template-columns: 1fr !important; }
+  .gryps-capacity-grid > div:first-child { min-height: 360px !important; height: 360px !important; }
 }
 
 /* Banner disclosure text is longer than the 640px breakpoint accounts for --

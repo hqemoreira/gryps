@@ -90,7 +90,7 @@ export default function SignaturesPage() {
         onLangChange={setLang}
         ctaHref="/#advisor"
         ctaLabel={t.navCta}
-        extraLink={{ href: "/", label: lang === "en" ? "Home" : "Etusivu" }}
+        extraLink={{ href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" }}
       />
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 32px 80px", paddingTop: 90 }}>

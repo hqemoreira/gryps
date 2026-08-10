@@ -289,6 +289,34 @@ Set in: Vercel → gryps project → Settings → Environment Variables
 
 ---
 
+## Capacity map (`/map`)
+
+Spatineo Capacity Map–lite view: one screen for the portfolio of sites in
+`signature_sites`, coloured by connectivity **posture** status.
+
+| Status | Derived from |
+|---|---|
+| `ok` | Resilience Signature grade A or B (or score ≥ 70) |
+| `degraded` | grade C or D (or score 30–69) |
+| `down` | grade F (or score &lt; 30) |
+| `unknown` | missing grade and score |
+
+**Data limits (honest):**
+- Source table is `signature_sites` only. `advisor_submissions` are anonymous
+  one-off analyses without stable site identity — not plotted.
+- There is **no** live link-monitoring, SNMP, or capacity-telemetry table in
+  this product. Status is model-derived from the stored Resilience Signature,
+  not real-time “link up/down.”
+- Optional side-panel fields (`real_data_score`, terrain, Bittimittari gap) are
+  enrichment already on the row; null when unavailable (e.g. non-FI sites).
+- Map tiles: existing free Leaflet + CARTO/OSM stack (same as `/signatures`).
+  No Esri / paid map SaaS.
+
+Implementation: `lib/capacity-status.ts`, `components/CapacityMap.tsx`,
+`components/CapacityMapView.tsx`, `app/map/page.tsx` (`force-dynamic`).
+
+---
+
 ## Cookies & ePrivacy
 
 **Banner required: No.** No HTTP cookies. Theme preference in localStorage (`gryps-theme`) + cookieless Vercel Analytics. Privacy §09 states no consent banner for Vercel Analytics; theme storage disclosed (no false sessionStorage claim).

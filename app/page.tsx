@@ -496,7 +496,7 @@ export default function HomePage() {
         onLangChange={setLang}
         ctaHref="#advisor"
         ctaLabel={t.navCta}
-        extraLink={{ href: "/signatures", label: lang === "en" ? "Signatures map" : "Signature-kartta" }}
+        extraLink={{ href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" }}
       />
 
       {/* Hero */}
@@ -648,7 +648,7 @@ export default function HomePage() {
         lang={lang}
         footerRights={t.footerRights}
         footerTag={t.footerTag}
-        secondaryLink={{ href: "/signatures", label: lang === "en" ? "Explore scored sites" : "Selaa pisteytettyjä kohteita" }}
+        secondaryLink={{ href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" }}
       />
     </div>
   )
