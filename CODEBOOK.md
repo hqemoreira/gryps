@@ -291,7 +291,7 @@ Set in: Vercel → gryps project → Settings → Environment Variables
 
 ## Cookies & ePrivacy
 
-**Banner required: No.** No HTTP cookies. Theme preference in localStorage + cookieless Vercel Analytics. Privacy page already states no consent banner for Vercel Analytics.
+**Banner required: No.** No HTTP cookies. Theme preference in localStorage (`gryps-theme`) + cookieless Vercel Analytics. Privacy §09 states no consent banner for Vercel Analytics; theme storage disclosed (no false sessionStorage claim).
 
 | Key | Type | Class |
 |---|---|---|

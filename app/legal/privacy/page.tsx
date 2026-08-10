@@ -103,7 +103,7 @@ const COPY = {
         body: [
           "GRYPS does not use advertising cookies, cross-site tracking pixels, or third-party retargeting scripts.",
           "Vercel Analytics uses a privacy-first, cookieless approach to aggregate traffic measurement. No consent banner is required for Vercel Analytics under the GDPR's legitimate interest basis, as no individual-level tracking occurs.",
-          "Session storage may be used to temporarily hold analysis inputs during an active Advisor session. This data is cleared when the session ends and is never transmitted to third parties.",
+          "Theme preference may be stored in localStorage (gryps-theme). Advisor analysis inputs are held in page memory for the active session and are not written to sessionStorage.",
         ],
       },
       {
@@ -221,7 +221,8 @@ const COPY = {
         title: "Evästeet ja seuranta",
         body: [
           "GRYPS ei käytä mainontaevästeitä, sivustojen välisiä seurantapikseleitä tai kolmannen osapuolen uudelleenkohdentamisskriptejä.",
-          "Vercel Analytics käyttää yksityisyydensuojaa korostavaa, evästeettömästi menetelmää liikenteen aggregaattimittaukseen.",
+          "Vercel Analytics käyttää yksityisyydensuojaa korostavaa, evästeettömästi menetelmää liikenteen aggregaattimittaukseen. Suostumusbanneria ei tarvita cookieless-analytiikalle.",
+          "Teema-asetus voidaan tallentaa localStorageen (gryps-theme). Advisor-syötteet pysyvät sivun muistissa aktiivisen istunnon ajan; sessionStoragea ei käytetä.",
         ],
       },
       {
