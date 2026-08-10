@@ -286,3 +286,16 @@ something addressed here.
 | `MISTRAL_API_KEY` | `lib/scoring.ts` | Mistral AI resilience scoring |
 
 Set in: Vercel → gryps project → Settings → Environment Variables
+
+---
+
+## Cookies & ePrivacy
+
+**Banner required: No.** No HTTP cookies. Theme preference in localStorage + cookieless Vercel Analytics. Privacy page already states no consent banner for Vercel Analytics.
+
+| Key | Type | Class |
+|---|---|---|
+| `gryps-theme` | localStorage | Functional UI preference |
+| Vercel Analytics (`@vercel/analytics`) | — | Cookieless |
+
+No advertising trackers.
