@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer"
 import { useTheme } from "@/context/ThemeContext"
 import {
   CAPACITY_STATUS_COLOR,
-  CAPACITY_STATUS_LABEL,
+  capacityStatusLabel,
   type CapacityStatus,
 } from "@/lib/capacity-status"
 
@@ -68,9 +68,9 @@ const COPY = {
   },
   fi: {
     tagline: "KAPASITEETTIKARTTA",
-    title: "Missä yhteyden asenne pitää — ja missä ei",
+    title: "Missä yhteyksiin voi luottaa — ja missä ei",
     disclosure:
-      "Havainnollistava portfolio signature_sites-taulusta. Tila johdetaan Resilience Signature -mallista (arvosana/pisteet), ei live-linkkiseurannasta. T&K-prototyyppi — ei-kaupallinen tutkimus.",
+      "Havainnollistava portfolio signature_sites-taulusta. Tila kuvaa Resilience Signature -mallin arvioimaa yhteyden resilienssiasentoa (arvosana/pisteet) — ei live-yhteyden tai linkkien seurantaa. T&K-prototyyppi — ei-kaupallinen tutkimus.",
     all: "Kaikki",
     source: "Lähde",
     lastUpdated: "Viimeksi pisteytetty",
@@ -181,7 +181,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                 width: 8, height: 8, borderRadius: "50%",
                 backgroundColor: CAPACITY_STATUS_COLOR[st], display: "inline-block",
               }} />
-              {CAPACITY_STATUS_LABEL[st]} · {counts[st]}
+              {capacityStatusLabel(st, lang)} · {counts[st]}
             </button>
           ))}
         </div>
@@ -236,7 +236,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                     color: "#070B12",
                     backgroundColor: CAPACITY_STATUS_COLOR[selected.status],
                   }}>
-                    {CAPACITY_STATUS_LABEL[selected.status]}
+                    {capacityStatusLabel(selected.status, lang)}
                   </span>
                   <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.06em" }}>
                     {selected.sector.toUpperCase()}

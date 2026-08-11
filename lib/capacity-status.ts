@@ -30,9 +30,25 @@ export const CAPACITY_STATUS_COLOR: Record<CapacityStatus, string> = {
   unknown: "#64748B",
 }
 
+/** EN labels — Spatineo-style; “Down” means model posture F, not live outage. */
 export const CAPACITY_STATUS_LABEL: Record<CapacityStatus, string> = {
   ok: "OK",
   degraded: "Degraded",
   down: "Down",
   unknown: "Unknown",
+}
+
+/** FI labels — posture wording (not live link telemetry). */
+export const CAPACITY_STATUS_LABEL_FI: Record<CapacityStatus, string> = {
+  ok: "Hyvä",
+  degraded: "Heikentynyt",
+  down: "Kriittinen",
+  unknown: "Tuntematon",
+}
+
+export function capacityStatusLabel(
+  status: CapacityStatus,
+  lang: "en" | "fi" = "en",
+): string {
+  return lang === "fi" ? CAPACITY_STATUS_LABEL_FI[status] : CAPACITY_STATUS_LABEL[status]
 }
