@@ -1,11 +1,12 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { getSiteBySlug, getAllSites } from "@/lib/signatures-db"
 import { ResilienceOutput } from "@/components/ResilienceOutput"
 import { gradeColor } from "@/lib/resilience-colors"
 import { Header } from "@/components/Header"
-import { Footer } from "@/components/Footer"
+import { Footer, grypsCopyright } from "@/components/Footer"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -112,19 +113,19 @@ export default async function SignatureSitePage({ params }: Props) {
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", marginBottom: 24, maxWidth: 420, margin: "0 auto 24px" }}>
             This site scored {score} ({grade}) using the same free Advisor available to you right now.
           </p>
-          <a href="/#advisor" style={{
+          <Link href="/#advisor" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
             backgroundColor: gc, color: "#070B12",
             fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
             padding: "12px 24px", borderRadius: 6, textDecoration: "none",
           }}>
             Run the free Advisor <ArrowRight size={14} />
-          </a>
+          </Link>
         </div>
       </div>
 
       <Footer
-        footerRights="© 2026 GRYPS · Espoo, Finland · Non-commercial R&D prototype"
+        footerRights={grypsCopyright("en", "Espoo, Finland · Non-commercial R&D prototype")}
         secondaryLink={{ href: "/signatures", label: "All signatures" }}
       />
     </div>

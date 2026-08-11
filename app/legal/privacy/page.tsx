@@ -5,7 +5,7 @@ import Link from "next/link"
 const COPY = {
   en: {
     title: "Privacy Policy",
-    effective: "Effective date: 29 June 2026",
+    effective: "Last updated: 11 August 2026",
     controller: "Data Controller: GRYPS (research project) · Espoo, Finland · hello@gryps.eu",
     intro: "This Privacy Policy explains how GRYPS collects, processes, and protects personal data in connection with the GRYPS satellite connectivity intelligence platform. GRYPS is committed to full compliance with the EU General Data Protection Regulation (GDPR) and applicable Finnish data protection law.",
     sections: [
@@ -13,7 +13,7 @@ const COPY = {
         id: "01",
         title: "Who We Are",
         body: [
-          "GRYPS is a non-commercial research project based in Espoo, Finland. There is no registered company and no revenue. For the purposes of the GDPR, the researcher operating GRYPS (hello@gryps.eu) is the data controller responsible for personal data processed through the GRYPS platform.",
+          "GRYPS is a non-commercial research project based in Espoo, Finland, operated by Henrique Moreira (solo founder). There is no registered company and no revenue. For the purposes of the GDPR, the researcher operating GRYPS (hello@gryps.eu) is the data controller responsible for personal data processed through the GRYPS platform.",
           "Contact for all data protection matters: hello@gryps.eu",
         ],
       },
@@ -22,8 +22,8 @@ const COPY = {
         title: "Data We Collect",
         subsections: [
           {
-            label: "Geospatial Input Data",
-            body: "When you use the Connectivity Advisor, you provide geographic coordinates, a sector classification, and operational priority weights. GRYPS treats coordinate inputs as functionally sensitive data. Coordinates are passed through a data-minimisation filter: they are used to compute orbital coverage and provider scoring, but are not persistently linked to your corporate identity, email address, or account profile in GRYPS's primary data tables. Analysis inputs are not retained beyond the session unless you explicitly save or export the report.",
+            label: "Advisor submissions",
+            body: "When you use the Connectivity Advisor, you may provide geographic coordinates, sector, autonomy level, criticality, optional current-setup notes, and an optional email address. These inputs and the resulting Resilience Signature output may be stored in Neon (advisor_submissions) for rate limiting, research, and service integrity. Optional email is stored with the submission when provided.",
           },
           {
             label: "Platform Analytics",
@@ -31,7 +31,7 @@ const COPY = {
           },
           {
             label: "API Usage Logs",
-            body: "API tier subscribers generate server-side logs that include request timestamps, endpoint paths, response codes, and payload sizes. These logs do not contain the content of analysis inputs (coordinates, sector, priorities) beyond what is necessary for rate limiting and abuse prevention. Logs are retained for a maximum of 90 days.",
+            body: "Server-side logs may include request timestamps, endpoint paths, response codes, IP address (for rate limiting), and payload sizes. Logs support security and abuse prevention. Logs are retained for a maximum of 90 days where applicable.",
           },
         ],
       },
@@ -39,43 +39,54 @@ const COPY = {
         id: "03",
         title: "Legal Basis for Processing",
         body: [
+          "Advisor submissions: Contract performance / legitimate interest — necessary to deliver the requested analysis, rate-limit abuse, and improve the research prototype.",
           "Platform analytics: Legitimate interest — anonymised aggregate analytics are used to improve the platform. No individual profiling is performed.",
           "API logs: Legitimate interest — retained for security, rate limiting, and service integrity purposes.",
-          "Analysis inputs (coordinates, sector, priorities): Contract performance — processing is necessary to deliver the service you have requested.",
         ],
       },
       {
         id: "04",
         title: "Data Sovereignty & EU Storage",
         body: [
-          "GRYPS is built on infrastructure that operates within European Union jurisdiction:",
-          "Vercel (hosting & analytics): EU-region deployment (Frankfurt, Germany — iad1/fra1). Production deployments are configured to prioritise EU edge nodes. Vercel's EU data processing addendum is available at vercel.com/legal/dpa.",
-          "Neon (database): PostgreSQL serverless database. GRYPS uses the EU (Frankfurt) region for all database instances. Analysis session records and API logs are stored exclusively within EU-region Neon infrastructure.",
-          "GRYPS does not transfer personal data to third countries (outside the EU/EEA) without an adequate legal mechanism in place.",
+          "GRYPS is built on infrastructure that operates within European Union jurisdiction where practicable:",
+          "Vercel (hosting & analytics): EU-region deployment (Frankfurt, Germany). Vercel's EU data processing addendum is available at vercel.com/legal/dpa.",
+          "Neon (database): PostgreSQL serverless database in the EU (Frankfurt) region. Advisor submission records are stored in Neon.",
+          "Mistral (AI inference): Advisor scoring and analytical text are processed by Mistral via the Mistral API. Prompt content may include site profile fields you submit. See Mistral's privacy documentation for their processing terms.",
+          "GRYPS does not transfer personal data to third countries (outside the EU/EEA) without an adequate legal mechanism in place where required.",
         ],
       },
       {
         id: "05",
-        title: "Geospatial Data — Special Handling",
+        title: "AI systems & transparency",
         body: [
-          "GRYPS processes geospatial location data — coordinates, route paths, site identifiers — that may be commercially sensitive or operationally confidential for your organisation.",
-          "Data minimisation: Coordinates submitted to the Connectivity Advisor are used only to compute orbital pass density, horizon angles, coverage zone classification, and provider scoring. They are not enriched with third-party company data, satellite imagery, or corporate directory lookups.",
-          "No secondary profiling: GRYPS does not correlate submitted coordinates across different users or sessions to build geographic profiles of client operations, fleet movements, or site inventories.",
-          "Report confidentiality: PDF reports generated by GRYPS are delivered directly to the requesting user and are not stored on GRYPS servers beyond the generation session. If cloud report storage is introduced in a future product tier, it will be opt-in and disclosed.",
+          "GRYPS uses a limited-risk AI system under Regulation (EU) 2024/1689 (EU AI Act) — not minimal-risk, high-risk, or prohibited.",
+          "The sole AI provider for Resilience Signature outputs is Mistral. GRYPS does not use Google Gemini or OpenAI for Advisor outputs.",
+          "AI-generated or AI-assisted analytical content is disclosed at the point of exposure with an [AI] badge. Maps, Capacity Map status colours derived from stored grades, and real-data evidence panels are not AI-generated.",
+          "GRYPS does not make automated decisions with legal or similarly significant effects concerning natural persons. Outputs support human judgement only.",
         ],
       },
       {
         id: "06",
-        title: "Data Retention",
+        title: "Geospatial Data — Special Handling",
         body: [
-          "Analysis inputs (coordinates, sector, priorities): Not retained beyond the active session unless you explicitly export a report.",
-          "Platform analytics: Aggregated and anonymised; no individual retention limit applies.",
-          "API logs: Retained for a maximum of 90 days, then automatically purged.",
-          "Exported PDF reports: Stored on your device. GRYPS does not maintain copies of exported reports on its servers.",
+          "GRYPS processes geospatial location data — coordinates and site profile fields — that may be commercially sensitive.",
+          "Data minimisation: Coordinates submitted to the Connectivity Advisor are used to produce Resilience Signature scoring and related evidence. They are not enriched with third-party company directory lookups.",
+          "No secondary profiling across users to build geographic profiles of client operations.",
+          "PDF reports generated via browser print are stored on your device. GRYPS does not maintain separate cloud copies of printed PDFs.",
         ],
       },
       {
         id: "07",
+        title: "Data Retention",
+        body: [
+          "Advisor submissions (inputs, outputs, optional email, IP for rate limiting): Retained in Neon until you request deletion or the research project is discontinued, whichever comes first, subject to legitimate operational needs (e.g. rate-limit history).",
+          "Platform analytics: Aggregated and anonymised; no individual retention limit applies.",
+          "API / edge logs: Retained for a maximum of 90 days where applicable, then purged.",
+          "Exported PDF reports: Stored on your device. GRYPS does not maintain copies of printed reports on its servers.",
+        ],
+      },
+      {
+        id: "08",
         title: "Your GDPR Rights",
         body: [
           "As a data subject under the GDPR, you have the following rights with respect to personal data processed by GRYPS:",
@@ -90,35 +101,37 @@ const COPY = {
         ],
       },
       {
-        id: "08",
+        id: "09",
         title: "Third-Party Processors",
         rows: [
           { processor: "Vercel", role: "Hosting, edge delivery, analytics", region: "EU (Frankfurt)", lawfulBasis: "DPA — vercel.com/legal/dpa" },
           { processor: "Neon", role: "PostgreSQL serverless database", region: "EU (Frankfurt)", lawfulBasis: "DPA — neon.tech/privacy" },
-        ],
-      },
-      {
-        id: "09",
-        title: "Cookies & Tracking",
-        body: [
-          "GRYPS does not use advertising cookies, cross-site tracking pixels, or third-party retargeting scripts.",
-          "Vercel Analytics uses a privacy-first, cookieless approach to aggregate traffic measurement. No consent banner is required for Vercel Analytics under the GDPR's legitimate interest basis, as no individual-level tracking occurs.",
-          "Theme preference may be stored in localStorage (gryps-theme). Advisor analysis inputs are held in page memory for the active session and are not written to sessionStorage.",
+          { processor: "Mistral", role: "AI inference for Advisor / Resilience Signature", region: "Per Mistral DPA / terms", lawfulBasis: "Processor — mistral.ai" },
         ],
       },
       {
         id: "10",
-        title: "Changes to This Policy",
+        title: "Cookies & Tracking",
         body: [
-          "This Privacy Policy may be updated to reflect changes in GRYPS's data processing practices, new regulatory requirements, or new product features. The effective date at the top of this page will be updated accordingly.",
-          "Material changes — such as the introduction of new data categories, new third-party processors, or changes to retention periods — will be communicated to registered users by email with at least 14 days notice.",
+          "GRYPS does not use advertising cookies, cross-site tracking pixels, or third-party retargeting scripts.",
+          "Vercel Analytics uses a privacy-first, cookieless approach to aggregate traffic measurement. No consent banner is required for Vercel Analytics under the GDPR's legitimate interest basis, as no individual-level tracking occurs.",
+          "Theme preference may be stored in localStorage (gryps-theme). Advisor analysis inputs are held in page memory for the active session UI; persisted submissions (when made) are stored in Neon as described above.",
         ],
       },
       {
         id: "11",
+        title: "Changes to This Policy",
+        body: [
+          "This Privacy Policy may be updated to reflect changes in GRYPS's data processing practices, new regulatory requirements, or new product features. The \"Last updated\" date at the top of this page will be updated accordingly.",
+          "When AI surfaces or AI providers change, Privacy and Terms Last updated dates are bumped in the same change set.",
+          "Material changes — such as the introduction of new data categories, new third-party processors, or changes to retention periods — will be communicated with reasonable notice where practicable.",
+        ],
+      },
+      {
+        id: "12",
         title: "Contact",
         body: [
-          "Data Controller: GRYPS (research project)",
+          "Data Controller: GRYPS (research project) · Henrique Moreira",
           "Platform: gryps.vercel.app",
           "Email: hello@gryps.eu",
           "Location: Espoo, Finland — European Union",
@@ -128,15 +141,15 @@ const COPY = {
   },
   fi: {
     title: "Tietosuojakäytäntö",
-    effective: "Voimaantulopäivä: 29. kesäkuuta 2026",
+    effective: "Viimeksi päivitetty: 11. elokuuta 2026",
     controller: "Rekisterinpitäjä: GRYPS (tutkimusprojekti) · Espoo, Suomi · hello@gryps.eu",
-    intro: "Tämä tietosuojakäytäntö selittää, miten GRYPS kerää, käsittelee ja suojaa henkilötietoja GRYPS-satelliittiyhteysintelligenssiplatformin yhteydessä. GRYPS on sitoutunut täydelliseen vaatimustenmukaisuuteen EU:n yleisen tietosuoja-asetuksen (GDPR) ja sovellettavan suomalaisen tietosuojalain kanssa.",
+    intro: "Tämä tietosuojakäytäntö selittää, miten GRYPS kerää, käsittelee ja suojaa henkilötietoja GRYPS-satelliittiyhteysälypalvelun yhteydessä. GRYPS on sitoutunut noudattamaan EU:n yleistä tietosuoja-asetusta (GDPR) ja sovellettavaa suomalaista tietosuojalakia.",
     sections: [
       {
         id: "01",
         title: "Keitä me olemme",
         body: [
-          "GRYPS on ei-kaupallinen tutkimusprojekti, jota operoidaan Espoosta, Suomesta. GDPR:n tarkoituksiin tutkija (hello@gryps.eu) on rekisterinpitäjä, joka vastaa GRYPS-platformin kautta käsitellyistä henkilötiedoista.",
+          "GRYPS on ei-kaupallinen tutkimusprojekti Espoossa, Suomessa, jota operoi Henrique Moreira (yksinyrittäjä). Ei rekisteröityä yritystä eikä tuloja. GDPR:n tarkoituksiin tutkija (hello@gryps.eu) on rekisterinpitäjä.",
           "Yhteystiedot kaikissa tietosuoja-asioissa: hello@gryps.eu",
         ],
       },
@@ -145,16 +158,16 @@ const COPY = {
         title: "Keräämämme tiedot",
         subsections: [
           {
-            label: "Geospatiaaliset syöttötiedot",
-            body: "Kun käytät Connectivity Advisoria, annat maantieteelliset koordinaatit, toimialaluokituksen ja operatiiviset prioriteettipainot. GRYPS käsittelee koordinaattisyöttöjä toiminnallisesti arkaluonteisina tietoina. Koordinaatteja käytetään orbitaalikattavuuden ja toimittajapisteytysten laskemiseen, mutta niitä ei säilytetä pysyvästi yhdistettynä yritysidentiteettiisi.",
+            label: "Advisor-lähetykset",
+            body: "Kun käytät Connectivity Advisoria, voit antaa koordinaatit, toimialan, autonomiatason, kriittisyyden, valinnaiset kokoonpanotiedot ja valinnaisen sähköpostin. Syötteet ja Resilience Signature -tulos voidaan tallentaa Neoniin (advisor_submissions) nopeuden rajoitusta, tutkimusta ja palvelun eheyttä varten.",
           },
           {
-            label: "Platformin analytiikka",
+            label: "Alustan analytiikka",
             body: "GRYPS käyttää Vercel Analyticsiä anonymisoitujen, aggregoitujen käyttötilastojen keräämiseen. Yksilötason seurantaevästeitä ei käytetä. Vercel Analytics on GDPR-vaatimusten mukainen.",
           },
           {
             label: "API-käyttölokit",
-            body: "API-tason tilaajat tuottavat palvelinpuolen lokeja, jotka sisältävät pyyntöjen aikaleimat, päätepisteen polut, vastauskoodit ja hyötykuormakoot. Lokeja säilytetään enintään 90 päivää.",
+            body: "Palvelinlokit voivat sisältää aikaleimoja, polkuja, vastauskoodeja, IP-osoitteen (nopeusrajoitus) ja hyötykuormakokoja. Lokeja säilytetään enintään 90 päivää soveltuvin osin.",
           },
         ],
       },
@@ -162,83 +175,100 @@ const COPY = {
         id: "03",
         title: "Käsittelyn oikeudellinen peruste",
         body: [
-          "Platformin analytiikka: Oikeutettu etu — anonymisoitua aggregaattianalytiikkaa käytetään platformin kehittämiseen.",
-          "API-lokit: Oikeutettu etu — säilytetään turvallisuus-, nopeusrajoitus- ja palvelun eheystarkoituksiin.",
-          "Analyysisyötteet (koordinaatit, toimiala, prioriteetit): Sopimuksen täytäntöönpano — käsittely on välttämätöntä pyydetyn palvelun toimittamiseksi.",
+          "Advisor-lähetykset: Sopimuksen täytäntöönpano / oikeutettu etu — analyysin toimittaminen, väärinkäytön rajoittaminen ja tutkimusprototyypin kehittäminen.",
+          "Alustan analytiikka: Oikeutettu etu — anonymisoitua aggregaattianalytiikkaa käytetään palvelun kehittämiseen.",
+          "API-lokit: Oikeutettu etu — turvallisuus, nopeusrajoitus ja palvelun eheys.",
         ],
       },
       {
         id: "04",
         title: "Tietosuvereniteetti ja EU-tallennus",
         body: [
-          "GRYPS on rakennettu infrastruktuurille, joka toimii Euroopan unionin lainkäyttöalueella:",
-          "Vercel (hosting ja analytiikka): EU-alueen käyttöönotto (Frankfurt, Saksa). Tuotantokäyttöönotot on konfiguroitu priorisoimaan EU:n reunasolmuja.",
-          "Neon (tietokanta): PostgreSQL-palvelimetonta tietokantaa käytetään EU (Frankfurt) -alueella kaikissa tietokantainstansseissa.",
-          "GRYPS ei siirrä henkilötietoja kolmansiin maihin (EU/ETA:n ulkopuolelle) ilman asianmukaista oikeusmekanismia.",
+          "GRYPS on rakennettu infrastruktuurille, joka toimii Euroopan unionin lainkäyttöalueella siltä osin kuin se on käytännöllistä:",
+          "Vercel (hosting ja analytiikka): EU-alue (Frankfurt, Saksa).",
+          "Neon (tietokanta): PostgreSQL EU (Frankfurt) -alueella. Advisor-lähetykset tallennetaan Neoniin.",
+          "Mistral (tekoälypäättely): Advisor-pisteytys ja analyyttinen teksti käsitellään Mistral API:n kautta.",
+          "GRYPS ei siirrä henkilötietoja kolmansiin maihin (EU/ETA:n ulkopuolelle) ilman asianmukaista oikeusmekanismia tarvittaessa.",
         ],
       },
       {
         id: "05",
-        title: "Geospatiaaliset tiedot — erityinen käsittely",
+        title: "Tekoälyjärjestelmät ja läpinäkyvyys",
         body: [
-          "GRYPS käsittelee geospatiaallisia sijaintitietoja — koordinaatteja, reittejä, sivustoidentifioijia — jotka voivat olla kaupallisesti arkaluonteisia tai operatiivisesti luottamuksellisia.",
-          "Tietojen minimointi: Connectivity Advisorille toimitetut koordinaatit käytetään vain orbitaalipassitiheyden, horisonttikulmien, kattavuusalueen luokituksen ja toimittajapisteytysten laskemiseen.",
-          "Ei toissijaista profilointia: GRYPS ei korreloi toimitettujen koordinaattien välillä eri käyttäjien tai istuntojen kesken.",
+          "GRYPS käyttää rajoitetun riskin tekoälyjärjestelmää asetuksen (EU) 2024/1689 mukaisesti — ei minimaalisen riskin, korkean riskin eikä kiellettyä järjestelmää.",
+          "Ainoa Resilience Signature -tulosteiden tekoälytoimittaja on Mistral. GRYPS ei käytä Google Geminiä tai OpenAI:ta Advisor-tulosteisiin.",
+          "Tekoälyn tuottama tai avustama analyyttinen sisältö merkitään [AI]-merkillä altistumiskohdassa. Kartat, Capacity Map -värit ja reaalidatanäyttö eivät ole tekoälyn tuottamia.",
+          "GRYPS ei tee automatisoituja päätöksiä, joilla on oikeudellisia tai vastaavia merkittäviä vaikutuksia luonnollisiin henkilöihin.",
         ],
       },
       {
         id: "06",
-        title: "Tietojen säilyttäminen",
+        title: "Geospatiaaliset tiedot — erityinen käsittely",
         body: [
-          "Analyysisyötteet (koordinaatit, toimiala, prioriteetit): Ei säilytetä aktiivisen istunnon jälkeen, ellei raporttia nimenomaisesti viedä.",
-          "API-lokit: Säilytetään enintään 90 päivää, sitten poistetaan automaattisesti.",
+          "GRYPS käsittelee sijaintitietoja — koordinaatteja ja kohdeprofiilikenttiä — jotka voivat olla kaupallisesti arkaluonteisia.",
+          "Tietojen minimointi: Advisorille annettuja koordinaatteja käytetään Resilience Signature -pisteytykseen ja liittyvään näyttöön.",
+          "Ei toissijaista profilointia käyttäjien välillä.",
+          "Selainprintillä luodut PDF-raportit säilyvät laitteellasi.",
         ],
       },
       {
         id: "07",
-        title: "GDPR-oikeutesi",
+        title: "Tietojen säilyttäminen",
         body: [
-          "GDPR:n mukaisena rekisteröitynä sinulla on seuraavat oikeudet:",
-          "Oikeus tutustua tietoihin (15 artikla): Voit pyytää kopiota GRYPS:n sinusta pitämistä henkilötiedoista.",
-          "Oikeus tietojen oikaisemiseen (16 artikla): Voit pyytää virheellisten henkilötietojen korjaamista.",
-          "Oikeus tietojen poistamiseen (17 artikla): Voit pyytää henkilötietojesi poistamista.",
-          "Oikeus käsittelyn rajoittamiseen (18 artikla): Voit pyytää, että tietojesi käsittelyä rajoitetaan tietyissä olosuhteissa.",
-          "Vastausoikeus (21 artikla): Voit vastustaa oikeutettuun etuun perustuvaa käsittelyä.",
-          "Ottaaksesi käyttöön näitä oikeuksia, ota yhteyttä: hello@gryps.eu",
-          "Jos uskot, että oikeuksiasi on rikottu, voit tehdä valituksen tietosuojavaltuutetulle (tietosuoja.fi).",
+          "Advisor-lähetykset: Säilytetään Neonissa, kunnes pyydät poistamista tai tutkimusprojekti lopetetaan, jollei operatiivinen tarve (esim. nopeusrajoitushistoria) edellytä muuta.",
+          "Alustan analytiikka: Aggregoitu ja anonymisoitu.",
+          "API-/edge-lokit: Enintään 90 päivää soveltuvin osin.",
+          "Viedyt PDF-raportit: Laitteellasi; GRYPS ei säilytä printtikopioita palvelimillaan.",
         ],
       },
       {
         id: "08",
-        title: "Kolmannen osapuolen käsittelijät",
-        rows: [
-          { processor: "Vercel", role: "Hosting, reunatoimitus, analytiikka", region: "EU (Frankfurt)", lawfulBasis: "DPA — vercel.com/legal/dpa" },
-          { processor: "Neon", role: "PostgreSQL-palvelimeton tietokanta", region: "EU (Frankfurt)", lawfulBasis: "DPA — neon.tech/privacy" },
+        title: "GDPR-oikeutesi",
+        body: [
+          "GDPR:n mukaisena rekisteröitynä sinulla on seuraavat oikeudet:",
+          "Oikeus tutustua tietoihin (15 artikla).",
+          "Oikeus tietojen oikaisemiseen (16 artikla).",
+          "Oikeus tietojen poistamiseen (17 artikla).",
+          "Oikeus käsittelyn rajoittamiseen (18 artikla).",
+          "Oikeus siirtää tiedot järjestelmästä toiseen (20 artikla).",
+          "Vastustamisoikeus (21 artikla).",
+          "Ota yhteyttä: hello@gryps.eu. GRYPS vastaa 30 päivän kuluessa.",
+          "Voit tehdä valituksen tietosuojavaltuutetulle (tietosuoja.fi).",
         ],
       },
       {
         id: "09",
-        title: "Evästeet ja seuranta",
-        body: [
-          "GRYPS ei käytä mainontaevästeitä, sivustojen välisiä seurantapikseleitä tai kolmannen osapuolen uudelleenkohdentamisskriptejä.",
-          "Vercel Analytics käyttää yksityisyydensuojaa korostavaa, evästeettömästi menetelmää liikenteen aggregaattimittaukseen. Suostumusbanneria ei tarvita cookieless-analytiikalle.",
-          "Teema-asetus voidaan tallentaa localStorageen (gryps-theme). Advisor-syötteet pysyvät sivun muistissa aktiivisen istunnon ajan; sessionStoragea ei käytetä.",
+        title: "Kolmannen osapuolen käsittelijät",
+        rows: [
+          { processor: "Vercel", role: "Hosting, reunatoimitus, analytiikka", region: "EU (Frankfurt)", lawfulBasis: "DPA — vercel.com/legal/dpa" },
+          { processor: "Neon", role: "PostgreSQL-palvelimeton tietokanta", region: "EU (Frankfurt)", lawfulBasis: "DPA — neon.tech/privacy" },
+          { processor: "Mistral", role: "Tekoälypäättely Advisor / Resilience Signature", region: "Mistralin DPA / ehdot", lawfulBasis: "Käsittelijä — mistral.ai" },
         ],
       },
       {
         id: "10",
-        title: "Muutokset tähän käytäntöön",
+        title: "Evästeet ja seuranta",
         body: [
-          "Tätä tietosuojakäytäntöä voidaan päivittää vastaamaan muutoksia GRYPS:n tietojenkäsittelykäytännöissä tai uusissa sääntelyvaatimuksissa.",
-          "Olennaisista muutoksista ilmoitetaan rekisteröityneille käyttäjille sähköpostitse vähintään 14 päivää etukäteen.",
+          "GRYPS ei käytä mainontaevästeitä, sivustojen välisiä seurantapikseleitä tai kolmannen osapuolen uudelleenkohdentamisskriptejä.",
+          "Vercel Analytics käyttää evästeetöntä aggregaattimittausmenetelmää. Suostumusbanneria ei tarvita cookieless-analytiikalle.",
+          "Teema-asetus voidaan tallentaa localStorageen (gryps-theme). Advisor-syötteet UI-istunnossa; pysyvät lähetykset Neonissa yllä kuvatusti.",
         ],
       },
       {
         id: "11",
+        title: "Muutokset tähän käytäntöön",
+        body: [
+          "Tätä tietosuojakäytäntöä voidaan päivittää. Sivun yläosan \"Viimeksi päivitetty\" -päivämäärä päivitetään vastaavasti.",
+          "Kun tekoälypintoja tai -toimittajia muutetaan, Privacy- ja Terms-päivämäärät päivitetään samassa muutoksessa.",
+          "Olennaisista muutoksista ilmoitetaan kohtuullisessa ajassa siltä osin kuin se on käytännöllistä.",
+        ],
+      },
+      {
+        id: "12",
         title: "Yhteystiedot",
         body: [
-          "Rekisterinpitäjä: GRYPS (tutkimusprojekti)",
-          "Platforma: gryps.vercel.app",
+          "Rekisterinpitäjä: GRYPS (tutkimusprojekti) · Henrique Moreira",
+          "Alusta: gryps.vercel.app",
           "Sähköposti: hello@gryps.eu",
           "Sijainti: Espoo, Suomi — Euroopan unioni",
         ],

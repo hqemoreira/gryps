@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ArrowRight, Map as MapIcon, List as ListIcon } from "lucide-react"
 import { gradeTextColor } from "@/lib/resilience-colors"
 import { Header } from "@/components/Header"
-import { Footer } from "@/components/Footer"
+import { Footer, grypsCopyright } from "@/components/Footer"
 import { useTheme } from "@/context/ThemeContext"
 
 const SignaturesMap = dynamic(() => import("@/components/SignaturesMap").then(m => m.SignaturesMap), {
@@ -35,7 +35,6 @@ const COPY = {
     ctaSub: "Get a free, real-time Resilience Signature for your own coordinates — the same model that scored every site above.",
     ctaBtn: "Run the free Advisor",
     navCta: "Score your site",
-    footerRights: "© 2026 GRYPS · Espoo, Finland · Non-commercial R&D prototype",
   },
   fi: {
     tagline:      "RESILIENCE-SIGNATUURIT",
@@ -48,7 +47,6 @@ const COPY = {
     ctaSub: "Hanki ilmainen, reaaliaikainen Resilience Signature omille koordinaateillesi — sama malli, joka pisteytti jokaisen yllä olevan kohteen.",
     ctaBtn: "Suorita ilmainen Advisor",
     navCta: "Pisteytä kohteesi",
-    footerRights: "© 2026 GRYPS · Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi",
   },
 }
 
@@ -191,20 +189,20 @@ export default function SignaturesPage() {
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", marginBottom: 24, maxWidth: 440, margin: "0 auto 24px" }}>
             {t.ctaSub}
           </p>
-          <a href="/#advisor" style={{
+          <Link href="/#advisor" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
             backgroundColor: "#4FA8FF", color: "#070B12",
             fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
             padding: "12px 24px", borderRadius: 6, textDecoration: "none",
           }}>
             {t.ctaBtn} <ArrowRight size={14} />
-          </a>
+          </Link>
         </div>
       </div>
 
       <Footer
         lang={lang}
-        footerRights={t.footerRights}
+        footerRights={grypsCopyright(lang, lang === "en" ? "Espoo, Finland · Non-commercial R&D prototype" : "Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi")}
         secondaryLink={{ href: "/", label: lang === "en" ? "Back to GRYPS" : "Takaisin GRYPS:iin" }}
       />
     </div>

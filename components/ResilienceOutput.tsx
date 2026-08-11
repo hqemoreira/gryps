@@ -102,25 +102,122 @@ function getOrbitalCharacteristics(type: string, provider: string): OrbitalChara
   return null // terrestrial/fiber/microwave options — no orbital class applies
 }
 
-function AssessmentInputsPanel({ input }: { input: AssessmentInputs }) {
+type UiLang = "en" | "fi"
+
+const UI = {
+  en: {
+    downloadPdf: "Download PDF",
+    resilienceScore: "RESILIENCE SCORE",
+    resilienceSignature: "RESILIENCE SIGNATURE",
+    assessmentInputs: "ASSESSMENT INPUTS",
+    assessmentSub: "The deterministic parameters provided for this scoring run.",
+    coordinates: "COORDINATES",
+    sector: "SECTOR",
+    autonomy: "AUTONOMY LEVEL",
+    criticality: "CRITICALITY",
+    currentSetup: "CURRENT SETUP",
+    notSpecified: "Not specified",
+    stricter: "stricter threshold applied",
+    realData: "REAL-DATA EVIDENCE",
+    realDataSub: "Deterministic score from measured third-party data — not model-generated, and not blended into the score above.",
+    realWorldGap: "Real-world gap (55%)",
+    terrainPenalty: "Terrain penalty (45%)",
+    bittiNA: "Not available — Bittimittari (Traficom) covers Finland only",
+    demNA: "Not available — EU-DEM has a data gap at this location (likely open water).",
+    sources:
+      "Real-world speed: Bittimittari (Traficom), licensed under CC BY 4.0 · Terrain: Produced using Copernicus data and information funded by the European Union — EU-DEM layers.",
+    recommendation: "RECOMMENDATION",
+    riskFactors: "RISK FACTORS",
+    redundancyGaps: "REDUNDANCY GAPS",
+    scoreImpact: "↓ SCORE IMPACT",
+    connectivityOptions: "CONNECTIVITY OPTIONS",
+    confidence: "CONFIDENCE",
+    latency: "LATENCY ",
+    reliability: "RELIABILITY ",
+    hardware: "HARDWARE ",
+    orbitalDisclaimer:
+      "General technical characteristics based on publicly available industry information — not official provider specifications, current commercial terms, or an endorsement of any provider. GRYPS has no commercial relationship with the providers listed.",
+    aiBadgeTitle:
+      "EU AI Act Art. 50 — AI-generated analytical summary (Mistral). Limited-risk system. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.",
+    art50: "Art. 50 EU AI Act",
+    generated: "Generated",
+    printAttr: "GRYPS — Connectivity Resilience Advisor · gryps.vercel.app",
+    measured: "measured",
+    medianDownload: "Mbit/s median download",
+    medianLatency: "ms median latency",
+    measurements: "measurements",
+    elevation: "m elevation",
+    variance: "m variance across a ~5km sample",
+    noDataFor: "no data for",
+  },
+  fi: {
+    downloadPdf: "Lataa PDF",
+    resilienceScore: "RESILIENSSIPISTEET",
+    resilienceSignature: "RESILIENCE SIGNATURE",
+    assessmentInputs: "ARVIOINNIN SYÖTTEET",
+    assessmentSub: "Tämän pisteytysajon deterministiset parametrit.",
+    coordinates: "KOORDINAATIT",
+    sector: "TOIMIALA",
+    autonomy: "AUTONOMIATASO",
+    criticality: "KRIITTISYYS",
+    currentSetup: "NYKYINEN KOKOONPANO",
+    notSpecified: "Ei ilmoitettu",
+    stricter: "tiukempi kynnys käytössä",
+    realData: "REAALIDATANÄYTTÖ",
+    realDataSub: "Deterministinen pistemäärä mitatusta kolmannen osapuolen datasta — ei mallin tuottama, eikä sekoitettu yllä olevaan pistemäärään.",
+    realWorldGap: "Todellinen kuilu (55 %)",
+    terrainPenalty: "Maastorangaistus (45 %)",
+    bittiNA: "Ei saatavilla — Bittimittari (Traficom) kattaa vain Suomen",
+    demNA: "Ei saatavilla — EU-DEM:ssä on aukko tällä sijainnilla (todennäköisesti avovettä).",
+    sources:
+      "Todellinen nopeus: Bittimittari (Traficom), CC BY 4.0 · Maasto: Copernicus-data ja EU:n rahoittama tieto — EU-DEM-kerrokset.",
+    recommendation: "SUOSITUS",
+    riskFactors: "RISKITEKIJÄT",
+    redundancyGaps: "REDUNDANSSIAUKOT",
+    scoreImpact: "↓ VAIKUTUS PISTEISIIN",
+    connectivityOptions: "YHTEYSVAIHTOEHDOT",
+    confidence: "LUOTTAMUS",
+    latency: "LATENSSI ",
+    reliability: "LUOTETTAVUUS ",
+    hardware: "LAITTEISTO ",
+    orbitalDisclaimer:
+      "Yleiset tekniset ominaisuudet perustuvat julkisesti saatavilla olevaan toimialatietoon — eivät virallisia toimittajamäärityksiä, nykyisiä kaupallisia ehtoja tai minkään toimittajan suositusta. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
+    aiBadgeTitle:
+      "EU:n tekoälylaki 50 artikla — tekoälyn tuottama analyyttinen yhteenveto (Mistral). Rajoitetun riskin järjestelmä. Ei takuu verkkojen saatavuudesta. Tukee ihmisen harkintaa; ei automatisoituja oikeudellisia päätöksiä.",
+    art50: "50 artikla, EU:n tekoälylaki",
+    generated: "Luotu",
+    printAttr: "GRYPS — Connectivity Resilience Advisor · gryps.vercel.app",
+    measured: "mitattu",
+    medianDownload: "Mbit/s mediaanilataus",
+    medianLatency: "ms mediaaniviive",
+    measurements: "mittausta",
+    elevation: "m korkeus",
+    variance: "m vaihtelu ~5 km otoksessa",
+    noDataFor: "ei dataa kohteelle",
+  },
+} as const
+
+type UiCopy = (typeof UI)["en"]
+
+function AssessmentInputsPanel({ input, t }: { input: AssessmentInputs; t: UiCopy }) {
   const strictAutonomy = input.autonomy_level === "autonomous" || input.autonomy_level === "mixed"
   const strictCriticality = input.operation_criticality === "safety-critical" || input.operation_criticality === "high"
 
   const rows: { label: string; value: string; note?: string }[] = [
     ...(input.lat != null && input.lng != null
-      ? [{ label: "COORDINATES", value: `${input.lat.toFixed(2)}°N · ${input.lng.toFixed(2)}°E` }]
+      ? [{ label: t.coordinates, value: `${input.lat.toFixed(2)}°N · ${input.lng.toFixed(2)}°E` }]
       : []),
-    { label: "SECTOR", value: input.sector },
-    { label: "AUTONOMY LEVEL", value: input.autonomy_level, note: strictAutonomy ? "stricter threshold applied" : undefined },
-    { label: "CRITICALITY", value: input.operation_criticality, note: strictCriticality ? "stricter threshold applied" : undefined },
-    { label: "CURRENT SETUP", value: input.current_setup?.trim() ? input.current_setup : "Not specified" },
+    { label: t.sector, value: input.sector },
+    { label: t.autonomy, value: input.autonomy_level, note: strictAutonomy ? t.stricter : undefined },
+    { label: t.criticality, value: input.operation_criticality, note: strictCriticality ? t.stricter : undefined },
+    { label: t.currentSetup, value: input.current_setup?.trim() ? input.current_setup : t.notSpecified },
   ]
 
   return (
     <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 4 }}>ASSESSMENT INPUTS</p>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 4 }}>{t.assessmentInputs}</p>
       <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14 }}>
-        The deterministic parameters provided for this scoring run.
+        {t.assessmentSub}
       </p>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {rows.map((row, i) => (
@@ -159,71 +256,79 @@ export type RealDataEvidence = {
   bittimittariMedianLatencyMs: number | null
 }
 
-function RealDataEvidencePanel({ data }: { data: RealDataEvidence }) {
+function RealDataEvidencePanel({ data, t }: { data: RealDataEvidence; t: UiCopy }) {
   const scoreColor = data.realDataScore >= 70 ? "var(--accent-green)" : data.realDataScore >= 40 ? "var(--accent-amber)" : "var(--accent-red)"
 
   return (
     <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em" }}>REAL-DATA EVIDENCE</p>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em" }}>{t.realData}</p>
         <span style={{ fontFamily: "var(--font-data)", fontSize: 20, fontWeight: 900, color: scoreColor }}>{data.realDataScore}</span>
       </div>
       <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14 }}>
-        Deterministic score from measured third-party data — not model-generated, and not blended into the score above.
+        {t.realDataSub}
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {/* Real-world gap */}
         <div style={{ borderLeft: "2px solid var(--border)", paddingLeft: 10 }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11, color: "var(--text)" }}>Real-world gap (55%)</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11, color: "var(--text)" }}>{t.realWorldGap}</span>
             <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text)" }}>{data.realWorldGapScore ?? "—"}</span>
           </div>
           {data.realWorldGapScore != null ? (
             <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-muted)", lineHeight: 1.6 }}>
-              {data.municipality} · measured {data.bittimittariMedianDownloadMbps?.toFixed(1)} Mbit/s median download, {data.bittimittariMedianLatencyMs?.toFixed(0)}ms median latency
-              ({data.bittimittariSampleCount} measurements, {data.bittimittariPeriod})
+              {data.municipality} · {t.measured} {data.bittimittariMedianDownloadMbps?.toFixed(1)} {t.medianDownload}, {data.bittimittariMedianLatencyMs?.toFixed(0)}{t.medianLatency}
+              ({data.bittimittariSampleCount} {t.measurements}, {data.bittimittariPeriod})
             </p>
           ) : (
             <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
-              Not available — Bittimittari (Traficom) covers Finland only{data.municipality === null ? "" : ` (no data for ${data.municipality})`}.
+              {t.bittiNA}{data.municipality === null ? "" : ` (${t.noDataFor} ${data.municipality})`}.
             </p>
           )}
         </div>
 
-        {/* Terrain penalty */}
         <div style={{ borderLeft: "2px solid var(--border)", paddingLeft: 10 }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11, color: "var(--text)" }}>Terrain penalty (45%)</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11, color: "var(--text)" }}>{t.terrainPenalty}</span>
             <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text)" }}>{data.terrainPenaltyScore ?? "—"}</span>
           </div>
           {data.terrainPenaltyScore != null && data.elevationCenterM != null && data.elevationVarianceM != null ? (
             <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-muted)", lineHeight: 1.6 }}>
-              {data.elevationCenterM.toFixed(0)}m elevation, ±{data.elevationVarianceM.toFixed(1)}m variance across a ~5km sample
+              {data.elevationCenterM.toFixed(0)}{t.elevation}, ±{data.elevationVarianceM.toFixed(1)}{t.variance}
             </p>
           ) : (
             <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
-              Not available — EU-DEM has a data gap at this location (likely open water).
+              {t.demNA}
             </p>
           )}
         </div>
       </div>
 
       <p style={{ fontFamily: "var(--font-ui)", fontSize: 9, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
-        Real-world speed: Bittimittari (Traficom), licensed under CC BY 4.0 · Terrain: Produced using Copernicus data and information funded by the European Union — EU-DEM layers.
+        {t.sources}
       </p>
     </div>
   )
 }
 
-export function ResilienceOutput({ result, input, realData }: { result: AdvisoryResult; input?: AssessmentInputs; realData?: RealDataEvidence }) {
+export function ResilienceOutput({
+  result,
+  input,
+  realData,
+  lang = "en",
+}: {
+  result: AdvisoryResult
+  input?: AssessmentInputs
+  realData?: RealDataEvidence
+  lang?: UiLang
+}) {
+  const t = UI[lang]
   const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats } = result
   const gc = gradeColor(sig.grade)
   const gtc = gradeTextColor(sig.grade)
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
-      {/* Download PDF — hidden in the printed output itself */}
       <button
         className="gryps-no-print"
         onClick={() => window.print()}
@@ -234,10 +339,9 @@ export function ResilienceOutput({ result, input, realData }: { result: Advisory
           fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
         }}
       >
-        <Download size={13} /> Download PDF
+        <Download size={13} /> {t.downloadPdf}
       </button>
 
-      {/* Signature score */}
       <div className="gryps-signature-card" style={{
         backgroundColor: "var(--surface)",
         border: `1px solid ${gc}44`,
@@ -249,7 +353,7 @@ export function ResilienceOutput({ result, input, realData }: { result: Advisory
           <div style={{ fontFamily: "var(--font-data)", fontSize: 72, fontWeight: 900, color: gtc, lineHeight: 1, letterSpacing: "-0.04em" }}>
             {sig.score}
           </div>
-          <div style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.12em", marginTop: 4 }}>RESILIENCE SCORE</div>
+          <div style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.12em", marginTop: 4 }}>{t.resilienceScore}</div>
         </div>
         <div className="gryps-signature-divider" style={{ width: 1, height: 64, backgroundColor: "var(--border)", flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
@@ -258,31 +362,27 @@ export function ResilienceOutput({ result, input, realData }: { result: Advisory
               fontFamily: "var(--font-data)", fontSize: 18, fontWeight: 900, color: gtc,
               border: `1px solid ${gc}55`, borderRadius: 6, padding: "2px 12px",
             }}>{sig.grade}</span>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.1em" }}>RESILIENCE SIGNATURE</span>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.1em" }}>{t.resilienceSignature}</span>
           </div>
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>{sig.summary}</p>
         </div>
       </div>
 
-      {/* Assessment inputs */}
-      {input && <AssessmentInputsPanel input={input} />}
+      {input && <AssessmentInputsPanel input={input} t={t} />}
 
-      {/* Real-data evidence — deterministic, kept separate from the Mistral narrative */}
-      {realData && <RealDataEvidencePanel data={realData} />}
+      {realData && <RealDataEvidencePanel data={realData} t={t} />}
 
-      {/* Recommendation */}
       <div style={{
         backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
         borderRadius: 8, padding: "16px 20px",
       }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 8 }}>RECOMMENDATION</p>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.recommendation}</p>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
       </div>
 
-      {/* Risk factors + Redundancy gaps */}
       <div className="gryps-output-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>RISK FACTORS</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.riskFactors}</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {risk_factors.map((r, i) => {
               const vivid = SEV_COLOR_VIVID[r.severity] ?? "#64748B"
@@ -310,13 +410,13 @@ export function ResilienceOutput({ result, input, realData }: { result: Advisory
           </div>
         </div>
         <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>REDUNDANCY GAPS</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.redundancyGaps}</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {redundancy_gaps.map((g, i) => (
               <div key={i}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{g.label}</span>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-red)", marginLeft: "auto" }}>↓ SCORE IMPACT</span>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-red)", marginLeft: "auto" }}>{t.scoreImpact}</span>
                 </div>
                 <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{g.detail}</p>
               </div>
@@ -325,9 +425,8 @@ export function ResilienceOutput({ result, input, realData }: { result: Advisory
         </div>
       </div>
 
-      {/* Connectivity options */}
       <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>CONNECTIVITY OPTIONS</p>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.connectivityOptions}</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {connectivity_options.map((o, i) => {
             const tech = getOrbitalCharacteristics(o.type, o.provider)
@@ -348,19 +447,19 @@ export function ResilienceOutput({ result, input, realData }: { result: Advisory
                     <div style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: i === 0 ? "var(--accent-blue)" : "var(--text)", lineHeight: 1 }}>
                       {o.confidence}<span style={{ fontSize: 10, color: "var(--text-muted)" }}>%</span>
                     </div>
-                    <div style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>CONFIDENCE</div>
+                    <div style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>{t.confidence}</div>
                   </div>
                 </div>
                 {tech && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
                     <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
-                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>LATENCY </span>{tech.latency}
+                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>{t.latency}</span>{tech.latency}
                     </p>
                     <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
-                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>RELIABILITY </span>{tech.reliability}
+                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>{t.reliability}</span>{tech.reliability}
                     </p>
                     <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
-                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>HARDWARE </span>{tech.hardware}
+                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>{t.hardware}</span>{tech.hardware}
                     </p>
                   </div>
                 )}
@@ -369,22 +468,23 @@ export function ResilienceOutput({ result, input, realData }: { result: Advisory
           })}
         </div>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
-          General technical characteristics based on publicly available industry information — not official provider specifications, current commercial terms, or an endorsement of any provider. GRYPS has no commercial relationship with the providers listed.
+          {t.orbitalDisclaimer}
         </p>
       </div>
 
-      {/* Caveats */}
       <div style={{ borderTop: "1px solid var(--border)", paddingTop: 12, display: "flex", alignItems: "flex-start", gap: 10 }}>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", border: "1px solid var(--border)", borderRadius: 3, padding: "2px 5px", flexShrink: 0, marginTop: 2 }}>AI</span>
+        <span
+          title={t.aiBadgeTitle}
+          style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", border: "1px solid var(--border)", borderRadius: 3, padding: "2px 5px", flexShrink: 0, marginTop: 2, cursor: "help" }}
+        >AI</span>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.6 }}>
-          {caveats.join(" · ")} · <Link href="/legal/terms#section-04" style={{ color: "var(--text-dim)", textDecoration: "underline" }}>Art. 50 EU AI Act</Link>
+          {caveats.join(" · ")} · <Link href="/legal/terms#section-04" style={{ color: "var(--text-dim)", textDecoration: "underline" }}>{t.art50}</Link>
         </p>
       </div>
 
-      {/* Print-only — generated date + attribution, invisible on screen */}
       <div className="gryps-print-only" style={{ borderTop: "1px solid var(--border)", paddingTop: 12, marginTop: 4 }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>
-          Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })} · GRYPS — Connectivity Resilience Advisor · gryps.vercel.app
+          {t.generated} {new Date().toLocaleDateString(lang === "fi" ? "fi-FI" : "en-GB", { day: "numeric", month: "long", year: "numeric" })} · {t.printAttr}
         </p>
       </div>
     </div>

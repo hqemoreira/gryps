@@ -4,11 +4,11 @@ import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTria
 import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
 import { GrypsMark } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
-import { Footer } from "@/components/Footer"
+import { Footer, grypsCopyright } from "@/components/Footer"
 import { useTheme } from "@/context/ThemeContext"
 
 // ── Advisor form ──────────────────────────────────────────────────────────────
-function AdvisorForm({ t }: { t: typeof COPY.en }) {
+function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const [lat, setLat]         = useState("")
   const [lng, setLng]         = useState("")
   const [vertical, setVertical]   = useState("")
@@ -83,7 +83,7 @@ function AdvisorForm({ t }: { t: typeof COPY.en }) {
     return (
       <div>
         <div className="gryps-print-target">
-          <ResilienceOutput result={result} input={assessmentInputs} realData={realData} />
+          <ResilienceOutput result={result} input={assessmentInputs} realData={realData} lang={lang} />
         </div>
         <button
           className="gryps-no-print"
@@ -405,7 +405,6 @@ const COPY = {
     ctaH2:  "Resilience starts with knowing your score.",
     ctaSub: "Free Resilience Signature for any Nordic, Arctic, or Icelandic site. No account, no sales call — just your connectivity risk, scored and documented.",
     ctaBtn: "Get your Resilience Signature",
-    footerRights: "© 2026 GRYPS · Espoo, Finland · Non-commercial R&D prototype · No registered company · No revenue generated",
     footerTag:    "Built in Finland for high-latitude resilience.",
   },
   fi: {
@@ -451,7 +450,6 @@ const COPY = {
     ctaH2:  "Resilienssi alkaa pisteidesi tuntemisesta.",
     ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä, ei myyntipuheluita — vain yhteyksiriskisi pisteytettynä ja dokumentoituna.",
     ctaBtn: "Hanki Resilience Signature",
-    footerRights: "© 2026 GRYPS · Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi · Ei rekisteröityä yritystä · Ei tuloja",
     footerTag:    "Rakennettu Suomessa korkean leveysasteen resilienssille.",
   },
 }
@@ -602,7 +600,7 @@ export default function HomePage() {
           {t.advisorCta}
         </h2>
         <p className="gryps-no-print" style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", marginBottom: 32 }}>{t.advisorSub}</p>
-        <AdvisorForm t={t} />
+        <AdvisorForm t={t} lang={lang} />
       </section>
 
       {/* How it works */}
@@ -646,7 +644,9 @@ export default function HomePage() {
 
       <Footer
         lang={lang}
-        footerRights={t.footerRights}
+        footerRights={grypsCopyright(lang, lang === "en"
+          ? "Espoo, Finland · Non-commercial R&D prototype · No registered company · No revenue generated"
+          : "Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi · Ei rekisteröityä yritystä · Ei tuloja")}
         footerTag={t.footerTag}
         secondaryLink={{ href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" }}
       />

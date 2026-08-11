@@ -3,7 +3,7 @@ import { useMemo, useState, type CSSProperties } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { Header } from "@/components/Header"
-import { Footer } from "@/components/Footer"
+import { Footer, grypsCopyright } from "@/components/Footer"
 import { useTheme } from "@/context/ThemeContext"
 import {
   CAPACITY_STATUS_COLOR,
@@ -64,7 +64,7 @@ const COPY = {
     viewSig: "Full signature →",
     empty: "No sites in this filter.",
     navCta: "Score your site",
-    footerRights: "© 2026 GRYPS · Espoo, Finland · Non-commercial R&D prototype",
+    loadingMap: "LOADING MAP…",
   },
   fi: {
     tagline: "KAPASITEETTIKARTTA",
@@ -82,7 +82,7 @@ const COPY = {
     viewSig: "Koko signatuuri →",
     empty: "Ei kohteita tällä suodattimella.",
     navCta: "Pisteytä kohteesi",
-    footerRights: "© 2026 GRYPS · Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi",
+    loadingMap: "LADATAAN KARTTAA…",
   },
 }
 
@@ -301,7 +301,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
 
       <Footer
         lang={lang}
-        footerRights={t.footerRights}
+        footerRights={grypsCopyright(lang, lang === "en" ? "Espoo, Finland · Non-commercial R&D prototype" : "Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi")}
         secondaryLink={{ href: "/", label: lang === "en" ? "Back to GRYPS" : "Takaisin GRYPS:iin" }}
       />
     </div>

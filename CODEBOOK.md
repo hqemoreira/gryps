@@ -195,11 +195,14 @@ Fixed header is 72px tall. Without `scrollMarginTop`, clicking a nav link scroll
 
 ## EU AI Act Article 50 — AI badge
 
-Inline `[AI]` badge on every AI-generated rationale. Non-intrusive: 8px, dimmed colour, `cursor:help`, tooltip with the full Article 50 disclosure.
+Inline `[AI]` badge on every AI-generated analytical summary (Advisor /
+Resilience Signature caveats). Tooltip discloses limited-risk classification,
+Mistral-only provider, human oversight, and Art. 50. Must stay aligned with
+Terms §04 and Privacy §05 — see Legal coupling above.
 
 ```tsx
 <span
-  title="EU AI Act Art. 50 — AI-generated analytical summary. Not a guarantee of network availability."
+  title="EU AI Act Art. 50 — AI-generated analytical summary (Mistral). Limited-risk system. …"
   style={{
     fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)",
     border: "1px solid var(--border)", borderRadius: 3, padding: "2px 5px",
@@ -286,6 +289,38 @@ something addressed here.
 | `MISTRAL_API_KEY` | `lib/scoring.ts` | Mistral AI resilience scoring |
 
 Set in: Vercel → gryps project → Settings → Environment Variables
+
+---
+
+## Dash house rules (EN + FI)
+
+- Use a typographic em dash (`—`) for parenthetical breaks and paired asides in
+  both EN and FI product copy. Do not use ASCII `--` or spaced hyphen pairs.
+- Keep product and feature names in English in both locales when intentional
+  (GRYPS, Resilience Signature, Connectivity Advisor, Capacity Map, Mistral).
+- UI languages are **EN and FI only** — no third language.
+- Prefer natural Finnish over calques (e.g. `alusta` / `palvelu`, not `platformin`).
+
+---
+
+## Legal coupling (EU AI Act)
+
+Privacy (`/legal/privacy`) and Terms (`/legal/terms`) are the required public
+legal pages (footer-linked). Both locales must stay aligned on:
+
+- Operator: Espoo, Finland · contact `hello@gryps.eu` · Henrique Moreira (solo founder)
+- AI provider: **Mistral only** for Advisor / Resilience Signature outputs
+- Classification: **limited-risk** under Regulation (EU) 2024/1689 — **not** minimal-risk
+- Article 50: `[AI]` badge at point of exposure; human oversight; no prohibited /
+  high-risk claims; no automated decisions with legal/similarly significant effects
+- What is / isn’t AI-generated (portal chrome, maps, real-data panels vs Advisor text)
+
+**When adding AI surfaces, update Privacy + Terms “Last updated” in the same PR.**
+Point-of-exposure UI labels (`[AI]` badge / tooltip) must match legal claims.
+This is product copy/compliance alignment — not legal advice.
+
+Footer copyright: `© {year} GRYPS · All rights reserved` (FI: `Kaikki oikeudet pidätetään`)
+via `grypsCopyright()` in `components/Footer.tsx`.
 
 ---
 
