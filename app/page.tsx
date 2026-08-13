@@ -594,7 +594,7 @@ export default function HomePage() {
 
       {/* Live Advisor */}
       <section id="advisor" className="gryps-section-pad" style={{ padding: "64px 32px", maxWidth: 900, margin: "0 auto", scrollMarginTop: 80 }}>
-        <p className="gryps-no-print" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>FREE RESILIENCE ADVISOR</p>
+        <p className="gryps-no-print" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>DEMO RESILIENCE ADVISOR</p>
         <h2 className="gryps-no-print" style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", marginBottom: 8, letterSpacing: "-0.01em" }}>
           {t.advisorCta}
         </h2>
