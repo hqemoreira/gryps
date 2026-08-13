@@ -32,8 +32,8 @@ const COPY = {
     map: "Map", list: "List",
     loading: "LOADING SIGNATURES…", noMatch: "No sites match these filters.",
     ctaHeading: "Score your own site",
-    ctaSub: "Get a free, real-time Resilience Signature for your own coordinates — the same model that scored every site above.",
-    ctaBtn: "Run the free Advisor",
+    ctaSub: "Generate a research Resilience Signature for your coordinates — same model as the portfolio sites above. Non-commercial demo.",
+    ctaBtn: "Run the demo Advisor",
     navCta: "Score your site",
   },
   fi: {
@@ -44,8 +44,8 @@ const COPY = {
     map: "Kartta", list: "Lista",
     loading: "LADATAAN SIGNATUUREITA…", noMatch: "Yksikään kohde ei vastaa suodattimia.",
     ctaHeading: "Pisteytä oma kohteesi",
-    ctaSub: "Hanki ilmainen, reaaliaikainen Resilience Signature omille koordinaateillesi — sama malli, joka pisteytti jokaisen yllä olevan kohteen.",
-    ctaBtn: "Suorita ilmainen Advisor",
+    ctaSub: "Luo tutkimus-Signature omille koordinaateillesi — sama malli. Ei-kaupallinen demo.",
+    ctaBtn: "Suorita demo-Advisor",
     navCta: "Pisteytä kohteesi",
   },
 }
