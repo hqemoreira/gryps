@@ -22,8 +22,8 @@ const jsonLd = {
   "@type": "SoftwareApplication",
   "name": "GRYPS",
   "url": "https://gryps.vercel.app",
-  "description": "GRYPS scores and documents connectivity resilience for autonomous and remote operations in maritime, Arctic, forestry, and mining environments — NIS2/CER-aligned reporting for critical operators.",
-  "applicationCategory": "BusinessApplication",
+  "description": "Non-commercial R&D prototype: GRYPS scores and documents satellite connectivity resilience for remote and autonomous site demos — learning and portfolio use, not a commercial service.",
+  "applicationCategory": "EducationalApplication",
   "operatingSystem": "Web",
   "audience": {
     "@type": "Audience",
@@ -39,20 +39,20 @@ const jsonLd = {
 
 export const metadata: Metadata = {
   title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
-  description: "GRYPS scores and documents satellite connectivity resilience for autonomous fleets and remote sites in maritime, Arctic, forestry, and mining. Free Resilience Signature — NIS2/CER-aligned reporting.",
+  description: "Non-commercial R&D prototype: GRYPS scores and documents satellite connectivity resilience for remote/autonomous site demos. Learning and portfolio use — not a commercial service.",
   keywords: "connectivity resilience, autonomous operations connectivity, NIS2 connectivity risk, CER critical operator, satellite resilience Arctic, satellite resilience Iceland, remote site connectivity risk, forestry autonomous fleet connectivity",
   metadataBase: new URL("https://gryps.vercel.app"),
   alternates: { canonical: "https://gryps.vercel.app" },
   openGraph: {
     title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
-    description: "Score and document satellite connectivity risk for autonomous and remote operations. Free Resilience Signature — NIS2/CER-aligned reporting for Nordic, Arctic, and Icelandic critical operators.",
+    description: "Non-commercial R&D prototype: score and document satellite connectivity risk for remote and autonomous site demos. Learning and portfolio use — not a commercial service.",
     type: "website",
     siteName: "GRYPS",
   },
   twitter: {
     card: "summary_large_image",
     title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
-    description: "Free Resilience Signature for your site. Score and document connectivity risk before it becomes a safety event.",
+    description: "Research demo Resilience Signature for learning — not a commercial service. Score connectivity risk for remote and autonomous site demos.",
   },
   robots: { index: true, follow: true },
   verification: { google: "vbGW3-1oXwqBQl7NlA461C2enz8BtVkFOPqW0SiJVy0" },
