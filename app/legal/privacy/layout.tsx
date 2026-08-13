@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | GRYPS",
-  description: "How GRYPS collects, processes, and protects personal data in connection with the GRYPS connectivity resilience platform.",
+  title: "Privacy | GRYPS",
+  description: "How the GRYPS demonstration prototype handles voluntarily entered data — no marketing tracking, Mistral + Vercel processing for Resilience Signature output.",
   alternates: { canonical: "https://gryps.vercel.app/legal/privacy" },
 }
 

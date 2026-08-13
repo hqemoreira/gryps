@@ -248,8 +248,8 @@ gryps/
 │   ├── icon.tsx                # Static PNG favicon (32×32) via ImageResponse
 │   └── legal/
 │       ├── layout.tsx          # Shared legal nav + footer
-│       ├── terms/page.tsx      # T&C — 10 sections, EN/FI
-│       └── privacy/page.tsx    # Privacy Policy — 11 sections, EN/FI
+│       ├── terms/page.tsx      # Plain Terms — EN/FI
+│       └── privacy/page.tsx    # Plain Privacy — EN/FI
 └── components/
     └── AnimatedFavicon.tsx     # Canvas RAF favicon
 ```
@@ -303,20 +303,18 @@ Set in: Vercel → gryps project → Settings → Environment Variables
 
 ---
 
-## Legal coupling (EU AI Act)
+## Legal coupling (plain prototype notices)
 
 Privacy (`/legal/privacy`) and Terms (`/legal/terms`) are the required public
 legal pages (footer-linked). Both locales must stay aligned on:
 
-- Operator: Espoo, Finland · contact `hello@gryps.eu` · Henrique Moreira (solo founder)
-- AI provider: **Mistral only** for Advisor / Resilience Signature outputs
-- Classification: **limited-risk** under Regulation (EU) 2024/1689 — **not** minimal-risk
-- Article 50: `[AI]` badge at point of exposure; human oversight; no prohibited /
-  high-risk claims; no automated decisions with legal/similarly significant effects
-- What is / isn’t AI-generated (portal chrome, maps, real-data panels vs Advisor text)
+- Plain, short notices — not multi-section commercial T&Cs
+- Operator: Henrique Moreira · Espoo, Finland · contact `hqe.moreira@gmail.com`
+- Non-commercial research / demonstration prototype — no company, no revenue, no sale
+- AI processing disclosed: **Mistral** (+ Vercel hosting) for demonstration Resilience Signature
+- No marketing tracking / analytics cookies claimed in Privacy
+- Point-of-exposure UI: `[AI]` badge remains on Advisor outputs; Terms link is `/legal/terms`
 
-**When adding AI surfaces, update Privacy + Terms “Last updated” in the same PR.**
-Point-of-exposure UI labels (`[AI]` badge / tooltip) must match legal claims.
 This is product copy/compliance alignment — not legal advice.
 
 Footer copyright: `© {year} GRYPS · All rights reserved` (FI: `Kaikki oikeudet pidätetään`)

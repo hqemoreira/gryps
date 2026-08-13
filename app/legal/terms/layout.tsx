@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | GRYPS",
-  description: "Terms governing access to and use of GRYPS, a non-commercial R&D prototype for connectivity resilience analysis.",
+  title: "Terms | GRYPS",
+  description: "Non-commercial research prototype terms for GRYPS — demonstration and learning purposes only. No warranties.",
   alternates: { canonical: "https://gryps.vercel.app/legal/terms" },
 }
 

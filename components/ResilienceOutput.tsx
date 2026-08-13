@@ -478,7 +478,7 @@ export function ResilienceOutput({
           style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", border: "1px solid var(--border)", borderRadius: 3, padding: "2px 5px", flexShrink: 0, marginTop: 2, cursor: "help" }}
         >AI</span>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.6 }}>
-          {caveats.join(" · ")} · <Link href="/legal/terms#section-04" style={{ color: "var(--text-dim)", textDecoration: "underline" }}>{t.art50}</Link>
+          {caveats.join(" · ")} · <Link href="/legal/terms" style={{ color: "var(--text-dim)", textDecoration: "underline" }}>{t.art50}</Link>
         </p>
       </div>
 
