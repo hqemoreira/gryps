@@ -12,8 +12,8 @@ const COPY = {
         id: "01",
         title: "Nature of the Service — Predictive Model Disclaimer",
         body: [
-          "GRYPS provides satellite connectivity intelligence through mathematical scoring models. The Deployment Confidence scores, provider rankings, latency estimates, and coverage assessments produced by GRYPS are probabilistic outputs derived from publicly available data, orbital telemetry, environmental variables, and historical performance records.",
-          "GRYPS does not provide an operational guarantee of satellite network availability, uptime, signal quality, or bandwidth at any specific location or time. A Deployment Confidence score of 94 does not mean that the recommended provider will maintain 94% uptime at your site. It means that, based on the analytical model's inputs at the time of analysis, that provider is statistically the most suitable choice for your stated operational requirements.",
+          "GRYPS provides satellite connectivity intelligence through mathematical scoring models. The Resilience Signature scores, provider rankings, latency estimates, and coverage assessments produced by GRYPS are probabilistic outputs derived from publicly available data, orbital telemetry, environmental variables, and historical performance records.",
+          "GRYPS does not provide an operational guarantee of satellite network availability, uptime, signal quality, or bandwidth at any specific location or time. A Resilience Signature score of 94 does not mean that the recommended provider will maintain 94% uptime at your site. It means that, based on the analytical model's inputs at the time of analysis, that provider is statistically the most suitable choice for your stated operational requirements.",
           "You expressly acknowledge that GRYPS scores and recommendations are tools to support procurement and planning decisions — not operational commitments. GRYPS shall not be liable for any operational failure, safety incident, connectivity outage, equipment loss, or consequential damages arising from reliance on GRYPS analysis outputs.",
         ],
       },
@@ -53,7 +53,7 @@ const COPY = {
         body: [
           "Access to the GRYPS API tier is subject to additional restrictions beyond general platform use. By accessing the GRYPS API, you agree that you will not:",
           "Systematically query the API with the intent of reverse-engineering, reproducing, or approximating GRYPS's proprietary scoring weights, orbital weighting methodology, or provider evaluation algorithms.",
-          "Feed GRYPS API outputs — including Deployment Confidence scores, ranked provider lists, or rationale summaries — into a competing satellite connectivity intelligence product, data aggregation platform, or resale data service without prior written authorisation from GRYPS.",
+          "Feed GRYPS API outputs — including Resilience Signature scores, ranked provider lists, or rationale summaries — into a competing satellite connectivity intelligence product, data aggregation platform, or resale data service without prior written authorisation from GRYPS.",
           "Use GRYPS API outputs to train, fine-tune, or benchmark any machine learning model intended to replicate GRYPS analytical capabilities.",
           "Violation of these restrictions may result in immediate API access termination and may give rise to legal claims under applicable intellectual property and trade secret law.",
         ],
@@ -111,8 +111,8 @@ const COPY = {
         id: "01",
         title: "Palvelun luonne — Ennustavan mallin vastuuvapauslauseke",
         body: [
-          "GRYPS tarjoaa satelliittiyhteysintelligenssiä matemaattisten pisteytysmallien avulla. Deployment Confidence -pisteet, toimittajarankingit, latenssiarviot ja kattavuusarviot ovat todennäköisyyspohjaisia tuloksia, jotka perustuvat julkisesti saatavilla olevaan dataan, orbitaalitelemetriaan, ympäristömuuttujiin ja historiallisiin suorituskykytietoihin.",
-          "GRYPS ei tarjoa operatiivista takuuta satelliittiverkon saatavuudesta, käytettävyydestä, signaalin laadusta tai kaistanleveydestä missään tietyssä sijainnissa tai ajankohdassa. Deployment Confidence -pisteet 94 ei tarkoita, että suositeltu toimittaja ylläpitäisi 94 % käytettävyyttä sivustollasi.",
+          "GRYPS tarjoaa satelliittiyhteysintelligenssiä matemaattisten pisteytysmallien avulla. Resilience Signature -pisteet, toimittajarankingit, latenssiarviot ja kattavuusarviot ovat todennäköisyyspohjaisia tuloksia, jotka perustuvat julkisesti saatavilla olevaan dataan, orbitaalitelemetriaan, ympäristömuuttujiin ja historiallisiin suorituskykytietoihin.",
+          "GRYPS ei tarjoa operatiivista takuuta satelliittiverkon saatavuudesta, käytettävyydestä, signaalin laadusta tai kaistanleveydestä missään tietyssä sijainnissa tai ajankohdassa. Resilience Signature -piste 94 ei tarkoita, että suositeltu toimittaja ylläpitäisi 94 % käytettävyyttä sivustollasi.",
           "Tunnustat nimenomaisesti, että GRYPS-pisteet ja -suositukset ovat hankinta- ja suunnittelupäätöksiä tukevia välineitä — eivät operatiivisia sitoumuksia. GRYPS ei ole vastuussa mistään operatiivisista häiriöistä, turvallisuustapahtumista, yhteyskatkoista tai välillisistä vahingoista.",
         ],
       },
@@ -277,8 +277,8 @@ export default function TermsPage() {
               }}>
                 <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-amber)", lineHeight: 1.6 }}>
                   {lang === "en"
-                    ? "GRYPS Deployment Confidence scores are predictive mathematical outputs. They do not constitute a guarantee of satellite network availability."
-                    : "GRYPS Deployment Confidence -pisteet ovat ennustavia matemaattisia tuloksia. Ne eivät muodosta takausta satelliittiverkon saatavuudesta."}
+                    ? "GRYPS Resilience Signature scores are predictive mathematical outputs. They do not constitute a guarantee of satellite network availability."
+                    : "GRYPS Resilience Signature -pisteet ovat ennustavia matemaattisia tuloksia. Ne eivät muodosta takausta satelliittiverkon saatavuudesta."}
                 </p>
               </div>
             )}

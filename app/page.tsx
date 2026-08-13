@@ -222,14 +222,14 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
 
 // ── Telemetry stream ──────────────────────────────────────────────────────────
 const TELEMETRY_LINES = [
-  { tag: "GRYPS-INIT", color: "var(--accent-blue)",  text: "Ingesting orbital telemetry for 68.2°N · 27.4°E…" },
-  { tag: "LEO-SCAN",   color: "var(--accent-cyan)",  text: "Starlink Shell-4 pass density: 94.2%  [OPTIMAL]" },
-  { tag: "GEO-CHECK",  color: "var(--accent-amber)", text: "Viasat ViaSat-3 horizon angle: 8.3°   [HIGH ATTENUATION RISK]" },
-  { tag: "MEO-EVAL",   color: "var(--accent-cyan)",  text: "OneWeb elevation window: 62°–89°      [STRONG]" },
-  { tag: "CANOPY",     color: "var(--accent-amber)", text: "Pine canopy blockage penalty applied: −6.2 dB" },
-  { tag: "REDUND",     color: "var(--accent-blue)",  text: "Dual-orbit redundancy path: Starlink + Iridium NEXT" },
-  { tag: "SCORE",      color: "var(--accent-green)", text: "Deployment Confidence computed: 94 · 81 · 67" },
-  { tag: "REPORT",     color: "var(--accent-green)", text: "Resilience signature generated — ready for export" },
+  { tag: "GRYPS-INIT", color: "var(--accent-blue)",  text: "Evaluating site profile for 68.2°N · 27.4°E…" },
+  { tag: "RISK-FACT",  color: "var(--accent-amber)", text: "Single-provider dependency · critical severity" },
+  { tag: "GAP",        color: "var(--accent-amber)", text: "No backup connectivity identified" },
+  { tag: "OPTIONS",    color: "var(--accent-cyan)",  text: "OneWeb LEO · confidence 85" },
+  { tag: "OPTIONS",    color: "var(--accent-cyan)",  text: "Iridium Certus LEO · confidence 90" },
+  { tag: "OPTIONS",    color: "var(--accent-cyan)",  text: "Inmarsat Global Xpress GEO · confidence 75" },
+  { tag: "SIGNATURE",  color: "var(--accent-green)", text: "Resilience Signature computed: 40 · D" },
+  { tag: "REPORT",     color: "var(--accent-green)", text: "Assessment complete — advisory output ready" },
 ]
 
 function TelemetryStream({ t }: { t: typeof COPY.en }) {
@@ -302,10 +302,7 @@ function PolarMap({ t }: { t: typeof COPY.en }) {
     <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid var(--border)" }}>
         <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>{t.polarHeader}</span>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div style={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 5px #2ED47A" }} />
-          <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-green)", letterSpacing: "0.08em" }}>LIVE</span>
-        </div>
+        <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em" }}>{t.polarMapLabel}</span>
       </div>
       <svg width="100%" viewBox="0 0 400 390" style={{ display: "block" }}>
         {latLines.map(lat => (
@@ -366,12 +363,12 @@ const COPY = {
     tag:        "CONNECTIVITY RESILIENCE · NORDIC, ARCTIC & ICELAND OPERATIONS",
     navCta:     "Free analysis",
     h1:         ["Connectivity resilience", "for autonomous and", "remote operations."],
-    sub:        "Remote sites, autonomous fleets, and critical operations fail without connectivity. GRYPS scores, documents, and monitors that risk — giving you a Resilience Signature before deployment depends on it.",
+    sub:        "Remote sites, autonomous fleets, and critical operations fail without connectivity. GRYPS scores and documents that risk — giving you a Resilience Signature before deployment depends on it.",
     nis2line:   "NIS2/CER-aligned resilience reporting · Espoo, Finland · R&D prototype",
     statsL1:    "Providers indexed",
     statsL2:    "All orbital types",
     statsL3:    "Polar coverage",
-    liveCounter: "sites monitored across the Nordics & Arctic",
+    liveCounter: "sites assessed in the Nordic & Arctic portfolio",
     advisorCta: "Get your site's Resilience Signature",
     advisorSub: "Free · Takes 60 seconds · No account needed",
     sectorLabel:        "OPERATIONAL SECTOR",
@@ -381,18 +378,18 @@ const COPY = {
     criticalityLabel:   "OPERATION CRITICALITY",
     criticalityPlaceholder: "Select criticality",
     emailLabel: "GET YOUR REPORT BY EMAIL",
-    emailHint:  "Enter your email to receive this report, plus get notified if your site's risk profile changes.",
+    emailHint:  "Optional — enter your email to receive a copy of your Resilience Signature report.",
     emailOptionalNote: "Optional — you'll see your results either way.",
     runAdvisor: "Run resilience analysis",
     analysing:  "Analysing your site…",
     analyseAnother: "Analyse another site",
     telemetryLabel:  "ILLUSTRATIVE ENGINE OUTPUT — NOT LIVE DATA",
-    telemetryHeader: "ORBITAL INTELLIGENCE ENGINE · LIVE",
+    telemetryHeader: "ILLUSTRATIVE ADVISOR SEQUENCE",
     problemL: "The resilience gap GRYPS closes",
     problems: [
       { title: "Autonomous operations have zero margin",    body: "A harvester fleet at −30°C. An offshore platform check-in. A remote mining sensor cluster. When connectivity fails in these environments it isn't an inconvenience — it's a safety event, an operational halt, or a regulatory incident." },
       { title: "Single-provider setups are fragile by design", body: "Most sites run one satellite provider with no documented fallback. Pass geometry, weather windows, and orbital outages are invisible risks until they materialise. GRYPS makes them legible before deployment." },
-      { title: "NIS2 and CER require documented resilience",   body: "Directive compliance increasingly demands that critical operators document connectivity risk and mitigation. A Resilience Signature is evidence your site's connectivity was assessed, scored, and monitored." },
+      { title: "NIS2 and CER require documented resilience",   body: "Directive compliance increasingly demands that critical operators document connectivity risk and mitigation. A Resilience Signature is evidence your site's connectivity was assessed and scored." },
     ],
     howL:  "How the Resilience Advisor works",
     steps: [
@@ -402,6 +399,7 @@ const COPY = {
       { n: "04", title: "Get your Signature",   body: "Score, grade, risk factors, redundancy gaps, ranked providers, and plain-language recommendation — in seconds." },
     ],
     polarHeader: "COVERAGE ZONE — NORDIC, ARCTIC & ICELAND",
+    polarMapLabel: "DEMO MAP — NOT LIVE MONITORING",
     ctaH2:  "Resilience starts with knowing your score.",
     ctaSub: "Free Resilience Signature for any Nordic, Arctic, or Icelandic site. No account, no sales call — just your connectivity risk, scored and documented.",
     ctaBtn: "Get your Resilience Signature",
@@ -411,12 +409,12 @@ const COPY = {
     tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT, ARKTINEN JA ISLANTI",
     navCta:     "Ilmainen analyysi",
     h1:         ["Yhteyden resilienssi", "autonomisille ja", "etätoiminnoille."],
-    sub:        "Etäkohteet, autonomiset laivastot ja kriittiset toiminnot epäonnistuvat ilman yhteyttä. GRYPS pisteytyää, dokumentoi ja seuraa tätä riskiä — antaen sinulle Resilience Signature -todistuksen ennen kuin käyttöönotto siitä riippuu.",
+    sub:        "Etäkohteet, autonomiset laivastot ja kriittiset toiminnot epäonnistuvat ilman yhteyttä. GRYPS pisteyttää ja dokumentoi tämän riskin — antaen sinulle Resilience Signature -todistuksen ennen kuin käyttöönotto siitä riippuu.",
     nis2line:   "NIS2/CER-yhteensopiva resilienssirapor­tointi · Espoo, Suomi · T&K-prototyyppi",
     statsL1:    "Palveluntarjoajaa indeksoitu",
     statsL2:    "Kaikki orbitaalityypit",
     statsL3:    "Napapiirin kattavuus",
-    liveCounter: "kohdetta seurannassa Pohjoismaissa ja arktisella alueella",
+    liveCounter: "kohdetta arvioitu pohjoismaisessa ja arktisessa portfoliossa",
     advisorCta: "Hanki kohteesi Resilience Signature",
     advisorSub: "Ilmainen · 60 sekuntia · Ei tiliä tarvita",
     sectorLabel:        "TOIMIALA",
@@ -426,18 +424,18 @@ const COPY = {
     criticalityLabel:   "TOIMINNAN KRIITTISYYS",
     criticalityPlaceholder: "Valitse kriittisyystaso",
     emailLabel: "SAA RAPORTTI SÄHKÖPOSTIIN",
-    emailHint:  "Syötä sähköpostisi saadaksesi tämän raportin, ja saat ilmoituksen jos kohteesi riskiprofiili muuttuu.",
+    emailHint:  "Valinnainen — syötä sähköpostisi saadaksesi kopion Resilience Signature -raportistasi.",
     emailOptionalNote: "Valinnainen — näet tuloksesi joka tapauksessa.",
     runAdvisor: "Suorita resilienssianalyysi",
     analysing:  "Analysoidaan kohdetta…",
     analyseAnother: "Analysoi toinen kohde",
     telemetryLabel:  "HAVAINNOLLISTAVA MOOTTORILÄHTÖ — EI LIVE-DATAA",
-    telemetryHeader: "ORBITAALINEN TIEDUSTELUMOOTTORI · LIVE",
+    telemetryHeader: "HAVAINNOLLISTAVA ADVISOR-SEKVENSSI",
     problemL: "Resilienssiaukko, jonka GRYPS sulkee",
     problems: [
       { title: "Autonomisilla toiminnoilla ei ole varaa virheisiin", body: "Harvesterilaivaston signaali katoaa −30°C:ssa. Offshore-alustan turvatarkistus epäonnistuu. Etäkaivoksen anturiklusteri menettää yhteyden. Näissä ympäristöissä yhteyskatkot eivät ole haittoja — ne ovat turvallisuustapahtumia." },
       { title: "Yhden toimittajan ratkaisut ovat rakenteellisesti haavoittuvia", body: "Useimmat kohteet käyttävät yhtä satelliittitoimittajaa ilman dokumentoitua varajärjestelmää. Ohitusgeometria, sääikkunat ja orbitaalikatkot ovat näkymättömiä riskejä, kunnes ne toteutuvat. GRYPS tekee ne näkyväksi ennen käyttöönottoa." },
-      { title: "NIS2 ja CER vaativat dokumentoitua resilienssiä", body: "Direktiivien noudattaminen edellyttää yhä useammin, että kriittiset operaattorit dokumentoivat yhteysriskin ja lieventämistoimenpiteet. Resilience Signature on todiste siitä, että kohteesi yhteys on arvioitu, pisteytetty ja seurattu." },
+      { title: "NIS2 ja CER vaativat dokumentoitua resilienssiä", body: "Direktiivien noudattaminen edellyttää yhä useammin, että kriittiset operaattorit dokumentoivat yhteysriskin ja lieventämistoimenpiteet. Resilience Signature on todiste siitä, että kohteesi yhteys on arvioitu ja pisteytetty." },
     ],
     howL:  "Miten Resilience Advisor toimii",
     steps: [
@@ -447,6 +445,7 @@ const COPY = {
       { n: "04", title: "Saat Signaturesi",        body: "Pisteet, arvosana, riskitekijät, redundanssiaukot, rankatut toimittajat ja selkokielinen suositus — sekunneissa." },
     ],
     polarHeader: "KATTAVUUSALUE — POHJOISMAAT, ARKTINEN JA ISLANTI",
+    polarMapLabel: "DEMO-KARTTA — EI LIVE-SEURANTAA",
     ctaH2:  "Resilienssi alkaa pisteidesi tuntemisesta.",
     ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä, ei myyntipuheluita — vain yhteyksiriskisi pisteytettynä ja dokumentoituna.",
     ctaBtn: "Hanki Resilience Signature",
