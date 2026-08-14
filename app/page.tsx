@@ -4,7 +4,8 @@ import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTria
 import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
 import { GrypsMark } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
-import { Footer, grypsCopyright } from "@/components/Footer"
+import { Footer } from "@/components/Footer"
+import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useTheme } from "@/context/ThemeContext"
 
 // ── Advisor form ──────────────────────────────────────────────────────────────

@@ -6,7 +6,8 @@ import { getSiteBySlug, getAllSites } from "@/lib/signatures-db"
 import { ResilienceOutput } from "@/components/ResilienceOutput"
 import { gradeColor } from "@/lib/resilience-colors"
 import { Header } from "@/components/Header"
-import { Footer, grypsCopyright } from "@/components/Footer"
+import { Footer } from "@/components/Footer"
+import { grypsCopyright } from "@/lib/gryps-copyright"
 
 type Props = { params: Promise<{ slug: string }> }
 

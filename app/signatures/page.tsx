@@ -5,7 +5,8 @@ import Link from "next/link"
 import { ArrowRight, Map as MapIcon, List as ListIcon } from "lucide-react"
 import { gradeTextColor } from "@/lib/resilience-colors"
 import { Header } from "@/components/Header"
-import { Footer, grypsCopyright } from "@/components/Footer"
+import { Footer } from "@/components/Footer"
+import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useTheme } from "@/context/ThemeContext"
 
 const SignaturesMap = dynamic(() => import("@/components/SignaturesMap").then(m => m.SignaturesMap), {

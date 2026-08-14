@@ -197,7 +197,7 @@ const UI = {
   },
 } as const
 
-type UiCopy = (typeof UI)["en"]
+type UiCopy = (typeof UI)[UiLang]
 
 function AssessmentInputsPanel({ input, t }: { input: AssessmentInputs; t: UiCopy }) {
   const strictAutonomy = input.autonomy_level === "autonomous" || input.autonomy_level === "mixed"

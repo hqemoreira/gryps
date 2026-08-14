@@ -3,7 +3,8 @@ import { useMemo, useState, type CSSProperties } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { Header } from "@/components/Header"
-import { Footer, grypsCopyright } from "@/components/Footer"
+import { Footer } from "@/components/Footer"
+import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useTheme } from "@/context/ThemeContext"
 import {
   CAPACITY_STATUS_COLOR,

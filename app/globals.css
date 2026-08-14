@@ -76,6 +76,35 @@ body {
   .gryps-view-toggle { flex: 1 1 100% !important; margin-left: 0 !important; }
   .gryps-capacity-grid { grid-template-columns: 1fr !important; }
   .gryps-capacity-grid > div:first-child { min-height: 360px !important; height: 360px !important; }
+  /* iOS: 16px inputs avoid focus zoom */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+  /* Header: stack CTA under controls on narrow screens */
+  .gryps-nav-inner {
+    height: auto !important;
+    min-height: 52px;
+    flex-wrap: wrap !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    gap: 8px !important;
+  }
+  .gryps-nav-inner > div:last-child {
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
+  }
+  /* Hero: less top padding (banner + nav) */
+  .gryps-section-pad:first-of-type {
+    padding-top: 120px !important;
+  }
+}
+
+@supports (padding: max(0px)) {
+  .gryps-banner {
+    padding-left: max(12px, env(safe-area-inset-left)) !important;
+    padding-right: max(12px, env(safe-area-inset-right)) !important;
+  }
 }
 
 /* Banner disclosure text is longer than the 640px breakpoint accounts for --
