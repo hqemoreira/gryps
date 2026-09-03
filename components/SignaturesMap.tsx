@@ -2,6 +2,7 @@
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet"
 import Link from "next/link"
 import "leaflet/dist/leaflet.css"
+import { basemapTiles } from "@/lib/basemap"
 
 type SiteSummary = {
   slug: string
@@ -31,6 +32,7 @@ const POPUP_TEXT_COLOR: Record<string, string> = {
 const POPUP_LINK_COLOR = "#0B5FBF"
 
 export function SignaturesMap({ sites, dark = true }: { sites: SiteSummary[]; dark?: boolean }) {
+  const tiles = basemapTiles()
   return (
     <MapContainer
       center={[67, 22]}
@@ -39,8 +41,9 @@ export function SignaturesMap({ sites, dark = true }: { sites: SiteSummary[]; da
       scrollWheelZoom={false}
     >
       <TileLayer
-        url={`https://{s}.basemaps.cartocdn.com/${dark ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`}
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        url={tiles.url}
+        attribution={tiles.attribution}
+        className={dark ? "gryps-basemap-dim" : undefined}
       />
       {sites.map(site => (
         <CircleMarker

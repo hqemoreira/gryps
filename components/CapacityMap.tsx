@@ -6,6 +6,7 @@ import {
   CAPACITY_STATUS_COLOR,
   type CapacityStatus,
 } from "@/lib/capacity-status"
+import { basemapTiles } from "@/lib/basemap"
 
 export type CapacityMapSite = {
   slug: string
@@ -43,6 +44,7 @@ export function CapacityMap({
   selectedSlug: string | null
   onSelect: (slug: string) => void
 }) {
+  const tiles = basemapTiles()
   return (
     <MapContainer
       center={[67, 18]}
@@ -51,8 +53,9 @@ export function CapacityMap({
       scrollWheelZoom
     >
       <TileLayer
-        url={`https://{s}.basemaps.cartocdn.com/${dark ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`}
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        url={tiles.url}
+        attribution={tiles.attribution}
+        className={dark ? "gryps-basemap-dim" : undefined}
       />
       <FitBounds sites={sites} />
       {sites.map(site => {
