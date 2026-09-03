@@ -2,10 +2,11 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ContactForm } from "@/components/ContactForm"
+import { GRYPS_PROTOTYPE_MARK, GRYPS_PROTOTYPE_MARK_FI } from "@/lib/prototype-copy"
 
 const COPY = {
   en: {
-    eyebrow: "R&D prototype · non-commercial",
+    mark: GRYPS_PROTOTYPE_MARK,
     title: "Terms",
     intro:
       "This is a non-commercial R&D prototype maintained by Henrique Moreira (Espoo, Finland) for demonstration and learning purposes only. No registered company, no revenue, no commercial activity.",
@@ -20,7 +21,7 @@ const COPY = {
     backLink: "← Back to GRYPS",
   },
   fi: {
-    eyebrow: "T&K-prototyyppi · ei-kaupallinen",
+    mark: GRYPS_PROTOTYPE_MARK_FI,
     title: "Ehdot",
     intro:
       "Tämä on ei-kaupallinen T&K-prototyyppi, jota ylläpitää Henrique Moreira (Espoo, Suomi) vain demonstraatio- ja oppimistarkoituksiin. Ei rekisteröityä yritystä, ei tuloja, ei kaupallista toimintaa.",
@@ -43,11 +44,11 @@ export default function TermsPage() {
   return (
     <div style={{ maxWidth: 720, margin: "0 auto", padding: "56px 32px 0" }}>
       <div style={{ marginBottom: 40, paddingBottom: 32, borderBottom: "1px solid var(--border)" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>
-            GRYPS · {t.eyebrow.toUpperCase()}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, gap: 12 }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>
+            {t.mark}
           </p>
-          <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden" }}>
+          <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden", flexShrink: 0 }}>
             {(["en", "fi"] as const).map(l => (
               <button key={l} onClick={() => setLang(l)} style={{
                 background: lang === l ? "var(--border2)" : "transparent",
@@ -90,7 +91,7 @@ export default function TermsPage() {
         borderTop: "1px solid var(--border)",
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
-        <Link href="/legal/privacy" style={{
+        <Link href="/privacy" style={{
           fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
           color: "var(--accent-blue)", textDecoration: "none",
         }}>

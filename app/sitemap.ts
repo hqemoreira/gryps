@@ -8,8 +8,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: 'https://gryps.vercel.app/map', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: 'https://gryps.vercel.app/methodology', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: 'https://gryps.vercel.app/providers', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.75 },
-    { url: 'https://gryps.vercel.app/legal/terms', lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: 'https://gryps.vercel.app/legal/privacy', lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
+    { url: 'https://gryps.vercel.app/terms', lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
+    { url: 'https://gryps.vercel.app/privacy', lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
   ]
 
   try {

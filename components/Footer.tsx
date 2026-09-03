@@ -37,10 +37,10 @@ export function Footer({
         <Link href="/providers" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
           {lang === "fi" ? "Toimittajat" : "Providers"}
         </Link>
-        <Link href="/legal/terms" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
+        <Link href="/terms" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
           {lang === "fi" ? "Ehdot" : "Terms"}
         </Link>
-        <Link href="/legal/privacy" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
+        <Link href="/privacy" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
           {lang === "fi" ? "Tietosuoja" : "Privacy"}
         </Link>
       </div>
