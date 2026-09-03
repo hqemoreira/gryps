@@ -4,7 +4,7 @@ import Link from "next/link"
 
 const COPY = {
   en: {
-    eyebrow: "Legal",
+    eyebrow: "R&D prototype · non-commercial",
     title: "Privacy",
     intro:
       "This non-commercial R&D prototype does not collect personal data beyond what you voluntarily enter to generate a demonstration Resilience Signature.",
@@ -21,7 +21,7 @@ const COPY = {
     backLink: "Back to GRYPS →",
   },
   fi: {
-    eyebrow: "Legal",
+    eyebrow: "T&K-prototyyppi · ei-kaupallinen",
     title: "Tietosuoja",
     intro:
       "Tämä ei-kaupallinen T&K-prototyyppi ei kerää henkilötietoja sen lisäksi, mitä syötät vapaaehtoisesti demonstraatio-Resilience Signaturen tuottamiseksi.",

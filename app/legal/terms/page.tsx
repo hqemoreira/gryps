@@ -5,7 +5,7 @@ import { ContactForm } from "@/components/ContactForm"
 
 const COPY = {
   en: {
-    eyebrow: "Legal",
+    eyebrow: "R&D prototype · non-commercial",
     title: "Terms",
     intro:
       "This is a non-commercial R&D prototype maintained by Henrique Moreira (Espoo, Finland) for demonstration and learning purposes only. No registered company, no revenue, no commercial activity.",
@@ -20,7 +20,7 @@ const COPY = {
     backLink: "← Back to GRYPS",
   },
   fi: {
-    eyebrow: "Legal",
+    eyebrow: "T&K-prototyyppi · ei-kaupallinen",
     title: "Ehdot",
     intro:
       "Tämä on ei-kaupallinen T&K-prototyyppi, jota ylläpitää Henrique Moreira (Espoo, Suomi) vain demonstraatio- ja oppimistarkoituksiin. Ei rekisteröityä yritystä, ei tuloja, ei kaupallista toimintaa.",

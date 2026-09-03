@@ -79,7 +79,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <GrypsMark size={16} animate />
-          <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS LEGAL</span>
+          <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS · R&D PROTOTYPE</span>
         </div>
         <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>
           © {new Date().getFullYear()} GRYPS · Non-commercial R&D prototype · No registered company · No revenue
