@@ -21,38 +21,55 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "GRYPS",
+  "alternateName": "GRYPS Connectivity Resilience Advisor",
   "url": "https://gryps.vercel.app",
-  "description": "Non-commercial R&D prototype: GRYPS scores and documents satellite connectivity resilience for remote and autonomous site demos — learning and portfolio use, not a commercial service.",
+  "description": "GRYPS is a non-commercial R&D prototype that scores and documents satellite connectivity resilience for remote and autonomous industrial operations in Nordic, Arctic, and Icelandic environments. It produces a Resilience Signature — a scored assessment of single-provider dependency risk, orbital redundancy gaps, and NIS2/CER compliance posture. Built for learning and portfolio demonstration, not as a commercial service.",
   "applicationCategory": "EducationalApplication",
   "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR",
+    "availability": "https://schema.org/InStock"
+  },
   "audience": {
     "@type": "Audience",
-    "audienceType": "Industrial operators in maritime, forestry, mining, and Arctic environments"
+    "audienceType": "Industrial operators, systems integrators, and connectivity planners working in maritime, forestry, mining, and Arctic environments"
   },
   "author": {
     "@type": "Person",
     "name": "Henrique Moreira",
     "url": "https://henriquemoreira.eu",
-    "email": "hello@gryps.eu"
+    "email": "hello@gryps.eu",
+    "jobTitle": "Connectivity resilience researcher",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Espoo",
+      "addressCountry": "FI"
+    }
+  },
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": ["h1", ".gryps-hero-sub"]
   }
 }
 
 export const metadata: Metadata = {
-  title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
-  description: "Non-commercial R&D prototype: GRYPS scores and documents satellite connectivity resilience for remote/autonomous site demos. Learning and portfolio use — not a commercial service.",
-  keywords: "connectivity resilience, autonomous operations connectivity, NIS2 connectivity risk, CER critical operator, satellite resilience Arctic, satellite resilience Iceland, remote site connectivity risk, forestry autonomous fleet connectivity",
+  title: "GRYPS — Satellite Connectivity Resilience Scoring for Nordic, Arctic & Iceland Operations",
+  description: "GRYPS is a free R&D prototype that scores satellite connectivity resilience for remote and autonomous industrial sites. It produces a Resilience Signature: a scored assessment covering single-provider dependency risk, LEO/MEO/GEO orbital redundancy, terrain obstruction penalties, and NIS2/CER compliance flags. Built in Espoo, Finland for maritime, forestry, mining, and Arctic operations above 60°N.",
+  keywords: "connectivity resilience, satellite connectivity scoring, autonomous operations connectivity, NIS2 connectivity risk, CER critical operator resilience, satellite resilience Arctic, satellite resilience Iceland, remote site connectivity risk, forestry autonomous fleet connectivity, Starlink Arctic coverage, Iridium Certus polar, OneWeb high latitude, LEO MEO GEO redundancy",
   metadataBase: new URL("https://gryps.vercel.app"),
   alternates: { canonical: "https://gryps.vercel.app" },
   openGraph: {
-    title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
-    description: "Non-commercial R&D prototype: score and document satellite connectivity risk for remote and autonomous site demos. Learning and portfolio use — not a commercial service.",
+    title: "GRYPS — Satellite Connectivity Resilience Scoring for Nordic, Arctic & Iceland",
+    description: "Free R&D prototype: score satellite connectivity resilience for remote and autonomous sites. Produces a Resilience Signature covering provider dependency, orbital redundancy, terrain penalties, and NIS2/CER compliance. Espoo, Finland.",
     type: "website",
     siteName: "GRYPS",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Connectivity Resilience for Autonomous & Remote Operations | GRYPS",
-    description: "Research demo Resilience Signature for learning — not a commercial service. Score connectivity risk for remote and autonomous site demos.",
+    title: "GRYPS — Score Satellite Connectivity Resilience for Arctic & Nordic Operations",
+    description: "Free research tool that produces a Resilience Signature — scored satellite connectivity assessment for remote industrial sites above 60°N. Covers Starlink, Iridium, OneWeb, and GEO providers.",
   },
   robots: { index: true, follow: true },
   verification: { google: "vbGW3-1oXwqBQl7NlA461C2enz8BtVkFOPqW0SiJVy0" },

@@ -6,16 +6,24 @@ import { GrypsMark } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { grypsCopyright } from "@/lib/gryps-copyright"
+import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
+import { gradeTextColor } from "@/lib/resilience-colors"
 import { useTheme } from "@/context/ThemeContext"
 
 // ── Advisor form ──────────────────────────────────────────────────────────────
+function getQueryParams(): URLSearchParams {
+  if (typeof window === "undefined") return new URLSearchParams()
+  return new URLSearchParams(window.location.search)
+}
+
 function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
-  const [lat, setLat]         = useState("")
-  const [lng, setLng]         = useState("")
-  const [vertical, setVertical]   = useState("")
-  const [setup, setSetup]     = useState("")
-  const [autonomy, setAutonomy]   = useState("")
-  const [criticality, setCriticality] = useState("")
+  const qp = getQueryParams()
+  const [lat, setLat]         = useState(qp.get("lat") ?? "")
+  const [lng, setLng]         = useState(qp.get("lng") ?? "")
+  const [vertical, setVertical]   = useState(qp.get("sector") ?? "")
+  const [setup, setSetup]     = useState(qp.get("setup") ?? "")
+  const [autonomy, setAutonomy]   = useState(qp.get("autonomy") ?? "")
+  const [criticality, setCriticality] = useState(qp.get("criticality") ?? "")
   const [email, setEmail]     = useState("")
   const [loading, setLoading] = useState(false)
   const [result, setResult]   = useState<AdvisoryResult | null>(null)
@@ -46,6 +54,15 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       if (!res.ok || !data.result) throw new Error(data.error ?? "Analysis failed")
       setResult(data.result as AdvisoryResult)
       setRealData(data.realData ?? undefined)
+      const shareParams = new URLSearchParams()
+      if (lat) shareParams.set("lat", lat)
+      if (lng) shareParams.set("lng", lng)
+      if (vertical) shareParams.set("sector", vertical)
+      if (autonomy) shareParams.set("autonomy", autonomy)
+      if (criticality) shareParams.set("criticality", criticality)
+      if (setup) shareParams.set("setup", setup)
+      const qs = shareParams.toString()
+      if (qs) window.history.replaceState(null, "", `?${qs}#advisor`)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Analysis failed")
     } finally {
@@ -399,6 +416,8 @@ const COPY = {
       { n: "03", title: "Set criticality",       body: "Standard, high, or safety-critical. A safety-critical autonomous site with no redundancy cannot score above 50." },
       { n: "04", title: "Generate a Signature", body: "Score, grade, risk factors, redundancy gaps, ranked providers, and plain-language recommendation — in seconds." },
     ],
+    examplesLabel: "EXAMPLE RESILIENCE SIGNATURES",
+    examplesSub: "Pre-computed examples showing what the Resilience Advisor produces. These are static demonstrations — run the Advisor above for a live assessment.",
     polarHeader: "COVERAGE ZONE — NORDIC, ARCTIC & ICELAND",
     polarMapLabel: "DEMO MAP — NOT LIVE MONITORING",
     ctaH2:  "Resilience starts with knowing your score.",
@@ -445,6 +464,8 @@ const COPY = {
       { n: "03", title: "Aseta kriittisyys",        body: "Standardi, korkea tai turvallisuuskriittinen. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
       { n: "04", title: "Luo Signature",           body: "Pisteet, arvosana, riskitekijät, redundanssiaukot, rankatut toimittajat ja selkokielinen suositus — sekunneissa." },
     ],
+    examplesLabel: "ESIMERKIT RESILIENCE-SIGNATUUREISTA",
+    examplesSub: "Ennalta lasketut esimerkit siitä, mitä Resilience Advisor tuottaa. Nämä ovat staattisia demonstraatioita — suorita Advisor yllä live-arviointia varten.",
     polarHeader: "KATTAVUUSALUE — POHJOISMAAT, ARKTINEN JA ISLANTI",
     polarMapLabel: "DEMO-KARTTA — EI LIVE-SEURANTAA",
     ctaH2:  "Resilienssi alkaa pisteidesi tuntemisesta.",
@@ -617,6 +638,49 @@ export default function HomePage() {
                 </div>
                 <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)", marginBottom: 8 }}>{step.title}</p>
                 <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>{step.body}</p>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* Example signatures */}
+      <section className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.examplesLabel}</p>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", marginBottom: 28, maxWidth: 560 }}>{t.examplesSub}</p>
+        <div className="gryps-problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+          {EXAMPLE_SIGNATURES.map(ex => {
+            const gc = gradeTextColor(ex.result.resilience_signature.grade)
+            return (
+              <div key={ex.id} style={{
+                backgroundColor: "var(--surface)", border: "1px solid var(--border)",
+                borderRadius: 8, padding: "20px",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 28, fontWeight: 900, color: gc, lineHeight: 1 }}>
+                    {ex.result.resilience_signature.score}
+                  </span>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 14, fontWeight: 900, color: gc }}>
+                    {ex.result.resilience_signature.grade}
+                  </span>
+                </div>
+                <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)", marginBottom: 6 }}>
+                  {lang === "fi" ? ex.titleFi : ex.title}
+                </p>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 12 }}>
+                  {ex.result.resilience_signature.summary}
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "2px 8px", borderRadius: 3 }}>
+                    {ex.input.sector}
+                  </span>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "2px 8px", borderRadius: 3 }}>
+                    {ex.input.autonomy_level}
+                  </span>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "2px 8px", borderRadius: 3 }}>
+                    {ex.input.operation_criticality}
+                  </span>
+                </div>
               </div>
             )
           })}

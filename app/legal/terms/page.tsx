@@ -1,18 +1,19 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
+import { ContactForm } from "@/components/ContactForm"
 
 const COPY = {
   en: {
     eyebrow: "Legal",
     title: "Terms",
     intro:
-      "This is a non-commercial research prototype maintained by Henrique Moreira (Espoo, Finland) for demonstration and learning purposes only.",
+      "This is a non-commercial R&D prototype maintained by Henrique Moreira (Espoo, Finland) for demonstration and learning purposes only. No registered company, no revenue, no commercial activity.",
     bullets: [
       "No registered company. No revenue. No commercial activity.",
-      "No warranties. Content and demonstration outputs are provided as-is for informational purposes.",
-      "This prototype is not actively sold or offered as a service.",
-      "Contact: hqe.moreira@gmail.com",
+      "No warranties. Content and demo Resilience Signature outputs are provided as-is for informational and learning purposes.",
+      "This R&D prototype is not sold or offered as a commercial service.",
+      "Use the contact form below to reach the maintainer.",
     ],
     privacyLink: "Privacy →",
     backLink: "← Back to GRYPS",
@@ -21,12 +22,12 @@ const COPY = {
     eyebrow: "Legal",
     title: "Ehdot",
     intro:
-      "Tämä on ei-kaupallinen tutkimusprototyyppi, jota ylläpitää Henrique Moreira (Espoo, Suomi) vain demonstraatio- ja oppimistarkoituksiin.",
+      "Tämä on ei-kaupallinen T&K-prototyyppi, jota ylläpitää Henrique Moreira (Espoo, Suomi) vain demonstraatio- ja oppimistarkoituksiin. Ei rekisteröityä yritystä, ei tuloja, ei kaupallista toimintaa.",
     bullets: [
       "Ei rekisteröityä yritystä. Ei tuloja. Ei kaupallista toimintaa.",
-      "Ei takuita. Sisältö ja demonstraatiotulosteet tarjotaan sellaisenaan tiedotustarkoituksiin.",
-      "Tätä prototyyppiä ei myydä aktiivisesti eikä tarjota palveluna.",
-      "Yhteydenotto: hqe.moreira@gmail.com",
+      "Ei takuita. Sisältö ja demo-Resilience Signature -tulosteet tarjotaan sellaisenaan tiedotus- ja oppimistarkoituksiin.",
+      "Tätä T&K-prototyyppiä ei myydä eikä tarjota kaupallisena palveluna.",
+      "Käytä alla olevaa yhteydenottolomaketta tavoittaaksesi ylläpitäjän.",
     ],
     privacyLink: "Tietosuoja →",
     backLink: "← Takaisin GRYPS:iin",
@@ -79,6 +80,8 @@ export default function TermsPage() {
           </li>
         ))}
       </ul>
+
+      <ContactForm lang={lang} />
 
       <div style={{
         marginTop: 64, padding: "24px 0",

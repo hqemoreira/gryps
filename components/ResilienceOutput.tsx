@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react"
 import Link from "next/link"
 import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck, Download } from "lucide-react"
 import { gradeColor, gradeTextColor, type AdvisoryResult, type AssessmentInputs } from "@/lib/resilience-colors"
@@ -109,6 +110,7 @@ const UI = {
     downloadPdf: "Download PDF",
     resilienceScore: "RESILIENCE SCORE",
     resilienceSignature: "RESILIENCE SIGNATURE",
+    modelGenerated: "AI-generated score — illustrative, not a guarantee of network availability",
     assessmentInputs: "ASSESSMENT INPUTS",
     assessmentSub: "The deterministic parameters provided for this scoring run.",
     coordinates: "COORDINATES",
@@ -119,13 +121,19 @@ const UI = {
     notSpecified: "Not specified",
     stricter: "stricter threshold applied",
     realData: "REAL-DATA EVIDENCE",
-    realDataSub: "Deterministic score from measured third-party data — not model-generated, and not blended into the score above.",
+    realDataSub: "Deterministic score computed from measured third-party data — not AI-generated, not blended into the Resilience Score above. This is live computation against real datasets.",
     realWorldGap: "Real-world gap (55%)",
     terrainPenalty: "Terrain penalty (45%)",
     bittiNA: "Not available — Bittimittari (Traficom) covers Finland only",
     demNA: "Not available — EU-DEM has a data gap at this location (likely open water).",
     sources:
       "Real-world speed: Bittimittari (Traficom), licensed under CC BY 4.0 · Terrain: Produced using Copernicus data and information funded by the European Union — EU-DEM layers.",
+    complianceLabel: "NIS2/CER COMPLIANCE FLAGS",
+    complianceNis2: "NIS2 Art. 21 — Network and information system security measures",
+    complianceCer: "CER — Critical entity resilience assessment",
+    compliancePass: "ADDRESSED",
+    complianceFail: "AT RISK",
+    complianceNote: "Compliance flags are indicative, based on the scoring model's assessment of connectivity resilience posture. They do not constitute legal or regulatory advice.",
     recommendation: "RECOMMENDATION",
     riskFactors: "RISK FACTORS",
     redundancyGaps: "REDUNDANCY GAPS",
@@ -137,11 +145,25 @@ const UI = {
     hardware: "HARDWARE ",
     orbitalDisclaimer:
       "General technical characteristics based on publicly available industry information — not official provider specifications, current commercial terms, or an endorsement of any provider. GRYPS has no commercial relationship with the providers listed.",
+    provenanceLabel: "DATA PROVENANCE",
+    provenanceScoringModel: "Scoring model",
+    provenanceScoringModelValue: "Mistral Small (mistral-small-latest) via Mistral AI API, EU-hosted",
+    provenanceRealDataSources: "Real-data sources",
+    provenanceBittimittari: "Bittimittari (Traficom, Finland) — municipality-level broadband speed/latency, CC BY 4.0",
+    provenanceEuDem: "EU-DEM (Copernicus/EEA) — 25m resolution elevation data, accessed via OpenTopoData",
+    provenanceDate: "Assessment date",
+    provenanceNote: "Scoring model outputs are non-deterministic (temperature 0.3). Real-data evidence is deterministic and reproducible. Neither dataset is proprietary.",
     aiBadgeTitle:
       "EU AI Act Art. 50 — AI-generated analytical summary (Mistral). Limited-risk system. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.",
     art50: "Art. 50 EU AI Act",
     generated: "Generated",
     printAttr: "GRYPS — Connectivity Resilience Advisor · gryps.vercel.app",
+    notifyCta: "Get notified when full reports launch",
+    notifyPlaceholder: "your@email.com",
+    notifySubmit: "Notify me",
+    notifySubmitting: "Submitting…",
+    notifySuccess: "You're on the list — we'll be in touch.",
+    notifyNote: "No spam. One-time notification only.",
     measured: "measured",
     medianDownload: "Mbit/s median download",
     medianLatency: "ms median latency",
@@ -154,6 +176,7 @@ const UI = {
     downloadPdf: "Lataa PDF",
     resilienceScore: "RESILIENSSIPISTEET",
     resilienceSignature: "RESILIENCE SIGNATURE",
+    modelGenerated: "Tekoälyn tuottama pistemäärä — havainnollistava, ei takuu verkkojen saatavuudesta",
     assessmentInputs: "ARVIOINNIN SYÖTTEET",
     assessmentSub: "Tämän pisteytysajon deterministiset parametrit.",
     coordinates: "KOORDINAATIT",
@@ -164,13 +187,19 @@ const UI = {
     notSpecified: "Ei ilmoitettu",
     stricter: "tiukempi kynnys käytössä",
     realData: "REAALIDATANÄYTTÖ",
-    realDataSub: "Deterministinen pistemäärä mitatusta kolmannen osapuolen datasta — ei mallin tuottama, eikä sekoitettu yllä olevaan pistemäärään.",
+    realDataSub: "Deterministinen pistemäärä mitatusta kolmannen osapuolen datasta — ei tekoälyn tuottama, eikä sekoitettu yllä olevaan Resilience-pisteeseen. Tämä on reaaliaikaista laskentaa todellisista tietoaineistoista.",
     realWorldGap: "Todellinen kuilu (55 %)",
     terrainPenalty: "Maastorangaistus (45 %)",
     bittiNA: "Ei saatavilla — Bittimittari (Traficom) kattaa vain Suomen",
     demNA: "Ei saatavilla — EU-DEM:ssä on aukko tällä sijainnilla (todennäköisesti avovettä).",
     sources:
       "Todellinen nopeus: Bittimittari (Traficom), CC BY 4.0 · Maasto: Copernicus-data ja EU:n rahoittama tieto — EU-DEM-kerrokset.",
+    complianceLabel: "NIS2/CER-VAATIMUSTENMUKAISUUSLIPUT",
+    complianceNis2: "NIS2 Art. 21 — Verkko- ja tietojärjestelmien turvatoimet",
+    complianceCer: "CER — Kriittisten toimijoiden resilienssiarviointi",
+    compliancePass: "KÄSITELTY",
+    complianceFail: "RISKISSÄ",
+    complianceNote: "Vaatimustenmukaisuusliput ovat suuntaa-antavia, perustuen pisteytysmallin arvioon yhteyden resilienssiasemasta. Ne eivät ole oikeudellista tai sääntelyneuvontaa.",
     recommendation: "SUOSITUS",
     riskFactors: "RISKITEKIJÄT",
     redundancyGaps: "REDUNDANSSIAUKOT",
@@ -182,11 +211,25 @@ const UI = {
     hardware: "LAITTEISTO ",
     orbitalDisclaimer:
       "Yleiset tekniset ominaisuudet perustuvat julkisesti saatavilla olevaan toimialatietoon — eivät virallisia toimittajamäärityksiä, nykyisiä kaupallisia ehtoja tai minkään toimittajan suositusta. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
+    provenanceLabel: "TIETOJEN ALKUPERÄ",
+    provenanceScoringModel: "Pisteytysmalli",
+    provenanceScoringModelValue: "Mistral Small (mistral-small-latest) Mistral AI API:n kautta, EU-hosting",
+    provenanceRealDataSources: "Reaalidatan lähteet",
+    provenanceBittimittari: "Bittimittari (Traficom, Suomi) — kuntakohtainen laajakaistaanopeus/-viive, CC BY 4.0",
+    provenanceEuDem: "EU-DEM (Copernicus/EEA) — 25m korkeusdata, OpenTopoData-rajapinnalla",
+    provenanceDate: "Arvioinnin päivämäärä",
+    provenanceNote: "Pisteytysmallin tulokset ovat ei-deterministisiä (lämpötila 0.3). Reaalidatan näyttö on deterministinen ja toistettava. Kumpikaan tietoaineisto ei ole patentoitu.",
     aiBadgeTitle:
       "EU:n tekoälylaki 50 artikla — tekoälyn tuottama analyyttinen yhteenveto (Mistral). Rajoitetun riskin järjestelmä. Ei takuu verkkojen saatavuudesta. Tukee ihmisen harkintaa; ei automatisoituja oikeudellisia päätöksiä.",
     art50: "50 artikla, EU:n tekoälylaki",
     generated: "Luotu",
     printAttr: "GRYPS — Connectivity Resilience Advisor · gryps.vercel.app",
+    notifyCta: "Saat ilmoituksen kun täydet raportit julkaistaan",
+    notifyPlaceholder: "sähköposti@esimerkki.fi",
+    notifySubmit: "Ilmoita minulle",
+    notifySubmitting: "Lähetetään…",
+    notifySuccess: "Olet listalla — olemme yhteydessä.",
+    notifyNote: "Ei roskapostia. Vain kertaluonteinen ilmoitus.",
     measured: "mitattu",
     medianDownload: "Mbit/s mediaanilataus",
     medianLatency: "ms mediaaniviive",
@@ -198,6 +241,73 @@ const UI = {
 } as const
 
 type UiCopy = (typeof UI)[UiLang]
+
+function NotifyCta({ t }: { t: UiCopy }) {
+  const [email, setEmail] = useState("")
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle")
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!email) return
+    setStatus("sending")
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, message: "Notify me when full reports launch", name: null }),
+      })
+      if (!res.ok) throw new Error()
+      setStatus("sent")
+    } catch {
+      setStatus("error")
+    }
+  }
+
+  if (status === "sent") {
+    return (
+      <div style={{
+        backgroundColor: "rgba(46,212,122,0.06)", border: "1px solid rgba(46,212,122,0.2)",
+        borderRadius: 8, padding: "16px 20px", textAlign: "center",
+      }}>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-green)" }}>{t.notifySuccess}</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="gryps-no-print" style={{
+      backgroundColor: "rgba(79,168,255,0.04)", border: "1px solid rgba(79,168,255,0.15)",
+      borderRadius: 8, padding: "16px 20px",
+    }}>
+      <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)", marginBottom: 8 }}>
+        {t.notifyCta}
+      </p>
+      <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <input
+          type="email"
+          required
+          placeholder={t.notifyPlaceholder}
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          style={{
+            flex: 1, backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
+            borderRadius: 6, padding: "8px 12px", fontFamily: "var(--font-data)",
+            fontSize: 12, color: "var(--text)", outline: "none",
+          }}
+        />
+        <button type="submit" disabled={status === "sending"} style={{
+          backgroundColor: "#4FA8FF", color: "#070B12", border: "none",
+          borderRadius: 6, padding: "8px 16px", fontFamily: "var(--font-ui)",
+          fontWeight: 700, fontSize: 12, cursor: status === "sending" ? "wait" : "pointer",
+          flexShrink: 0,
+        }}>
+          {status === "sending" ? t.notifySubmitting : t.notifySubmit}
+        </button>
+      </form>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", marginTop: 6 }}>{t.notifyNote}</p>
+    </div>
+  )
+}
 
 function AssessmentInputsPanel({ input, t }: { input: AssessmentInputs; t: UiCopy }) {
   const strictAutonomy = input.autonomy_level === "autonomous" || input.autonomy_level === "mixed"
@@ -256,14 +366,22 @@ export type RealDataEvidence = {
   bittimittariMedianLatencyMs: number | null
 }
 
-function RealDataEvidencePanel({ data, t }: { data: RealDataEvidence; t: UiCopy }) {
+function RealDataEvidencePanel({ data, t, lang = "en" }: { data: RealDataEvidence; t: UiCopy; lang?: UiLang }) {
   const scoreColor = data.realDataScore >= 70 ? "var(--accent-green)" : data.realDataScore >= 40 ? "var(--accent-amber)" : "var(--accent-red)"
+  const terrainOnly = data.realWorldGapScore == null
 
   return (
     <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em" }}>{t.realData}</p>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 20, fontWeight: 900, color: scoreColor }}>{data.realDataScore}</span>
+        <div style={{ textAlign: "right" }}>
+          <span style={{ fontFamily: "var(--font-data)", fontSize: 20, fontWeight: 900, color: scoreColor }}>{data.realDataScore}</span>
+          {terrainOnly && (
+            <p style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)" }}>
+              {lang === "fi" ? "vain maasto" : "terrain only"}
+            </p>
+          )}
+        </div>
       </div>
       <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14 }}>
         {t.realDataSub}
@@ -368,9 +486,13 @@ export function ResilienceOutput({
         </div>
       </div>
 
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", textAlign: "center" }}>
+        {t.modelGenerated}
+      </p>
+
       {input && <AssessmentInputsPanel input={input} t={t} />}
 
-      {realData && <RealDataEvidencePanel data={realData} t={t} />}
+      {realData && <RealDataEvidencePanel data={realData} t={t} lang={lang} />}
 
       <div style={{
         backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
@@ -378,6 +500,29 @@ export function ResilienceOutput({
       }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.recommendation}</p>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
+      </div>
+
+      <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 12 }}>{t.complianceLabel}</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {[
+            { label: t.complianceNis2, pass: sig.score >= 50 && redundancy_gaps.length <= 1 },
+            { label: t.complianceCer, pass: sig.score >= 40 && !risk_factors.some(r => r.severity === "critical") },
+          ].map((flag, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)" }}>{flag.label}</span>
+              <span style={{
+                fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 700,
+                color: flag.pass ? "var(--accent-green)" : "var(--accent-red)",
+                border: `1px solid ${flag.pass ? "rgba(46,212,122,0.3)" : "rgba(239,68,68,0.3)"}`,
+                borderRadius: 4, padding: "2px 8px",
+              }}>{flag.pass ? t.compliancePass : t.complianceFail}</span>
+            </div>
+          ))}
+        </div>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 9, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
+          {t.complianceNote}
+        </p>
       </div>
 
       <div className="gryps-output-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
@@ -472,6 +617,30 @@ export function ResilienceOutput({
         </p>
       </div>
 
+      <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 12 }}>{t.provenanceLabel}</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceScoringModel}</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceScoringModelValue}</span>
+          </div>
+          <div>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em" }}>{t.provenanceRealDataSources}</span>
+            <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+              <li style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{t.provenanceBittimittari}</li>
+              <li style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{t.provenanceEuDem}</li>
+            </ul>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceDate}</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{new Date().toLocaleDateString(lang === "fi" ? "fi-FI" : "en-GB", { day: "numeric", month: "long", year: "numeric" })}</span>
+          </div>
+        </div>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 9, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
+          {t.provenanceNote}
+        </p>
+      </div>
+
       <div style={{ borderTop: "1px solid var(--border)", paddingTop: 12, display: "flex", alignItems: "flex-start", gap: 10 }}>
         <span
           title={t.aiBadgeTitle}
@@ -487,6 +656,8 @@ export function ResilienceOutput({
           {t.generated} {new Date().toLocaleDateString(lang === "fi" ? "fi-FI" : "en-GB", { day: "numeric", month: "long", year: "numeric" })} · {t.printAttr}
         </p>
       </div>
+
+      <NotifyCta t={t} />
     </div>
   )
 }

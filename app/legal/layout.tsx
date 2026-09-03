@@ -2,6 +2,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Sun, Moon } from "lucide-react"
+import { GrypsMark } from "@/components/GrypsMark"
 import { useTheme } from "@/context/ThemeContext"
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
@@ -26,14 +27,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
-              <path d="M4 18 A14 14 0 0 1 32 18" stroke="#4FA8FF" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.5"/>
-              <path d="M8 18 A10 10 0 0 1 28 18" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.75"/>
-              <path d="M12 18 A6 6 0 0 1 24 18" stroke="#4FA8FF" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-              <line x1="18" y1="20" x2="18" y2="10" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round"/>
-              <path d="M15 13 L18 9 L21 13" stroke="#6EE7F9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <circle cx="18" cy="21" r="1.5" fill="#4FA8FF"/>
-            </svg>
+            <GrypsMark size={24} animate />
             <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14, letterSpacing: "0.12em", color: "var(--text)" }}>GRYPS</span>
           </Link>
           <div style={{ width: 1, height: 16, backgroundColor: "var(--border)" }} />
@@ -81,9 +75,12 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         flexWrap: "wrap", gap: 12,
         marginTop: 64,
       }}>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS LEGAL</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <GrypsMark size={16} animate />
+          <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS LEGAL</span>
+        </div>
         <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>
-          © {new Date().getFullYear()} GRYPS · All rights reserved · Non-commercial R&D prototype
+          © {new Date().getFullYear()} GRYPS · Non-commercial R&D prototype · No registered company · No revenue
         </span>
         <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>Espoo, Finland · EU</span>
       </footer>
