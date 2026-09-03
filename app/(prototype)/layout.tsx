@@ -81,7 +81,7 @@ export default function PrototypeLayout({ children }: { children: React.ReactNod
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <GrypsMark size={16} animate />
           <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>
-            {GRYPS_PROTOTYPE_MARK}
+            GRYPS
           </span>
         </div>
         <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>
