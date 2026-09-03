@@ -2,11 +2,10 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ContactForm } from "@/components/ContactForm"
-import { GRYPS_PROTOTYPE_MARK, GRYPS_PROTOTYPE_MARK_FI } from "@/lib/prototype-copy"
 
 const COPY = {
   en: {
-    mark: GRYPS_PROTOTYPE_MARK,
+    mark: "GRYPS",
     title: "Terms",
     intro:
       "This is a non-commercial R&D prototype maintained by Henrique Moreira (Espoo, Finland) for demonstration and learning purposes only. No registered company, no revenue, no commercial activity.",
@@ -21,7 +20,7 @@ const COPY = {
     backLink: "← Back to GRYPS",
   },
   fi: {
-    mark: GRYPS_PROTOTYPE_MARK_FI,
+    mark: "GRYPS",
     title: "Ehdot",
     intro:
       "Tämä on ei-kaupallinen T&K-prototyyppi, jota ylläpitää Henrique Moreira (Espoo, Suomi) vain demonstraatio- ja oppimistarkoituksiin. Ei rekisteröityä yritystä, ei tuloja, ei kaupallista toimintaa.",

@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation"
 import { Sun, Moon } from "lucide-react"
 import { GrypsMark } from "@/components/GrypsMark"
 import { useTheme } from "@/context/ThemeContext"
-import { GRYPS_PROTOTYPE_MARK } from "@/lib/prototype-copy"
 
 export default function PrototypeLayout({ children }: { children: React.ReactNode }) {
   const { dark, toggleDark } = useTheme()
@@ -30,9 +29,7 @@ export default function PrototypeLayout({ children }: { children: React.ReactNod
         <div style={{ display: "flex", alignItems: "center", gap: 20, minWidth: 0 }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", minWidth: 0 }}>
             <GrypsMark size={24} animate />
-            <span style={{ fontFamily: "var(--font-data)", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {GRYPS_PROTOTYPE_MARK}
-            </span>
+            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14, letterSpacing: "0.12em", color: "var(--text)" }}>GRYPS</span>
           </Link>
           <div style={{ width: 1, height: 16, backgroundColor: "var(--border)", flexShrink: 0 }} />
           <div style={{ display: "flex", gap: 16, flexShrink: 0 }}>

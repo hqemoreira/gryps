@@ -1,11 +1,10 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
-import { GRYPS_PROTOTYPE_MARK, GRYPS_PROTOTYPE_MARK_FI } from "@/lib/prototype-copy"
 
 const COPY = {
   en: {
-    mark: GRYPS_PROTOTYPE_MARK,
+    mark: "GRYPS",
     title: "Privacy",
     intro:
       "This non-commercial R&D prototype does not collect personal data beyond what you voluntarily enter to generate a demonstration Resilience Signature.",
@@ -22,7 +21,7 @@ const COPY = {
     backLink: "Back to GRYPS →",
   },
   fi: {
-    mark: GRYPS_PROTOTYPE_MARK_FI,
+    mark: "GRYPS",
     title: "Tietosuoja",
     intro:
       "Tämä ei-kaupallinen T&K-prototyyppi ei kerää henkilötietoja sen lisäksi, mitä syötät vapaaehtoisesti demonstraatio-Resilience Signaturen tuottamiseksi.",
