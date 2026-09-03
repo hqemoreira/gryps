@@ -1,4 +1,5 @@
 import { Mistral } from "@mistralai/mistralai"
+import { applyHardRules, versionSignature } from "@/lib/signature-meta"
 
 export const SYSTEM_PROMPT = `You are GRYPS, a satellite connectivity resilience analyst for Nordic and Arctic industrial operations.
 
@@ -12,12 +13,13 @@ Given a site profile, return ONLY valid JSON matching this exact schema — no m
   },
   "risk_factors": [{ "label": string, "severity": "low" | "medium" | "high" | "critical", "detail": string }],
   "redundancy_gaps": [{ "label": string, "detail": string }],
-  "connectivity_options": [{ "provider": string, "type": string, "confidence": integer, "note": string }],
+  "connectivity_options": [{ "provider": string, "type": string, "confidence": integer, "note": string, "elevation": string, "coverage": string, "failover_latency": string }],
   "recommendation": string,
   "caveats": [string]
 }
 
 Score and grade must reflect operational autonomy level and criticality. Safety-critical autonomous operations with single-provider setups should score 30-50 max. High redundancy with diverse orbital types should score 75-90. Grade mirrors score: A=85+, B=70-84, C=50-69, D=30-49, F=<30. Always include at least 2 risk factors, 1 redundancy gap, 3 connectivity options, and 2 caveats.
+For each connectivity option, populate elevation (typical terminal elevation / sky-view constraint at the site latitude), coverage (high-latitude coverage claim), and failover_latency (what failover would cost in time if this were a backup path). These must be structured fields, not only prose in note.
 
 Provider coverage validation rules:
 - Starlink: confirmed LEO broadband coverage at 70°N+ (polar shell expansion since 2023). Confidence 70-95.
@@ -33,9 +35,20 @@ export type ResilienceOutput = {
   resilience_signature: { score: number; grade: string; summary: string }
   risk_factors: { label: string; severity: string; detail: string }[]
   redundancy_gaps: { label: string; detail: string }[]
-  connectivity_options: { provider: string; type: string; confidence: number; note: string }[]
+  connectivity_options: {
+    provider: string
+    type: string
+    confidence: number
+    note: string
+    elevation?: string
+    coverage?: string
+    failover_latency?: string
+  }[]
   recommendation: string
   caveats: string[]
+  issuedAt?: string
+  modelVersion?: string
+  inputHash?: string
 }
 
 async function callMistralOnce(body: object): Promise<ResilienceOutput> {
@@ -58,10 +71,17 @@ async function callMistralOnce(body: object): Promise<ResilienceOutput> {
 
 /** Single source of truth for resilience scoring — used by /api/advise and site seeding. One retry on failure. */
 export async function scoreSite(body: object): Promise<ResilienceOutput> {
+  let raw: ResilienceOutput
   try {
-    return await callMistralOnce(body)
+    raw = await callMistralOnce(body)
   } catch (firstErr) {
     console.error("Mistral first attempt:", firstErr)
-    return await callMistralOnce(body)
+    raw = await callMistralOnce(body)
   }
+  const input = body as {
+    autonomy_level?: string
+    operation_criticality?: string
+    current_setup?: string
+  }
+  return versionSignature(applyHardRules(raw, input), body) as ResilienceOutput
 }

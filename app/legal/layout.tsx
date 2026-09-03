@@ -10,6 +10,8 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname()
 
   const navLinks = [
+    { href: "/methodology", label: "Methodology" },
+    { href: "/providers", label: "Providers" },
     { href: "/legal/terms",   label: "Terms" },
     { href: "/legal/privacy", label: "Privacy" },
   ]

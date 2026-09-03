@@ -14,6 +14,7 @@ export function Header({
   ctaHref,
   ctaLabel,
   extraLink,
+  extraLinks,
 }: {
   topOffset?: number
   tagline?: string
@@ -22,8 +23,10 @@ export function Header({
   ctaHref: string
   ctaLabel: string
   extraLink?: ExtraLink
+  extraLinks?: ExtraLink[]
 }) {
   const { dark, toggleDark } = useTheme()
+  const links = extraLinks ?? (extraLink ? [extraLink] : [])
 
   return (
     <header className="gryps-nav-inner" style={{
@@ -42,11 +45,11 @@ export function Header({
         {tagline && (
           <span className="gryps-nav-label" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>{tagline}</span>
         )}
-        {extraLink && (
-          <Link href={extraLink.href} className="gryps-nav-label" style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textDecoration: "none" }}>
-            {extraLink.label}
+        {links.map(link => (
+          <Link key={link.href} href={link.href} className="gryps-nav-label" style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textDecoration: "none" }}>
+            {link.label}
           </Link>
-        )}
+        ))}
         {lang && onLangChange && (
           <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden" }}>
             {(["en", "fi"] as const).map(l => (

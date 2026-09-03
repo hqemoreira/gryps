@@ -89,7 +89,10 @@ export default function SignaturesPage() {
         onLangChange={setLang}
         ctaHref="/#advisor"
         ctaLabel={t.navCta}
-        extraLink={{ href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" }}
+        extraLinks={[
+          { href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" },
+          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
+        ]}
       />
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 32px 80px", paddingTop: 90 }}>

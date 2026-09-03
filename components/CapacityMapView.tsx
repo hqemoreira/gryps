@@ -131,7 +131,10 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
         onLangChange={setLang}
         ctaHref="/#advisor"
         ctaLabel={t.navCta}
-        extraLink={{ href: "/signatures", label: lang === "en" ? "Signatures" : "Signatuurit" }}
+        extraLinks={[
+          { href: "/signatures", label: lang === "en" ? "Signatures" : "Signatuurit" },
+          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
+        ]}
       />
 
       <div style={{

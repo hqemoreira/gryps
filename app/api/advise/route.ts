@@ -115,15 +115,18 @@ export async function POST(req: NextRequest) {
   }
 
   // Store submission in Neon
+  let submissionId: number | null = null
   try {
-    await sql`
+    const rows = await sql`
       INSERT INTO advisor_submissions (input, output, email, autonomy_level, criticality, lat, lng, ip)
       VALUES (${JSON.stringify(input)}, ${JSON.stringify(output)}, ${email ?? null}, ${autonomy_level}, ${operation_criticality}, ${lat}, ${lng}, ${ip})
+      RETURNING id
     `
+    submissionId = (rows[0]?.id as number) ?? null
   } catch (err) {
     console.error("Neon error:", err)
     // Don't fail the request — output still returned
   }
 
-  return NextResponse.json({ ok: true, result: output, realData: realData ?? null })
+  return NextResponse.json({ ok: true, result: output, realData: realData ?? null, id: submissionId })
 }

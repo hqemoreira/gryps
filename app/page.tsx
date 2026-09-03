@@ -7,6 +7,8 @@ import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
+import { PROVIDER_INDEX_COUNT } from "@/lib/providers"
+import { DriftMock } from "@/components/DriftMock"
 import { gradeTextColor } from "@/lib/resilience-colors"
 import { useTheme } from "@/context/ThemeContext"
 
@@ -29,6 +31,28 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const [result, setResult]   = useState<AdvisoryResult | null>(null)
   const [realData, setRealData] = useState<RealDataEvidence | undefined>(undefined)
   const [error, setError]     = useState("")
+  const [shareId, setShareId] = useState<string | null>(qp.get("sid"))
+
+  useEffect(() => {
+    const sid = getQueryParams().get("sid")
+    if (!sid || result) return
+    fetch(`/api/submissions/${sid}`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        if (!data.result) return
+        setResult(data.result as AdvisoryResult)
+        const inp = data.input ?? {}
+        const coords = inp.site_coordinates as { lat?: number; lng?: number } | undefined
+        if (coords?.lat != null) setLat(String(coords.lat))
+        if (coords?.lng != null) setLng(String(coords.lng))
+        if (inp.vertical) setVertical(String(inp.vertical))
+        if (inp.autonomy_level) setAutonomy(String(inp.autonomy_level))
+        if (inp.operation_criticality) setCriticality(String(inp.operation_criticality))
+        if (inp.current_setup) setSetup(String(inp.current_setup))
+        setShareId(String(data.id))
+      })
+      .catch(() => {})
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -61,6 +85,10 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       if (autonomy) shareParams.set("autonomy", autonomy)
       if (criticality) shareParams.set("criticality", criticality)
       if (setup) shareParams.set("setup", setup)
+      if (data.id) {
+        shareParams.set("sid", String(data.id))
+        setShareId(String(data.id))
+      }
       const qs = shareParams.toString()
       if (qs) window.history.replaceState(null, "", `?${qs}#advisor`)
     } catch (err: unknown) {
@@ -366,12 +394,20 @@ function PolarMap({ t }: { t: typeof COPY.en }) {
 }
 
 // ── Stat chip ─────────────────────────────────────────────────────────────────
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+function Stat({ value, label, href }: { value: string; label: string; href?: string }) {
+  const inner = (
+    <>
       <span style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>{value}</span>
       <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.06em" }}>{label}</span>
-    </div>
+    </>
+  )
+  if (href) {
+    return (
+      <a href={href} style={{ display: "flex", flexDirection: "column", gap: 2, textDecoration: "none" }}>{inner}</a>
+    )
+  }
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>{inner}</div>
   )
 }
 
@@ -383,7 +419,7 @@ const COPY = {
     h1:         ["Connectivity resilience", "for autonomous and", "remote operations."],
     sub:        "Remote sites, autonomous fleets, and critical operations fail without connectivity. GRYPS scores and documents that risk — giving you a Resilience Signature before deployment depends on it.",
     nis2line:   "NIS2/CER-aligned resilience reporting · Espoo, Finland · R&D prototype",
-    statsL1:    "Providers indexed",
+    statsL1:    "Providers indexed (catalog)",
     statsL2:    "All orbital types",
     statsL3:    "Polar coverage",
     liveCounter: "sites assessed in the Nordic & Arctic portfolio",
@@ -417,7 +453,7 @@ const COPY = {
       { n: "04", title: "Generate a Signature", body: "Score, grade, risk factors, redundancy gaps, ranked providers, and plain-language recommendation — in seconds." },
     ],
     examplesLabel: "EXAMPLE RESILIENCE SIGNATURES",
-    examplesSub: "Pre-computed examples showing what the Resilience Advisor produces. These are static demonstrations — run the Advisor above for a live assessment.",
+    examplesSub: "Pre-computed examples showing what the Resilience Advisor produces. Static demonstrations — run the Advisor above for a live assessment. Equal weight across forestry, maritime, mining, and autonomous fleets.",
     polarHeader: "COVERAGE ZONE — NORDIC, ARCTIC & ICELAND",
     polarMapLabel: "DEMO MAP — NOT LIVE MONITORING",
     ctaH2:  "Resilience starts with knowing your score.",
@@ -515,7 +551,11 @@ export default function HomePage() {
         onLangChange={setLang}
         ctaHref="#advisor"
         ctaLabel={t.navCta}
-        extraLink={{ href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" }}
+        extraLinks={[
+          { href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" },
+          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
+          { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
+        ]}
       />
 
       {/* Hero */}
@@ -561,7 +601,7 @@ export default function HomePage() {
               )}
 
               <div className="gryps-stats-row" style={{ display: "flex", gap: 56, paddingBottom: 28, borderBottom: "1px solid var(--border)" }}>
-                <Stat value="120+" label={t.statsL1} />
+                <Stat value={`${PROVIDER_INDEX_COUNT}`} label={t.statsL1} href="/providers" />
                 <Stat value="LEO–MEO–GEO" label={t.statsL2} />
                 <Stat value="70°N+" label={t.statsL3} />
               </div>
@@ -648,7 +688,7 @@ export default function HomePage() {
       <section className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.examplesLabel}</p>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", marginBottom: 28, maxWidth: 560 }}>{t.examplesSub}</p>
-        <div className="gryps-problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+        <div className="gryps-problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
           {EXAMPLE_SIGNATURES.map(ex => {
             const gc = gradeTextColor(ex.result.resilience_signature.grade)
             return (
@@ -685,6 +725,7 @@ export default function HomePage() {
             )
           })}
         </div>
+        <DriftMock lang={lang} />
       </section>
 
       {/* CTA */}

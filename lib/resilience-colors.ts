@@ -3,13 +3,26 @@
 // if this module is bundled as a client boundary. Keep this file free of any
 // "use client" directive, hooks, or browser APIs.
 
+export type ConnectivityOption = {
+  provider: string
+  type: string
+  confidence: number
+  note: string
+  elevation?: string
+  coverage?: string
+  failover_latency?: string
+}
+
 export type AdvisoryResult = {
   resilience_signature: { score: number; grade: string; summary: string }
   risk_factors: { label: string; severity: string; detail: string }[]
   redundancy_gaps: { label: string; detail: string }[]
-  connectivity_options: { provider: string; type: string; confidence: number; note: string }[]
+  connectivity_options: ConnectivityOption[]
   recommendation: string
   caveats: string[]
+  issuedAt?: string
+  modelVersion?: string
+  inputHash?: string
 }
 
 export type AssessmentInputs = {

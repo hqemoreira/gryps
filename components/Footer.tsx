@@ -31,6 +31,12 @@ export function Footer({
             {secondaryLink.label}
           </Link>
         )}
+        <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
+          {lang === "fi" ? "Menetelmä" : "Methodology"}
+        </Link>
+        <Link href="/providers" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
+          {lang === "fi" ? "Toimittajat" : "Providers"}
+        </Link>
         <Link href="/legal/terms" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
           {lang === "fi" ? "Ehdot" : "Terms"}
         </Link>

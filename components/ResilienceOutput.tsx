@@ -3,6 +3,9 @@ import { useState } from "react"
 import Link from "next/link"
 import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck, Download } from "lucide-react"
 import { gradeColor, gradeTextColor, type AdvisoryResult, type AssessmentInputs } from "@/lib/resilience-colors"
+import { computeComplianceFlags } from "@/lib/compliance"
+import { redundancyTiers } from "@/lib/redundancy-tiers"
+import { MODEL_VERSION } from "@/lib/signature-meta"
 
 // Re-exported as TYPES only (types are erased at compile time, no client-boundary
 // issue). Do NOT re-export gradeColor/gradeTextColor themselves here — a Server
@@ -152,6 +155,20 @@ const UI = {
     provenanceBittimittari: "Bittimittari (Traficom, Finland) — municipality-level broadband speed/latency, CC BY 4.0",
     provenanceEuDem: "EU-DEM (Copernicus/EEA) — 25m resolution elevation data, accessed via OpenTopoData",
     provenanceDate: "Assessment date",
+    provenanceModelVersion: "Model version",
+    provenanceInputHash: "Input hash",
+    provenanceNotLive: "Illustrative / not live constellation data",
+    terrainExplain: "Terrain score is independent of the Resilience Score: higher variance in a ~5 km EU-DEM sample reduces this evidence score. It is not blended into the 0–100 Signature.",
+    shareLink: "Copy shareable link",
+    shareCopied: "Link copied",
+    redundancyTiers: "REDUNDANCY OPTIONS (COST-TIERED)",
+    tierEssential: "Essential",
+    tierStandard: "Standard",
+    tierDefense: "Defense-in-depth",
+    whyConfidence: "WHY THIS RANKING",
+    elevationField: "ELEVATION / SKY VIEW ",
+    coverageField: "COVERAGE ",
+    failoverField: "FAILOVER LATENCY ",
     provenanceNote: "Scoring model outputs are non-deterministic (temperature 0.3). Real-data evidence is deterministic and reproducible. Neither dataset is proprietary.",
     aiBadgeTitle:
       "EU AI Act Art. 50 — AI-generated analytical summary (Mistral). Limited-risk system. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.",
@@ -218,6 +235,20 @@ const UI = {
     provenanceBittimittari: "Bittimittari (Traficom, Suomi) — kuntakohtainen laajakaistaanopeus/-viive, CC BY 4.0",
     provenanceEuDem: "EU-DEM (Copernicus/EEA) — 25m korkeusdata, OpenTopoData-rajapinnalla",
     provenanceDate: "Arvioinnin päivämäärä",
+    provenanceModelVersion: "Malliversio",
+    provenanceInputHash: "Syötteen tiiviste",
+    provenanceNotLive: "Havainnollistava / ei live-konstellaatiodataa",
+    terrainExplain: "Maastopiste on erillinen Resilience-pisteestä: suurempi vaihtelu ~5 km EU-DEM-otoksessa laskee tätä näyttöpistettä. Sitä ei sekoiteta 0–100 Signatureen.",
+    shareLink: "Kopioi jaettava linkki",
+    shareCopied: "Linkki kopioitu",
+    redundancyTiers: "REDUNDANSSIVAIHTOEHDOT (KUSTANNUSTASOT)",
+    tierEssential: "Välttämätön",
+    tierStandard: "Standardi",
+    tierDefense: "Puolustus syvyyteen",
+    whyConfidence: "MIKSI TÄMÄ SIJAINTI",
+    elevationField: "KORKEUSKULMA / TAIVAS ",
+    coverageField: "KATTAVUUS ",
+    failoverField: "FAILOVER-VIIVE ",
     provenanceNote: "Pisteytysmallin tulokset ovat ei-deterministisiä (lämpötila 0.3). Reaalidatan näyttö on deterministinen ja toistettava. Kumpikaan tietoaineisto ei ole patentoitu.",
     aiBadgeTitle:
       "EU:n tekoälylaki 50 artikla — tekoälyn tuottama analyyttinen yhteenveto (Mistral). Rajoitetun riskin järjestelmä. Ei takuu verkkojen saatavuudesta. Tukee ihmisen harkintaa; ei automatisoituja oikeudellisia päätöksiä.",
@@ -386,6 +417,9 @@ function RealDataEvidencePanel({ data, t, lang = "en" }: { data: RealDataEvidenc
       <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14 }}>
         {t.realDataSub}
       </p>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 14 }}>
+        {t.terrainExplain}
+      </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ borderLeft: "2px solid var(--border)", paddingLeft: 10 }}>
@@ -444,10 +478,36 @@ export function ResilienceOutput({
   const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats } = result
   const gc = gradeColor(sig.grade)
   const gtc = gradeTextColor(sig.grade)
+  const flags = computeComplianceFlags(result, input)
+  const tiers = redundancyTiers(input)
+  const issued = result.issuedAt ? new Date(result.issuedAt) : new Date()
+  const dateLabel = issued.toLocaleDateString(lang === "fi" ? "fi-FI" : "en-GB", { day: "numeric", month: "long", year: "numeric" })
+  const [copied, setCopied] = useState(false)
+
+  function copyShare() {
+    const url = typeof window !== "undefined" ? window.location.href : ""
+    void navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
-      <button
+      <div className="gryps-no-print" style={{ display: "flex", justifyContent: "flex-end", gap: 8, flexWrap: "wrap" }}>
+        <button
+          type="button"
+          onClick={copyShare}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
+            borderRadius: 6, padding: "8px 14px", cursor: "pointer",
+            fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
+          }}
+        >
+          {copied ? t.shareCopied : t.shareLink}
+        </button>
+        <button
         className="gryps-no-print"
         onClick={() => window.print()}
         style={{
@@ -458,7 +518,8 @@ export function ResilienceOutput({
         }}
       >
         <Download size={13} /> {t.downloadPdf}
-      </button>
+        </button>
+      </div>
 
       <div className="gryps-signature-card" style={{
         backgroundColor: "var(--surface)",
@@ -468,10 +529,14 @@ export function ResilienceOutput({
         display: "flex", alignItems: "center", gap: 32,
       }}>
         <div style={{ textAlign: "center", flexShrink: 0 }}>
-          <div style={{ fontFamily: "var(--font-data)", fontSize: 72, fontWeight: 900, color: gtc, lineHeight: 1, letterSpacing: "-0.04em" }}>
+          <div
+            aria-label={`Resilience score ${sig.score} out of 100, grade ${sig.grade}`}
+            style={{ fontFamily: "var(--font-data)", fontSize: 72, fontWeight: 900, color: gtc, lineHeight: 1, letterSpacing: "-0.04em" }}
+          >
             {sig.score}
           </div>
           <div style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.12em", marginTop: 4 }}>{t.resilienceScore}</div>
+          <span className="sr-only">Grade {sig.grade}. Scale A 85 and above resilient, through F below 30 critical failure.</span>
         </div>
         <div className="gryps-signature-divider" style={{ width: 1, height: 64, backgroundColor: "var(--border)", flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
@@ -479,7 +544,7 @@ export function ResilienceOutput({
             <span style={{
               fontFamily: "var(--font-data)", fontSize: 18, fontWeight: 900, color: gtc,
               border: `1px solid ${gc}55`, borderRadius: 6, padding: "2px 12px",
-            }}>{sig.grade}</span>
+            }} aria-hidden="true">{sig.grade}</span>
             <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.1em" }}>{t.resilienceSignature}</span>
           </div>
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>{sig.summary}</p>
@@ -505,18 +570,18 @@ export function ResilienceOutput({
       <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 12 }}>{t.complianceLabel}</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {[
-            { label: t.complianceNis2, pass: sig.score >= 50 && redundancy_gaps.length <= 1 },
-            { label: t.complianceCer, pass: sig.score >= 40 && !risk_factors.some(r => r.severity === "critical") },
-          ].map((flag, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-              <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)" }}>{flag.label}</span>
-              <span style={{
-                fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 700,
-                color: flag.pass ? "var(--accent-green)" : "var(--accent-red)",
-                border: `1px solid ${flag.pass ? "rgba(46,212,122,0.3)" : "rgba(239,68,68,0.3)"}`,
-                borderRadius: 4, padding: "2px 8px",
-              }}>{flag.pass ? t.compliancePass : t.complianceFail}</span>
+          {flags.map(flag => (
+            <div key={flag.id}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)" }}>{flag.id === "nis2-art21" ? t.complianceNis2 : t.complianceCer}</span>
+                <span style={{
+                  fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 700,
+                  color: flag.pass ? "var(--accent-green)" : "var(--accent-red)",
+                  border: `1px solid ${flag.pass ? "rgba(46,212,122,0.3)" : "rgba(239,68,68,0.3)"}`,
+                  borderRadius: 4, padding: "2px 8px",
+                }}>{flag.pass ? t.compliancePass : t.complianceFail}</span>
+              </div>
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5, marginTop: 4 }}>{flag.reason}</p>
             </div>
           ))}
         </div>
@@ -587,6 +652,14 @@ export function ResilienceOutput({
                       <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--border)", padding: "1px 6px", borderRadius: 3 }}>{o.type}</span>
                     </div>
                     <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{o.note}</p>
+                    {(o.elevation || o.coverage || o.failover_latency) && (
+                      <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 3 }}>
+                        <p style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>{t.whyConfidence}</p>
+                        {o.elevation && <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.5 }}><span style={{ fontWeight: 700 }}>{t.elevationField}</span>{o.elevation}</p>}
+                        {o.coverage && <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.5 }}><span style={{ fontWeight: 700 }}>{t.coverageField}</span>{o.coverage}</p>}
+                        {o.failover_latency && <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.5 }}><span style={{ fontWeight: 700 }}>{t.failoverField}</span>{o.failover_latency}</p>}
+                      </div>
+                    )}
                   </div>
                   <div style={{ textAlign: "right", flexShrink: 0 }}>
                     <div style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: i === 0 ? "var(--accent-blue)" : "var(--text)", lineHeight: 1 }}>
@@ -618,6 +691,24 @@ export function ResilienceOutput({
       </div>
 
       <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.redundancyTiers}</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {tiers.map(tier => (
+            <div key={tier.id} style={{ borderLeft: "2px solid var(--accent-blue)", paddingLeft: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+                <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{tier.label}</span>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)" }}>
+                  {tier.tier === "essential" ? t.tierEssential : tier.tier === "standard" ? t.tierStandard : t.tierDefense}
+                </span>
+              </div>
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)", marginTop: 4 }}>{tier.estimate}</p>
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6, marginTop: 4 }}>{tier.detail}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 12 }}>{t.provenanceLabel}</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
@@ -633,8 +724,19 @@ export function ResilienceOutput({
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
             <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceDate}</span>
-            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{new Date().toLocaleDateString(lang === "fi" ? "fi-FI" : "en-GB", { day: "numeric", month: "long", year: "numeric" })}</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{dateLabel}</span>
           </div>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceModelVersion}</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{result.modelVersion ?? MODEL_VERSION}</span>
+          </div>
+          {result.inputHash && (
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+              <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceInputHash}</span>
+              <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)" }}>{result.inputHash}</span>
+            </div>
+          )}
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-amber)", letterSpacing: "0.06em" }}>{t.provenanceNotLive}</p>
         </div>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 9, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
           {t.provenanceNote}
@@ -653,7 +755,7 @@ export function ResilienceOutput({
 
       <div className="gryps-print-only" style={{ borderTop: "1px solid var(--border)", paddingTop: 12, marginTop: 4 }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>
-          {t.generated} {new Date().toLocaleDateString(lang === "fi" ? "fi-FI" : "en-GB", { day: "numeric", month: "long", year: "numeric" })} · {t.printAttr}
+          {t.generated} {dateLabel} · {t.printAttr} · {result.modelVersion ?? MODEL_VERSION}
         </p>
       </div>
 

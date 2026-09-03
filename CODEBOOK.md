@@ -313,6 +313,7 @@ legal pages (footer-linked). Both locales must stay aligned on:
 - Non-commercial research / demonstration prototype — no company, no revenue, no sale
 - AI processing disclosed: **Mistral** (+ Vercel hosting) for demonstration Resilience Signature
 - No marketing tracking / analytics cookies claimed in Privacy
+- Optional email may be stored with demo submissions in Neon (EU); deletion via `hqe.moreira@gmail.com`
 - Point-of-exposure UI: `[AI]` badge remains on Advisor outputs; Terms link is `/legal/terms`
 
 This is product copy/compliance alignment — not legal advice.

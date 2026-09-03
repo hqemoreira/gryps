@@ -70,9 +70,9 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
         { label: "No terrestrial fallback", detail: "Adding a terrestrial LTE/5G link where mine infrastructure permits would create a third independent path for defense-in-depth." },
       ],
       connectivity_options: [
-        { provider: "Starlink", type: "LEO broadband", confidence: 88, note: "Primary high-bandwidth link for telemetry, video, and fleet coordination." },
-        { provider: "Iridium Certus", type: "Polar LEO narrowband", confidence: 93, note: "Independent safety-critical backup with true polar coverage." },
-        { provider: "OneWeb", type: "LEO broadband", confidence: 80, note: "Alternative LEO broadband provider for additional orbital diversity." },
+        { provider: "Starlink", type: "LEO broadband", confidence: 88, note: "Primary high-bandwidth link for telemetry, video, and fleet coordination.", elevation: "Phased array; needs open pit sky view.", coverage: "Improving polar shell at 67°N.", failover_latency: "Seconds if auto; minutes if manual." },
+        { provider: "Iridium Certus", type: "Polar LEO narrowband", confidence: 93, note: "Independent safety-critical backup with true polar coverage.", elevation: "Low-profile omni; modest sky view.", coverage: "True polar.", failover_latency: "Sub-minute if pre-provisioned." },
+        { provider: "OneWeb", type: "LEO broadband", confidence: 80, note: "Alternative LEO broadband provider for additional orbital diversity.", elevation: "High-inclination LEO.", coverage: "Polar-optimized.", failover_latency: "Minutes to provision if not installed." },
       ],
       recommendation: "Current dual-LEO setup is strong. To reach A-grade, implement automatic failover between Starlink and Iridium, and explore adding a private LTE network within the mine perimeter for a third independent path.",
       caveats: [
@@ -116,6 +116,48 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
         "Terrain penalty is estimated from EU-DEM elevation data, not on-site survey",
         "AI-generated assessment — not a substitute for professional connectivity planning",
       ],
+      issuedAt: "2026-08-12T15:10:12.000Z",
+      modelVersion: "gryps-signature-v1",
+      inputHash: "ex-forestry-mixed",
+    },
+  },
+  {
+    id: "iceland-autonomous-fleet",
+    title: "Autonomous fleet — Coastal inspection, Iceland",
+    titleFi: "Autonominen laivasto — Rannikkotarkastus, Islanti",
+    input: {
+      lat: 64.15, lng: -21.95,
+      sector: "arctic",
+      autonomy_level: "autonomous",
+      operation_criticality: "high",
+      current_setup: "OneWeb LEO + Iridium Certus backup",
+    },
+    result: {
+      resilience_signature: {
+        score: 72,
+        grade: "B",
+        summary: "Autonomous coastal inspection fleet with dual LEO paths (broadband + polar narrowband). High criticality is documented; remaining gap is automated failover, not missing hardware.",
+      },
+      risk_factors: [
+        { label: "Manual failover delay", severity: "medium", detail: "Terminals exist; switchover is still operator-driven, which stretches incident response for unmanned craft." },
+        { label: "North Atlantic weather windows", severity: "medium", detail: "Broadband LEO can degrade in heavy precipitation; narrowband backup preserves command." },
+      ],
+      redundancy_gaps: [
+        { label: "No automatic failover policy", detail: "Documented dual terminals without automated path selection still leave a human-in-the-loop gap." },
+      ],
+      connectivity_options: [
+        { provider: "OneWeb", type: "LEO broadband", confidence: 86, note: "Primary telemetry/video.", elevation: "High-inclination LEO — usable sky view at 64°N with clear horizon.", coverage: "Polar-optimized constellation.", failover_latency: "~seconds if auto; minutes if crew-switched." },
+        { provider: "Iridium Certus", type: "Polar LEO narrowband", confidence: 91, note: "Independent safety/control channel.", elevation: "Omnidirectional terminal; modest sky-view need.", coverage: "True polar including high latitudes.", failover_latency: "Sub-minute if pre-provisioned." },
+        { provider: "Starlink", type: "LEO broadband", confidence: 80, note: "Optional third broadband path for orbital diversity.", elevation: "Phased-array needs open sky.", coverage: "Improving high-latitude shell.", failover_latency: "Minutes to provision if not already installed." },
+      ],
+      recommendation: "Keep dual-LEO hardware. Implement automatic failover to reach A-band without adding a third constellation.",
+      caveats: [
+        "Illustrative Signature — not live coverage or a site survey",
+        "Not insurance or NIS2 legal advice",
+      ],
+      issuedAt: "2026-09-01T12:00:00.000Z",
+      modelVersion: "gryps-signature-v1",
+      inputHash: "ex-iceland-fleet",
     },
   },
 ]
