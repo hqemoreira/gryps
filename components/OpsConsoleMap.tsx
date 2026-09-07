@@ -10,32 +10,23 @@ import { MODEL_VERSION } from "@/lib/signature-meta"
 const HERO_SITE = { lat: 68.2, lng: 27.4, label: "Lapland · hero site" }
 
 /**
- * Dark raster basemap — no API key.
- * OpenFreeMap vector styles often paint a black canvas when glyphs/tiles flake;
- * Esri Dark Gray + Carto dark_all are reliable key-free rasters.
+ * Dark raster basemap — no API key, no country-name layer.
+ * Label-free tiles keep the ops console readable; pins/arcs carry the story.
+ * (Stacking Esri + Carto labels previously doubled SWEDEN/FINLAND/RUSSIA.)
  */
 function darkOpsStyle(): StyleSpecification {
   return {
     version: 8,
     name: "gryps-ops-dark",
     sources: {
-      "esri-dark": {
+      "carto-dark": {
         type: "raster",
         tiles: [
-          "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+          "https://basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png",
         ],
         tileSize: 256,
         attribution:
-          'Tiles &copy; <a href="https://www.esri.com/">Esri</a> · Data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxzoom: 16,
-      },
-      "carto-labels": {
-        type: "raster",
-        tiles: [
-          "https://basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png",
-        ],
-        tileSize: 256,
-        attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
         maxzoom: 19,
       },
     },
@@ -46,20 +37,13 @@ function darkOpsStyle(): StyleSpecification {
         paint: { "background-color": "#0B1220" },
       },
       {
-        id: "esri-dark",
+        id: "carto-dark",
         type: "raster",
-        source: "esri-dark",
+        source: "carto-dark",
         paint: {
-          "raster-opacity": 0.92,
-          "raster-saturation": -0.35,
-          "raster-contrast": 0.1,
+          "raster-opacity": 0.95,
+          "raster-saturation": -0.15,
         },
-      },
-      {
-        id: "carto-labels",
-        type: "raster",
-        source: "carto-labels",
-        paint: { "raster-opacity": 0.85 },
       },
     ],
   }
