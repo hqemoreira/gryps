@@ -2,23 +2,27 @@ import type { StyleSpecification } from "maplibre-gl"
 import type { Map as MapLibreMap } from "maplibre-gl"
 
 /**
- * Dark raster basemap — no API key, no country-name layer.
+ * Dark raster basemap — no API key.
  * Shared by homepage Ops Console and Capacity Map.
+ *
+ * Do NOT use basemaps.cartocdn.com — CARTO now watermarks
+ * "API KEY REQUIRED" without a key (see lib/basemap.ts).
+ * Esri Canvas Dark Gray is key-free and paints reliably in MapLibre.
  */
 export function darkOpsStyle(): StyleSpecification {
   return {
     version: 8,
     name: "gryps-ops-dark",
     sources: {
-      "carto-dark": {
+      "esri-dark": {
         type: "raster",
         tiles: [
-          "https://basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png",
+          "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
         ],
         tileSize: 256,
         attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-        maxzoom: 19,
+          'Tiles &copy; <a href="https://www.esri.com/">Esri</a>',
+        maxzoom: 16,
       },
     },
     layers: [
@@ -28,12 +32,15 @@ export function darkOpsStyle(): StyleSpecification {
         paint: { "background-color": "#0B1220" },
       },
       {
-        id: "carto-dark",
+        id: "esri-dark",
         type: "raster",
-        source: "carto-dark",
+        source: "esri-dark",
         paint: {
-          "raster-opacity": 0.95,
-          "raster-saturation": -0.15,
+          "raster-opacity": 0.92,
+          "raster-saturation": -0.35,
+          "raster-contrast": 0.12,
+          "raster-brightness-min": 0.02,
+          "raster-brightness-max": 0.85,
         },
       },
     ],
