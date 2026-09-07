@@ -1,7 +1,17 @@
 # GRYPS — Codebook
 
-> Satellite connectivity intelligence platform for Nordic/Arctic industrial operators.
+> Non-commercial R&D — assessment-first satellite connectivity resilience scoring for Nordic/Arctic industrial contexts (Resilience Signature).
 > Stack: Next.js 16 App Router · TypeScript · CSS custom properties · Neon (PostgreSQL) · Vercel
+
+---
+
+## Public posture
+
+- **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC.
+- **Object:** Resilience Signature (versioned). Supporting surfaces: `/methodology`, `/providers`, `/signatures`, `/map` (Capacity).
+- **Legal chrome:** Terms/Privacy labeled non-commercial R&D — not multi-section commercial “Legal”.
+- **Monitoring:** illustrative T0/T1 drift mock only. No freemium / free-trial CTAs.
+- **SEO:** `Allow: /` + indexed metadata (unlike shelved portfolio prototypes).
 
 ---
 
@@ -52,12 +62,8 @@ All translatable components accept `t: typeof COPY.en` as a prop. `COPY` is a mo
 ```ts
 const COPY = {
   en: {
-    tag: "Satellite connectivity intelligence",
-    h1: ["Know which satellite", "network to deploy.", "Before you deploy."],
-    tiers: [
-      { name: "Report", price: "€550", unit: "per analysis", ... },
-      ...
-    ],
+    tag: "Satellite connectivity resilience",
+    // advisory / assessment copy — no pricing tiers or freemium CTAs
     // ... all strings
   },
   fi: {
@@ -72,8 +78,9 @@ const t = COPY[lang]
 // Passed to every component:
 <TelemetryStream t={t} />
 <PolarMap t={t} />
-<PricingTiers t={t} />
 ```
+
+Do not reintroduce `PricingTiers` or paid ladder copy. Assessment surfaces: `app/methodology/page.tsx`, `app/providers/page.tsx`, versioned Signature metadata in `lib/signature-meta.ts`.
 
 ---
 
@@ -343,7 +350,7 @@ Spatineo Capacity Map–lite view: one screen for the portfolio of sites in
   not real-time “link up/down.”
 - Optional side-panel fields (`real_data_score`, terrain, Bittimittari gap) are
   enrichment already on the row; null when unavailable (e.g. non-FI sites).
-- Map tiles: existing free Leaflet + CARTO/OSM stack (same as `/signatures`).
+- Map tiles: Leaflet + OSM-compatible free tiles (avoid Carto styles that now require an API key).
   No Esri / paid map SaaS.
 
 Implementation: `lib/capacity-status.ts`, `components/CapacityMap.tsx`,
