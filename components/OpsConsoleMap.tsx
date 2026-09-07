@@ -1,16 +1,69 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import * as maplibregl from "maplibre-gl"
-import type { Map, Marker } from "maplibre-gl"
+import type { Map, Marker, StyleSpecification } from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
 import { MODEL_VERSION } from "@/lib/signature-meta"
 
 const HERO_SITE = { lat: 68.2, lng: 27.4, label: "Lapland · hero site" }
 
-/** Free dark basemap (no API key) — OpenFreeMap dark, MapLibre-native. */
-const DARK_STYLE = "https://tiles.openfreemap.org/styles/dark"
+/**
+ * Dark raster basemap — no API key.
+ * OpenFreeMap vector styles often paint a black canvas when glyphs/tiles flake;
+ * Esri Dark Gray + Carto dark_all are reliable key-free rasters.
+ */
+function darkOpsStyle(): StyleSpecification {
+  return {
+    version: 8,
+    name: "gryps-ops-dark",
+    sources: {
+      "esri-dark": {
+        type: "raster",
+        tiles: [
+          "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        ],
+        tileSize: 256,
+        attribution:
+          'Tiles &copy; <a href="https://www.esri.com/">Esri</a> · Data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxzoom: 16,
+      },
+      "carto-labels": {
+        type: "raster",
+        tiles: [
+          "https://basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png",
+        ],
+        tileSize: 256,
+        attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+        maxzoom: 19,
+      },
+    },
+    layers: [
+      {
+        id: "background",
+        type: "background",
+        paint: { "background-color": "#0B1220" },
+      },
+      {
+        id: "esri-dark",
+        type: "raster",
+        source: "esri-dark",
+        paint: {
+          "raster-opacity": 0.92,
+          "raster-saturation": -0.35,
+          "raster-contrast": 0.1,
+        },
+      },
+      {
+        id: "carto-labels",
+        type: "raster",
+        source: "carto-labels",
+        paint: { "raster-opacity": 0.85 },
+      },
+    ],
+  }
+}
 
 function modelChip(): string {
   const m = MODEL_VERSION.match(/v[\d.]+/)
@@ -89,7 +142,6 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<Map | null>(null)
   const markersRef = useRef<Marker[]>([])
-  const [failed, setFailed] = useState(false)
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -99,9 +151,9 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
 
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: DARK_STYLE,
+      style: darkOpsStyle(),
       center: [18, 67],
-      zoom: 3.2,
+      zoom: 3.4,
       pitch: 0,
       attributionControl: { compact: true },
     })
@@ -109,12 +161,21 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
 
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right")
 
-    map.on("error", () => {
-      if (!cancelled) setFailed(true)
+    // Dynamic layout / first paint often leaves a blank WebGL canvas until resize
+    const kickResize = () => {
+      try { map.resize() } catch { /* map may already be removed */ }
+    }
+    map.once("load", kickResize)
+    const resizeTimers = [50, 200, 500].map(ms => window.setTimeout(kickResize, ms))
+
+    map.on("error", (e) => {
+      console.error("OpsConsoleMap error:", e.error)
+      // Don't flip to failed overlay for a single tile miss — only if style is empty
     })
 
     map.on("load", () => {
       if (cancelled) return
+      kickResize()
 
       map.addSource("arctic-glow", {
         type: "geojson",
@@ -288,6 +349,7 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
 
     return () => {
       cancelled = true
+      resizeTimers.forEach(id => window.clearTimeout(id))
       if (dashTimer) window.clearInterval(dashTimer)
       markersRef.current.forEach(m => m.remove())
       markersRef.current = []
@@ -333,15 +395,6 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         <span><span style={{ color: "#EF4444" }}>●</span> Grade D/F</span>
         <span style={{ color: "#4FA8FF" }}>◎ Hero 68.2°N</span>
       </div>
-
-      {failed && (
-        <div style={{
-          position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
-          background: "var(--surface)", color: "var(--text-muted)", fontFamily: "var(--font-ui)", fontSize: 13,
-        }}>
-          Map tiles unavailable — reload to retry.
-        </div>
-      )}
 
       <style>{`
         .gryps-ops-pulse-core {
