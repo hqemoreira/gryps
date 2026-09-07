@@ -1,46 +1,55 @@
 import type { StyleSpecification } from "maplibre-gl"
 import type { Map as MapLibreMap } from "maplibre-gl"
+import { MODEL_VERSION } from "@/lib/signature-meta"
+
+/** Corner badge — includes "Esri" so a deploy is visually obvious vs Carto watermark builds. */
+export function modelBasemapChip(): string {
+  const m = MODEL_VERSION.match(/v[\d.]+/)
+  const ver = m ? m[0] : "v0.3"
+  return `Esri · Model ${ver} · illustrative`
+}
 
 /**
  * Dark raster basemap — no API key.
  * Shared by homepage Ops Console and Capacity Map.
  *
- * Do NOT use basemaps.cartocdn.com — CARTO now watermarks
- * "API KEY REQUIRED" without a key (see lib/basemap.ts).
- * Esri Canvas Dark Gray is key-free and paints reliably in MapLibre.
+ * NEVER use basemaps.cartocdn.com — CARTO watermarks "API KEY REQUIRED".
+ * Use Esri World Imagery (same key-free source as lib/basemap.ts) with a dark wash.
+ * Style name is versioned so clients cannot keep a stale MapLibre style cache.
  */
 export function darkOpsStyle(): StyleSpecification {
   return {
     version: 8,
-    name: "gryps-ops-dark",
+    name: "gryps-ops-dark-v4-esri-imagery",
     sources: {
-      "esri-dark": {
+      "esri-imagery": {
         type: "raster",
         tiles: [
-          "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+          // ArcGIS tile path is level/row/column → {z}/{y}/{x} for MapLibre
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         ],
         tileSize: 256,
         attribution:
           'Tiles &copy; <a href="https://www.esri.com/">Esri</a>',
-        maxzoom: 16,
+        maxzoom: 19,
       },
     },
     layers: [
       {
         id: "background",
         type: "background",
-        paint: { "background-color": "#0B1220" },
+        paint: { "background-color": "#070B12" },
       },
       {
-        id: "esri-dark",
+        id: "esri-imagery",
         type: "raster",
-        source: "esri-dark",
+        source: "esri-imagery",
         paint: {
-          "raster-opacity": 0.92,
-          "raster-saturation": -0.35,
-          "raster-contrast": 0.12,
-          "raster-brightness-min": 0.02,
-          "raster-brightness-max": 0.85,
+          "raster-opacity": 0.88,
+          "raster-saturation": -0.55,
+          "raster-contrast": 0.15,
+          "raster-brightness-min": 0,
+          "raster-brightness-max": 0.72,
         },
       },
     ],

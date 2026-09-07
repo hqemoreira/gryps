@@ -9,8 +9,7 @@ import {
   capacityStatusLabel,
   type CapacityStatus,
 } from "@/lib/capacity-status"
-import { addOpsDecorLayers, darkOpsStyle, OPS_MAP_CSS } from "@/lib/ops-map-style"
-import { MODEL_VERSION } from "@/lib/signature-meta"
+import { addOpsDecorLayers, darkOpsStyle, modelBasemapChip, OPS_MAP_CSS } from "@/lib/ops-map-style"
 
 export type CapacityMapSite = {
   slug: string
@@ -18,11 +17,6 @@ export type CapacityMapSite = {
   lat: number
   lng: number
   status: CapacityStatus
-}
-
-function modelChip(): string {
-  const m = MODEL_VERSION.match(/v[\d.]+/)
-  return m ? m[0] : "v0.3"
 }
 
 function fitSites(map: Map, sites: CapacityMapSite[]) {
@@ -195,7 +189,7 @@ export function CapacityMap({
         backdropFilter: "blur(8px)",
         pointerEvents: "none",
       }}>
-        Model {modelChip()} · illustrative
+        {modelBasemapChip()}
       </div>
 
       <div style={{

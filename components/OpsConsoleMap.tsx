@@ -5,15 +5,9 @@ import * as maplibregl from "maplibre-gl"
 import type { Map, Marker } from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
-import { addOpsDecorLayers, darkOpsStyle, OPS_MAP_CSS } from "@/lib/ops-map-style"
-import { MODEL_VERSION } from "@/lib/signature-meta"
+import { addOpsDecorLayers, darkOpsStyle, modelBasemapChip, OPS_MAP_CSS } from "@/lib/ops-map-style"
 
 const HERO_SITE = { lat: 68.2, lng: 27.4, label: "Lapland · hero site" }
-
-function modelChip(): string {
-  const m = MODEL_VERSION.match(/v[\d.]+/)
-  return m ? m[0] : "v0.3"
-}
 
 function gradePinColor(grade: string): string {
   if (grade === "A" || grade === "B") return "#2ED47A"
@@ -185,7 +179,7 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         backdropFilter: "blur(8px)",
         pointerEvents: "none",
       }}>
-        Model {modelChip()} · illustrative
+        {modelBasemapChip()}
       </div>
 
       <div style={{
