@@ -55,21 +55,22 @@ const jsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "GRYPS — Satellite Connectivity Resilience Scoring for Nordic, Arctic & Iceland Operations",
-  description: "GRYPS is a free R&D prototype that scores satellite connectivity resilience for remote and autonomous industrial sites. It produces a Resilience Signature: a scored assessment covering single-provider dependency risk, LEO/MEO/GEO orbital redundancy, terrain obstruction penalties, and NIS2/CER compliance flags. Built in Espoo, Finland for maritime, forestry, mining, and Arctic operations above 60°N.",
+  title: "GRYPS — Know your score before the Arctic finds it for you",
+  description: "Resilience Signatures for Nordic, Arctic & Icelandic operations. Score satellite dependency, redundancy gaps, and NIS2-aligned evidence in 60 seconds. Free R&D prototype · Model v0.3 · Espoo, Finland.",
   keywords: "connectivity resilience, satellite connectivity scoring, autonomous operations connectivity, NIS2 connectivity risk, CER critical operator resilience, satellite resilience Arctic, satellite resilience Iceland, remote site connectivity risk, forestry autonomous fleet connectivity, Starlink Arctic coverage, Iridium Certus polar, OneWeb high latitude, LEO MEO GEO redundancy",
   metadataBase: new URL("https://gryps.vercel.app"),
   alternates: { canonical: "https://gryps.vercel.app" },
   openGraph: {
-    title: "GRYPS — Satellite Connectivity Resilience Scoring for Nordic, Arctic & Iceland",
-    description: "Free R&D prototype: score satellite connectivity resilience for remote and autonomous sites. Produces a Resilience Signature covering provider dependency, orbital redundancy, terrain penalties, and NIS2/CER compliance. Espoo, Finland.",
+    title: "GRYPS — Score: 40/100 · Grade D",
+    description: "Know your score before the Arctic finds it for you. Free Resilience Signature demo for Nordic & Arctic operations.",
     type: "website",
     siteName: "GRYPS",
+    url: "https://gryps.vercel.app",
   },
   twitter: {
     card: "summary_large_image",
-    title: "GRYPS — Score Satellite Connectivity Resilience for Arctic & Nordic Operations",
-    description: "Free research tool that produces a Resilience Signature — scored satellite connectivity assessment for remote industrial sites above 60°N. Covers Starlink, Iridium, OneWeb, and GEO providers.",
+    title: "GRYPS — Score: 40/100 · Grade D",
+    description: "Know your score before the Arctic finds it for you. Resilience Signatures for Nordic, Arctic & Icelandic ops.",
   },
   robots: { index: true, follow: true },
   verification: { google: "vbGW3-1oXwqBQl7NlA461C2enz8BtVkFOPqW0SiJVy0" },

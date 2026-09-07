@@ -452,29 +452,33 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   )
 }
 
-// ── Hero score count-up ───────────────────────────────────────────────────────
+// ── Hero score — final value always in the DOM; motion is decorative only
 function HeroScoreCountUp({ label }: { label: string }) {
-  const [score, setScore] = useState(0)
+  const TARGET = 40
+  const [pulse, setPulse] = useState(false)
   useEffect(() => {
-    const target = 40
-    const duration = 1200
-    const start = performance.now()
-    let raf: number
-    function tick(now: number) {
-      const t = Math.min(1, (now - start) / duration)
-      const eased = 1 - Math.pow(1 - t, 3)
-      setScore(Math.round(eased * target))
-      if (t < 1) raf = requestAnimationFrame(tick)
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return
     }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    const start = window.setTimeout(() => setPulse(true), 0)
+    const end = window.setTimeout(() => setPulse(false), 900)
+    return () => {
+      window.clearTimeout(start)
+      window.clearTimeout(end)
+    }
   }, [])
-  const text = label.replace("{score}", String(score)).replace("{grade}", "D")
+  // Always the final score — never 0 — so crawlers, OG scrapers, and first paint stay correct
+  const text = label.replace("{score}", String(TARGET)).replace("{grade}", "D")
   return (
     <div
       className="gryps-hero-score"
-      aria-live="polite"
-      style={{ fontFamily: "var(--font-data)", color: gradeTextColor("D"), marginBottom: 20 }}
+      style={{
+        fontFamily: "var(--font-data)",
+        color: gradeTextColor("D"),
+        marginBottom: 20,
+        transform: pulse ? "scale(1.02)" : "scale(1)",
+        transition: "transform 0.6s ease",
+      }}
     >
       {text}
     </div>
@@ -520,47 +524,7 @@ function HeroSignatureCard({ t }: { t: typeof COPY.en }) {
   )
 }
 
-// ── Telemetry stream ──────────────────────────────────────────────────────────
-const TELEMETRY_LINES = [
-  { tag: "GRYPS-INIT", color: "var(--accent-blue)",  text: "Evaluating site profile for 68.2°N · 27.4°E…" },
-  { tag: "RISK-FACT",  color: "var(--accent-amber)", text: "Single-provider dependency · critical severity" },
-  { tag: "GAP",        color: "var(--accent-amber)", text: "No backup connectivity identified" },
-  { tag: "OPTIONS",    color: "var(--accent-cyan)",  text: "OneWeb LEO · confidence 85" },
-  { tag: "OPTIONS",    color: "var(--accent-cyan)",  text: "Iridium Certus LEO · confidence 90" },
-  { tag: "OPTIONS",    color: "var(--accent-cyan)",  text: "Inmarsat Global Xpress GEO · confidence 75" },
-  { tag: "SIGNATURE",  color: "var(--accent-green)", text: "Resilience Signature computed: 40 · D" },
-  { tag: "REPORT",     color: "var(--accent-green)", text: "Assessment complete — advisory output ready" },
-]
-
-function TelemetryStream({ t }: { t: typeof COPY.en }) {
-  const [visible, setVisible] = useState(1)
-  useEffect(() => {
-    const id = setInterval(() => setVisible(v => v < TELEMETRY_LINES.length ? v + 1 : 1), 900)
-    return () => clearInterval(id)
-  }, [])
-  return (
-    <div className="gryps-hero-terminal" style={{
-      backgroundColor: "var(--surface)", border: "1px solid var(--border)",
-      borderRadius: 8, padding: "16px 18px", fontFamily: "var(--font-data)",
-      fontSize: 11, lineHeight: 2, overflow: "hidden",
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 10, borderBottom: "1px solid var(--border)" }}>
-        <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 6px #2ED47A" }} />
-        <span style={{ color: "var(--text-muted)", fontSize: 10, letterSpacing: "0.1em" }}>{t.telemetryHeader}</span>
-      </div>
-      {TELEMETRY_LINES.map((line, i) => (
-        <div key={i} style={{
-          display: "flex", gap: 12,
-          opacity: i < visible ? (i === visible - 1 ? 1 : 0.45) : 0,
-          transition: "opacity 0.4s ease", whiteSpace: "nowrap", overflow: "hidden",
-        }}>
-          <span style={{ color: line.color, minWidth: 80, flexShrink: 0 }}>[{line.tag}]</span>
-          <span style={{ color: i === visible - 1 ? "var(--text)" : "var(--text-muted)" }}>{line.text}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
+// Polar map lives below examples — decorative coverage zone only
 
 // ── Polar map ─────────────────────────────────────────────────────────────────
 function PolarMap({ t }: { t: typeof COPY.en }) {
@@ -695,13 +659,13 @@ const COPY = {
     providersHint:  "Select all providers currently in use. Choose None if no satellite path is documented.",
     boundsHint: "Coordinates must be within Nordic/Arctic bounds (lat 55–85°, lng −30–40°).",
     emailLabel: "OPTIONAL EMAIL",
-    emailHint:  "Email me this report + get notified when live monitoring launches",
-    emailOptionalNote: "Optional — you'll see your results either way.",
+    emailHint:  "Optional — stored with this run so we can email the report / notify when live monitoring launches. Not a newsletter.",
+    emailOptionalNote: "You'll see results either way. After generate, use Copy shareable link (?sid=).",
     runAdvisor: "Score my site — free",
     analysing:  "Analysing your site…",
     analyseAnother: "Analyse another site",
     telemetryLabel:  "Research prototype · illustrative engine output",
-    telemetryHeader: "ILLUSTRATIVE ADVISOR SEQUENCE",
+    telemetryHeader: "ENGINE LOG",
     topRiskLabel: "TOP RISK",
     topRecLabel:  "REC #1",
     heroTopRisk:  "No backup",
@@ -755,13 +719,13 @@ const COPY = {
     providersHint:  "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittipolkua ei ole dokumentoitu.",
     boundsHint: "Koordinaattien on oltava pohjoismaisella/arktisella alueella (lat 55–85°, lng −30–40°).",
     emailLabel: "VALINNAINEN SÄHKÖPOSTI",
-    emailHint:  "Lähetä raportti sähköpostiini + ilmoita kun live-seuranta käynnistyy",
-    emailOptionalNote: "Valinnainen — näet tuloksesi joka tapauksessa.",
+    emailHint:  "Valinnainen — tallennetaan tähän ajoon, jotta voimme lähettää raportin / ilmoittaa kun live-seuranta käynnistyy. Ei uutiskirjettä.",
+    emailOptionalNote: "Näet tulokset joka tapauksessa. Generoinnin jälkeen: Kopioi jaettava linkki (?sid=).",
     runAdvisor: "Pisteytä kohteeni — ilmaiseksi",
     analysing:  "Analysoidaan kohdetta…",
     analyseAnother: "Analysoi toinen kohde",
     telemetryLabel:  "Tutkimusprototyyppi · havainnollistava moottorilähtö",
-    telemetryHeader: "HAVAINNOLLISTAVA ADVISOR-SEKVENSSI",
+    telemetryHeader: "MOOTTORILOKI",
     topRiskLabel: "PÄÄRISKI",
     topRecLabel:  "SUOS #1",
     heroTopRisk:  "Ei varayhteyttä",
@@ -819,7 +783,7 @@ export default function HomePage() {
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 1010,
         backdropFilter: "blur(12px)",
       }}>
-        R&D PROTOTYPE · NON-COMMERCIAL RESEARCH PROJECT · EARLY ACCESS · {lang === "en" ? "ESPOO, FINLAND" : "ESPOO, SUOMI"}
+        R&D PROTOTYPE · ESPOO, FINLAND · {lang === "en" ? "NOT FOR SALE" : "EI MYYNNISSÄ"}
       </div>
 
       <Header
@@ -915,7 +879,6 @@ export default function HomePage() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <HeroSignatureCard t={t} />
-            <TelemetryStream t={t} />
           </div>
         </div>
       </section>
@@ -972,7 +935,6 @@ export default function HomePage() {
       <section id="examples" className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.examplesLabel}</p>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", marginBottom: 28, maxWidth: 560 }}>{t.examplesSub}</p>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 24 }}>{t.telemetryLabel}</p>
         <div className="gryps-problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
           {EXAMPLE_SIGNATURES.map(ex => {
             const gc = gradeTextColor(ex.result.resilience_signature.grade)
