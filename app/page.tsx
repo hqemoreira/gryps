@@ -12,6 +12,24 @@ import { DriftMock } from "@/components/DriftMock"
 import { gradeTextColor } from "@/lib/resilience-colors"
 import { ADVISOR_PROVIDERS, providersToSetupString } from "@/lib/deterministic-score"
 import { MODEL_VERSION } from "@/lib/signature-meta"
+import dynamic from "next/dynamic"
+
+const OpsConsoleMap = dynamic(
+  () => import("@/components/OpsConsoleMap").then(m => m.OpsConsoleMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div style={{
+        height: 420, borderRadius: 10, border: "1px solid var(--border)",
+        backgroundColor: "var(--surface)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.1em",
+      }}>
+        LOADING OPS MAP…
+      </div>
+    ),
+  },
+)
 
 const NORDIC_LAT_MIN = 55
 const NORDIC_LAT_MAX = 85
@@ -524,93 +542,6 @@ function HeroSignatureCard({ t }: { t: typeof COPY.en }) {
   )
 }
 
-// Polar map lives below examples — decorative coverage zone only
-
-// ── Polar map ─────────────────────────────────────────────────────────────────
-function PolarMap({ t }: { t: typeof COPY.en }) {
-  const cx = 200, cy = 195, maxR = 160
-  const [tick, setTick] = useState(0)
-  useEffect(() => {
-    let raf: number
-    const start = performance.now()
-    function loop(now: number) { setTick((now - start) / 1000); raf = requestAnimationFrame(loop) }
-    raf = requestAnimationFrame(loop)
-    return () => cancelAnimationFrame(raf)
-  }, [])
-
-  const latLines = [90, 80, 70, 60, 50]
-  const markers = [
-    { lat: 68.2, lon: 27.4, label: "68.2°N", active: true },
-    { lat: 71.0, lon: 25.9, label: "71.0°N", active: false },
-    { lat: 64.5, lon: -21.9, label: "64.5°N", active: false },
-    { lat: 78.2, lon: 15.6, label: "78.2°N", active: false },
-  ]
-  function latToR(lat: number) { return ((90 - lat) / 50) * maxR }
-  function toXY(lat: number, lon: number) {
-    const r = latToR(lat), angle = (lon * Math.PI) / 180 - Math.PI / 2
-    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) }
-  }
-  function satPos(r: number, speed: number, offset: number) {
-    const a = tick * speed + offset
-    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) }
-  }
-  const starlink = satPos(latToR(67), 1.5, 0)
-  const oneweb   = satPos(latToR(71), 1.1, 2.4)
-  const iridium  = satPos(latToR(74), 0.8, 4.7)
-  const activePt = toXY(68.2, 27.4)
-  const pulsePct = (Math.sin(tick * 2.5) + 1) / 2
-  const pulseR   = 6 + pulsePct * 5
-  const signalOpacity = 0.15 + 0.2 * ((Math.sin(tick * 3) + 1) / 2)
-
-  return (
-    <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid var(--border)" }}>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>{t.polarHeader}</span>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em" }}>{t.polarMapLabel}</span>
-      </div>
-      <svg width="100%" viewBox="0 0 400 390" style={{ display: "block" }}>
-        {latLines.map(lat => (
-          <circle key={lat} cx={cx} cy={cy} r={latToR(lat)} fill="none"
-            stroke="var(--border)" strokeWidth={lat === 70 ? 1.2 : 0.7}
-            strokeDasharray={lat === 70 ? "none" : "3 4"} />
-        ))}
-        {[-90, -45, 0, 45, 90, 135].map(lon => {
-          const angle = (lon * Math.PI) / 180 - Math.PI / 2
-          return <line key={lon} x1={cx} y1={cy} x2={cx + maxR * Math.cos(angle)} y2={cy + maxR * Math.sin(angle)} stroke="var(--border)" strokeWidth={0.6} opacity={0.5} />
-        })}
-        <text x={cx + latToR(70) + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="var(--text-dim)">70°N</text>
-        <text x={cx + latToR(60) + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="var(--text-dim)">60°N</text>
-        <circle cx={cx} cy={cy} r={latToR(50)} fill="rgba(79,168,255,0.04)" />
-        <circle cx={cx} cy={cy} r={latToR(70)} fill="rgba(110,231,249,0.05)" />
-        <line x1={activePt.x} y1={activePt.y} x2={starlink.x} y2={starlink.y}
-          stroke="#4FA8FF" strokeWidth={0.8} strokeDasharray="4 3" opacity={signalOpacity} />
-        {markers.map((m, i) => {
-          const pos = toXY(m.lat, m.lon)
-          return (
-            <g key={i}>
-              {m.active && <circle cx={pos.x} cy={pos.y} r={pulseR} fill="rgba(79,168,255,0.08)" />}
-              {m.active && <circle cx={pos.x} cy={pos.y} r={pulseR + 4} fill="none" stroke="rgba(79,168,255,0.06)" strokeWidth={1} />}
-              <circle cx={pos.x} cy={pos.y} r={m.active ? 3 : 2} fill={m.active ? "#4FA8FF" : "var(--text-dim)"} />
-              {m.active && <text x={pos.x + 6} y={pos.y - 5} style={{ fontFamily: "var(--font-data)", fontSize: 8 }} fill="var(--accent-blue)">{m.label}</text>}
-            </g>
-          )
-        })}
-        <circle cx={starlink.x} cy={starlink.y} r={5} fill="rgba(79,168,255,0.15)" />
-        <circle cx={starlink.x} cy={starlink.y} r={2.5} fill="#4FA8FF" />
-        <text x={starlink.x + 5} y={starlink.y - 4} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="var(--accent-blue)">SL</text>
-        <circle cx={oneweb.x} cy={oneweb.y} r={4} fill="rgba(110,231,249,0.12)" />
-        <circle cx={oneweb.x} cy={oneweb.y} r={2} fill="#6EE7F9" />
-        <text x={oneweb.x + 4} y={oneweb.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="var(--accent-cyan)">OW</text>
-        <circle cx={iridium.x} cy={iridium.y} r={3.5} fill="rgba(245,184,74,0.12)" />
-        <circle cx={iridium.x} cy={iridium.y} r={1.8} fill="#D97706" />
-        <text x={iridium.x + 4} y={iridium.y - 3} style={{ fontFamily: "var(--font-data)", fontSize: 7 }} fill="var(--accent-amber)">IR</text>
-        <circle cx={cx} cy={cy} r={2} fill="var(--text-dim)" />
-        <text x={cx + 4} y={cy - 3} style={{ fontFamily: "var(--font-data)", fontSize: 9 }} fill="var(--text-dim)">N</text>
-      </svg>
-    </div>
-  )
-}
-
 // ── Stat chip ─────────────────────────────────────────────────────────────────
 function Stat({ value, label, href }: { value: string; label: string; href?: string }) {
   const inner = (
@@ -973,8 +904,10 @@ export default function HomePage() {
           })}
         </div>
         <div style={{ marginTop: 32, marginBottom: 32 }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 12 }}>{t.sampleCta}</p>
-          <PolarMap t={t} />
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 12 }}>
+            {lang === "en" ? "OPS CONSOLE · EXAMPLE SITES" : "OPS-KONSOLI · ESIMERKKIKOHTEET"}
+          </p>
+          <OpsConsoleMap lang={lang} />
         </div>
         <DriftMock lang={lang} />
       </section>
