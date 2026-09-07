@@ -2,124 +2,23 @@
 
 import { useEffect, useRef } from "react"
 import * as maplibregl from "maplibre-gl"
-import type { Map, Marker, StyleSpecification } from "maplibre-gl"
+import type { Map, Marker } from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
+import { addOpsDecorLayers, darkOpsStyle, OPS_MAP_CSS } from "@/lib/ops-map-style"
 import { MODEL_VERSION } from "@/lib/signature-meta"
 
 const HERO_SITE = { lat: 68.2, lng: 27.4, label: "Lapland · hero site" }
-
-/**
- * Dark raster basemap — no API key, no country-name layer.
- * Label-free tiles keep the ops console readable; pins/arcs carry the story.
- * (Stacking Esri + Carto labels previously doubled SWEDEN/FINLAND/RUSSIA.)
- */
-function darkOpsStyle(): StyleSpecification {
-  return {
-    version: 8,
-    name: "gryps-ops-dark",
-    sources: {
-      "carto-dark": {
-        type: "raster",
-        tiles: [
-          "https://basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png",
-        ],
-        tileSize: 256,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-        maxzoom: 19,
-      },
-    },
-    layers: [
-      {
-        id: "background",
-        type: "background",
-        paint: { "background-color": "#0B1220" },
-      },
-      {
-        id: "carto-dark",
-        type: "raster",
-        source: "carto-dark",
-        paint: {
-          "raster-opacity": 0.95,
-          "raster-saturation": -0.15,
-        },
-      },
-    ],
-  }
-}
 
 function modelChip(): string {
   const m = MODEL_VERSION.match(/v[\d.]+/)
   return m ? m[0] : "v0.3"
 }
 
-function parallelLine(lat: number, fromLng: number, toLng: number, step = 2): GeoJSON.Feature {
-  const coords: [number, number][] = []
-  for (let lng = fromLng; lng <= toLng; lng += step) coords.push([lng, lat])
-  return {
-    type: "Feature",
-    properties: { lat },
-    geometry: { type: "LineString", coordinates: coords },
-  }
-}
-
-function arcticGlowPolygon(): GeoJSON.Feature {
-  // Rough polygon covering Nordic/Arctic view above ~66.5°N
-  const coords: [number, number][] = []
-  for (let lng = -30; lng <= 40; lng += 2) coords.push([lng, 66.5])
-  for (let lng = 40; lng >= -30; lng -= 2) coords.push([lng, 82])
-  coords.push([-30, 66.5])
-  return {
-    type: "Feature",
-    properties: {},
-    geometry: { type: "Polygon", coordinates: [coords] },
-  }
-}
-
-/** Decorative orbital-class arcs sweeping the Arctic FOV */
-function orbitalArcs(): GeoJSON.FeatureCollection {
-  return {
-    type: "FeatureCollection",
-    features: [
-      {
-        type: "Feature",
-        properties: { class: "LEO", color: "#4FA8FF" },
-        geometry: {
-          type: "LineString",
-          coordinates: [
-            [-25, 62], [-10, 72], [5, 78], [20, 76], [35, 70],
-          ],
-        },
-      },
-      {
-        type: "Feature",
-        properties: { class: "MEO", color: "#6EE7F9" },
-        geometry: {
-          type: "LineString",
-          coordinates: [
-            [-28, 58], [-5, 68], [12, 74], [30, 72],
-          ],
-        },
-      },
-      {
-        type: "Feature",
-        properties: { class: "GEO", color: "#D97706" },
-        geometry: {
-          type: "LineString",
-          coordinates: [
-            [-20, 55], [0, 58], [20, 57], [38, 54],
-          ],
-        },
-      },
-    ],
-  }
-}
-
 function gradePinColor(grade: string): string {
   if (grade === "A" || grade === "B") return "#2ED47A"
   if (grade === "C") return "#D97706"
-  return "#EF4444" // D / F
+  return "#EF4444"
 }
 
 export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
@@ -142,95 +41,23 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
       attributionControl: { compact: true },
     })
     mapRef.current = map
-
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right")
 
-    // Dynamic layout / first paint often leaves a blank WebGL canvas until resize
     const kickResize = () => {
-      try { map.resize() } catch { /* map may already be removed */ }
+      try { map.resize() } catch { /* removed */ }
     }
     map.once("load", kickResize)
     const resizeTimers = [50, 200, 500].map(ms => window.setTimeout(kickResize, ms))
 
-    map.on("error", (e) => {
+    map.on("error", e => {
       console.error("OpsConsoleMap error:", e.error)
-      // Don't flip to failed overlay for a single tile miss — only if style is empty
     })
 
     map.on("load", () => {
       if (cancelled) return
       kickResize()
+      dashTimer = addOpsDecorLayers(map)
 
-      map.addSource("arctic-glow", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [arcticGlowPolygon()] },
-      })
-      map.addLayer({
-        id: "arctic-glow-fill",
-        type: "fill",
-        source: "arctic-glow",
-        paint: {
-          "fill-color": "#6EE7F9",
-          "fill-opacity": 0.06,
-        },
-      })
-
-      map.addSource("graticule", {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: [
-            parallelLine(60, -30, 40),
-            parallelLine(70, -30, 40),
-            parallelLine(66.5, -30, 40),
-          ],
-        },
-      })
-      map.addLayer({
-        id: "graticule-lines",
-        type: "line",
-        source: "graticule",
-        paint: {
-          "line-color": "#4FA8FF",
-          "line-opacity": 0.35,
-          "line-width": 1,
-          "line-dasharray": [2, 2],
-        },
-      })
-
-      map.addSource("orbits", { type: "geojson", data: orbitalArcs() })
-      map.addLayer({
-        id: "orbit-arcs",
-        type: "line",
-        source: "orbits",
-        paint: {
-          "line-color": ["get", "color"],
-          "line-width": 1.5,
-          "line-opacity": 0.75,
-          "line-dasharray": [0, 4, 3],
-        },
-      })
-
-      // Animate dash offset for "live" pass feel
-      const dashSeq = [
-        [0, 4, 3],
-        [1, 4, 2],
-        [2, 4, 1],
-        [3, 4, 0],
-        [0, 1, 3, 4],
-        [0, 2, 3, 3],
-        [0, 3, 3, 2],
-        [0, 4, 3, 1],
-      ]
-      let step = 0
-      dashTimer = window.setInterval(() => {
-        step = (step + 1) % dashSeq.length
-        if (map.getLayer("orbit-arcs")) {
-          map.setPaintProperty("orbit-arcs", "line-dasharray", dashSeq[step])
-        }
-      }, 80)
-
-      // Example site pins
       for (const ex of EXAMPLE_SIGNATURES) {
         const lat = ex.input.lat
         const lng = ex.input.lng
@@ -276,13 +103,11 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
           popup.setLngLat([lng, lat]).addTo(map)
         })
 
-        const marker = new maplibregl.Marker({ element: el })
-          .setLngLat([lng, lat])
-          .addTo(map)
-        markersRef.current.push(marker)
+        markersRef.current.push(
+          new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map),
+        )
       }
 
-      // Pulsing hero site (synced with Signature card at 68.2°N 27.4°E)
       const pulse = document.createElement("div")
       pulse.setAttribute("aria-label", HERO_SITE.label)
       pulse.innerHTML = `
@@ -304,12 +129,10 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
       pulse.addEventListener("click", () => {
         heroPopup.setLngLat([HERO_SITE.lng, HERO_SITE.lat]).addTo(map)
       })
-      const heroMarker = new maplibregl.Marker({ element: pulse })
-        .setLngLat([HERO_SITE.lng, HERO_SITE.lat])
-        .addTo(map)
-      markersRef.current.push(heroMarker)
+      markersRef.current.push(
+        new maplibregl.Marker({ element: pulse }).setLngLat([HERO_SITE.lng, HERO_SITE.lat]).addTo(map),
+      )
 
-      // Orbit class labels as HTML markers (avoids style glyph dependency)
       const orbitLabels: { lng: number; lat: number; label: string; color: string }[] = [
         { lng: 5, lat: 78, label: "LEO", color: "#4FA8FF" },
         { lng: 12, lat: 74, label: "MEO", color: "#6EE7F9" },
@@ -324,10 +147,9 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
           text-shadow: 0 0 6px #070B12, 0 1px 2px #070B12;
           pointer-events: none; user-select: none;
         `
-        const m = new maplibregl.Marker({ element: lab, anchor: "center" })
-          .setLngLat([o.lng, o.lat])
-          .addTo(map)
-        markersRef.current.push(m)
+        markersRef.current.push(
+          new maplibregl.Marker({ element: lab, anchor: "center" }).setLngLat([o.lng, o.lat]).addTo(map),
+        )
       }
     })
 
@@ -381,6 +203,7 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
       </div>
 
       <style>{`
+        ${OPS_MAP_CSS}
         .gryps-ops-pulse-core {
           width: 10px; height: 10px; border-radius: 50%;
           background: #4FA8FF; box-shadow: 0 0 10px #4FA8FF;
@@ -394,23 +217,6 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         @keyframes gryps-ops-pulse {
           0% { transform: scale(0.4); opacity: 0.9; }
           100% { transform: scale(1.6); opacity: 0; }
-        }
-        .gryps-ops-popup .maplibregl-popup-content {
-          background: #0B1220;
-          border: 1px solid #1E293B;
-          border-radius: 8px;
-          box-shadow: 0 12px 40px rgba(0,0,0,0.45);
-          padding: 12px 14px;
-          color: #F7FAFC;
-        }
-        .gryps-ops-popup .maplibregl-popup-tip {
-          border-top-color: #0B1220;
-        }
-        .gryps-ops-popup .maplibregl-popup-close-button {
-          color: #64748B; font-size: 18px; padding: 4px 8px;
-        }
-        .maplibregl-ctrl-attrib {
-          font-size: 9px; background: rgba(7,11,18,0.7) !important; color: #64748B !important;
         }
       `}</style>
     </div>
