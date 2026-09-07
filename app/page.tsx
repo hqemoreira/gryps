@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle } from "lucide-react"
 import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
 import { GrypsMark } from "@/components/GrypsMark"
@@ -10,7 +10,41 @@ import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
 import { PROVIDER_INDEX_COUNT } from "@/lib/providers"
 import { DriftMock } from "@/components/DriftMock"
 import { gradeTextColor } from "@/lib/resilience-colors"
-import { useTheme } from "@/context/ThemeContext"
+import { ADVISOR_PROVIDERS, providersToSetupString } from "@/lib/deterministic-score"
+import { MODEL_VERSION } from "@/lib/signature-meta"
+
+const NORDIC_LAT_MIN = 55
+const NORDIC_LAT_MAX = 85
+const NORDIC_LNG_MIN = -30
+const NORDIC_LNG_MAX = 40
+const DEFAULT_LAT = "68.2"
+const DEFAULT_LNG = "27.4"
+
+function modelVersionDisplay(): string {
+  const m = MODEL_VERSION.match(/v[\d.]+/)
+  return m ? m[0] : "v0.3"
+}
+
+function parseProvidersParam(raw: string | null): string[] {
+  if (!raw) return []
+  return raw.split(",").map(s => s.trim()).filter(Boolean)
+}
+
+function inferProvidersFromSetup(setup: string): string[] {
+  const s = setup.toLowerCase()
+  if (!s.trim() || /\bnone\b|\bno connectivity\b/.test(s)) return ["none"]
+  const ids: string[] = []
+  for (const p of ADVISOR_PROVIDERS) {
+    if (p.aliases.some(a => s.includes(a)) || s.includes(p.name.toLowerCase())) {
+      if (!ids.includes(p.id)) ids.push(p.id)
+    }
+  }
+  return ids.length ? ids : []
+}
+
+function coordsInNordicBounds(lat: number, lng: number): boolean {
+  return lat >= NORDIC_LAT_MIN && lat <= NORDIC_LAT_MAX && lng >= NORDIC_LNG_MIN && lng <= NORDIC_LNG_MAX
+}
 
 // ── Advisor form ──────────────────────────────────────────────────────────────
 function getQueryParams(): URLSearchParams {
@@ -18,20 +52,126 @@ function getQueryParams(): URLSearchParams {
   return new URLSearchParams(window.location.search)
 }
 
+function SignatureReveal({
+  result,
+  assessmentInputs,
+  realData,
+  lang,
+  t,
+  onReset,
+}: {
+  result: AdvisoryResult
+  assessmentInputs: AssessmentInputs
+  realData?: RealDataEvidence
+  lang: "en" | "fi"
+  t: typeof COPY.en
+  onReset: () => void
+}) {
+  const lines = useMemo(() => {
+    const sig = result.resilience_signature
+    const lat = assessmentInputs.lat ?? 68.2
+    const lng = assessmentInputs.lng ?? 27.4
+    const rows: { tag: string; color: string; text: string }[] = [
+      { tag: "GRYPS-INIT", color: "var(--accent-blue)", text: `Evaluating site profile for ${lat}°N · ${lng}°E…` },
+    ]
+    for (const r of result.risk_factors.slice(0, 3)) {
+      rows.push({ tag: "RISK-FACT", color: "var(--accent-amber)", text: `${r.label} · ${r.severity}` })
+    }
+    for (const g of result.redundancy_gaps.slice(0, 2)) {
+      rows.push({ tag: "GAP", color: "var(--accent-amber)", text: g.label })
+    }
+    for (const o of result.connectivity_options.slice(0, 3)) {
+      rows.push({ tag: "OPTIONS", color: "var(--accent-cyan)", text: `${o.provider} · confidence ${o.confidence}` })
+    }
+    rows.push({ tag: "SIGNATURE", color: "var(--accent-green)", text: `Resilience Signature computed: ${sig.score} · ${sig.grade}` })
+    rows.push({ tag: "REPORT", color: "var(--accent-green)", text: "Assessment complete — advisory output ready" })
+    return rows
+  }, [result, assessmentInputs.lat, assessmentInputs.lng])
+
+  const [visible, setVisible] = useState(0)
+  const [done, setDone] = useState(false)
+
+  useEffect(() => {
+    let i = 0
+    const id = setInterval(() => {
+      i += 1
+      setVisible(i)
+      if (i >= lines.length) {
+        clearInterval(id)
+        setTimeout(() => setDone(true), 400)
+      }
+    }, 450)
+    return () => clearInterval(id)
+  }, [lines])
+
+  if (!done) {
+    return (
+      <div style={{
+        backgroundColor: "var(--surface)", border: "1px solid var(--border)",
+        borderRadius: 8, padding: "16px 18px", fontFamily: "var(--font-data)",
+        fontSize: 11, lineHeight: 2, overflow: "hidden", marginBottom: 24,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 10, borderBottom: "1px solid var(--border)" }}>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 6px #2ED47A" }} />
+          <span style={{ color: "var(--text-muted)", fontSize: 10, letterSpacing: "0.1em" }}>{t.telemetryHeader}</span>
+        </div>
+        {lines.map((line, idx) => (
+          <div key={idx} style={{
+            display: "flex", gap: 12,
+            opacity: idx < visible ? (idx === visible - 1 ? 1 : 0.45) : 0,
+            transition: "opacity 0.35s ease", whiteSpace: "nowrap", overflow: "hidden",
+          }}>
+            <span style={{ color: line.color, minWidth: 80, flexShrink: 0 }}>[{line.tag}]</span>
+            <span style={{ color: idx === visible - 1 ? "var(--text)" : "var(--text-muted)" }}>{line.text}</span>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <div className="gryps-print-target">
+        <ResilienceOutput result={result} input={assessmentInputs} realData={realData} lang={lang} />
+      </div>
+      <button
+        className="gryps-no-print"
+        onClick={onReset}
+        style={{
+          marginTop: 20, display: "flex", alignItems: "center", gap: 6,
+          backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
+          borderRadius: 6, padding: "0 16px", minHeight: 44, cursor: "pointer",
+          fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
+        }}
+      >
+        ← {t.analyseAnother}
+      </button>
+    </div>
+  )
+}
+
 function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const qp = getQueryParams()
-  const [lat, setLat]         = useState(qp.get("lat") ?? "")
-  const [lng, setLng]         = useState(qp.get("lng") ?? "")
-  const [vertical, setVertical]   = useState(qp.get("sector") ?? "")
-  const [setup, setSetup]     = useState(qp.get("setup") ?? "")
-  const [autonomy, setAutonomy]   = useState(qp.get("autonomy") ?? "")
+  const [lat, setLat] = useState(qp.get("lat") ?? DEFAULT_LAT)
+  const [lng, setLng] = useState(qp.get("lng") ?? DEFAULT_LNG)
+  const [vertical, setVertical] = useState(qp.get("sector") ?? "")
+  const [providers, setProviders] = useState<string[]>(() => {
+    const fromParam = parseProvidersParam(qp.get("providers"))
+    if (fromParam.length) return fromParam
+    const legacy = qp.get("setup")
+    if (legacy) return inferProvidersFromSetup(legacy)
+    return []
+  })
+  const [legacySetup] = useState(qp.get("setup") ?? "")
+  const [autonomy, setAutonomy] = useState(qp.get("autonomy") ?? "")
   const [criticality, setCriticality] = useState(qp.get("criticality") ?? "")
-  const [email, setEmail]     = useState("")
+  const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
-  const [result, setResult]   = useState<AdvisoryResult | null>(null)
+  const [result, setResult] = useState<AdvisoryResult | null>(null)
   const [realData, setRealData] = useState<RealDataEvidence | undefined>(undefined)
-  const [error, setError]     = useState("")
-  const [shareId, setShareId] = useState<string | null>(qp.get("sid"))
+  const [error, setError] = useState("")
+  const [boundsError, setBoundsError] = useState("")
+  const [, setShareId] = useState<string | null>(qp.get("sid"))
 
   useEffect(() => {
     const sid = getQueryParams().get("sid")
@@ -48,15 +188,41 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         if (inp.vertical) setVertical(String(inp.vertical))
         if (inp.autonomy_level) setAutonomy(String(inp.autonomy_level))
         if (inp.operation_criticality) setCriticality(String(inp.operation_criticality))
-        if (inp.current_setup) setSetup(String(inp.current_setup))
+        if (Array.isArray(inp.providers) && inp.providers.length) {
+          setProviders(inp.providers.map(String))
+        } else if (inp.current_setup) {
+          setProviders(inferProvidersFromSetup(String(inp.current_setup)))
+        }
         setShareId(String(data.id))
       })
       .catch(() => {})
-  }, [])
+  }, [result])
+
+  function toggleProvider(id: string) {
+    setProviders(prev => {
+      if (id === "none") return ["none"]
+      const withoutNone = prev.filter(p => p !== "none")
+      if (withoutNone.includes(id)) return withoutNone.filter(p => p !== id)
+      return [...withoutNone, id]
+    })
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!vertical || !autonomy || !criticality) return
+
+    const latNum = lat ? parseFloat(lat) : parseFloat(DEFAULT_LAT)
+    const lngNum = lng ? parseFloat(lng) : parseFloat(DEFAULT_LNG)
+    if (!coordsInNordicBounds(latNum, lngNum)) {
+      setBoundsError(t.boundsHint)
+      return
+    }
+    setBoundsError("")
+
+    const setupStr = providers.length
+      ? providersToSetupString(providers)
+      : legacySetup || undefined
+
     setLoading(true)
     setError("")
     setResult(null)
@@ -66,9 +232,10 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          site_coordinates: lat && lng ? { lat: parseFloat(lat), lng: parseFloat(lng) } : undefined,
+          site_coordinates: { lat: latNum, lng: lngNum },
           vertical,
-          current_setup: setup || undefined,
+          providers,
+          current_setup: setupStr,
           autonomy_level: autonomy,
           operation_criticality: criticality,
           email: email || undefined,
@@ -79,12 +246,12 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       setResult(data.result as AdvisoryResult)
       setRealData(data.realData ?? undefined)
       const shareParams = new URLSearchParams()
-      if (lat) shareParams.set("lat", lat)
-      if (lng) shareParams.set("lng", lng)
+      shareParams.set("lat", String(latNum))
+      shareParams.set("lng", String(lngNum))
       if (vertical) shareParams.set("sector", vertical)
       if (autonomy) shareParams.set("autonomy", autonomy)
       if (criticality) shareParams.set("criticality", criticality)
-      if (setup) shareParams.set("setup", setup)
+      if (providers.length) shareParams.set("providers", providers.join(","))
       if (data.id) {
         shareParams.set("sid", String(data.id))
         setShareId(String(data.id))
@@ -119,57 +286,49 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
 
   if (result) {
     const assessmentInputs: AssessmentInputs = {
-      lat: lat ? parseFloat(lat) : undefined,
-      lng: lng ? parseFloat(lng) : undefined,
+      lat: lat ? parseFloat(lat) : parseFloat(DEFAULT_LAT),
+      lng: lng ? parseFloat(lng) : parseFloat(DEFAULT_LNG),
       sector: vertical,
       autonomy_level: autonomy,
       operation_criticality: criticality,
-      current_setup: setup || undefined,
+      current_setup: providers.length ? providersToSetupString(providers) : legacySetup || undefined,
     }
     return (
-      <div>
-        <div className="gryps-print-target">
-          <ResilienceOutput result={result} input={assessmentInputs} realData={realData} lang={lang} />
-        </div>
-        <button
-          className="gryps-no-print"
-          onClick={() => { setResult(null); setRealData(undefined); setLoading(false) }}
-          style={{
-            marginTop: 20, display: "flex", alignItems: "center", gap: 6,
-            backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
-            borderRadius: 6, padding: "0 16px", minHeight: 44, cursor: "pointer",
-            fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
-          }}
-        >
-          ← {t.analyseAnother}
-        </button>
-      </div>
+      <SignatureReveal
+        key={result.issuedAt ?? `${result.resilience_signature.score}-${result.resilience_signature.grade}`}
+        result={result}
+        assessmentInputs={assessmentInputs}
+        realData={realData}
+        lang={lang}
+        t={t}
+        onReset={() => { setResult(null); setRealData(undefined); setLoading(false) }}
+      />
     )
   }
 
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      {/* Coordinates row */}
       <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         <div>
-          <label style={labelStyle}>LATITUDE (optional)</label>
-          <input type="number" step="any" placeholder="68.2" value={lat} onChange={e => setLat(e.target.value)} style={inputStyle} />
+          <label style={labelStyle}>{t.latLabel}</label>
+          <input type="number" step="any" placeholder={DEFAULT_LAT} value={lat} onChange={e => setLat(e.target.value)} style={inputStyle} />
         </div>
         <div>
-          <label style={labelStyle}>LONGITUDE (optional)</label>
-          <input type="number" step="any" placeholder="27.4" value={lng} onChange={e => setLng(e.target.value)} style={inputStyle} />
+          <label style={labelStyle}>{t.lngLabel}</label>
+          <input type="number" step="any" placeholder={DEFAULT_LNG} value={lng} onChange={e => setLng(e.target.value)} style={inputStyle} />
         </div>
       </div>
 
-      {/* Vertical + autonomy row */}
       <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         <div>
           <label style={labelStyle}>{t.sectorLabel} *</label>
           <select value={vertical} onChange={e => setVertical(e.target.value)} required style={{ ...selectStyle, color: vertical ? "var(--text)" : "var(--text-muted)" }}>
             <option value="" disabled>{t.sectorPlaceholder}</option>
             <option value="forestry">Forestry</option>
-            <option value="maritime">Maritime</option>
             <option value="mining">Mining</option>
+            <option value="maritime">Maritime</option>
+            <option value="energy">Energy</option>
+            <option value="research">Research</option>
             <option value="arctic">Arctic / Polar</option>
             <option value="integrator">Systems Integrator</option>
             <option value="other">Other</option>
@@ -187,7 +346,6 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         </div>
       </div>
 
-      {/* Criticality */}
       <div>
         <label style={labelStyle}>{t.criticalityLabel} *</label>
         <select value={criticality} onChange={e => setCriticality(e.target.value)} required style={{ ...selectStyle, color: criticality ? "var(--text)" : "var(--text-muted)" }}>
@@ -198,19 +356,47 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         </select>
       </div>
 
-      {/* Current setup */}
       <div>
-        <label style={labelStyle}>CURRENT CONNECTIVITY SETUP (optional)</label>
-        <input
-          type="text"
-          placeholder="e.g. Starlink standard kit, no backup link"
-          value={setup}
-          onChange={e => setSetup(e.target.value)}
-          style={inputStyle}
-        />
+        <label style={labelStyle}>{t.providersLabel}</label>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", marginBottom: 10, lineHeight: 1.5 }}>
+          {t.providersHint}
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {ADVISOR_PROVIDERS.map(p => {
+            const selected = providers.includes(p.id)
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => toggleProvider(p.id)}
+                style={{
+                  fontFamily: "var(--font-data)", fontSize: 10, letterSpacing: "0.04em",
+                  padding: "8px 12px", borderRadius: 6, cursor: "pointer",
+                  border: selected ? "1px solid #4FA8FF" : "1px solid var(--border2)",
+                  backgroundColor: selected ? "rgba(79,168,255,0.12)" : "var(--surface2)",
+                  color: selected ? "var(--accent-blue)" : "var(--text-muted)",
+                }}
+              >
+                {p.name}
+              </button>
+            )
+          })}
+          <button
+            type="button"
+            onClick={() => toggleProvider("none")}
+            style={{
+              fontFamily: "var(--font-data)", fontSize: 10, letterSpacing: "0.04em",
+              padding: "8px 12px", borderRadius: 6, cursor: "pointer",
+              border: providers.includes("none") ? "1px solid var(--accent-amber)" : "1px solid var(--border2)",
+              backgroundColor: providers.includes("none") ? "rgba(217,119,6,0.12)" : "var(--surface2)",
+              color: providers.includes("none") ? "var(--accent-amber)" : "var(--text-muted)",
+            }}
+          >
+            {lang === "fi" ? "Ei yhteyttä" : "None"}
+          </button>
+        </div>
       </div>
 
-      {/* Email — optional, but framed as a clear value exchange rather than a bare field */}
       <div style={{
         backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
         borderRadius: 8, padding: "14px 16px",
@@ -231,9 +417,9 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         </p>
       </div>
 
-      {error && (
+      {(boundsError || error) && (
         <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 6, padding: "10px 14px" }}>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-red)" }}>{error}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-red)" }}>{boundsError || error}</p>
         </div>
       )}
 
@@ -266,6 +452,74 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   )
 }
 
+// ── Hero score count-up ───────────────────────────────────────────────────────
+function HeroScoreCountUp({ label }: { label: string }) {
+  const [score, setScore] = useState(0)
+  useEffect(() => {
+    const target = 40
+    const duration = 1200
+    const start = performance.now()
+    let raf: number
+    function tick(now: number) {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3)
+      setScore(Math.round(eased * target))
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+  const text = label.replace("{score}", String(score)).replace("{grade}", "D")
+  return (
+    <div
+      className="gryps-hero-score"
+      aria-live="polite"
+      style={{ fontFamily: "var(--font-data)", color: gradeTextColor("D"), marginBottom: 20 }}
+    >
+      {text}
+    </div>
+  )
+}
+
+// ── Hero signature card ───────────────────────────────────────────────────────
+function HeroSignatureCard({ t }: { t: typeof COPY.en }) {
+  const gc = gradeTextColor("D")
+  return (
+    <div className="gryps-signature-card" style={{
+      backgroundColor: "var(--surface)", border: "1px solid var(--border)",
+      borderRadius: 10, padding: "20px 22px",
+      display: "flex", flexDirection: "column", gap: 14,
+    }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
+        <div>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 4 }}>
+            RESILIENCE SIGNATURE
+          </p>
+          <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14, color: "var(--text)" }}>
+            68.2°N 27.4°E · Lapland
+          </p>
+        </div>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }} aria-label="Score 40 out of 100, grade D">
+          <span className="sr-only">Score 40 out of 100, grade D</span>
+          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: 32, fontWeight: 900, color: gc, lineHeight: 1 }}>40</span>
+          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: 16, fontWeight: 900, color: gc }}>D</span>
+        </div>
+      </div>
+      <div className="gryps-signature-divider" style={{ height: 1, backgroundColor: "var(--border)" }} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 4 }}>{t.topRiskLabel}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-amber)", fontWeight: 600 }}>{t.heroTopRisk}</p>
+        </div>
+        <div>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 4 }}>{t.topRecLabel}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-cyan)", fontWeight: 600 }}>Iridium Certus · 90</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Telemetry stream ──────────────────────────────────────────────────────────
 const TELEMETRY_LINES = [
   { tag: "GRYPS-INIT", color: "var(--accent-blue)",  text: "Evaluating site profile for 68.2°N · 27.4°E…" },
@@ -285,7 +539,7 @@ function TelemetryStream({ t }: { t: typeof COPY.en }) {
     return () => clearInterval(id)
   }, [])
   return (
-    <div style={{
+    <div className="gryps-hero-terminal" style={{
       backgroundColor: "var(--surface)", border: "1px solid var(--border)",
       borderRadius: 8, padding: "16px 18px", fontFamily: "var(--font-data)",
       fontSize: 11, lineHeight: 2, overflow: "hidden",
@@ -415,98 +669,122 @@ function Stat({ value, label, href }: { value: string; label: string; href?: str
 const COPY = {
   en: {
     tag:        "CONNECTIVITY RESILIENCE · NORDIC, ARCTIC & ICELAND OPERATIONS",
-    navCta:     "Demo analysis",
-    h1:         ["Connectivity resilience", "for autonomous and", "remote operations."],
-    sub:        "Remote sites, autonomous fleets, and critical operations fail without connectivity. GRYPS scores and documents that risk — giving you a Resilience Signature before deployment depends on it.",
+    navCta:     "Score my site — free",
+    h1:         "Know your score before the Arctic finds it for you.",
+    sub:        "Resilience Signatures for Nordic, Arctic, and Icelandic operations — score, grade, risks, and ranked providers in ~60 seconds. No account required.",
+    scoreLabel: "Score: {score}/100 · Grade {grade}",
+    heroSecondary: "See a sample Signature",
+    modelChip:  "Research prototype · Model v0.3",
+    sampleCta:  "See a sample Signature",
     nis2line:   "NIS2/CER-aligned resilience reporting · Espoo, Finland · R&D prototype",
     statsL1:    "Providers indexed (catalog)",
     statsL2:    "All orbital types",
     statsL3:    "Polar coverage",
     liveCounter: "sites assessed in the Nordic & Arctic portfolio",
-    advisorCta: "Generate a demo Resilience Signature",
-    advisorSub: "Research prototype · ~60 seconds · No account · Not for sale",
+    advisorCta: "Score my site — free",
+    advisorSub: "~60 seconds · No account · Research prototype",
     sectorLabel:        "OPERATIONAL SECTOR",
     sectorPlaceholder:  "Select sector",
     autonomyLabel:      "AUTONOMY LEVEL",
     autonomyPlaceholder:"Select autonomy level",
     criticalityLabel:   "OPERATION CRITICALITY",
     criticalityPlaceholder: "Select criticality",
-    emailLabel: "OPTIONAL EMAIL (DEMO COPY)",
-    emailHint:  "Optional — for a demo copy of this run only. Not a newsletter or sales list.",
+    latLabel:   "LATITUDE",
+    lngLabel:   "LONGITUDE",
+    providersLabel: "CURRENT CONNECTIVITY PROVIDERS",
+    providersHint:  "Select all providers currently in use. Choose None if no satellite path is documented.",
+    boundsHint: "Coordinates must be within Nordic/Arctic bounds (lat 55–85°, lng −30–40°).",
+    emailLabel: "OPTIONAL EMAIL",
+    emailHint:  "Email me this report + get notified when live monitoring launches",
     emailOptionalNote: "Optional — you'll see your results either way.",
-    runAdvisor: "Run resilience analysis",
+    runAdvisor: "Score my site — free",
     analysing:  "Analysing your site…",
     analyseAnother: "Analyse another site",
-    telemetryLabel:  "ILLUSTRATIVE ENGINE OUTPUT — NOT LIVE DATA",
+    telemetryLabel:  "Research prototype · illustrative engine output",
     telemetryHeader: "ILLUSTRATIVE ADVISOR SEQUENCE",
+    topRiskLabel: "TOP RISK",
+    topRecLabel:  "REC #1",
+    heroTopRisk:  "No backup",
     problemL: "The resilience gap GRYPS closes",
     problems: [
-      { title: "Autonomous operations have zero margin",    body: "A harvester fleet at −30°C. An offshore platform check-in. A remote mining sensor cluster. When connectivity fails in these environments it isn't an inconvenience — it's a safety event, an operational halt, or a regulatory incident." },
-      { title: "Single-provider setups are fragile by design", body: "Most sites run one satellite provider with no documented fallback. Pass geometry, weather windows, and orbital outages are invisible risks until they materialise. GRYPS makes them legible before deployment." },
-      { title: "NIS2 and CER require documented resilience",   body: "Directive compliance increasingly demands that critical operators document connectivity risk and mitigation. A Resilience Signature is evidence your site's connectivity was assessed and scored." },
+      { title: "Zero margin.", body: "A harvester at −30°C, an offshore check-in, a remote sensor cluster — when connectivity fails here, it is a safety event, not an inconvenience." },
+      { title: "One provider.", body: "Most sites run a single satellite path with no documented fallback. Pass geometry and orbital outages stay invisible until they materialise." },
+      { title: "Documented or fined.", body: "NIS2 and CER increasingly require critical operators to document connectivity risk. A Resilience Signature is audit-ready evidence." },
     ],
     howL:  "How the Resilience Advisor works",
     steps: [
-      { n: "01", title: "Enter site profile",    body: "Coordinates, sector, and current setup. Elevation and terrain are factored automatically." },
+      { n: "01", title: "Enter site profile",    body: "Coordinates, sector, and current providers. Elevation and terrain are factored automatically." },
       { n: "02", title: "Set autonomy level",    body: "Manual, remote-operated, autonomous, or mixed. Scoring weights shift with operational dependency on connectivity." },
       { n: "03", title: "Set criticality",       body: "Standard, high, or safety-critical. A safety-critical autonomous site with no redundancy cannot score above 50." },
       { n: "04", title: "Generate a Signature", body: "Score, grade, risk factors, redundancy gaps, ranked providers, and plain-language recommendation — in seconds." },
     ],
     examplesLabel: "EXAMPLE RESILIENCE SIGNATURES",
-    examplesSub: "Pre-computed examples showing what the Resilience Advisor produces. Static demonstrations — run the Advisor above for a live assessment. Equal weight across forestry, maritime, mining, and autonomous fleets.",
+    examplesSub: "Pre-computed examples showing what the Resilience Advisor produces. Run the Advisor above for a live assessment.",
     polarHeader: "COVERAGE ZONE — NORDIC, ARCTIC & ICELAND",
     polarMapLabel: "DEMO MAP — NOT LIVE MONITORING",
     ctaH2:  "Resilience starts with knowing your score.",
-    ctaSub: "Research demo Signature for any Nordic, Arctic, or Icelandic site. No account, not for sale — connectivity risk scored for learning.",
-    ctaBtn: "Generate a demo Resilience Signature",
+    ctaSub: "Free Resilience Signature for any Nordic, Arctic, or Icelandic site. No account — connectivity risk scored in ~60 seconds.",
+    ctaBtn: "Score my site — free",
     footerTag:    "Built in Finland for high-latitude resilience.",
   },
   fi: {
     tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT, ARKTINEN JA ISLANTI",
-    navCta:     "Demo-analyysi",
-    h1:         ["Yhteyden resilienssi", "autonomisille ja", "etätoiminnoille."],
-    sub:        "Etäkohteet, autonomiset laivastot ja kriittiset toiminnot epäonnistuvat ilman yhteyttä. GRYPS pisteyttää ja dokumentoi tämän riskin — antaen sinulle Resilience Signature -todistuksen ennen kuin käyttöönotto siitä riippuu.",
+    navCta:     "Pisteytä kohteeni — ilmaiseksi",
+    h1:         "Tiedä pisteesi ennen kuin Arktinen paljastaa sen puolestasi.",
+    sub:        "Resilience Signature -todistukset pohjoismaisille, arktisille ja islantilaisille kohteille — pisteet, arvosana, riskit ja rankatut toimittajat ~60 sekunnissa. Ei tiliä.",
+    scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
+    heroSecondary: "Katso esimerkki-Signature",
+    modelChip:  "Tutkimusprototyyppi · Malli v0.3",
+    sampleCta:  "Katso esimerkki-Signature",
     nis2line:   "NIS2/CER-yhteensopiva resilienssirapor­tointi · Espoo, Suomi · T&K-prototyyppi",
     statsL1:    "Palveluntarjoajaa indeksoitu",
     statsL2:    "Kaikki orbitaalityypit",
     statsL3:    "Napapiirin kattavuus",
     liveCounter: "kohdetta arvioitu pohjoismaisessa ja arktisessa portfoliossa",
-    advisorCta: "Luo demo Resilience Signature",
-    advisorSub: "Tutkimusprototyyppi · ~60 sekuntia · Ei tiliä · Ei myynnissä",
+    advisorCta: "Pisteytä kohteeni — ilmaiseksi",
+    advisorSub: "~60 sekuntia · Ei tiliä · Tutkimusprototyyppi",
     sectorLabel:        "TOIMIALA",
     sectorPlaceholder:  "Valitse toimiala",
     autonomyLabel:      "AUTONOMIATASO",
     autonomyPlaceholder:"Valitse autonomiataso",
     criticalityLabel:   "TOIMINNAN KRIITTISYYS",
     criticalityPlaceholder: "Valitse kriittisyystaso",
-    emailLabel: "VALINNAINEN SÄHKÖPOSTI (DEMO)",
-    emailHint:  "Valinnainen — vain tämän ajon demokopiota varten. Ei uutiskirjettä eikä myyntilistaa.",
+    latLabel:   "LEVEYSASTE",
+    lngLabel:   "PITUUSASTE",
+    providersLabel: "NYKYISET YHTEYSPALVELUNTARJOAJAT",
+    providersHint:  "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittipolkua ei ole dokumentoitu.",
+    boundsHint: "Koordinaattien on oltava pohjoismaisella/arktisella alueella (lat 55–85°, lng −30–40°).",
+    emailLabel: "VALINNAINEN SÄHKÖPOSTI",
+    emailHint:  "Lähetä raportti sähköpostiini + ilmoita kun live-seuranta käynnistyy",
     emailOptionalNote: "Valinnainen — näet tuloksesi joka tapauksessa.",
-    runAdvisor: "Suorita resilienssianalyysi",
+    runAdvisor: "Pisteytä kohteeni — ilmaiseksi",
     analysing:  "Analysoidaan kohdetta…",
     analyseAnother: "Analysoi toinen kohde",
-    telemetryLabel:  "HAVAINNOLLISTAVA MOOTTORILÄHTÖ — EI LIVE-DATAA",
+    telemetryLabel:  "Tutkimusprototyyppi · havainnollistava moottorilähtö",
     telemetryHeader: "HAVAINNOLLISTAVA ADVISOR-SEKVENSSI",
+    topRiskLabel: "PÄÄRISKI",
+    topRecLabel:  "SUOS #1",
+    heroTopRisk:  "Ei varayhteyttä",
     problemL: "Resilienssiaukko, jonka GRYPS sulkee",
     problems: [
-      { title: "Autonomisilla toiminnoilla ei ole varaa virheisiin", body: "Harvesterilaivaston signaali katoaa −30°C:ssa. Offshore-alustan turvatarkistus epäonnistuu. Etäkaivoksen anturiklusteri menettää yhteyden. Näissä ympäristöissä yhteyskatkot eivät ole haittoja — ne ovat turvallisuustapahtumia." },
-      { title: "Yhden toimittajan ratkaisut ovat rakenteellisesti haavoittuvia", body: "Useimmat kohteet käyttävät yhtä satelliittitoimittajaa ilman dokumentoitua varajärjestelmää. Ohitusgeometria, sääikkunat ja orbitaalikatkot ovat näkymättömiä riskejä, kunnes ne toteutuvat. GRYPS tekee ne näkyväksi ennen käyttöönottoa." },
-      { title: "NIS2 ja CER vaativat dokumentoitua resilienssiä", body: "Direktiivien noudattaminen edellyttää yhä useammin, että kriittiset operaattorit dokumentoivat yhteysriskin ja lieventämistoimenpiteet. Resilience Signature on todiste siitä, että kohteesi yhteys on arvioitu ja pisteytetty." },
+      { title: "Nolla marginaalia.", body: "Harvester −30°C:ssa, offshore-tarkistus, etäanturiklusteri — yhteyskatko on turvallisuustapahtuma, ei haitto." },
+      { title: "Yksi toimittaja.", body: "Useimmat kohteet käyttävät yhtä satelliittipolkua ilman dokumentoitua varajärjestelmää. Ohitusgeometria pysyy näkymättömänä, kunnes se toteutuu." },
+      { title: "Dokumentoitu tai sakko.", body: "NIS2 ja CER edellyttävät yhä useammin yhteysriskin dokumentointia. Resilience Signature on auditointivalmis todiste." },
     ],
     howL:  "Miten Resilience Advisor toimii",
     steps: [
-      { n: "01", title: "Syötä kohteen profiili",  body: "Koordinaatit, toimiala ja nykyinen järjestelmä. Korkeus ja maasto huomioidaan automaattisesti." },
+      { n: "01", title: "Syötä kohteen profiili",  body: "Koordinaatit, toimiala ja nykyiset toimittajat. Korkeus ja maasto huomioidaan automaattisesti." },
       { n: "02", title: "Aseta autonomiataso",      body: "Manuaalinen, etäoperoitu, autonominen tai sekoitettu. Pisteytyksen painot muuttuvat operatiivisen yhteyksiriippuvuuden mukaan." },
       { n: "03", title: "Aseta kriittisyys",        body: "Standardi, korkea tai turvallisuuskriittinen. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
       { n: "04", title: "Luo Signature",           body: "Pisteet, arvosana, riskitekijät, redundanssiaukot, rankatut toimittajat ja selkokielinen suositus — sekunneissa." },
     ],
     examplesLabel: "ESIMERKIT RESILIENCE-SIGNATUUREISTA",
-    examplesSub: "Ennalta lasketut esimerkit siitä, mitä Resilience Advisor tuottaa. Nämä ovat staattisia demonstraatioita — suorita Advisor yllä live-arviointia varten.",
+    examplesSub: "Ennalta lasketut esimerkit siitä, mitä Resilience Advisor tuottaa. Suorita Advisor yllä live-arviointia varten.",
     polarHeader: "KATTAVUUSALUE — POHJOISMAAT, ARKTINEN JA ISLANTI",
     polarMapLabel: "DEMO-KARTTA — EI LIVE-SEURANTAA",
     ctaH2:  "Resilienssi alkaa pisteidesi tuntemisesta.",
-    ctaSub: "Tutkimusdemo-Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä, ei myynnissä — yhteysriski pisteytetty oppimista varten.",
-    ctaBtn: "Luo demo Resilience Signature",
+    ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — yhteysriski pisteytetty ~60 sekunnissa.",
+    ctaBtn: "Pisteytä kohteeni — ilmaiseksi",
     footerTag:    "Rakennettu Suomessa korkean leveysasteen resilienssille.",
   },
 }
@@ -515,8 +793,8 @@ const COPY = {
 export default function HomePage() {
   const [lang, setLang] = useState<"en" | "fi">("en")
   const [siteCount, setSiteCount] = useState<number | null>(null)
-  const { dark } = useTheme()
   const t = COPY[lang]
+  const modelChip = useMemo(() => t.modelChip.replace("v0.3", modelVersionDisplay()), [t.modelChip])
 
   useEffect(() => {
     fetch("/api/signatures")
@@ -562,32 +840,59 @@ export default function HomePage() {
       <section className="gryps-section-pad gryps-no-print" style={{ paddingTop: 148, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
         <div className="gryps-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "stretch" }}>
 
-          {/* Left — three groups spread across the column's full height (matches the right column, no dead space) */}
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
 
-            {/* Group 1: eyebrow + headline + subhead */}
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
                 <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 8px #2ED47A" }} />
                 <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
               </div>
+
+              <HeroScoreCountUp label={t.scoreLabel} />
 
               <h1 className="gryps-hero-h1" style={{
                 fontFamily: "var(--font-ui)", fontSize: 44, fontWeight: 700,
                 lineHeight: 1.15, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 24,
               }}>
-                {t.h1[0]}<br />{t.h1[1]}<br />
-                <span style={{ color: "var(--accent-blue)" }}>{t.h1[2]}</span>
+                {t.h1}
               </h1>
 
-              <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.85, maxWidth: 440 }}>
+              <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.85, maxWidth: 440, marginBottom: 24 }}>
                 {t.sub}
               </p>
+
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginBottom: 28 }}>
+                <a href="#advisor" style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  backgroundColor: "#4FA8FF", color: "#070B12",
+                  fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
+                  padding: "12px 22px", borderRadius: 6, textDecoration: "none",
+                }}>
+                  {t.advisorCta} <ArrowRight size={14} />
+                </a>
+                <a href="#examples" style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  backgroundColor: "transparent", color: "var(--text-muted)",
+                  fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 13,
+                  padding: "12px 18px", borderRadius: 6, textDecoration: "none",
+                  border: "1px solid var(--border2)",
+                }}>
+                  {t.heroSecondary}
+                </a>
+              </div>
+
+              <span style={{
+                display: "inline-block", fontFamily: "var(--font-data)", fontSize: 10,
+                color: "var(--accent-amber)", letterSpacing: "0.06em",
+                backgroundColor: "rgba(245,184,74,0.08)", border: "1px solid rgba(245,184,74,0.25)",
+                borderRadius: 4, padding: "4px 10px",
+              }}>
+                {modelChip}
+              </span>
             </div>
 
-            {/* Group 2: NIS2 line + stat chips — sits between subhead and CTA, spaced generously */}
             <div>
-              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 16 }}>
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 16, marginTop: 32 }}>
                 {t.nis2line}
               </p>
 
@@ -606,32 +911,11 @@ export default function HomePage() {
                 <Stat value="70°N+" label={t.statsL3} />
               </div>
             </div>
-
-            {/* Group 3: CTA */}
-            <div>
-              <a href="#advisor" style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                backgroundColor: "#4FA8FF", color: "#070B12",
-                fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
-                padding: "12px 22px", borderRadius: 6, textDecoration: "none",
-                marginBottom: 10,
-              }}>
-                {t.advisorCta} <ArrowRight size={14} />
-              </a>
-              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.06em" }}>
-                {t.advisorSub}
-              </p>
-            </div>
           </div>
 
-          {/* Right — telemetry + polar map */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <AlertTriangle size={11} color="var(--text-dim)" />
-              <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>{t.telemetryLabel}</span>
-            </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <HeroSignatureCard t={t} />
             <TelemetryStream t={t} />
-            <PolarMap t={t} />
           </div>
         </div>
       </section>
@@ -685,9 +969,10 @@ export default function HomePage() {
       </section>
 
       {/* Example signatures */}
-      <section className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
+      <section id="examples" className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.examplesLabel}</p>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", marginBottom: 28, maxWidth: 560 }}>{t.examplesSub}</p>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 24 }}>{t.telemetryLabel}</p>
         <div className="gryps-problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
           {EXAMPLE_SIGNATURES.map(ex => {
             const gc = gradeTextColor(ex.result.resilience_signature.grade)
@@ -724,6 +1009,10 @@ export default function HomePage() {
               </div>
             )
           })}
+        </div>
+        <div style={{ marginTop: 32, marginBottom: 32 }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 12 }}>{t.sampleCta}</p>
+          <PolarMap t={t} />
         </div>
         <DriftMock lang={lang} />
       </section>

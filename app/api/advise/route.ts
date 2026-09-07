@@ -22,10 +22,18 @@ function getClientIp(req: NextRequest): string {
 export async function POST(req: NextRequest) {
   const input = await req.json()
 
-  const { site_coordinates, vertical, current_setup, autonomy_level, operation_criticality, email } = input
+  const { site_coordinates, vertical, current_setup, providers, autonomy_level, operation_criticality, email } = input
 
   if (!vertical || !autonomy_level || !operation_criticality) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+  }
+
+  if (Array.isArray(providers)) {
+    input.providers = providers.filter((p: unknown) => typeof p === "string")
+  }
+  // Keep current_setup for legacy share links / storage even when providers[] is set
+  if (current_setup != null && typeof current_setup !== "string") {
+    input.current_setup = undefined
   }
 
   const ip = getClientIp(req)
@@ -54,8 +62,8 @@ export async function POST(req: NextRequest) {
     // hard block caused by an infra issue on our side.
   }
 
-  // Rate limit — checked BEFORE the Mistral call, since the whole point is to
-  // cap API cost exposure, not just log abuse after already paying for it.
+  // Rate limit — checked BEFORE scoring, since the whole point is to
+  // cap abuse / storage, not just log after the fact.
   if (ip !== "unknown") {
     try {
       const rows = await sql`
@@ -78,7 +86,7 @@ export async function POST(req: NextRequest) {
   try {
     output = await scoreSite(input)
   } catch (err) {
-    console.error("Mistral failed after retry:", err)
+    console.error("Scoring failed:", err)
     return NextResponse.json({ error: "Analysis engine unavailable" }, { status: 502 })
   }
 

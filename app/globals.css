@@ -66,8 +66,12 @@ body {
   color: var(--text-muted);
 }
 
+.gryps-hero-score { font-size: 64px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
+
 /* ── Responsive overrides — inline styles above are the desktop baseline ── */
 @media (max-width: 900px) {
+  .gryps-hero-terminal { display: none !important; }
+  .gryps-hero-score { font-size: 42px !important; }
   .gryps-hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
   .gryps-problem-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
   .gryps-steps-grid { grid-template-columns: repeat(2, 1fr) !important; }

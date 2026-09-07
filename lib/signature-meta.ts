@@ -1,16 +1,14 @@
 import { createHash } from "crypto"
 import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors"
+import { gradeFromDeterministicScore } from "@/lib/deterministic-score"
 
-/** Bump when scoring rules or prompt change. Monitoring diffs this field. */
-export const MODEL_VERSION = "gryps-signature-v1"
-export const SCORING_ENGINE = "mistral-small-latest"
+/** Bump when scoring rules change. Monitoring diffs this field. */
+export const MODEL_VERSION = "gryps-signature-v0.3"
+/** Numeric score authority — Mistral is optional prose only */
+export const SCORING_ENGINE = "deterministic-v0.3"
 
 export function gradeFromScore(score: number): "A" | "B" | "C" | "D" | "F" {
-  if (score >= 85) return "A"
-  if (score >= 70) return "B"
-  if (score >= 50) return "C"
-  if (score >= 30) return "D"
-  return "F"
+  return gradeFromDeterministicScore(score)
 }
 
 export function hashInputs(input: object): string {
@@ -20,7 +18,7 @@ export function hashInputs(input: object): string {
 export function isSingleProviderSetup(setup?: string): boolean {
   if (!setup || !setup.trim()) return true
   const s = setup.toLowerCase()
-  if (/\bno backup\b|\bsingle[- ]provider\b|\bno redundancy\b|\bno failover\b/.test(s)) return true
+  if (/\bno backup\b|\bsingle[- ]provider\b|\bno redundancy\b|\bno failover\b|\bnone\b/.test(s)) return true
   if (/\bdual\b|\bredundan|\bbackup\b|\bfailover\b|\band\b|\+/.test(s) && !/\bno backup\b/.test(s)) return false
   return true
 }
@@ -29,19 +27,29 @@ export function hardCapApplies(body: {
   autonomy_level?: string
   operation_criticality?: string
   current_setup?: string
+  providers?: string[]
 }): boolean {
   const autonomy = body.autonomy_level ?? ""
   const crit = body.operation_criticality ?? ""
+  const fromArr = (body.providers ?? []).filter(p => p && p !== "none")
+  const single =
+    fromArr.length > 0 ? fromArr.length < 2 : isSingleProviderSetup(body.current_setup)
   return (
     (autonomy === "autonomous" || autonomy === "mixed") &&
     crit === "safety-critical" &&
-    isSingleProviderSetup(body.current_setup)
+    single
   )
 }
 
+/** Legacy post-processor — deterministic engine already applies caps; kept for safety. */
 export function applyHardRules(
   output: AdvisoryResult,
-  body: { autonomy_level?: string; operation_criticality?: string; current_setup?: string },
+  body: {
+    autonomy_level?: string
+    operation_criticality?: string
+    current_setup?: string
+    providers?: string[]
+  },
 ): AdvisoryResult {
   let score = Math.round(Number(output.resilience_signature?.score) || 0)
   score = Math.max(0, Math.min(100, score))

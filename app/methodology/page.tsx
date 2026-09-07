@@ -7,7 +7,7 @@ import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/signature-meta"
 export const metadata: Metadata = {
   title: "Methodology — How GRYPS scores connectivity resilience",
   description:
-    "GRYPS is a non-commercial research prototype that scores satellite connectivity resilience for remote Nordic and Arctic operations. This page explains the 0–100 score, grade bands, weights, hard rules, and what the advisor is not: not a site survey, not live coverage, not insurance.",
+    "GRYPS Model v0.3 is a deterministic research prototype that scores satellite connectivity resilience for remote Nordic and Arctic operations. This page explains the 0–100 score, grade bands, component weights, hard caps, and what the advisor is not.",
   alternates: { canonical: "https://gryps.vercel.app/methodology" },
 }
 
@@ -28,7 +28,7 @@ const jsonLd = {
       name: "How is the 0–100 Resilience Score computed?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The illustrative engine weights provider diversity and orbital class, autonomy dependence, operation criticality, high-latitude coverage constraints, and documented redundancy. A hard rule caps safety-critical autonomous sites without documented redundancy at 50. Terrain evidence from EU-DEM is shown separately and is not blended into the AI score.",
+        text: "Model v0.3 is deterministic. Score = redundancy (0–30) + latitude (0–20) + operational profile (0–15) + provider confidence (0–30), then hard caps. Grades: A ≥90, B 75–89, C 60–74, D 40–59, F <40. Terrain evidence from EU-DEM is shown separately and is not blended into the Signature score.",
       },
     },
     {
@@ -36,7 +36,7 @@ const jsonLd = {
       name: "What is GRYPS not?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "GRYPS is not a site survey, not live satellite coverage, not insurance, and not a substitute for professional connectivity engineering or legal advice. Outputs are illustrative unless labelled as deterministic real-data evidence.",
+        text: "GRYPS is not a site survey, not live satellite coverage, not insurance, and not a substitute for professional connectivity engineering or legal advice. Outputs are illustrative research-prototype assessments.",
       },
     },
   ],
@@ -63,30 +63,50 @@ export default function MethodologyPage() {
           <li>Not for sale — no company, no revenue, research demonstration only.</li>
         </ul>
 
-        <h2 style={h2}>Score (0–100) and grades</h2>
-        <p style={p}>A = ≥85 resilient · B = 70–84 · C = 50–69 · D = 30–49 · F = &lt;30 critical failure.</p>
-        <p style={p}>Illustrative engine weights (relative, not a proprietary formula dump):</p>
+        <h2 style={h2}>Model v0.3 formula ({SCORING_ENGINE})</h2>
+        <p style={p}>
+          The Resilience Score is <strong>deterministic</strong> and reproducible for the same inputs. Optional language-model text may polish the recommendation paragraph only — it never changes score, grade, risks, or ranked providers.
+        </p>
+        <p style={p}>Score = sum of four components (then hard caps, clamped 0–100):</p>
         <ul style={ul}>
-          <li>Provider diversity and independent orbital class (~30%).</li>
-          <li>Autonomy dependence on the link (~25%).</li>
-          <li>Operation criticality (~20%).</li>
-          <li>High-latitude / GEO elevation constraint (~15%).</li>
-          <li>Documented failover / redundancy (~10%).</li>
+          <li>
+            <strong>Redundancy (0–30)</strong> — 0 providers → 0; 1 → 8; 2 → 22 (+6 if independent orbital types / LEO broadband+narrowband); ≥3 → 28.
+          </li>
+          <li>
+            <strong>Latitude (0–20)</strong> — ≤60°N → 20; ≤65 → 16; ≤70 → 12; &gt;70 → 8. Forestry sites below 300&nbsp;m elevation: −4 (canopy/terrain).
+          </li>
+          <li>
+            <strong>Operational profile (0–15)</strong> — manual 15 · remote-operated 11 · mixed 8 · autonomous 5.
+          </li>
+          <li>
+            <strong>Provider confidence (0–30)</strong> — average catalog confidence × 0.30. GEO providers above 70°N use a degraded confidence.
+          </li>
         </ul>
 
-        <h2 style={h2}>Hard rule</h2>
+        <h2 style={h2}>Grades</h2>
+        <p style={p}>A = ≥90 · B = 75–89 · C = 60–74 · D = 40–59 · F = &lt;40 (spec band E maps to F in the UI).</p>
+
+        <h2 style={h2}>Hard caps</h2>
+        <ul style={ul}>
+          <li>Safety-critical + autonomous + &lt;2 providers → score capped at <strong>50</strong>.</li>
+          <li>Safety-critical + exactly 1 provider → capped at <strong>60</strong>.</li>
+          <li>Latitude &gt;72°N with GEO-only providers → capped at <strong>45</strong>.</li>
+        </ul>
+        <p style={p}>Caps are enforced in the deterministic engine (and re-checked in code) so edge-case demos cannot bypass homepage claims.</p>
+
+        <h2 style={h2}>Risk factors and ranked providers</h2>
         <p style={p}>
-          A safety-critical autonomous (or mixed) site with no documented redundancy <strong>cannot score above 50</strong>. This is enforced in code after the language model returns, so edge-case tests cannot bypass the homepage claim.
+          Up to four risk factors are derived from redundancy, latitude/GEO, sector, autonomy, and score vs safety threshold. Backup providers not in the current setup are ranked by confidence minus latitude and orbital-overlap penalties.
         </p>
 
         <h2 style={h2}>Two scores, not one blend</h2>
         <p style={p}>
-          The Resilience Score is model-generated ({SCORING_ENGINE}, temperature 0.3) and non-deterministic. Terrain penalty from EU-DEM via OpenTopoData is deterministic and displayed separately. Finnish Bittimittari speed/latency applies only to seeded municipality sites — not ad-hoc coordinates.
+          The Resilience Score is the deterministic Signature above. Terrain penalty from EU-DEM via OpenTopoData is deterministic and displayed separately. Finnish Bittimittari speed/latency applies only to seeded municipality sites — not ad-hoc coordinates.
         </p>
 
         <h2 style={h2}>Versioning (monitoring later)</h2>
         <p style={p}>
-          Every Signature carries <code>issuedAt</code>, <code>modelVersion</code> ({MODEL_VERSION}), and <code>inputHash</code>. Monitoring is the same engine at T1, T2 — not a second product. Live drift alerting is not built yet.
+          Every Signature carries <code>issuedAt</code>, <code>modelVersion</code> ({MODEL_VERSION}), and <code>inputHash</code>. Monitoring is the same engine at T1, T2 — not a second product. Live drift alerting is not built yet; the homepage drift slider is illustrative only.
         </p>
 
         <p style={{ ...p, marginTop: 40 }}>
