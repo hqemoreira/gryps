@@ -102,22 +102,30 @@ function StickyMobileCta({ label }: { label: string }) {
   useEffect(() => {
     const hero = document.getElementById("gryps-hero")
     const advisor = document.getElementById("advisor")
-    const footer = document.getElementById("gryps-footer")
-      ?? document.querySelector("footer.gryps-footer")
+    const footer =
+      document.getElementById("gryps-footer") ??
+      document.querySelector("footer.gryps-footer")
     if (!hero || !advisor) return
 
     let pastHero = false
     let nearAdvisor = false
+    let nearFooter = false
 
     const update = () => {
       const vh = window.innerHeight
-      const footerTop = footer?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY
-      // Hide as soon as the footer reaches the sticky bar zone (≈80px from bottom).
-      const nearFooter = footerTop < vh - 72
-      const distBottom =
-        document.documentElement.scrollHeight - (window.scrollY + vh)
-      const nearPageEnd = distBottom < 120
-      setVisible(pastHero && !nearAdvisor && !nearFooter && !nearPageEnd)
+      const scrollRoot = document.scrollingElement ?? document.documentElement
+      const distBottom = scrollRoot.scrollHeight - (scrollRoot.scrollTop + vh)
+      // Sticky bar ≈ 72–96px; hide early so copyright never sits under it.
+      const nearPageEnd = distBottom < 160
+
+      let footerInView = nearFooter
+      if (footer) {
+        const top = footer.getBoundingClientRect().top
+        // Hide as soon as the footer peeks into the viewport (or earlier via IO).
+        footerInView = nearFooter || top < vh
+      }
+
+      setVisible(pastHero && !nearAdvisor && !footerInView && !nearPageEnd)
     }
 
     const heroIo = new IntersectionObserver(([e]) => {
@@ -129,17 +137,35 @@ function StickyMobileCta({ label }: { label: string }) {
       update()
     }, { rootMargin: "80px 0px", threshold: 0 })
 
+    // Grow the root downward so we hide ~100px before the footer reaches the fold.
+    const footerIo = footer
+      ? new IntersectionObserver(
+          ([e]) => {
+            nearFooter = e.isIntersecting
+            update()
+          },
+          { rootMargin: "0px 0px 100px 0px", threshold: 0 },
+        )
+      : null
+
     heroIo.observe(hero)
     advisorIo.observe(advisor)
+    if (footer && footerIo) footerIo.observe(footer)
+
     window.addEventListener("scroll", update, { passive: true })
     window.addEventListener("resize", update)
+    window.visualViewport?.addEventListener("resize", update)
+    window.visualViewport?.addEventListener("scroll", update)
     update()
 
     return () => {
       heroIo.disconnect()
       advisorIo.disconnect()
+      footerIo?.disconnect()
       window.removeEventListener("scroll", update)
       window.removeEventListener("resize", update)
+      window.visualViewport?.removeEventListener("resize", update)
+      window.visualViewport?.removeEventListener("scroll", update)
     }
   }, [])
 
@@ -147,8 +173,11 @@ function StickyMobileCta({ label }: { label: string }) {
     <div
       className={`gryps-sticky-cta gryps-no-print${visible ? " is-visible" : ""}`}
       aria-hidden={!visible}
+      {...(!visible ? { inert: true as const } : {})}
     >
-      <a href="#advisor">{label} <ArrowRight size={14} /></a>
+      <a href="#advisor" tabIndex={visible ? 0 : -1}>
+        {label} <ArrowRight size={14} />
+      </a>
     </div>
   )
 }

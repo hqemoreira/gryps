@@ -591,7 +591,7 @@ body {
   .gryps-ops-map-shell { height: 70vh; }
 }
 
-/* Sticky mobile CTA */
+/* Sticky mobile CTA — hidden while footer is in view so copyright stays readable */
 .gryps-sticky-cta {
   display: none;
   position: fixed;
@@ -605,14 +605,16 @@ body {
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--border);
   transform: translateY(100%);
-  transition: transform 0.2s ease, visibility 0.2s ease;
+  transition: transform 0.2s ease, visibility 0.2s ease, opacity 0.2s ease;
   pointer-events: none;
   visibility: hidden;
+  opacity: 0;
 }
 .gryps-sticky-cta.is-visible {
   transform: translateY(0);
   pointer-events: auto;
   visibility: visible;
+  opacity: 1;
 }
 .gryps-sticky-cta a {
   display: flex;
@@ -1071,7 +1073,8 @@ body {
   .gryps-steps-grid { grid-template-columns: 1fr !important; }
   .gryps-form-row { grid-template-columns: 1fr !important; }
   .gryps-footer {
-    padding: 48px var(--pad-x) max(24px, env(safe-area-inset-bottom, 0px));
+    /* Keep last line clear of home indicator; sticky CTA hides when footer enters view */
+    padding: 48px var(--pad-x) max(28px, calc(12px + env(safe-area-inset-bottom, 0px)));
   }
   .gryps-footer-top {
     flex-direction: column;
@@ -1092,7 +1095,9 @@ body {
     align-items: flex-start;
     gap: 8px;
     padding-top: 18px;
-    padding-bottom: 8px;
+    padding-bottom: 4px;
+    position: relative;
+    z-index: 2;
   }
   .gryps-footer-model {
     white-space: normal;
