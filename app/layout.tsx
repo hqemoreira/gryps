@@ -23,7 +23,7 @@ const jsonLd = {
   "name": "GRYPS",
   "alternateName": "GRYPS Connectivity Resilience Advisor",
   "url": "https://gryps.vercel.app",
-  "description": "GRYPS is a non-commercial R&D prototype that scores and documents satellite connectivity resilience for remote and autonomous industrial operations in Nordic, Arctic, and Icelandic environments. It produces a Resilience Signature — a scored assessment of single-provider dependency risk, orbital redundancy gaps, and NIS2/CER compliance posture. Built for learning and portfolio demonstration, not as a commercial service.",
+  "description": "GRYPS is a non-commercial R&D prototype that scores and documents satellite connectivity resilience for remote and autonomous industrial operations in Nordic, Arctic, and Icelandic environments. It produces a Resilience Signature — a scored assessment of single-provider dependency risk, orbital redundancy gaps, and NIS2/CER readiness documentation support. Built for learning and portfolio demonstration, not as a commercial service.",
   "applicationCategory": "EducationalApplication",
   "operatingSystem": "Web",
   "offers": {
@@ -56,7 +56,7 @@ const jsonLd = {
 
 export const metadata: Metadata = {
   title: "GRYPS — Know your score before the Arctic finds it for you",
-  description: "Resilience Signatures for Nordic, Arctic & Icelandic operations. Score satellite dependency, redundancy gaps, and NIS2-aligned evidence in 60 seconds. Free R&D prototype · Model v0.3 · Espoo, Finland.",
+  description: "Resilience Signatures for Nordic, Arctic & Icelandic operations. Score satellite dependency and redundancy gaps in 60 seconds — supports NIS2/CER readiness documentation. Free R&D prototype · Model v0.3 · Espoo, Finland.",
   keywords: "connectivity resilience, satellite connectivity scoring, autonomous operations connectivity, NIS2 connectivity risk, CER critical operator resilience, satellite resilience Arctic, satellite resilience Iceland, remote site connectivity risk, forestry autonomous fleet connectivity, Starlink Arctic coverage, Iridium Certus polar, OneWeb high latitude, LEO MEO GEO redundancy",
   metadataBase: new URL("https://gryps.vercel.app"),
   alternates: { canonical: "https://gryps.vercel.app" },

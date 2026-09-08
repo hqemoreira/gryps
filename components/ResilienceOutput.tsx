@@ -2,7 +2,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck, Download } from "lucide-react"
-import { gradeColor, gradeTextColor, type AdvisoryResult, type AssessmentInputs } from "@/lib/resilience-colors"
+import { gradeColor, gradeTextColor, type AdvisoryResult, type AssessmentInputs, type ScoreComposition } from "@/lib/resilience-colors"
 import { computeComplianceFlags } from "@/lib/compliance"
 import { redundancyTiers } from "@/lib/redundancy-tiers"
 import { MODEL_VERSION } from "@/lib/signature-meta"
@@ -136,8 +136,19 @@ const UI = {
     complianceCer: "CER — Critical entity resilience assessment",
     compliancePass: "ADDRESSED",
     complianceFail: "AT RISK",
-    complianceNote: "Compliance flags are indicative, based on the scoring model's assessment of connectivity resilience posture. They do not constitute legal or regulatory advice.",
+    complianceNote: "Compliance flags are indicative, based on the scoring model's assessment of connectivity resilience posture. They do not constitute legal or regulatory advice. A Signature supports readiness documentation — it is not certification.",
     recommendation: "RECOMMENDATION",
+    scoreComposition: "HOW THIS SCORE WAS COMPUTED",
+    scoreCompositionSub: "Model v0.3 component breakdown before hard caps. Full formula on the methodology page.",
+    scoreRawSum: "Raw sum",
+    scoreFinal: "Final score",
+    scoreCaps: "Hard caps applied",
+    scoreNoCaps: "No hard caps applied",
+    methodologyLink: "Full scoring methodology →",
+    componentRedundancy: "Redundancy",
+    componentLatitude: "Latitude",
+    componentProfile: "Operational profile",
+    componentConfidence: "Provider confidence",
     riskFactors: "RISK FACTORS",
     redundancyGaps: "REDUNDANCY GAPS",
     scoreImpact: "↓ SCORE IMPACT",
@@ -149,8 +160,8 @@ const UI = {
     orbitalDisclaimer:
       "General technical characteristics based on publicly available industry information — not official provider specifications, current commercial terms, or an endorsement of any provider. GRYPS has no commercial relationship with the providers listed.",
     provenanceLabel: "DATA PROVENANCE",
-    provenanceScoringModel: "Scoring model",
-    provenanceScoringModelValue: "Mistral Small (mistral-small-latest) via Mistral AI API, EU-hosted",
+    provenanceScoringModel: "Scoring engine",
+    provenanceScoringModelValue: "deterministic-v0.3 (reproducible; optional Mistral prose only — never changes score)",
     provenanceRealDataSources: "Real-data sources",
     provenanceBittimittari: "Bittimittari (Traficom, Finland) — municipality-level broadband speed/latency, CC BY 4.0",
     provenanceEuDem: "EU-DEM (Copernicus/EEA) — 25m resolution elevation data, accessed via OpenTopoData",
@@ -169,9 +180,9 @@ const UI = {
     elevationField: "ELEVATION / SKY VIEW ",
     coverageField: "COVERAGE ",
     failoverField: "FAILOVER LATENCY ",
-    provenanceNote: "Scoring model outputs are non-deterministic (temperature 0.3). Real-data evidence is deterministic and reproducible. Neither dataset is proprietary.",
+    provenanceNote: "Numeric score, grade, risks, and ranked providers are deterministic and reproducible for the same inputs. Optional Mistral text may polish the recommendation paragraph only. Real-data evidence (EU-DEM / Bittimittari) is separate and not blended into the Signature score.",
     aiBadgeTitle:
-      "EU AI Act Art. 50 — AI-generated analytical summary (Mistral). Limited-risk system. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.",
+      "EU AI Act Art. 50 — optional AI-generated recommendation prose (Mistral). Limited-risk system. Score itself is deterministic Model v0.3. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.",
     art50: "Art. 50 EU AI Act",
     generated: "Generated",
     printAttr: "GRYPS — Connectivity Resilience Advisor · gryps.vercel.app",
@@ -216,8 +227,19 @@ const UI = {
     complianceCer: "CER — Kriittisten toimijoiden resilienssiarviointi",
     compliancePass: "KÄSITELTY",
     complianceFail: "RISKISSÄ",
-    complianceNote: "Vaatimustenmukaisuusliput ovat suuntaa-antavia, perustuen pisteytysmallin arvioon yhteyden resilienssiasemasta. Ne eivät ole oikeudellista tai sääntelyneuvontaa.",
+    complianceNote: "Vaatimustenmukaisuusliput ovat suuntaa-antavia, perustuen pisteytysmallin arvioon yhteyden resilienssiasemasta. Ne eivät ole oikeudellista tai sääntelyneuvontaa. Signature tukee valmiusdokumentaatiota — se ei ole sertifiointi.",
     recommendation: "SUOSITUS",
+    scoreComposition: "MITEN TÄMÄ PISTE LASKETTIIN",
+    scoreCompositionSub: "Mallin v0.3 komponenttijako ennen kovia kattoja. Täysi kaava menetelmäsivulla.",
+    scoreRawSum: "Raakasumma",
+    scoreFinal: "Lopullinen pistemäärä",
+    scoreCaps: "Käytetyt kovat katot",
+    scoreNoCaps: "Ei kovia kattoja",
+    methodologyLink: "Täysi pisteytysmenetelmä →",
+    componentRedundancy: "Redundanssi",
+    componentLatitude: "Leveysaste",
+    componentProfile: "Toimintaprofiili",
+    componentConfidence: "Toimittajaluottamus",
     riskFactors: "RISKITEKIJÄT",
     redundancyGaps: "REDUNDANSSIAUKOT",
     scoreImpact: "↓ VAIKUTUS PISTEISIIN",
@@ -229,8 +251,8 @@ const UI = {
     orbitalDisclaimer:
       "Yleiset tekniset ominaisuudet perustuvat julkisesti saatavilla olevaan toimialatietoon — eivät virallisia toimittajamäärityksiä, nykyisiä kaupallisia ehtoja tai minkään toimittajan suositusta. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
     provenanceLabel: "TIETOJEN ALKUPERÄ",
-    provenanceScoringModel: "Pisteytysmalli",
-    provenanceScoringModelValue: "Mistral Small (mistral-small-latest) Mistral AI API:n kautta, EU-hosting",
+    provenanceScoringModel: "Pisteytysmoottori",
+    provenanceScoringModelValue: "deterministic-v0.3 (toistettava; valinnainen Mistral-proosa — ei muuta pistettä)",
     provenanceRealDataSources: "Reaalidatan lähteet",
     provenanceBittimittari: "Bittimittari (Traficom, Suomi) — kuntakohtainen laajakaistaanopeus/-viive, CC BY 4.0",
     provenanceEuDem: "EU-DEM (Copernicus/EEA) — 25m korkeusdata, OpenTopoData-rajapinnalla",
@@ -249,9 +271,9 @@ const UI = {
     elevationField: "KORKEUSKULMA / TAIVAS ",
     coverageField: "KATTAVUUS ",
     failoverField: "FAILOVER-VIIVE ",
-    provenanceNote: "Pisteytysmallin tulokset ovat ei-deterministisiä (lämpötila 0.3). Reaalidatan näyttö on deterministinen ja toistettava. Kumpikaan tietoaineisto ei ole patentoitu.",
+    provenanceNote: "Pisteet, arvosana, riskit ja rankatut toimittajat ovat deterministisiä ja toistettavia samoilla syötteillä. Valinnainen Mistral-teksti voi hioa vain suosituskappaleen. Reaalidatanäyttö (EU-DEM / Bittimittari) on erillinen eikä sekoitu Signature-pisteeseen.",
     aiBadgeTitle:
-      "EU:n tekoälylaki 50 artikla — tekoälyn tuottama analyyttinen yhteenveto (Mistral). Rajoitetun riskin järjestelmä. Ei takuu verkkojen saatavuudesta. Tukee ihmisen harkintaa; ei automatisoituja oikeudellisia päätöksiä.",
+      "EU:n tekoälylaki 50 artikla — valinnainen tekoälyn tuottama suositusproosa (Mistral). Rajoitetun riskin järjestelmä. Itse piste on deterministinen malli v0.3. Ei takuu verkkojen saatavuudesta. Tukee ihmisen harkintaa; ei automatisoituja oikeudellisia päätöksiä.",
     art50: "50 artikla, EU:n tekoälylaki",
     generated: "Luotu",
     printAttr: "GRYPS — Connectivity Resilience Advisor · gryps.vercel.app",
@@ -377,8 +399,63 @@ function AssessmentInputsPanel({ input, t }: { input: AssessmentInputs; t: UiCop
   )
 }
 
+function componentLabel(id: string, t: UiCopy): string {
+  if (id === "redundancy") return t.componentRedundancy
+  if (id === "latitude") return t.componentLatitude
+  if (id === "operational_profile") return t.componentProfile
+  if (id === "provider_confidence") return t.componentConfidence
+  return id
+}
+
+function ScoreCompositionPanel({ composition, t }: { composition: ScoreComposition; t: UiCopy }) {
+  return (
+    <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 4 }}>{t.scoreComposition}</p>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14, lineHeight: 1.5 }}>
+        {t.scoreCompositionSub}
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 14 }}>
+        {composition.components.map(c => {
+          const pct = c.max > 0 ? Math.max(0, Math.min(100, (c.points / c.max) * 100)) : 0
+          return (
+            <div key={c.id}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 4 }}>
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text)", fontWeight: 600 }}>{componentLabel(c.id, t)}</span>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 12, color: "var(--text)", fontWeight: 700 }}>
+                  {c.points}/{c.max}
+                </span>
+              </div>
+              <div style={{ height: 4, backgroundColor: "var(--surface2)", borderRadius: 2, overflow: "hidden" }}>
+                <div style={{ width: `${pct}%`, height: "100%", backgroundColor: "var(--accent-cyan)", borderRadius: 2 }} />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 16, paddingTop: 12, borderTop: "1px solid var(--border)", marginBottom: 12 }}>
+        <div>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 2 }}>{t.scoreRawSum}</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{composition.raw_sum}</p>
+        </div>
+        <div>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 2 }}>{t.scoreFinal}</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 14, fontWeight: 700, color: "var(--accent-cyan)" }}>{composition.final_score}</p>
+        </div>
+      </div>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: composition.caps_applied.length ? "var(--accent-amber)" : "var(--text-muted)", lineHeight: 1.5, marginBottom: 12 }}>
+        {composition.caps_applied.length
+          ? `${t.scoreCaps}: ${composition.caps_applied.join(", ")}`
+          : t.scoreNoCaps}
+      </p>
+      <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--accent-blue)", textDecoration: "none" }}>
+        {t.methodologyLink}
+      </Link>
+    </div>
+  )
+}
+
 // Real, measured data — deliberately separate from and never blended into the
-// Mistral-generated resilience_signature score above. Two independent inputs:
+// Resilience Signature score above. Two independent inputs:
 // Bittimittari real-world speed/latency (Finland only — Traficom's dataset has
 // no coverage outside Finland) and EU-DEM terrain variance (works globally).
 // When Bittimittari doesn't apply (non-Finnish site, or a live ad-hoc query
@@ -475,7 +552,7 @@ export function ResilienceOutput({
   lang?: UiLang
 }) {
   const t = UI[lang]
-  const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats } = result
+  const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats, score_composition } = result
   const gc = gradeColor(sig.grade)
   const gtc = gradeTextColor(sig.grade)
   const flags = computeComplianceFlags(result, input)
@@ -556,6 +633,8 @@ export function ResilienceOutput({
       </p>
 
       {input && <AssessmentInputsPanel input={input} t={t} />}
+
+      {score_composition && <ScoreCompositionPanel composition={score_composition} t={t} />}
 
       {realData && <RealDataEvidencePanel data={realData} t={t} lang={lang} />}
 

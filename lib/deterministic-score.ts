@@ -48,6 +48,20 @@ export type RankedProvider = {
   failover_latency: string
 }
 
+export type ScoreComponent = {
+  id: "redundancy" | "latitude" | "operational_profile" | "provider_confidence"
+  label: string
+  points: number
+  max: number
+}
+
+export type ScoreComposition = {
+  components: ScoreComponent[]
+  raw_sum: number
+  final_score: number
+  caps_applied: string[]
+}
+
 export type DeterministicResult = {
   resilience_signature: { score: number; grade: "A" | "B" | "C" | "D" | "F"; summary: string }
   risk_factors: RiskFactor[]
@@ -56,6 +70,7 @@ export type DeterministicResult = {
   recommendation: string
   caveats: string[]
   caps_applied: string[]
+  score_composition: ScoreComposition
 }
 
 type ProviderMeta = {
@@ -284,7 +299,7 @@ function templateRecommendation(
     return `Resilience Signature ${score} · ${grade}. Posture is comparatively strong for this profile.${riskBit}${backupBit}`.trim()
   }
   if (score >= 50) {
-    return `Resilience Signature ${score} · ${grade}. Documented gaps remain before this site is audit-ready.${riskBit}${backupBit}`.trim()
+    return `Resilience Signature ${score} · ${grade}. Documented gaps remain before this site meets a stronger readiness posture.${riskBit}${backupBit}`.trim()
   }
   return `Resilience Signature ${score} · ${grade}. Connectivity resilience is below an acceptable threshold for this operational profile.${riskBit}${backupBit}`.trim()
 }
@@ -297,11 +312,13 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
   const autonomy = raw.autonomy
   const criticality = raw.criticality
 
-  let score =
-    redundancyPoints(providers) +
-    latitudePoints(lat, sector, elevation) +
-    autonomyPoints(autonomy) +
-    providerConfidencePoints(providers, lat)
+  const redPts = redundancyPoints(providers)
+  const latPts = latitudePoints(lat, sector, elevation)
+  const opPts = autonomyPoints(autonomy)
+  const confPts = providerConfidencePoints(providers, lat)
+
+  let score = redPts + latPts + opPts + confPts
+  const raw_sum = score
 
   const caps_applied: string[] = []
   const onlyGeo = providers.length > 0 && providers.every(p => p.orbit === "GEO")
@@ -327,6 +344,18 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
 
   score = Math.max(0, Math.min(100, Math.round(score)))
   const grade = gradeFromDeterministicScore(score)
+
+  const score_composition: ScoreComposition = {
+    components: [
+      { id: "redundancy", label: "Redundancy", points: redPts, max: 30 },
+      { id: "latitude", label: "Latitude", points: latPts, max: 20 },
+      { id: "operational_profile", label: "Operational profile", points: opPts, max: 15 },
+      { id: "provider_confidence", label: "Provider confidence", points: confPts, max: 30 },
+    ],
+    raw_sum,
+    final_score: score,
+    caps_applied: [...caps_applied],
+  }
 
   const risk_factors = buildRisks(providers, lat, sector, autonomy, criticality, score)
   if (lat > 72 && onlyGeo && !risk_factors.some(r => r.label.includes("GEO"))) {
@@ -379,6 +408,7 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
     recommendation,
     caveats,
     caps_applied,
+    score_composition,
   }
 }
 

@@ -13,6 +13,20 @@ export type ConnectivityOption = {
   failover_latency?: string
 }
 
+export type ScoreComponent = {
+  id: "redundancy" | "latitude" | "operational_profile" | "provider_confidence"
+  label: string
+  points: number
+  max: number
+}
+
+export type ScoreComposition = {
+  components: ScoreComponent[]
+  raw_sum: number
+  final_score: number
+  caps_applied: string[]
+}
+
 export type AdvisoryResult = {
   resilience_signature: { score: number; grade: string; summary: string }
   risk_factors: { label: string; severity: string; detail: string }[]
@@ -23,6 +37,8 @@ export type AdvisoryResult = {
   issuedAt?: string
   modelVersion?: string
   inputHash?: string
+  caps_applied?: string[]
+  score_composition?: ScoreComposition
 }
 
 export type AssessmentInputs = {

@@ -764,7 +764,7 @@ const COPY = {
     heroSecondary: "See a sample Signature",
     modelChip:  "Research prototype · Model v0.3",
     sampleCta:  "See a sample Signature",
-    nis2line:   "NIS2/CER-aligned resilience reporting · Espoo, Finland · R&D prototype",
+    nis2line:   "Supports NIS2/CER readiness documentation · Espoo, Finland · R&D prototype",
     statsL1:    "Providers indexed (catalog)",
     statsL2:    "All orbital types",
     statsL3:    "Polar coverage",
@@ -797,7 +797,7 @@ const COPY = {
     problems: [
       { title: "Zero margin.", body: "A harvester at −30°C, an offshore check-in, a remote sensor cluster — when connectivity fails here, it is a safety event, not an inconvenience." },
       { title: "One provider.", body: "Most sites run a single satellite path with no documented fallback. Pass geometry and orbital outages stay invisible until they materialise." },
-      { title: "Documented or fined.", body: "NIS2 and CER increasingly require critical operators to document connectivity risk. A Resilience Signature is audit-ready evidence." },
+      { title: "Documented or fined.", body: "NIS2 and CER increasingly require critical operators to document connectivity risk. A Resilience Signature supports readiness documentation — it is not certification or legal advice." },
     ],
     howL:  "How the Resilience Advisor works",
     steps: [
@@ -825,7 +825,7 @@ const COPY = {
     heroSecondary: "Katso esimerkki-Signature",
     modelChip:  "Tutkimusprototyyppi · Malli v0.3",
     sampleCta:  "Katso esimerkki-Signature",
-    nis2line:   "NIS2/CER-yhteensopiva resilienssirapor­tointi · Espoo, Suomi · T&K-prototyyppi",
+    nis2line:   "Tukee NIS2/CER-valmiusdokumentaatiota · Espoo, Suomi · T&K-prototyyppi",
     statsL1:    "Palveluntarjoajaa indeksoitu",
     statsL2:    "Kaikki orbitaalityypit",
     statsL3:    "Napapiirin kattavuus",
@@ -858,7 +858,7 @@ const COPY = {
     problems: [
       { title: "Nolla marginaalia.", body: "Harvester −30°C:ssa, offshore-tarkistus, etäanturiklusteri — yhteyskatko on turvallisuustapahtuma, ei haitto." },
       { title: "Yksi toimittaja.", body: "Useimmat kohteet käyttävät yhtä satelliittipolkua ilman dokumentoitua varajärjestelmää. Ohitusgeometria pysyy näkymättömänä, kunnes se toteutuu." },
-      { title: "Dokumentoitu tai sakko.", body: "NIS2 ja CER edellyttävät yhä useammin yhteysriskin dokumentointia. Resilience Signature on auditointivalmis todiste." },
+      { title: "Dokumentoitu tai sakko.", body: "NIS2 ja CER edellyttävät yhä useammin yhteysriskin dokumentointia. Resilience Signature tukee valmiusdokumentaatiota — se ei ole sertifiointi tai oikeudellinen neuvonta." },
     ],
     howL:  "Miten Resilience Advisor toimii",
     steps: [

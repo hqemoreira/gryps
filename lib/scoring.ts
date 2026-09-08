@@ -80,6 +80,8 @@ export async function scoreSite(body: object): Promise<ResilienceOutput> {
     connectivity_options: det.connectivity_options,
     recommendation: det.recommendation,
     caveats: det.caveats,
+    caps_applied: det.caps_applied,
+    score_composition: det.score_composition,
   }
 
   const withProse: AdvisoryResult = {
@@ -109,6 +111,8 @@ export function scoreSiteSync(body: object): ResilienceOutput {
     connectivity_options: det.connectivity_options,
     recommendation: det.recommendation,
     caveats: det.caveats,
+    caps_applied: det.caps_applied,
+    score_composition: det.score_composition,
   }
   return versionSignature(
     applyHardRules(structured, {
