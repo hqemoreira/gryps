@@ -2,6 +2,7 @@
 import type { CSSProperties } from "react"
 import Link from "next/link"
 import { DocShell, type DocLang } from "@/components/DocShell"
+import { PolarAtmosphere } from "@/components/PolarAtmosphere"
 import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/signature-meta"
 
 const COPY = {
@@ -10,6 +11,7 @@ const COPY = {
     h1: "How a Resilience Signature is scored",
     intro:
       "GRYPS is a non-commercial research prototype that scores satellite connectivity resilience for remote Nordic and Arctic operations (forestry, maritime, mining, autonomous fleets). A Signature is an assessment at a timestamp — not live monitoring.",
+    geometryCaption: "Illustrative polar geometry — latitude rings and orbital-pass ellipses. Scoring uses deterministic Model v0.3 weights, not live RF.",
     notH2: "What the advisor is not",
     notItems: [
       "Not a substitute for an on-site RF / sky-view survey.",
@@ -52,6 +54,7 @@ const COPY = {
     h1: "Miten Resilience Signature pisteytetään",
     intro:
       "GRYPS on ei-kaupallinen tutkimusprototyyppi, joka pisteyttää satelliittiyhteyden resilienssiä pohjoismaisissa ja arktisissa kohteissa (metsätalous, merenkulku, kaivostoiminta, autonomiset kalustot). Signature on arvio tiettynä ajanhetkenä — ei live-seurantaa.",
+    geometryCaption: "Havainnollistava polaarigeometria — leveyspiirit ja ohitusellipsit. Pisteytys käyttää determinististä mallia v0.3, ei live-RF:ää.",
     notH2: "Mitä Advisor ei ole",
     notItems: [
       "Ei korvaa paikan päällä tehtävää RF- / taivasnäkymämittausta.",
@@ -99,9 +102,14 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
       <h1 style={{ fontFamily: "var(--font-ui)", fontSize: 36, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em", margin: "16px 0 20px" }}>
         {t.h1}
       </h1>
-      <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 16, color: "var(--text-muted)", lineHeight: 1.75, marginBottom: 32 }}>
+      <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 16, color: "var(--text-muted)", lineHeight: 1.75, marginBottom: 28 }}>
         {t.intro}
       </p>
+
+      <figure className="gryps-polar-method">
+        <PolarAtmosphere variant="full" className="gryps-polar-figure gryps-polar-figure-sm" />
+        <figcaption>{t.geometryCaption}</figcaption>
+      </figure>
 
       <h2 style={h2}>{t.notH2}</h2>
       <ul style={ul}>

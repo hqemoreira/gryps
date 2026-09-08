@@ -914,6 +914,8 @@ const COPY = {
     examplesSub: "Pre-computed examples showing what the Resilience Advisor produces. Run the Advisor above for a live assessment.",
     polarHeader: "COVERAGE ZONE · NORDIC, ARCTIC & ICELAND",
     polarMapLabel: "DEMO MAP · NOT LIVE MONITORING",
+    polarInstrumentTitle: "High-latitude geometry",
+    polarInstrumentBody: "Illustrative polar projection — latitude rings and orbital-pass ellipses for the Lapland sample site. Not live constellation telemetry.",
     ctaH2:  "Resilience starts with knowing your score.",
     ctaSub: "Free Resilience Signature for any Nordic, Arctic, or Icelandic site. No account — connectivity risk scored in ~60 seconds.",
     ctaBtn: "Score my site · free",
@@ -977,6 +979,8 @@ const COPY = {
     examplesSub: "Ennalta lasketut esimerkit siitä, mitä Resilience Advisor tuottaa. Suorita Advisor yllä live-arviointia varten.",
     polarHeader: "KATTAVUUSALUE · POHJOISMAAT, ARKTINEN JA ISLANTI",
     polarMapLabel: "DEMO-KARTTA · EI LIVE-SEURANTAA",
+    polarInstrumentTitle: "Korkean leveysasteen geometria",
+    polarInstrumentBody: "Havainnollistava polaariprojektio — leveyspiirit ja ohitusellipsit Lapin esimerkkikohteelle. Ei live-konstellaatiotelemetriaa.",
     ctaH2:  "Resilienssi alkaa pisteidesi tuntemisesta.",
     ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — yhteysriski pisteytetty ~60 sekunnissa.",
     ctaBtn: "Pisteytä kohteeni · ilmaiseksi",
@@ -1280,6 +1284,24 @@ export default function HomePage() {
               {t.polarMapLabel}
             </p>
           </div>
+
+          <div className="gryps-content gryps-section-pad" style={{ paddingTop: 0, paddingBottom: 28 }}>
+            <div className="gryps-polar-instrument">
+              <div className="gryps-polar-instrument-copy">
+                <p className="label" style={{ marginBottom: 10 }}>{t.polarHeader}</p>
+                <h3 className="text-title" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 10, fontSize: "var(--text-title)" }}>
+                  {t.polarInstrumentTitle}
+                </h3>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", lineHeight: 1.65, maxWidth: "42ch" }}>
+                  {t.polarInstrumentBody}
+                </p>
+              </div>
+              <div className="gryps-polar-instrument-figure">
+                <PolarAtmosphere variant="full" animate className="gryps-polar-figure" />
+              </div>
+            </div>
+          </div>
+
           <LazyOpsMap lang={lang} />
           <div className="gryps-content gryps-section-pad" style={{ paddingTop: 28, paddingBottom: "var(--section-y)" }}>
             <DriftMock lang={lang} />

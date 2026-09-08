@@ -835,6 +835,64 @@ body {
   white-space: nowrap;
 }
 
+/* ── Polar instrument (ops + methodology) ────────────────────────────────── */
+.gryps-polar-instrument {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 380px);
+  gap: 40px;
+  align-items: center;
+  padding: 28px 0 8px;
+}
+.gryps-polar-instrument-copy {
+  min-width: 0;
+}
+.gryps-polar-instrument-figure {
+  width: 100%;
+  max-width: 380px;
+  margin-left: auto;
+  aspect-ratio: 1 / 1;
+}
+.gryps-polar-figure {
+  width: 100%;
+  height: 100%;
+}
+.gryps-polar-figure-sm {
+  max-width: 260px;
+  margin: 0 auto;
+}
+.gryps-polar-method {
+  margin: 0 0 36px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  text-align: center;
+}
+.gryps-polar-method figcaption {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin-top: 14px;
+  max-width: 42ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.gryps-polar-orbit-dash {
+  animation: gryps-polar-dash 28s linear infinite;
+}
+.gryps-polar-orbit-dash-slow {
+  animation-duration: 42s;
+  animation-direction: reverse;
+}
+@keyframes gryps-polar-dash {
+  to { stroke-dashoffset: -120; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gryps-polar-orbit-dash,
+  .gryps-polar-orbit-dash-slow { animation: none; }
+}
+
 /* ── Responsive overrides ────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .gryps-nav-tagline { display: none !important; }
@@ -858,6 +916,15 @@ body {
     width: 100%;
   }
   .gryps-nav-link { display: none !important; }
+  .gryps-polar-instrument {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    text-align: left;
+  }
+  .gryps-polar-instrument-figure {
+    margin: 0 auto;
+    max-width: 320px;
+  }
 }
 
 @media (max-width: 900px) {
