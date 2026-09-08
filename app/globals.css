@@ -39,10 +39,13 @@
   --pad-x: 32px;
 
   /* Depth */
-  --glow-aurora: radial-gradient(ellipse 80% 60% at 70% 20%, rgba(46, 212, 122, 0.07) 0%, transparent 55%),
-                 radial-gradient(ellipse 60% 50% at 20% 40%, rgba(110, 231, 249, 0.05) 0%, transparent 50%);
+  --glow-aurora: radial-gradient(ellipse 90% 70% at 75% 15%, rgba(46, 212, 122, 0.11) 0%, transparent 55%),
+                 radial-gradient(ellipse 70% 55% at 15% 35%, rgba(110, 231, 249, 0.08) 0%, transparent 50%),
+                 radial-gradient(ellipse 50% 40% at 50% 100%, rgba(79, 168, 255, 0.04) 0%, transparent 45%);
   --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.35);
   --cta-gradient: linear-gradient(135deg, #4FA8FF 0%, #6EE7F9 100%);
+  --grid-polar: linear-gradient(rgba(110, 231, 249, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(110, 231, 249, 0.035) 1px, transparent 1px);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -152,6 +155,7 @@ body {
 
 .gryps-hero-aurora {
   position: relative;
+  overflow: hidden;
 }
 .gryps-hero-aurora::before {
   content: "";
@@ -160,6 +164,17 @@ body {
   background: var(--glow-aurora);
   pointer-events: none;
   z-index: 0;
+}
+.gryps-hero-aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grid-polar);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.9;
 }
 .gryps-hero-aurora > * {
   position: relative;
@@ -170,7 +185,7 @@ body {
   background-color: var(--surface-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-card), 0 0 48px rgba(217, 119, 6, 0.14);
+  box-shadow: var(--shadow-card), 0 0 56px rgba(217, 119, 6, 0.18);
   padding: 28px 32px;
 }
 .gryps-hero-signature {
@@ -179,6 +194,108 @@ body {
 }
 .gryps-hero-signature-col {
   min-height: 100%;
+}
+
+.gryps-comp-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.gryps-comp-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.gryps-comp-track {
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+  grid-column: 1 / -1;
+}
+.gryps-comp-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent-cyan);
+  transform-origin: left center;
+  animation: gryps-comp-fill 0.7s ease-out both;
+}
+@keyframes gryps-comp-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gryps-comp-fill { animation: none; }
+}
+
+.gryps-trust-strip {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  padding: 14px var(--pad-x);
+}
+.gryps-trust-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+}
+.gryps-trust-items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 4px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.gryps-trust-items span[data-sep] {
+  color: var(--text-dim);
+  margin: 0 4px;
+}
+.gryps-trust-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.gryps-trust-links a {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  text-decoration: none;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.gryps-proof-band-label {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--accent-amber);
+  margin-bottom: 8px;
+}
+
+.gryps-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
 }
 
 .gryps-cta-btn {
@@ -210,8 +327,9 @@ body {
 .gryps-console-panel {
   background-color: var(--surface-elevated);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-cyan);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), 0 0 40px rgba(110, 231, 249, 0.06);
   padding: 28px 28px 32px;
 }
 
@@ -447,11 +565,15 @@ body {
 
 @media (max-width: 900px) {
   .gryps-hero-score { font-size: clamp(2rem, 9vw, 2.625rem) !important; }
-  .gryps-hero-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
+  .gryps-hero-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
   .gryps-hero-signature { position: static; min-height: 0 !important; }
   .gryps-problem-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
   .gryps-output-grid { grid-template-columns: 1fr !important; }
   .gryps-signature-detail { display: none !important; }
+  .gryps-trust-inner { flex-direction: column; align-items: flex-start; }
+  .gryps-trust-links { width: 100%; justify-content: flex-start; gap: 8px 18px; }
+  .gryps-stats-row-hero { display: none !important; }
+  .gryps-comp-bars { gap: 8px; }
 }
 
 @media (max-width: 767px) {
@@ -464,7 +586,7 @@ body {
   .gryps-nav-inner { padding: 0 16px !important; }
   .gryps-banner { font-size: 8px !important; letter-spacing: 0.03em !important; padding: 6px 12px !important; }
   .gryps-section-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .gryps-hero-h1 { font-size: clamp(1.75rem, 7vw, 2rem) !important; }
+  .gryps-hero-h1 { font-size: clamp(1.85rem, 7.5vw, 2.15rem) !important; }
   .gryps-hero-sub { font-size: 15px !important; max-width: 100% !important; }
   .gryps-stats-row { gap: 20px !important; flex-wrap: wrap !important; }
   .gryps-steps-grid { grid-template-columns: 1fr !important; }
@@ -476,7 +598,6 @@ body {
   .gryps-view-toggle { flex: 1 1 100% !important; margin-left: 0 !important; }
   .gryps-capacity-grid { grid-template-columns: 1fr !important; }
   .gryps-capacity-grid > div:first-child { min-height: 360px !important; height: 360px !important; }
-  /* iOS: 16px inputs avoid focus zoom */
   input, select, textarea {
     font-size: 16px !important;
   }
@@ -497,10 +618,20 @@ body {
     padding-top: 120px !important;
   }
   .gryps-signature-elevated {
-    padding: 20px 18px;
+    padding: 20px 16px;
   }
   .gryps-console-panel {
     padding: 20px 16px 24px;
+  }
+  .gryps-trust-strip {
+    padding: 12px 20px;
+  }
+  .gryps-cta-btn, .gryps-secondary-btn {
+    width: 100%;
+  }
+  .gryps-hero-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
   }
 }
 

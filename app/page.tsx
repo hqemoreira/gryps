@@ -10,7 +10,7 @@ import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
 import { PROVIDER_INDEX_COUNT } from "@/lib/providers"
 import { DriftMock } from "@/components/DriftMock"
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors"
-import { ADVISOR_PROVIDERS, providersToSetupString } from "@/lib/deterministic-score"
+import { ADVISOR_PROVIDERS, providersToSetupString, scoreDeterministic } from "@/lib/deterministic-score"
 import { MODEL_VERSION } from "@/lib/signature-meta"
 import dynamic from "next/dynamic"
 
@@ -660,79 +660,158 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
 }
 
 // ── Hero signature card ───────────────────────────────────────────────────────
-function HeroSignatureCard({ t }: { t: typeof COPY.en }) {
-  const gc = gradeTextColor("D")
-  const border = gradeColor("D")
+const HERO_DEMO = scoreDeterministic({
+  lat: 68.2,
+  lng: 27.4,
+  sector: "forestry",
+  autonomy: "autonomous",
+  criticality: "high",
+  providers: ["starlink"],
+})
+
+function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
+  const labels: Record<string, { en: string; fi: string }> = {
+    redundancy: { en: "Redundancy", fi: "Redundanssi" },
+    latitude: { en: "Latitude", fi: "Leveysaste" },
+    operational_profile: { en: "Profile", fi: "Profiili" },
+    provider_confidence: { en: "Providers", fi: "Toimittajat" },
+  }
+  return (
+    <div className="gryps-comp-bars" style={{ marginTop: 4 }}>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 4 }}>
+        {lang === "fi" ? "PISTEKOMPONENTIT" : "SCORE COMPOSITION"}
+      </p>
+      {HERO_DEMO.score_composition.components.map(c => {
+        const pct = c.max > 0 ? Math.max(0, Math.min(100, (c.points / c.max) * 100)) : 0
+        const label = labels[c.id]?.[lang] ?? c.label
+        return (
+          <div key={c.id} className="gryps-comp-row">
+            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{label}</span>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text)", fontWeight: 700 }}>{c.points}/{c.max}</span>
+            <div className="gryps-comp-track">
+              <div className="gryps-comp-fill" style={{ width: `${pct}%` }} />
+            </div>
+          </div>
+        )
+      })}
+      {HERO_DEMO.score_composition.caps_applied.length > 0 && (
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-amber)", marginTop: 4 }}>
+          {lang === "fi" ? "Katto:" : "Cap:"} {HERO_DEMO.score_composition.caps_applied.join(", ")}
+        </p>
+      )}
+    </div>
+  )
+}
+
+function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
+  const score = HERO_DEMO.resilience_signature.score
+  const grade = HERO_DEMO.resilience_signature.grade
+  const gc = gradeTextColor(grade)
+  const border = gradeColor(grade)
+  const topRisk = t.heroTopRisk
+  const topRec = HERO_DEMO.connectivity_options[0]
+    ? `${HERO_DEMO.connectivity_options[0].provider} · ${HERO_DEMO.connectivity_options[0].confidence}`
+    : "Iridium Certus · 90"
+
   return (
     <div
       className="gryps-signature-card gryps-signature-elevated gryps-hero-signature"
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: 22,
+        gap: 18,
         width: "100%",
-        minHeight: 420,
+        minHeight: 0,
         justifyContent: "space-between",
         borderLeft: `3px solid ${border}`,
       }}
     >
       <div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
           <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.12em" }}>
             RESILIENCE SIGNATURE
           </p>
           <span
             className="gryps-grade-badge"
-            style={{ color: gc, backgroundColor: gradeBadgeBg("D"), border: `1px solid ${border}55` }}
+            style={{ color: gc, backgroundColor: gradeBadgeBg(grade), border: `1px solid ${border}55` }}
           >
-            GRADE D
+            {lang === "fi" ? "ARVOSANA" : "GRADE"} {grade}
           </span>
         </div>
 
-        <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "var(--text-title)", color: "var(--text)", marginBottom: 6 }}>
+        <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "var(--text-title)", color: "var(--text)", marginBottom: 4 }}>
           68.2°N 27.4°E · Lapland
         </p>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.04em", marginBottom: 28 }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.04em", marginBottom: 20 }}>
           Single Starlink · no backup path
         </p>
 
-        <div aria-label="Score 40 out of 100, grade D" style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
-          <span className="sr-only">Score 40 out of 100, grade D</span>
+        <div aria-label={`Score ${score} out of 100, grade ${grade}`} style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
+          <span className="sr-only">Score {score} out of 100, grade {grade}</span>
           <span aria-hidden="true" style={{
             fontFamily: "var(--font-data)",
-            fontSize: "clamp(4rem, 8vw, 5.5rem)",
+            fontSize: "clamp(3.5rem, 7vw, 5rem)",
             fontWeight: 900,
             color: gc,
             lineHeight: 0.9,
             letterSpacing: "-0.04em",
-          }}>40</span>
-          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: 18, color: "var(--text-dim)" }}>/100</span>
+          }}>{score}</span>
+          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: 16, color: "var(--text-dim)" }}>/100</span>
         </div>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", marginBottom: 24 }}>
-          {t.scoreLabel.replace("{score}", "40").replace("{grade}", "D")}
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.06em", marginBottom: 18 }}>
+          deterministic-v0.3
         </p>
 
-        <div className="gryps-signature-divider" style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 20 }} />
+        <div className="gryps-signature-divider" style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 16 }} />
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+        <HeroCompositionBars lang={lang} />
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 18 }}>
           <div>
-            <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 8 }}>{t.topRiskLabel}</p>
-            <p style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--accent-amber)", fontWeight: 600, lineHeight: 1.4 }}>{t.heroTopRisk}</p>
+            <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 6 }}>{t.topRiskLabel}</p>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-amber)", fontWeight: 600, lineHeight: 1.35 }}>{topRisk}</p>
           </div>
           <div>
-            <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 8 }}>{t.topRecLabel}</p>
-            <p style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--accent-cyan)", fontWeight: 600, lineHeight: 1.4 }}>Iridium Certus · 90</p>
+            <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 6 }}>{t.topRecLabel}</p>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-cyan)", fontWeight: 600, lineHeight: 1.35 }}>{topRec}</p>
           </div>
         </div>
       </div>
 
       <div>
-        <p className="gryps-signature-detail" style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 16 }}>
-          {t.nis2line}
-        </p>
         <a href="#advisor" className="gryps-cta-btn" style={{ width: "100%" }}>
           {t.advisorCta} <ArrowRight size={14} />
         </a>
+      </div>
+    </div>
+  )
+}
+
+function TrustStrip({ lang }: { lang: "en" | "fi" }) {
+  const items = lang === "fi"
+    ? ["Malli v0.3", "Deterministinen", "EU AI Act Art. 50", "Espoo", "Tutkimusprototyyppi"]
+    : ["Model v0.3", "Deterministic", "EU AI Act Art. 50", "Espoo", "Research prototype"]
+  const links = [
+    { href: "/methodology", label: lang === "fi" ? "Menetelmä" : "Methodology" },
+    { href: "/about", label: lang === "fi" ? "Tietoa" : "About" },
+    { href: "/privacy", label: lang === "fi" ? "Tietosuoja" : "Privacy" },
+  ]
+  return (
+    <div className="gryps-trust-strip gryps-no-print">
+      <div className="gryps-trust-inner">
+        <div className="gryps-trust-items">
+          {items.map((item, i) => (
+            <span key={item} style={{ display: "inline-flex", alignItems: "center" }}>
+              {i > 0 && <span data-sep aria-hidden="true">·</span>}
+              {item}
+            </span>
+          ))}
+        </div>
+        <div className="gryps-trust-links">
+          {links.map(l => (
+            <a key={l.href} href={l.href}>{l.label}</a>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -762,7 +841,7 @@ const COPY = {
     tag:        "CONNECTIVITY RESILIENCE · NORDIC, ARCTIC & ICELAND OPERATIONS",
     navCta:     "Score my site — free",
     h1:         "Know your score before the Arctic finds it for you.",
-    sub:        "Resilience Signatures for Nordic, Arctic, and Icelandic operations — score, grade, risks, and ranked providers in ~60 seconds. No account required.",
+    sub:        "Score, grade, risks, and ranked providers for Nordic, Arctic, and Icelandic sites — in ~60 seconds. Free. No account.",
     scoreLabel: "Score: {score}/100 · Grade {grade}",
     heroSecondary: "See a sample Signature",
     modelChip:  "Research prototype · Model v0.3",
@@ -772,6 +851,7 @@ const COPY = {
     statsL2:    "All orbital types",
     statsL3:    "Polar coverage",
     liveCounter: "sites assessed in the Nordic & Arctic portfolio",
+    proofBand:  "Illustrative · not live monitoring",
     advisorCta: "Score my site — free",
     advisorSub: "~60 seconds · No account · Research prototype",
     sectorLabel:        "OPERATIONAL SECTOR",
@@ -797,11 +877,11 @@ const COPY = {
     topRiskLabel: "TOP RISK",
     topRecLabel:  "REC #1",
     heroTopRisk:  "No backup",
-    problemL: "The resilience gap GRYPS closes",
+    problemL: "Why sites fail without a Signature",
     problems: [
       { title: "Zero margin.", body: "A harvester at −30°C, an offshore check-in, a remote sensor cluster — when connectivity fails here, it is a safety event, not an inconvenience." },
-      { title: "One provider.", body: "Most sites run a single satellite path with no documented fallback. Pass geometry and orbital outages stay invisible until they materialise." },
-      { title: "Documented or fined.", body: "NIS2 and CER increasingly require critical operators to document connectivity risk. A Resilience Signature supports readiness documentation — it is not certification or legal advice." },
+      { title: "One path. No fallback.", body: "Most sites run a single satellite link with nothing documented behind it. Pass geometry and orbital outages stay invisible until they hit operations." },
+      { title: "Undocumented risk.", body: "NIS2 and CER push critical operators to evidence connectivity risk. A Resilience Signature supports readiness documentation — not certification or legal advice." },
     ],
     howL:  "How the Resilience Advisor works",
     steps: [
@@ -824,7 +904,7 @@ const COPY = {
     tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT, ARKTINEN JA ISLANTI",
     navCta:     "Pisteytä kohteeni — ilmaiseksi",
     h1:         "Tiedä pisteesi ennen kuin Arktinen paljastaa sen puolestasi.",
-    sub:        "Resilience Signature -todistukset pohjoismaisille, arktisille ja islantilaisille kohteille — pisteet, arvosana, riskit ja rankatut toimittajat ~60 sekunnissa. Ei tiliä.",
+    sub:        "Pisteet, arvosana, riskit ja rankatut toimittajat pohjoismaisille, arktisille ja islantilaisille kohteille — ~60 sekunnissa. Ilmaiseksi. Ei tiliä.",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
     heroSecondary: "Katso esimerkki-Signature",
     modelChip:  "Tutkimusprototyyppi · Malli v0.3",
@@ -834,6 +914,7 @@ const COPY = {
     statsL2:    "Kaikki orbitaalityypit",
     statsL3:    "Napapiirin kattavuus",
     liveCounter: "kohdetta arvioitu pohjoismaisessa ja arktisessa portfoliossa",
+    proofBand:  "Havainnollistava · ei live-seurantaa",
     advisorCta: "Pisteytä kohteeni — ilmaiseksi",
     advisorSub: "~60 sekuntia · Ei tiliä · Tutkimusprototyyppi",
     sectorLabel:        "TOIMIALA",
@@ -859,11 +940,11 @@ const COPY = {
     topRiskLabel: "PÄÄRISKI",
     topRecLabel:  "SUOS #1",
     heroTopRisk:  "Ei varayhteyttä",
-    problemL: "Resilienssiaukko, jonka GRYPS sulkee",
+    problemL: "Miksi kohteet kaatuvat ilman Signaturea",
     problems: [
-      { title: "Nolla marginaalia.", body: "Harvester −30°C:ssa, offshore-tarkistus, etäanturiklusteri — yhteyskatko on turvallisuustapahtuma, ei haitto." },
-      { title: "Yksi toimittaja.", body: "Useimmat kohteet käyttävät yhtä satelliittipolkua ilman dokumentoitua varajärjestelmää. Ohitusgeometria pysyy näkymättömänä, kunnes se toteutuu." },
-      { title: "Dokumentoitu tai sakko.", body: "NIS2 ja CER edellyttävät yhä useammin yhteysriskin dokumentointia. Resilience Signature tukee valmiusdokumentaatiota — se ei ole sertifiointi tai oikeudellinen neuvonta." },
+      { title: "Nolla marginaalia.", body: "Harvester −30°C:ssa, offshore-tarkistus, etäanturiklusteri — yhteyskatko on turvallisuustapahtuma, ei haitta." },
+      { title: "Yksi polku. Ei varaa.", body: "Useimmat kohteet käyttävät yhtä satelliittiyhteyttä ilman dokumentoitua varajärjestelmää. Ohitusgeometria pysyy näkymättömänä, kunnes se iskee operaatioihin." },
+      { title: "Dokumentoimaton riski.", body: "NIS2 ja CER edellyttävät yhä useammin yhteysriskin näyttöä. Resilience Signature tukee valmiusdokumentaatiota — ei sertifiointia tai oikeudellista neuvontaa." },
     ],
     howL:  "Miten Resilience Advisor toimii",
     steps: [
@@ -1015,21 +1096,15 @@ export default function HomePage() {
                 {t.h1}
               </h1>
 
-              <p className="gryps-hero-sub text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", maxWidth: 520, marginBottom: 28 }}>
+              <p className="gryps-hero-sub text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", maxWidth: 480, marginBottom: 28 }}>
                 {t.sub}
               </p>
 
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginBottom: 24 }}>
+              <div className="gryps-hero-actions" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginBottom: 20 }}>
                 <a href="#advisor" className="gryps-cta-btn">
                   {t.advisorCta} <ArrowRight size={14} />
                 </a>
-                <a href="#examples" style={{
-                  display: "inline-flex", alignItems: "center", gap: 6,
-                  backgroundColor: "transparent", color: "var(--text-muted)",
-                  fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 14,
-                  padding: "0 18px", minHeight: 48, borderRadius: "var(--radius)", textDecoration: "none",
-                  border: "1px solid var(--border2)",
-                }}>
+                <a href="#examples" className="gryps-secondary-btn">
                   {t.heroSecondary}
                 </a>
               </div>
@@ -1038,13 +1113,13 @@ export default function HomePage() {
                 display: "inline-block", fontFamily: "var(--font-data)", fontSize: "var(--text-label)",
                 color: "var(--accent-amber)", letterSpacing: "0.06em",
                 backgroundColor: "rgba(245,184,74,0.08)", border: "1px solid rgba(245,184,74,0.25)",
-                borderRadius: 6, padding: "4px 10px", marginBottom: 28,
+                borderRadius: 6, padding: "4px 10px", marginBottom: 24,
               }}>
                 {modelChip}
               </span>
 
               {siteCount !== null && (
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
                   <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--accent-green)", boxShadow: "0 0 8px var(--accent-green)" }} />
                   <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--accent-green)", letterSpacing: "0.04em" }}>
                     {siteCount} {t.liveCounter}
@@ -1052,7 +1127,7 @@ export default function HomePage() {
                 </div>
               )}
 
-              <div className="gryps-stats-row" style={{ display: "flex", gap: 40, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
+              <div className="gryps-stats-row gryps-stats-row-hero" style={{ display: "flex", gap: 40, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
                 <Stat value={`${PROVIDER_INDEX_COUNT}`} label={t.statsL1} href="/providers" />
                 <Stat value="LEO–MEO–GEO" label={t.statsL2} />
                 <Stat value="70°N+" label={t.statsL3} />
@@ -1066,15 +1141,17 @@ export default function HomePage() {
               alignSelf: "stretch",
               justifyContent: "center",
             }}>
-              <HeroSignatureCard t={t} />
+              <HeroSignatureCard t={t} lang={lang} />
             </div>
           </div>
         </div>
       </section>
 
+      <TrustStrip lang={lang} />
+
       {/* Problem strip */}
       <FadeUp>
-        <section className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", backgroundColor: "var(--surface)" }}>
+        <section className="gryps-section gryps-section-pad gryps-no-print" style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--surface)" }}>
           <div className="gryps-content">
             <p className="label" style={{ textAlign: "center", marginBottom: 36 }}>{t.problemL}</p>
             <div className="gryps-problem-grid-responsive">
@@ -1096,7 +1173,9 @@ export default function HomePage() {
       <FadeUp>
         <section id="advisor" className="gryps-section gryps-section-pad" style={{ scrollMarginTop: 80 }}>
           <div className="gryps-content-narrow">
-            <p className="gryps-no-print label" style={{ marginBottom: 10 }}>DEMO RESILIENCE ADVISOR</p>
+            <p className="gryps-no-print label" style={{ marginBottom: 10 }}>
+              {lang === "fi" ? "RESILIENCE ADVISOR · KONSOLI" : "RESILIENCE ADVISOR · CONSOLE"}
+            </p>
             <h2 className="gryps-no-print text-display" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 10 }}>
               {t.advisorCta}
             </h2>
@@ -1134,6 +1213,7 @@ export default function HomePage() {
       <FadeUp>
         <section id="examples" className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)" }}>
           <div className="gryps-content">
+            <p className="gryps-proof-band-label">{t.proofBand}</p>
             <p className="label" style={{ marginBottom: 10 }}>{t.examplesLabel}</p>
             <p className="text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", marginBottom: 28, maxWidth: 560, fontSize: "var(--text-small)" }}>{t.examplesSub}</p>
 
@@ -1155,6 +1235,7 @@ export default function HomePage() {
       <FadeUp>
         <section className="gryps-no-print" style={{ paddingTop: 8 }}>
           <div className="gryps-content gryps-section-pad" style={{ paddingBottom: 16 }}>
+            <p className="gryps-proof-band-label">{t.proofBand}</p>
             <p className="label" style={{ marginBottom: 8 }}>
               {lang === "en" ? "OPS CONSOLE · EXAMPLE SITES" : "OPS-KONSOLI · ESIMERKKIKOHTEET"}
             </p>
