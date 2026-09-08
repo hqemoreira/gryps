@@ -1173,7 +1173,7 @@ export default function HomePage() {
               justifyContent: "center",
             }}>
               <div className="gryps-polar-stage">
-                <PolarAtmosphere className="gryps-polar-bg" />
+                <PolarAtmosphere className="gryps-polar-bg" variant="halo" />
                 <div className="gryps-polar-foreground">
                   <HeroSignatureCard t={t} lang={lang} />
                 </div>

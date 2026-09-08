@@ -3,11 +3,16 @@ export function PolarAtmosphere({
   latLabel = "68.2°N 27.4°E",
   ringLabel = "70°N",
   className,
+  /** Halo: quieter rings only — for behind-card atmosphere (no labels / wide ellipses). */
+  variant = "full",
 }: {
   latLabel?: string
   ringLabel?: string
   className?: string
+  variant?: "full" | "halo"
 }) {
+  const halo = variant === "halo"
+
   return (
     <div className={className} aria-hidden="true">
       <svg viewBox="0 0 440 440" width="100%" height="100%" fill="none">
@@ -34,51 +39,61 @@ export function PolarAtmosphere({
           strokeDasharray="3 6"
         />
 
-        <ellipse
-          cx="220"
-          cy="220"
-          rx="205"
-          ry="95"
-          stroke="url(#grypsAuroraStroke)"
-          strokeWidth="1.1"
-          strokeDasharray="1 7"
-          transform="rotate(-22 220 220)"
-        />
-        <ellipse
-          cx="220"
-          cy="220"
-          rx="205"
-          ry="95"
-          stroke="var(--border2)"
-          strokeWidth="1"
-          strokeDasharray="1 7"
-          transform="rotate(34 220 220)"
-        />
+        {!halo && (
+          <>
+            <ellipse
+              cx="220"
+              cy="220"
+              rx="205"
+              ry="95"
+              stroke="url(#grypsAuroraStroke)"
+              strokeWidth="1.1"
+              strokeDasharray="1 7"
+              transform="rotate(-22 220 220)"
+            />
+            <ellipse
+              cx="220"
+              cy="220"
+              rx="205"
+              ry="95"
+              stroke="var(--border2)"
+              strokeWidth="1"
+              strokeDasharray="1 7"
+              transform="rotate(34 220 220)"
+            />
+          </>
+        )}
 
-        <line x1="220" y1="30" x2="220" y2="410" stroke="var(--border)" strokeWidth="1" />
-        <line x1="30" y1="220" x2="410" y2="220" stroke="var(--border)" strokeWidth="1" />
+        {halo && (
+          <ellipse
+            cx="220"
+            cy="220"
+            rx="190"
+            ry="88"
+            stroke="url(#grypsAuroraStroke)"
+            strokeWidth="1"
+            strokeDasharray="1 8"
+            transform="rotate(-22 220 220)"
+            opacity="0.55"
+          />
+        )}
+
+        <line x1="220" y1="50" x2="220" y2="390" stroke="var(--border)" strokeWidth="1" />
+        <line x1="50" y1="220" x2="390" y2="220" stroke="var(--border)" strokeWidth="1" />
 
         <circle cx="164" cy="152" r="16" fill="url(#grypsMarkerGlow)" />
         <circle cx="164" cy="152" r="3.5" fill="var(--aurora-1)" />
 
-        <text
-          x="236"
-          y="118"
-          fill="var(--text-dim)"
-          fontFamily="var(--font-data)"
-          fontSize="11"
-        >
-          {latLabel}
-        </text>
-        <text
-          x="36"
-          y="214"
-          fill="var(--text-dim)"
-          fontFamily="var(--font-data)"
-          fontSize="11"
-        >
-          {ringLabel}
-        </text>
+        {!halo && (
+          <>
+            <text x="236" y="118" fill="var(--text-dim)" fontFamily="var(--font-data)" fontSize="11">
+              {latLabel}
+            </text>
+            <text x="36" y="214" fill="var(--text-dim)" fontFamily="var(--font-data)" fontSize="11">
+              {ringLabel}
+            </text>
+          </>
+        )}
       </svg>
     </div>
   )

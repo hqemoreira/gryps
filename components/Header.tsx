@@ -29,61 +29,59 @@ export function Header({
   const links = extraLinks ?? (extraLink ? [extraLink] : [])
 
   return (
-    <header className="gryps-nav-inner" style={{
-      position: "fixed", top: topOffset, left: 0, right: 0, zIndex: 1000,
-      borderBottom: "1px solid var(--border)",
-      backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
-      backdropFilter: "blur(12px)",
-      padding: "0 32px", height: 52,
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-    }}>
-      <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+    <header
+      className="gryps-nav-inner"
+      style={{
+        position: "fixed",
+        top: topOffset,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        borderBottom: "1px solid var(--border)",
+        backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
+        backdropFilter: "blur(12px)",
+      }}
+    >
+      <Link href="/" className="gryps-nav-brand">
         <GrypsMark size={28} animate />
-        <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 15, letterSpacing: "0.12em", color: "var(--text)" }}>GRYPS</span>
+        <span className="gryps-nav-wordmark">GRYPS</span>
       </Link>
-      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+
+      <div className="gryps-nav-actions">
         {tagline && (
-          <span className="gryps-nav-label" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.1em" }}>{tagline}</span>
+          <span className="gryps-nav-label gryps-nav-tagline">{tagline}</span>
         )}
         {links.map(link => (
-          <Link key={link.href} href={link.href} className="gryps-nav-label" style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textDecoration: "none" }}>
+          <Link key={link.href} href={link.href} className="gryps-nav-label gryps-nav-link">
             {link.label}
           </Link>
         ))}
         {lang && onLangChange && (
-          <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: "var(--radius)", overflow: "hidden" }}>
+          <div className="gryps-nav-lang" role="group" aria-label="Language">
             {(["en", "fi"] as const).map(l => (
-              <button key={l} onClick={() => onLangChange(l)} style={{
-                background: lang === l ? "var(--border2)" : "transparent",
-                border: "none", padding: "0 12px", minHeight: 44, cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.08em",
-                color: lang === l ? "var(--text)" : "var(--text-muted)",
-                transition: "background 0.15s",
-              }}>{l.toUpperCase()}</button>
+              <button
+                key={l}
+                type="button"
+                onClick={() => onLangChange(l)}
+                className={lang === l ? "is-active" : undefined}
+              >
+                {l.toUpperCase()}
+              </button>
             ))}
           </div>
         )}
         <button
+          type="button"
+          className="gryps-nav-theme"
           onClick={toggleDark}
           title={dark ? "Switch to light mode" : "Switch to dark mode"}
-          style={{
-            background: "var(--surface2)", border: "1px solid var(--border2)",
-            borderRadius: "var(--radius)", width: 44, height: 44, cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "var(--text-muted)", flexShrink: 0,
-          }}
+          aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
         >
           {dark ? <Sun size={14} /> : <Moon size={14} />}
         </button>
-        <a href={ctaHref} style={{
-          fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700,
-          color: "var(--accent-blue)", textDecoration: "none",
-          border: "1px solid rgba(79,168,255,0.3)",
-          padding: "0 16px", minHeight: 44,
-          display: "inline-flex", alignItems: "center", borderRadius: "var(--radius)",
-        }}>{ctaLabel}</a>
+        <a href={ctaHref} className="gryps-nav-cta">
+          {ctaLabel}
+        </a>
       </div>
     </header>
   )
