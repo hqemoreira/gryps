@@ -55,7 +55,7 @@ export function Footer({
     secondaryLink.href !== "/providers"
 
   return (
-    <footer className="gryps-footer gryps-no-print">
+    <footer id="gryps-footer" className="gryps-footer gryps-no-print">
       <div className="gryps-footer-inner">
         <div className="gryps-footer-top">
           <div className="gryps-footer-brand">

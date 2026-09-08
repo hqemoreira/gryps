@@ -102,41 +102,52 @@ function StickyMobileCta({ label }: { label: string }) {
   useEffect(() => {
     const hero = document.getElementById("gryps-hero")
     const advisor = document.getElementById("advisor")
-    const footer = document.querySelector("footer.gryps-footer")
+    const footer = document.getElementById("gryps-footer")
+      ?? document.querySelector("footer.gryps-footer")
     if (!hero || !advisor) return
 
     let pastHero = false
     let nearAdvisor = false
-    let nearFooter = false
-    const sync = () => setVisible(pastHero && !nearAdvisor && !nearFooter)
+
+    const update = () => {
+      const vh = window.innerHeight
+      const footerTop = footer?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY
+      // Hide as soon as the footer reaches the sticky bar zone (≈80px from bottom).
+      const nearFooter = footerTop < vh - 72
+      const distBottom =
+        document.documentElement.scrollHeight - (window.scrollY + vh)
+      const nearPageEnd = distBottom < 120
+      setVisible(pastHero && !nearAdvisor && !nearFooter && !nearPageEnd)
+    }
 
     const heroIo = new IntersectionObserver(([e]) => {
       pastHero = !e.isIntersecting && e.boundingClientRect.top < 0
-      sync()
+      update()
     }, { threshold: 0 })
     const advisorIo = new IntersectionObserver(([e]) => {
       nearAdvisor = e.isIntersecting
-      sync()
+      update()
     }, { rootMargin: "80px 0px", threshold: 0 })
-    const footerIo = footer
-      ? new IntersectionObserver(([e]) => {
-          nearFooter = e.isIntersecting
-          sync()
-        }, { rootMargin: "48px 0px 0px 0px", threshold: 0 })
-      : null
 
     heroIo.observe(hero)
     advisorIo.observe(advisor)
-    if (footer && footerIo) footerIo.observe(footer)
+    window.addEventListener("scroll", update, { passive: true })
+    window.addEventListener("resize", update)
+    update()
+
     return () => {
       heroIo.disconnect()
       advisorIo.disconnect()
-      footerIo?.disconnect()
+      window.removeEventListener("scroll", update)
+      window.removeEventListener("resize", update)
     }
   }, [])
 
   return (
-    <div className={`gryps-sticky-cta gryps-no-print${visible ? " is-visible" : ""}`} aria-hidden={!visible}>
+    <div
+      className={`gryps-sticky-cta gryps-no-print${visible ? " is-visible" : ""}`}
+      aria-hidden={!visible}
+    >
       <a href="#advisor">{label} <ArrowRight size={14} /></a>
     </div>
   )
