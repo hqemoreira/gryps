@@ -761,7 +761,7 @@ body {
 .gryps-footer-mark {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-height: 44px;
   font-family: var(--font-ui);
   font-size: 17px;
@@ -769,13 +769,6 @@ body {
   color: var(--text);
   text-decoration: none;
   width: fit-content;
-}
-.gryps-footer-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--aurora-gradient);
-  flex-shrink: 0;
 }
 .gryps-footer-tag {
   font-family: var(--font-ui);

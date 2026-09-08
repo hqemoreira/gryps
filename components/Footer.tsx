@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link"
+import { GrypsMark } from "@/components/GrypsMark"
 
 const MODEL_SHORT = "v0.3"
 
@@ -59,7 +60,7 @@ export function Footer({
         <div className="gryps-footer-top">
           <div className="gryps-footer-brand">
             <Link href="/" className="gryps-footer-mark">
-              <span className="gryps-footer-dot" aria-hidden="true" />
+              <GrypsMark size={22} animate />
               GRYPS
             </Link>
             <p className="gryps-footer-tag">{tag}</p>
