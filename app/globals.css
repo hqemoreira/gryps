@@ -841,32 +841,89 @@ body {
   padding-top: 8px;
 }
 .gryps-polar-instrument {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 1.05fr);
-  gap: 28px 40px;
-  align-items: start;
-  padding: 20px 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px 32px;
+  padding: 18px 20px;
+  margin: 12px 0 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.gryps-polar-instrument-figure {
+  flex: 0 0 auto;
+  width: min(100%, 260px);
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--aurora-1) 10%, transparent), transparent 55%),
+    var(--surface-elevated);
+  padding: 6px;
 }
 .gryps-polar-instrument-copy {
+  flex: 1 1 240px;
   min-width: 0;
-  padding-top: 8px;
+  padding-top: 0;
 }
 .gryps-polar-instrument-title {
   font-family: var(--font-ui);
-  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: var(--text);
-  margin: 0 0 12px;
+  margin: 0 0 10px;
 }
 .gryps-polar-instrument-body {
   font-family: var(--font-ui);
   font-size: var(--text-small);
   color: var(--text-muted);
-  line-height: 1.65;
-  max-width: 38ch;
-  margin: 0 0 16px;
+  line-height: 1.6;
+  max-width: 40ch;
+  margin: 0 0 12px;
+}
+.gryps-polar-instrument-facts {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.gryps-polar-instrument-facts li {
+  font-family: var(--font-data);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  padding-left: 12px;
+  position: relative;
+}
+.gryps-polar-instrument-facts li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--aurora-1);
+}
+.gryps-polar-instrument-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  text-decoration: none;
+  margin-bottom: 4px;
+}
+.gryps-polar-instrument-link:hover,
+.gryps-polar-instrument-link:focus-visible {
+  color: var(--text);
 }
 .gryps-polar-instrument-meta {
   font-family: var(--font-data);
@@ -875,18 +932,6 @@ body {
   color: var(--text-dim);
   line-height: 1.5;
   margin: 0;
-}
-.gryps-polar-instrument-figure {
-  width: 100%;
-  max-width: 440px;
-  margin-left: auto;
-  aspect-ratio: 1 / 1;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--aurora-1) 8%, transparent), transparent 55%),
-    var(--surface);
-  padding: 8px;
 }
 .gryps-polar-figure {
   width: 100%;
@@ -953,16 +998,15 @@ body {
   }
   .gryps-nav-link { display: none !important; }
   .gryps-polar-instrument {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 16px 0 24px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px;
+    margin: 8px 0 16px;
   }
   .gryps-polar-instrument-figure {
+    width: min(100%, 240px);
     margin: 0 auto;
-    max-width: 300px;
-  }
-  .gryps-polar-instrument-copy {
-    padding-top: 0;
   }
 }
 
@@ -1023,17 +1067,17 @@ body {
   .gryps-steps-grid { grid-template-columns: 1fr !important; }
   .gryps-form-row { grid-template-columns: 1fr !important; }
   .gryps-footer {
-    padding: 48px var(--pad-x) max(96px, calc(80px + env(safe-area-inset-bottom, 0px)));
+    padding: 48px var(--pad-x) max(28px, calc(16px + env(safe-area-inset-bottom, 0px)));
   }
   .gryps-footer-top {
     flex-direction: column;
-    gap: 32px;
-    padding-bottom: 32px;
+    gap: 28px;
+    padding-bottom: 28px;
   }
   .gryps-footer-cols {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px 20px;
+    gap: 24px 20px;
     width: 100%;
   }
   .gryps-footer-col:first-child {
@@ -1044,6 +1088,7 @@ body {
     align-items: flex-start;
     gap: 8px;
     padding-top: 18px;
+    padding-bottom: 4px;
   }
   .gryps-footer-model {
     white-space: normal;

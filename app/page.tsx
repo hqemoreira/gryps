@@ -102,11 +102,13 @@ function StickyMobileCta({ label }: { label: string }) {
   useEffect(() => {
     const hero = document.getElementById("gryps-hero")
     const advisor = document.getElementById("advisor")
+    const footer = document.querySelector("footer.gryps-footer")
     if (!hero || !advisor) return
 
     let pastHero = false
     let nearAdvisor = false
-    const sync = () => setVisible(pastHero && !nearAdvisor)
+    let nearFooter = false
+    const sync = () => setVisible(pastHero && !nearAdvisor && !nearFooter)
 
     const heroIo = new IntersectionObserver(([e]) => {
       pastHero = !e.isIntersecting && e.boundingClientRect.top < 0
@@ -116,12 +118,20 @@ function StickyMobileCta({ label }: { label: string }) {
       nearAdvisor = e.isIntersecting
       sync()
     }, { rootMargin: "80px 0px", threshold: 0 })
+    const footerIo = footer
+      ? new IntersectionObserver(([e]) => {
+          nearFooter = e.isIntersecting
+          sync()
+        }, { rootMargin: "48px 0px 0px 0px", threshold: 0 })
+      : null
 
     heroIo.observe(hero)
     advisorIo.observe(advisor)
+    if (footer && footerIo) footerIo.observe(footer)
     return () => {
       heroIo.disconnect()
       advisorIo.disconnect()
+      footerIo?.disconnect()
     }
   }, [])
 
@@ -916,6 +926,9 @@ const COPY = {
     polarMapLabel: "DEMO MAP · NOT LIVE MONITORING",
     polarInstrumentTitle: "High-latitude geometry",
     polarInstrumentBody: "Illustrative polar projection — latitude rings and orbital-pass ellipses for the Lapland sample site. Not live constellation telemetry.",
+    polarFact1: "Sample site 68.2°N · single Starlink path",
+    polarFact2: "Latitude weight drops above 70°N",
+    polarMethodLink: "See scoring formula →",
     ctaH2:  "Resilience starts with knowing your score.",
     ctaSub: "Free Resilience Signature for any Nordic, Arctic, or Icelandic site. No account — connectivity risk scored in ~60 seconds.",
     ctaBtn: "Score my site · free",
@@ -981,6 +994,9 @@ const COPY = {
     polarMapLabel: "DEMO-KARTTA · EI LIVE-SEURANTAA",
     polarInstrumentTitle: "Korkean leveysasteen geometria",
     polarInstrumentBody: "Havainnollistava polaariprojektio — leveyspiirit ja ohitusellipsit Lapin esimerkkikohteelle. Ei live-konstellaatiotelemetriaa.",
+    polarFact1: "Esimerkkikohde 68.2°N · yksi Starlink-polku",
+    polarFact2: "Leveysastepaino laskee yli 70°N",
+    polarMethodLink: "Katso pisteytyskaava →",
     ctaH2:  "Resilienssi alkaa pisteidesi tuntemisesta.",
     ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — yhteysriski pisteytetty ~60 sekunnissa.",
     ctaBtn: "Pisteytä kohteeni · ilmaiseksi",
@@ -1277,6 +1293,9 @@ export default function HomePage() {
         <section className="gryps-ops-band gryps-no-print">
           <div className="gryps-content gryps-section-pad">
             <div className="gryps-polar-instrument">
+              <div className="gryps-polar-instrument-figure">
+                <PolarAtmosphere variant="full" animate className="gryps-polar-figure" />
+              </div>
               <div className="gryps-polar-instrument-copy">
                 <p className="gryps-proof-band-label">{t.proofBand}</p>
                 <p className="label" style={{ marginBottom: 8 }}>
@@ -1288,12 +1307,14 @@ export default function HomePage() {
                 <p className="gryps-polar-instrument-body">
                   {t.polarInstrumentBody}
                 </p>
+                <ul className="gryps-polar-instrument-facts">
+                  <li>{t.polarFact1}</li>
+                  <li>{t.polarFact2}</li>
+                </ul>
+                <a href="/methodology" className="gryps-polar-instrument-link">{t.polarMethodLink}</a>
                 <p className="gryps-polar-instrument-meta">
-                  {t.polarHeader} · {t.polarMapLabel}
+                  {t.polarMapLabel}
                 </p>
-              </div>
-              <div className="gryps-polar-instrument-figure">
-                <PolarAtmosphere variant="full" animate className="gryps-polar-figure" />
               </div>
             </div>
           </div>
