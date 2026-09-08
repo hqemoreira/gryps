@@ -656,82 +656,81 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   )
 }
 
-// ── Hero score — final value always in the DOM; motion is decorative only
-function HeroScoreCountUp({ label }: { label: string }) {
-  const TARGET = 40
-  const [pulse, setPulse] = useState(false)
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return
-    }
-    const start = window.setTimeout(() => setPulse(true), 0)
-    const end = window.setTimeout(() => setPulse(false), 900)
-    return () => {
-      window.clearTimeout(start)
-      window.clearTimeout(end)
-    }
-  }, [])
-  // Always the final score — never 0 — so crawlers, OG scrapers, and first paint stay correct
-  const text = label.replace("{score}", String(TARGET)).replace("{grade}", "D")
-  return (
-    <div
-      className="gryps-hero-score"
-      style={{
-        fontFamily: "var(--font-data)",
-        color: gradeTextColor("D"),
-        marginBottom: 20,
-        transform: pulse ? "scale(1.02)" : "scale(1)",
-        transition: "transform 0.6s ease",
-      }}
-    >
-      {text}
-    </div>
-  )
-}
-
 // ── Hero signature card ───────────────────────────────────────────────────────
 function HeroSignatureCard({ t }: { t: typeof COPY.en }) {
   const gc = gradeTextColor("D")
+  const border = gradeColor("D")
   return (
     <div
-      className="gryps-signature-card gryps-signature-elevated"
-      style={{ display: "flex", flexDirection: "column", gap: 20 }}
+      className="gryps-signature-card gryps-signature-elevated gryps-hero-signature"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 22,
+        width: "100%",
+        minHeight: 420,
+        justifyContent: "space-between",
+        borderLeft: `3px solid ${border}`,
+      }}
     >
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
-        <div>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>
+      <div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 18 }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.12em" }}>
             RESILIENCE SIGNATURE
           </p>
-          <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "var(--text-title)", color: "var(--text)" }}>
-            68.2°N 27.4°E · Lapland
-          </p>
-        </div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 10 }} aria-label="Score 40 out of 100, grade D">
-          <span className="sr-only">Score 40 out of 100, grade D</span>
-          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: "clamp(2.75rem, 6vw, 3.5rem)", fontWeight: 900, color: gc, lineHeight: 1 }}>40</span>
           <span
-            aria-hidden="true"
             className="gryps-grade-badge"
-            style={{ color: gc, backgroundColor: gradeBadgeBg("D"), border: `1px solid ${gradeColor("D")}44` }}
+            style={{ color: gc, backgroundColor: gradeBadgeBg("D"), border: `1px solid ${border}55` }}
           >
-            D
+            GRADE D
           </span>
         </div>
-      </div>
-      <div className="gryps-signature-divider" style={{ height: 1, backgroundColor: "var(--border)" }} />
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 6 }}>{t.topRiskLabel}</p>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--accent-amber)", fontWeight: 600 }}>{t.heroTopRisk}</p>
+
+        <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "var(--text-title)", color: "var(--text)", marginBottom: 6 }}>
+          68.2°N 27.4°E · Lapland
+        </p>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.04em", marginBottom: 28 }}>
+          Single Starlink · no backup path
+        </p>
+
+        <div aria-label="Score 40 out of 100, grade D" style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
+          <span className="sr-only">Score 40 out of 100, grade D</span>
+          <span aria-hidden="true" style={{
+            fontFamily: "var(--font-data)",
+            fontSize: "clamp(4rem, 8vw, 5.5rem)",
+            fontWeight: 900,
+            color: gc,
+            lineHeight: 0.9,
+            letterSpacing: "-0.04em",
+          }}>40</span>
+          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: 18, color: "var(--text-dim)" }}>/100</span>
         </div>
-        <div>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 6 }}>{t.topRecLabel}</p>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--accent-cyan)", fontWeight: 600 }}>Iridium Certus · 90</p>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", marginBottom: 24 }}>
+          {t.scoreLabel.replace("{score}", "40").replace("{grade}", "D")}
+        </p>
+
+        <div className="gryps-signature-divider" style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 20 }} />
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+          <div>
+            <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 8 }}>{t.topRiskLabel}</p>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--accent-amber)", fontWeight: 600, lineHeight: 1.4 }}>{t.heroTopRisk}</p>
+          </div>
+          <div>
+            <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 8 }}>{t.topRecLabel}</p>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--accent-cyan)", fontWeight: 600, lineHeight: 1.4 }}>Iridium Certus · 90</p>
+          </div>
         </div>
       </div>
-      <p className="gryps-signature-detail" style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", lineHeight: 1.6, marginTop: 4 }}>
-        {t.nis2line}
-      </p>
+
+      <div>
+        <p className="gryps-signature-detail" style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 16 }}>
+          {t.nis2line}
+        </p>
+        <a href="#advisor" className="gryps-cta-btn" style={{ width: "100%" }}>
+          {t.advisorCta} <ArrowRight size={14} />
+        </a>
+      </div>
     </div>
   )
 }
@@ -990,28 +989,31 @@ export default function HomePage() {
         style={{ paddingTop: 148, paddingBottom: "var(--section-y)", paddingLeft: "var(--pad-x)", paddingRight: "var(--pad-x)" }}
       >
         <div className="gryps-content">
-          <div className="gryps-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+          <div className="gryps-hero-grid" style={{
+            display: "grid",
+            gridTemplateColumns: "minmax(0, 1.05fr) minmax(320px, 0.95fr)",
+            gap: 48,
+            alignItems: "center",
+          }}>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
                 <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--accent-green)", boxShadow: "0 0 8px var(--accent-green)" }} />
                 <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
               </div>
 
-              <HeroScoreCountUp label={t.scoreLabel} />
-
               <h1 className="gryps-hero-h1 text-display" style={{
-                fontFamily: "var(--font-ui)", fontSize: "var(--text-display)", fontWeight: 700,
-                lineHeight: 1.15, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 20, marginTop: 8,
+                fontFamily: "var(--font-ui)", fontSize: "clamp(2rem, 4.2vw, 2.75rem)", fontWeight: 700,
+                lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 18,
               }}>
                 {t.h1}
               </h1>
 
-              <p className="gryps-hero-sub text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", maxWidth: 440, marginBottom: 28 }}>
+              <p className="gryps-hero-sub text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", maxWidth: 520, marginBottom: 28 }}>
                 {t.sub}
               </p>
 
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginBottom: 28 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginBottom: 24 }}>
                 <a href="#advisor" className="gryps-cta-btn">
                   {t.advisorCta} <ArrowRight size={14} />
                 </a>
@@ -1030,13 +1032,13 @@ export default function HomePage() {
                 display: "inline-block", fontFamily: "var(--font-data)", fontSize: "var(--text-label)",
                 color: "var(--accent-amber)", letterSpacing: "0.06em",
                 backgroundColor: "rgba(245,184,74,0.08)", border: "1px solid rgba(245,184,74,0.25)",
-                borderRadius: 6, padding: "4px 10px", marginBottom: 32,
+                borderRadius: 6, padding: "4px 10px", marginBottom: 28,
               }}>
                 {modelChip}
               </span>
 
               {siteCount !== null && (
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
                   <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--accent-green)", boxShadow: "0 0 8px var(--accent-green)" }} />
                   <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--accent-green)", letterSpacing: "0.04em" }}>
                     {siteCount} {t.liveCounter}
@@ -1044,14 +1046,20 @@ export default function HomePage() {
                 </div>
               )}
 
-              <div className="gryps-stats-row" style={{ display: "flex", gap: 48, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
+              <div className="gryps-stats-row" style={{ display: "flex", gap: 40, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
                 <Stat value={`${PROVIDER_INDEX_COUNT}`} label={t.statsL1} href="/providers" />
                 <Stat value="LEO–MEO–GEO" label={t.statsL2} />
                 <Stat value="70°N+" label={t.statsL3} />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 16, paddingTop: 8 }}>
+            <div className="gryps-hero-signature-col" style={{
+              display: "flex",
+              flexDirection: "column",
+              minWidth: 0,
+              alignSelf: "stretch",
+              justifyContent: "center",
+            }}>
               <HeroSignatureCard t={t} />
             </div>
           </div>

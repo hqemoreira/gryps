@@ -170,8 +170,15 @@ body {
   background-color: var(--surface-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-card), 0 0 48px rgba(217, 119, 6, 0.12);
+  box-shadow: var(--shadow-card), 0 0 48px rgba(217, 119, 6, 0.14);
   padding: 28px 32px;
+}
+.gryps-hero-signature {
+  position: sticky;
+  top: 96px;
+}
+.gryps-hero-signature-col {
+  min-height: 100%;
 }
 
 .gryps-cta-btn {
@@ -440,7 +447,8 @@ body {
 
 @media (max-width: 900px) {
   .gryps-hero-score { font-size: clamp(2rem, 9vw, 2.625rem) !important; }
-  .gryps-hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .gryps-hero-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
+  .gryps-hero-signature { position: static; min-height: 0 !important; }
   .gryps-problem-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
   .gryps-output-grid { grid-template-columns: 1fr !important; }
   .gryps-signature-detail { display: none !important; }
