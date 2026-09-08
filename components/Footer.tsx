@@ -1,9 +1,41 @@
 "use client"
 import Link from "next/link"
-import { GrypsMark } from "@/components/GrypsMark"
+
+const MODEL_SHORT = "v0.3"
+
+const COPY = {
+  en: {
+    tagDefault: "Built in Finland for high-latitude resilience.",
+    product: "PRODUCT",
+    resources: "RESOURCES",
+    legal: "LEGAL",
+    score: "Score my site",
+    map: "Capacity map",
+    providers: "Providers",
+    about: "About",
+    methodology: "Methodology",
+    terms: "Terms",
+    privacy: "Privacy",
+    modelMeta: `MODEL ${MODEL_SHORT} · ESPOO, FINLAND`,
+  },
+  fi: {
+    tagDefault: "Rakennettu Suomessa korkean leveysasteen resilienssille.",
+    product: "TUOTE",
+    resources: "RESURSSIT",
+    legal: "OIKEUDELLINEN",
+    score: "Pisteytä kohteeni",
+    map: "Kapasiteettikartta",
+    providers: "Toimittajat",
+    about: "Tietoa",
+    methodology: "Menetelmä",
+    terms: "Ehdot",
+    privacy: "Tietosuoja",
+    modelMeta: `MALLI ${MODEL_SHORT} · ESPOO, SUOMI`,
+  },
+}
 
 export function Footer({
-  lang,
+  lang = "en",
   footerRights,
   footerTag,
   secondaryLink,
@@ -11,61 +43,57 @@ export function Footer({
   lang?: "en" | "fi"
   footerRights: string
   footerTag?: string
+  /** Optional contextual product link (e.g. Back to GRYPS). Skipped if it duplicates Capacity map. */
   secondaryLink?: { href: string; label: string }
 }) {
+  const t = COPY[lang]
+  const tag = footerTag ?? t.tagDefault
+  const showExtra =
+    secondaryLink &&
+    secondaryLink.href !== "/map" &&
+    secondaryLink.href !== "/providers"
+
   return (
-    <footer className="gryps-footer gryps-section-pad" style={{
-      borderTop: "1px solid var(--border)",
-      padding: "28px var(--pad-x)",
-      display: "flex",
-      flexDirection: "column",
-      gap: 16,
-    }}>
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        flexWrap: "wrap", gap: 12,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <GrypsMark size={18} animate />
-          <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.08em" }}>GRYPS</span>
-        </div>
-
-        <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-          <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>{footerRights}</span>
-          {secondaryLink && (
-            <Link href={secondaryLink.href} style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
-              {secondaryLink.label}
+    <footer className="gryps-footer gryps-no-print">
+      <div className="gryps-footer-inner">
+        <div className="gryps-footer-top">
+          <div className="gryps-footer-brand">
+            <Link href="/" className="gryps-footer-mark">
+              <span className="gryps-footer-dot" aria-hidden="true" />
+              GRYPS
             </Link>
-          )}
-          <Link href="/about" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
-            {lang === "fi" ? "Tietoa" : "About"}
-          </Link>
-          <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
-            {lang === "fi" ? "Menetelmä" : "Methodology"}
-          </Link>
-          <Link href="/providers" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
-            {lang === "fi" ? "Toimittajat" : "Providers"}
-          </Link>
-          <Link href="/terms" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
-            {lang === "fi" ? "Ehdot" : "Terms"}
-          </Link>
-          <Link href="/privacy" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
-            {lang === "fi" ? "Tietosuoja" : "Privacy"}
-          </Link>
-        </div>
-      </div>
+            <p className="gryps-footer-tag">{tag}</p>
+          </div>
 
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        flexWrap: "wrap", gap: 10,
-        paddingTop: 12, borderTop: "1px solid var(--border)",
-      }}>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.06em" }}>
-          GRYPS · Model v0.3 · Espoo, Finland
-        </span>
-        {footerTag && (
-          <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>{footerTag}</span>
-        )}
+          <nav className="gryps-footer-cols" aria-label={lang === "fi" ? "Alatunniste" : "Footer"}>
+            <div className="gryps-footer-col">
+              <p className="gryps-footer-col-label">{t.product}</p>
+              <Link href="/#advisor">{t.score}</Link>
+              <Link href="/map">{t.map}</Link>
+              <Link href="/providers">{t.providers}</Link>
+              {showExtra && secondaryLink && (
+                <Link href={secondaryLink.href}>{secondaryLink.label}</Link>
+              )}
+            </div>
+            <div className="gryps-footer-col">
+              <p className="gryps-footer-col-label">{t.resources}</p>
+              <Link href="/about">{t.about}</Link>
+              <Link href="/methodology">{t.methodology}</Link>
+            </div>
+            <div className="gryps-footer-col">
+              <p className="gryps-footer-col-label">{t.legal}</p>
+              <Link href="/terms">{t.terms}</Link>
+              <Link href="/privacy">{t.privacy}</Link>
+            </div>
+          </nav>
+        </div>
+
+        <div className="gryps-footer-rule" aria-hidden="true" />
+
+        <div className="gryps-footer-bottom">
+          <span className="gryps-footer-copy">{footerRights}</span>
+          <span className="gryps-footer-model">{t.modelMeta}</span>
+        </div>
       </div>
     </footer>
   )

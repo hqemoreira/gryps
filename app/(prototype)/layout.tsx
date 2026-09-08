@@ -3,7 +3,9 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Sun, Moon } from "lucide-react"
 import { GrypsMark } from "@/components/GrypsMark"
+import { Footer } from "@/components/Footer"
 import { useTheme } from "@/context/ThemeContext"
+import { grypsCopyright } from "@/lib/gryps-copyright"
 
 export default function PrototypeLayout({ children }: { children: React.ReactNode }) {
   const { dark, toggleDark } = useTheme()
@@ -70,23 +72,10 @@ export default function PrototypeLayout({ children }: { children: React.ReactNod
         {children}
       </main>
 
-      <footer className="gryps-footer gryps-section-pad" style={{
-        borderTop: "1px solid var(--border)", padding: "20px 32px",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        flexWrap: "wrap", gap: 12,
-        marginTop: 64,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <GrypsMark size={16} animate />
-          <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em" }}>
-            GRYPS
-          </span>
-        </div>
-        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>
-          © {new Date().getFullYear()} GRYPS · Non-commercial R&D prototype · No registered company · No revenue
-        </span>
-        <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)" }}>Espoo, Finland · EU</span>
-      </footer>
+      <Footer
+        footerRights={grypsCopyright("en", "Non-commercial R&D prototype")}
+        secondaryLink={{ href: "/", label: "Back to GRYPS" }}
+      />
     </div>
   )
 }
