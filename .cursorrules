@@ -1,0 +1,13 @@
+# Security Rules
+- NEVER attempt to read or modify .env or .env.local files.
+- NEVER output live secret keys, passwords, or tokens in chat responses.
+- If an environment variable needs to be updated or added, instruct the user to use the Vercel CLI via 'vercel env add' or the Vercel Web Dashboard.
+
+# Typography — dashes (EN + FI user-facing copy)
+- Hyphen `-` (U+002D): compounds, prefixes, IDs (`non-commercial`, `safety-critical`, `deterministic-v0.3`). Finnish open-compound attachments keep a space before the hyphen (`Signature -pisteet`).
+- En dash `–` (U+2013): ranges and spans (`0–100`, `55–85°`, `75–89`, `LEO–MEO–GEO`, `~20–50ms`). Never ASCII hyphen for ranges.
+- Em dash `—` (U+2014): prose breaks and contrasts (`…risk — not certification`), page `<title>` pairs (`Methodology — How…`). Prefer one em dash per sentence.
+- Minus `−` (U+2212): negative quantities (`−30°C`, `lng −30–40°`).
+- Middle dot `·` (U+00B7): UI chrome only — CTAs, chips, meta stacks, ALL-CAPS labels (`Score my site · free`, `OPS CONSOLE · EXAMPLE SITES`). Do not use em dash for those short qualifiers.
+- Empty / null display: em dash `—` alone is fine.
+- Code comments may keep em dashes; do not “fix” math operators (`a - b`).

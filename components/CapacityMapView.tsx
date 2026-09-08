@@ -53,7 +53,7 @@ const COPY = {
     tagline: "CAPACITY MAP",
     title: "Where connectivity posture holds — and where it does not",
     disclosure:
-      "Illustrative portfolio from signature_sites. Status is derived from the Resilience Signature model (grade/score), not live link monitoring. R&D prototype — non-commercial research.",
+      "Illustrative portfolio from signature_sites. Status is derived from the Resilience Signature model (grade/score), not live link monitoring. R&D prototype · non-commercial research.",
     all: "All",
     source: "Source",
     lastUpdated: "Last scored",
@@ -71,7 +71,7 @@ const COPY = {
     tagline: "KAPASITEETTIKARTTA",
     title: "Missä yhteyksiin voi luottaa — ja missä ei",
     disclosure:
-      "Havainnollistava portfolio signature_sites-taulusta. Tila kuvaa Resilience Signature -mallin arvioimaa yhteyden resilienssiasentoa (arvosana/pisteet) — ei live-yhteyden tai linkkien seurantaa. T&K-prototyyppi — ei-kaupallinen tutkimus.",
+      "Havainnollistava portfolio signature_sites-taulusta. Tila kuvaa Resilience Signature -mallin arvioimaa yhteyden resilienssiasentoa (arvosana/pisteet) — ei live-yhteyden tai linkkien seurantaa. T&K-prototyyppi · ei-kaupallinen tutkimus.",
     all: "Kaikki",
     source: "Lähde",
     lastUpdated: "Viimeksi pisteytetty",

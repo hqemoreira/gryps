@@ -61,7 +61,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://gryps.vercel.app"),
   alternates: { canonical: "https://gryps.vercel.app" },
   openGraph: {
-    title: "GRYPS — Score: 40/100 · Grade D",
+    title: "GRYPS · Score: 40/100 · Grade D",
     description: "Know your score before the Arctic finds it for you. Free Resilience Signature demo for Nordic & Arctic operations.",
     type: "website",
     siteName: "GRYPS",
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "GRYPS — Score: 40/100 · Grade D",
+    title: "GRYPS · Score: 40/100 · Grade D",
     description: "Know your score before the Arctic finds it for you. Resilience Signatures for Nordic, Arctic & Icelandic ops.",
   },
   robots: { index: true, follow: true },
