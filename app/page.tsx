@@ -9,6 +9,7 @@ import { grypsCopyright } from "@/lib/gryps-copyright"
 import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
 import { PROVIDER_INDEX_COUNT } from "@/lib/providers"
 import { DriftMock } from "@/components/DriftMock"
+import { PolarAtmosphere } from "@/components/PolarAtmosphere"
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors"
 import { ADVISOR_PROVIDERS, providersToSetupString, scoreDeterministic } from "@/lib/deterministic-score"
 import { MODEL_VERSION } from "@/lib/signature-meta"
@@ -787,6 +788,25 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
   )
 }
 
+function LatitudeRuler() {
+  const ticks = [
+    { label: "60N", active: false },
+    { label: "65N", active: false },
+    { label: "68N", active: true },
+    { label: "70N", active: false },
+    { label: "75N", active: false },
+    { label: "80N", active: false },
+    { label: "POLAR", active: false },
+  ]
+  return (
+    <div className="gryps-latitude-ruler gryps-no-print" aria-hidden="true">
+      {ticks.map(t => (
+        <span key={t.label} data-active={t.active ? "true" : undefined}>{t.label}</span>
+      ))}
+    </div>
+  )
+}
+
 function TrustStrip({ lang }: { lang: "en" | "fi" }) {
   const items = lang === "fi"
     ? ["Malli v0.3", "Deterministinen", "EU AI Act Art. 50", "Espoo", "Tutkimusprototyyppi"]
@@ -1053,9 +1073,10 @@ export default function HomePage() {
       }}>
         R&D PROTOTYPE · ESPOO, FINLAND · {lang === "en" ? "NOT FOR SALE" : "EI MYYNNISSÄ"}
       </div>
+      <div className="gryps-aurora-topline gryps-no-print" aria-hidden="true" />
 
       <Header
-        topOffset={28}
+        topOffset={30}
         tagline="CONNECTIVITY INTELLIGENCE"
         lang={lang}
         onLangChange={setLang}
@@ -1084,19 +1105,29 @@ export default function HomePage() {
           }}>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--accent-green)", boxShadow: "0 0 8px var(--accent-green)" }} />
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+                <div style={{
+                  width: 6, height: 6, borderRadius: "50%",
+                  background: "var(--aurora-gradient)",
+                  boxShadow: "0 0 10px color-mix(in srgb, var(--aurora-1) 60%, transparent)",
+                }} />
                 <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
               </div>
 
               <h1 className="gryps-hero-h1 text-display" style={{
-                fontFamily: "var(--font-ui)", fontSize: "clamp(2rem, 4.2vw, 2.75rem)", fontWeight: 700,
-                lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 18,
+                fontFamily: "var(--font-ui)",
+                fontSize: "clamp(2.15rem, 4.8vw, 3.5rem)",
+                fontWeight: 600,
+                lineHeight: 1.08,
+                letterSpacing: "-0.02em",
+                color: "var(--text)",
+                marginBottom: 20,
+                maxWidth: "13ch",
               }}>
                 {t.h1}
               </h1>
 
-              <p className="gryps-hero-sub text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", maxWidth: 480, marginBottom: 28 }}>
+              <p className="gryps-hero-sub text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", maxWidth: "42ch", marginBottom: 28, lineHeight: 1.65 }}>
                 {t.sub}
               </p>
 
@@ -1141,12 +1172,18 @@ export default function HomePage() {
               alignSelf: "stretch",
               justifyContent: "center",
             }}>
-              <HeroSignatureCard t={t} lang={lang} />
+              <div className="gryps-polar-stage">
+                <PolarAtmosphere className="gryps-polar-bg" />
+                <div className="gryps-polar-foreground">
+                  <HeroSignatureCard t={t} lang={lang} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+      <LatitudeRuler />
       <TrustStrip lang={lang} />
 
       {/* Problem strip */}

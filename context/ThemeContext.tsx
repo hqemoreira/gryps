@@ -13,7 +13,9 @@ const DARK: Record<string, string> = {
   "--text": "#F7FAFC", "--text-muted": "#64748B", "--text-dim": "#334155",
   "--accent-blue": "#4FA8FF", "--accent-cyan": "#6EE7F9", "--accent-green": "#2ED47A",
   "--accent-amber": "#D97706", "--accent-red": "#EF4444",
-  "--glow-aurora": "radial-gradient(ellipse 90% 70% at 75% 15%, rgba(46, 212, 122, 0.11) 0%, transparent 55%), radial-gradient(ellipse 70% 55% at 15% 35%, rgba(110, 231, 249, 0.08) 0%, transparent 50%), radial-gradient(ellipse 50% 40% at 50% 100%, rgba(79, 168, 255, 0.04) 0%, transparent 45%)",
+  "--aurora-1": "#63E2C0", "--aurora-2": "#8B8FE8",
+  "--aurora-gradient": "linear-gradient(90deg, #63E2C0, #8B8FE8)",
+  "--glow-aurora": "radial-gradient(circle at 78% 8%, rgba(99, 226, 192, 0.14) 0%, transparent 42%), radial-gradient(circle at 88% 28%, rgba(139, 143, 232, 0.10) 0%, transparent 48%)",
   "--shadow-card": "0 8px 32px rgba(0, 0, 0, 0.35)",
   "--cta-gradient": "linear-gradient(135deg, #4FA8FF 0%, #6EE7F9 100%)",
 }
@@ -24,7 +26,9 @@ const LIGHT: Record<string, string> = {
   "--text": "#0B1220", "--text-muted": "#5A6A84", "--text-dim": "#586886",
   "--accent-blue": "#0B5FBF", "--accent-cyan": "#0B7680", "--accent-green": "#146B3E",
   "--accent-amber": "#9A4508", "--accent-red": "#C41E1E",
-  "--glow-aurora": "radial-gradient(ellipse 90% 70% at 75% 15%, rgba(20, 107, 62, 0.08) 0%, transparent 55%), radial-gradient(ellipse 70% 55% at 15% 35%, rgba(11, 118, 128, 0.06) 0%, transparent 50%)",
+  "--aurora-1": "#2A9A7A", "--aurora-2": "#5B5FA8",
+  "--aurora-gradient": "linear-gradient(90deg, #2A9A7A, #5B5FA8)",
+  "--glow-aurora": "radial-gradient(circle at 78% 8%, rgba(42, 154, 122, 0.10) 0%, transparent 42%), radial-gradient(circle at 88% 28%, rgba(91, 95, 168, 0.08) 0%, transparent 48%)",
   "--shadow-card": "0 8px 28px rgba(11, 18, 32, 0.08)",
   "--cta-gradient": "linear-gradient(135deg, #0B5FBF 0%, #0B7680 100%)",
 }

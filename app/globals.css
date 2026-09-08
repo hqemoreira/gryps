@@ -39,13 +39,15 @@
   --pad-x: 32px;
 
   /* Depth */
-  --glow-aurora: radial-gradient(ellipse 90% 70% at 75% 15%, rgba(46, 212, 122, 0.11) 0%, transparent 55%),
-                 radial-gradient(ellipse 70% 55% at 15% 35%, rgba(110, 231, 249, 0.08) 0%, transparent 50%),
-                 radial-gradient(ellipse 50% 40% at 50% 100%, rgba(79, 168, 255, 0.04) 0%, transparent 45%);
+  --aurora-1: #63E2C0;
+  --aurora-2: #8B8FE8;
+  --aurora-gradient: linear-gradient(90deg, var(--aurora-1), var(--aurora-2));
+  --glow-aurora: radial-gradient(circle at 78% 8%, rgba(99, 226, 192, 0.14) 0%, transparent 42%),
+                 radial-gradient(circle at 88% 28%, rgba(139, 143, 232, 0.10) 0%, transparent 48%);
   --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.35);
   --cta-gradient: linear-gradient(135deg, #4FA8FF 0%, #6EE7F9 100%);
-  --grid-polar: linear-gradient(rgba(110, 231, 249, 0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(110, 231, 249, 0.035) 1px, transparent 1px);
+  --grid-polar: linear-gradient(rgba(99, 226, 192, 0.028) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 143, 232, 0.028) 1px, transparent 1px);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -174,19 +176,32 @@ body {
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 75%);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.9;
+  opacity: 0.75;
 }
 .gryps-hero-aurora > * {
   position: relative;
   z-index: 1;
 }
 
+.gryps-aurora-topline {
+  height: 2px;
+  width: 100%;
+  background: var(--aurora-gradient);
+  position: fixed;
+  top: 28px;
+  left: 0;
+  right: 0;
+  z-index: 1011;
+  pointer-events: none;
+}
+
 .gryps-signature-elevated {
-  background-color: var(--surface-elevated);
+  background-color: color-mix(in srgb, var(--surface-elevated) 92%, transparent);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-card), 0 0 56px rgba(217, 119, 6, 0.18);
+  box-shadow: var(--shadow-card), 0 0 48px rgba(99, 226, 192, 0.08);
   padding: 28px 32px;
+  backdrop-filter: blur(10px);
 }
 .gryps-hero-signature {
   position: sticky;
@@ -194,6 +209,27 @@ body {
 }
 .gryps-hero-signature-col {
   min-height: 100%;
+}
+
+.gryps-polar-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: min(100%, 480px);
+  width: 100%;
+}
+.gryps-polar-bg {
+  position: absolute;
+  inset: -6% -14% -2%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.gryps-polar-foreground {
+  position: relative;
+  z-index: 1;
+  width: 100%;
 }
 
 .gryps-comp-bars {
@@ -217,7 +253,7 @@ body {
 .gryps-comp-fill {
   height: 100%;
   border-radius: 2px;
-  background: var(--accent-cyan);
+  background: var(--aurora-gradient);
   transform-origin: left center;
   animation: gryps-comp-fill 0.7s ease-out both;
 }
@@ -229,8 +265,37 @@ body {
   .gryps-comp-fill { animation: none; }
 }
 
-.gryps-trust-strip {
+.gryps-latitude-ruler {
+  display: flex;
+  align-items: stretch;
   border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  height: 28px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+.gryps-latitude-ruler span {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--border);
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+.gryps-latitude-ruler span:last-child {
+  border-right: none;
+  color: var(--aurora-1);
+}
+.gryps-latitude-ruler span[data-active="true"] {
+  color: var(--aurora-1);
+  box-shadow: inset 0 -2px 0 var(--aurora-1);
+}
+
+.gryps-trust-strip {
+  border-top: none;
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface) 80%, transparent);
   padding: 14px var(--pad-x);
@@ -327,9 +392,9 @@ body {
 .gryps-console-panel {
   background-color: var(--surface-elevated);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--accent-cyan);
+  border-left: 3px solid var(--aurora-1);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-card), 0 0 40px rgba(110, 231, 249, 0.06);
+  box-shadow: var(--shadow-card), 0 0 40px rgba(99, 226, 192, 0.06);
   padding: 28px 28px 32px;
 }
 
@@ -574,6 +639,13 @@ body {
   .gryps-trust-links { width: 100%; justify-content: flex-start; gap: 8px 18px; }
   .gryps-stats-row-hero { display: none !important; }
   .gryps-comp-bars { gap: 8px; }
+  .gryps-polar-stage { min-height: 0; }
+  .gryps-polar-bg {
+    inset: -4% -8% 40%;
+    opacity: 0.45;
+  }
+  .gryps-latitude-ruler span:nth-child(n+6) { display: none; }
+  .gryps-aurora-topline { top: 26px; }
 }
 
 @media (max-width: 767px) {
