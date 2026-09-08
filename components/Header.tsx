@@ -51,7 +51,7 @@ export function Header({
           </Link>
         ))}
         {lang && onLangChange && (
-          <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: 6, overflow: "hidden" }}>
+          <div style={{ display: "flex", border: "1px solid var(--border2)", borderRadius: "var(--radius)", overflow: "hidden" }}>
             {(["en", "fi"] as const).map(l => (
               <button key={l} onClick={() => onLangChange(l)} style={{
                 background: lang === l ? "var(--border2)" : "transparent",
@@ -70,7 +70,7 @@ export function Header({
           title={dark ? "Switch to light mode" : "Switch to dark mode"}
           style={{
             background: "var(--surface2)", border: "1px solid var(--border2)",
-            borderRadius: 6, width: 44, height: 44, cursor: "pointer",
+            borderRadius: "var(--radius)", width: 44, height: 44, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
             color: "var(--text-muted)", flexShrink: 0,
           }}
@@ -82,7 +82,7 @@ export function Header({
           color: "var(--accent-blue)", textDecoration: "none",
           border: "1px solid rgba(79,168,255,0.3)",
           padding: "0 16px", minHeight: 44,
-          display: "inline-flex", alignItems: "center", borderRadius: 5,
+          display: "inline-flex", alignItems: "center", borderRadius: "var(--radius)",
         }}>{ctaLabel}</a>
       </div>
     </header>

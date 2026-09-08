@@ -8,17 +8,25 @@ import { createContext, useContext, useEffect, useState } from "react"
 // of the same hue, each ≥4.5:1 on all three light surfaces.
 const DARK: Record<string, string> = {
   "--bg": "#070B12", "--surface": "#0B1220", "--surface2": "#111827",
+  "--surface-elevated": "#0E1628",
   "--border": "#1E293B", "--border2": "#253347",
   "--text": "#F7FAFC", "--text-muted": "#64748B", "--text-dim": "#334155",
   "--accent-blue": "#4FA8FF", "--accent-cyan": "#6EE7F9", "--accent-green": "#2ED47A",
   "--accent-amber": "#D97706", "--accent-red": "#EF4444",
+  "--glow-aurora": "radial-gradient(ellipse 80% 60% at 70% 20%, rgba(46, 212, 122, 0.07) 0%, transparent 55%), radial-gradient(ellipse 60% 50% at 20% 40%, rgba(110, 231, 249, 0.05) 0%, transparent 50%)",
+  "--shadow-card": "0 8px 32px rgba(0, 0, 0, 0.35)",
+  "--cta-gradient": "linear-gradient(135deg, #4FA8FF 0%, #6EE7F9 100%)",
 }
 const LIGHT: Record<string, string> = {
   "--bg": "#F4F6F9", "--surface": "#FFFFFF", "--surface2": "#EEF1F6",
+  "--surface-elevated": "#FFFFFF",
   "--border": "#DDE2EC", "--border2": "#C8D0DE",
   "--text": "#0B1220", "--text-muted": "#5A6A84", "--text-dim": "#586886",
   "--accent-blue": "#0B5FBF", "--accent-cyan": "#0B7680", "--accent-green": "#146B3E",
   "--accent-amber": "#9A4508", "--accent-red": "#C41E1E",
+  "--glow-aurora": "radial-gradient(ellipse 80% 60% at 70% 20%, rgba(20, 107, 62, 0.06) 0%, transparent 55%), radial-gradient(ellipse 60% 50% at 20% 40%, rgba(11, 118, 128, 0.05) 0%, transparent 50%)",
+  "--shadow-card": "0 8px 28px rgba(11, 18, 32, 0.08)",
+  "--cta-gradient": "linear-gradient(135deg, #0B5FBF 0%, #0B7680 100%)",
 }
 
 const STORAGE_KEY = "gryps-theme"

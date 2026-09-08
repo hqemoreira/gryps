@@ -33,6 +33,8 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
       zoom: 3.4,
       pitch: 0,
       attributionControl: { compact: true },
+      dragRotate: false,
+      touchPitch: false,
     })
     mapRef.current = map
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right")
@@ -42,6 +44,8 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
     }
     map.once("load", kickResize)
     const resizeTimers = [50, 200, 500].map(ms => window.setTimeout(kickResize, ms))
+    const onWinResize = () => kickResize()
+    window.addEventListener("resize", onWinResize)
 
     map.on("error", e => {
       console.error("OpsConsoleMap error:", e.error)
@@ -66,14 +70,22 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         el.type = "button"
         el.setAttribute("aria-label", `${title}: score ${score}, grade ${grade}`)
         el.style.cssText = `
+          width: 40px; height: 40px; border-radius: 50%;
+          background: transparent; border: none;
+          cursor: pointer; padding: 0;
+          display: flex; align-items: center; justify-content: center;
+        `
+        const core = document.createElement("span")
+        core.style.cssText = `
           width: 14px; height: 14px; border-radius: 50%;
           background: ${color}; border: 2px solid #070B12;
           box-shadow: 0 0 0 2px ${color}88, 0 0 12px ${color}66;
-          cursor: pointer; padding: 0;
+          pointer-events: none;
         `
+        el.appendChild(core)
 
         const popup = new maplibregl.Popup({
-          offset: 16,
+          offset: 20,
           closeButton: true,
           maxWidth: "280px",
           className: "gryps-ops-popup",
@@ -93,24 +105,23 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
           e.stopPropagation()
           popup.setLngLat([lng, lat]).addTo(map)
         })
-        el.addEventListener("mouseenter", () => {
-          popup.setLngLat([lng, lat]).addTo(map)
-        })
 
         markersRef.current.push(
           new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map),
         )
       }
 
-      const pulse = document.createElement("div")
+      const pulse = document.createElement("button")
+      pulse.type = "button"
       pulse.setAttribute("aria-label", HERO_SITE.label)
       pulse.innerHTML = `
         <span class="gryps-ops-pulse-ring"></span>
         <span class="gryps-ops-pulse-core"></span>
       `
       pulse.style.cssText = `
-        width: 28px; height: 28px; position: relative;
+        width: 44px; height: 44px; position: relative;
         display: flex; align-items: center; justify-content: center;
+        background: transparent; border: none; cursor: pointer; padding: 0;
       `
       const heroPopup = new maplibregl.Popup({ offset: 18, closeButton: true, maxWidth: "260px" }).setHTML(`
         <div style="font-family: ui-sans-serif, system-ui, sans-serif; padding: 4px 2px;">
@@ -149,6 +160,7 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
 
     return () => {
       cancelled = true
+      window.removeEventListener("resize", onWinResize)
       resizeTimers.forEach(id => window.clearTimeout(id))
       if (dashTimer) window.clearInterval(dashTimer)
       markersRef.current.forEach(m => m.remove())
@@ -159,14 +171,7 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
   }, [lang])
 
   return (
-    <div style={{
-      position: "relative",
-      borderRadius: 10,
-      overflow: "hidden",
-      border: "1px solid var(--border)",
-      backgroundColor: "var(--surface)",
-      height: 420,
-    }}>
+    <div className="gryps-ops-map-shell">
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
       <div style={{
@@ -175,7 +180,7 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         color: "var(--accent-amber)",
         backgroundColor: "rgba(7,11,18,0.82)",
         border: "1px solid rgba(245,184,74,0.28)",
-        borderRadius: 4, padding: "5px 10px",
+        borderRadius: "var(--radius)", padding: "6px 12px",
         backdropFilter: "blur(8px)",
         pointerEvents: "none",
       }}>
@@ -188,7 +193,7 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         fontFamily: "var(--font-data)", fontSize: 9, letterSpacing: "0.06em",
         color: "var(--text-muted)",
         backgroundColor: "rgba(7,11,18,0.75)",
-        borderRadius: 4, padding: "6px 10px",
+        borderRadius: "var(--radius)", padding: "6px 10px",
         pointerEvents: "none",
       }}>
         <span><span style={{ color: "#2ED47A" }}>●</span> Grade A/B</span>
@@ -211,6 +216,9 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         @keyframes gryps-ops-pulse {
           0% { transform: scale(0.4); opacity: 0.9; }
           100% { transform: scale(1.6); opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .gryps-ops-pulse-ring { animation: none; opacity: 0.5; }
         }
       `}</style>
     </div>

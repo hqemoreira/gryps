@@ -1,6 +1,6 @@
 "use client"
-import { useState, useEffect, useMemo } from "react"
-import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle } from "lucide-react"
+import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
+import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle, LocateFixed } from "lucide-react"
 import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
 import { GrypsMark } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
@@ -9,7 +9,7 @@ import { grypsCopyright } from "@/lib/gryps-copyright"
 import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
 import { PROVIDER_INDEX_COUNT } from "@/lib/providers"
 import { DriftMock } from "@/components/DriftMock"
-import { gradeTextColor } from "@/lib/resilience-colors"
+import { gradeColor, gradeTextColor } from "@/lib/resilience-colors"
 import { ADVISOR_PROVIDERS, providersToSetupString } from "@/lib/deterministic-score"
 import { MODEL_VERSION } from "@/lib/signature-meta"
 import dynamic from "next/dynamic"
@@ -19,9 +19,7 @@ const OpsConsoleMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div style={{
-        height: 420, borderRadius: 10, border: "1px solid var(--border)",
-        backgroundColor: "var(--surface)",
+      <div className="gryps-ops-map-shell" style={{
         display: "flex", alignItems: "center", justifyContent: "center",
         fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.1em",
       }}>
@@ -30,6 +28,108 @@ const OpsConsoleMap = dynamic(
     ),
   },
 )
+
+function gradeBadgeBg(grade: string): string {
+  const c = gradeColor(grade)
+  return `${c}1F`
+}
+
+function FadeUp({ children, className = "" }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.classList.add("is-inview")
+      return
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("is-inview")
+          io.disconnect()
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  return (
+    <div ref={ref} className={`gryps-fade-up ${className}`.trim()}>
+      {children}
+    </div>
+  )
+}
+
+function LazyOpsMap({ lang }: { lang: "en" | "fi" }) {
+  const hostRef = useRef<HTMLDivElement>(null)
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    const el = hostRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setReady(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: "200px 0px" },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  return (
+    <div ref={hostRef}>
+      {ready ? (
+        <OpsConsoleMap lang={lang} />
+      ) : (
+        <div className="gryps-ops-map-shell" style={{
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.1em",
+        }}>
+          OPS MAP · SCROLL TO LOAD
+        </div>
+      )}
+    </div>
+  )
+}
+
+function StickyMobileCta({ label }: { label: string }) {
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const hero = document.getElementById("gryps-hero")
+    const advisor = document.getElementById("advisor")
+    if (!hero || !advisor) return
+
+    let pastHero = false
+    let nearAdvisor = false
+    const sync = () => setVisible(pastHero && !nearAdvisor)
+
+    const heroIo = new IntersectionObserver(([e]) => {
+      pastHero = !e.isIntersecting && e.boundingClientRect.top < 0
+      sync()
+    }, { threshold: 0 })
+    const advisorIo = new IntersectionObserver(([e]) => {
+      nearAdvisor = e.isIntersecting
+      sync()
+    }, { rootMargin: "80px 0px", threshold: 0 })
+
+    heroIo.observe(hero)
+    advisorIo.observe(advisor)
+    return () => {
+      heroIo.disconnect()
+      advisorIo.disconnect()
+    }
+  }, [])
+
+  return (
+    <div className={`gryps-sticky-cta gryps-no-print${visible ? " is-visible" : ""}`} aria-hidden={!visible}>
+      <a href="#advisor">{label} <ArrowRight size={14} /></a>
+    </div>
+  )
+}
 
 const NORDIC_LAT_MIN = 55
 const NORDIC_LAT_MAX = 85
@@ -126,7 +226,7 @@ function SignatureReveal({
     return (
       <div style={{
         backgroundColor: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: 8, padding: "16px 18px", fontFamily: "var(--font-data)",
+        borderRadius: "var(--radius)", padding: "16px 18px", fontFamily: "var(--font-data)",
         fontSize: 11, lineHeight: 2, overflow: "hidden", marginBottom: 24,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 10, borderBottom: "1px solid var(--border)" }}>
@@ -158,7 +258,7 @@ function SignatureReveal({
         style={{
           marginTop: 20, display: "flex", alignItems: "center", gap: 6,
           backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
-          borderRadius: 6, padding: "0 16px", minHeight: 44, cursor: "pointer",
+          borderRadius: "var(--radius)", padding: "0 16px", minHeight: 44, cursor: "pointer",
           fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
         }}
       >
@@ -189,6 +289,8 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const [realData, setRealData] = useState<RealDataEvidence | undefined>(undefined)
   const [error, setError] = useState("")
   const [boundsError, setBoundsError] = useState("")
+  const [geoBusy, setGeoBusy] = useState(false)
+  const [geoNote, setGeoNote] = useState("")
   const [, setShareId] = useState<string | null>(qp.get("sid"))
 
   useEffect(() => {
@@ -223,6 +325,39 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       if (withoutNone.includes(id)) return withoutNone.filter(p => p !== id)
       return [...withoutNone, id]
     })
+  }
+
+  function useMyLocation() {
+    if (!navigator.geolocation) {
+      setGeoNote(lang === "fi" ? "Sijaintia ei tueta tällä laitteella." : "Geolocation is not available on this device.")
+      return
+    }
+    setGeoBusy(true)
+    setGeoNote("")
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const la = pos.coords.latitude.toFixed(4)
+        const ln = pos.coords.longitude.toFixed(4)
+        setLat(la)
+        setLng(ln)
+        setGeoBusy(false)
+        if (!coordsInNordicBounds(parseFloat(la), parseFloat(ln))) {
+          setBoundsError(t.boundsHint)
+        } else {
+          setBoundsError("")
+        }
+        setGeoNote(lang === "fi"
+          ? "Sijainti haettu laitteelta — käytetään vain tähän arvioon."
+          : "Location filled from this device — used only for this assessment.")
+      },
+      () => {
+        setGeoBusy(false)
+        setGeoNote(lang === "fi"
+          ? "Sijainnin haku epäonnistui. Syötä koordinaatit manuaalisesti."
+          : "Could not read location. Enter coordinates manually.")
+      },
+      { enableHighAccuracy: true, timeout: 12000 },
+    )
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -286,20 +421,20 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const inputStyle: React.CSSProperties = {
     backgroundColor: "var(--surface2)",
     border: "1px solid var(--border2)",
-    borderRadius: 6,
-    padding: "10px 14px",
-    minHeight: 44,
+    borderRadius: "var(--radius)",
+    padding: "12px 14px",
+    minHeight: 48,
     fontFamily: "var(--font-data)",
-    fontSize: 12,
+    fontSize: 16,
     color: "var(--text)",
     outline: "none",
     width: "100%",
     boxSizing: "border-box",
   }
-  const selectStyle: React.CSSProperties = { ...inputStyle, cursor: "pointer" }
+  const selectStyle: React.CSSProperties = { ...inputStyle, cursor: "pointer", fontFamily: "var(--font-ui)", fontSize: 15 }
   const labelStyle: React.CSSProperties = {
-    fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)",
-    letterSpacing: "0.1em", display: "block", marginBottom: 6,
+    fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)",
+    letterSpacing: "0.1em", display: "block", marginBottom: 8,
   }
 
   if (result) {
@@ -324,59 +459,118 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     )
   }
 
+  const chipBase: React.CSSProperties = {
+    fontFamily: "var(--font-data)", fontSize: 11, letterSpacing: "0.04em",
+    padding: "10px 14px", minHeight: 44, borderRadius: "var(--radius)", cursor: "pointer",
+  }
+
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-        <div>
-          <label style={labelStyle}>{t.latLabel}</label>
-          <input type="number" step="any" placeholder={DEFAULT_LAT} value={lat} onChange={e => setLat(e.target.value)} style={inputStyle} />
+    <form onSubmit={handleSubmit} className="gryps-console-panel" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      <div className="gryps-field-group">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.1em" }}>
+            {lang === "fi" ? "KOHTEEN KOORDINAATIT" : "SITE COORDINATES"}
+          </p>
+          <button
+            type="button"
+            onClick={useMyLocation}
+            disabled={geoBusy}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600,
+              color: "var(--accent-cyan)", background: "transparent",
+              border: "1px solid rgba(110,231,249,0.35)", borderRadius: "var(--radius)",
+              padding: "8px 12px", minHeight: 44, cursor: geoBusy ? "wait" : "pointer",
+            }}
+          >
+            <LocateFixed size={14} />
+            {geoBusy
+              ? (lang === "fi" ? "Haetaan…" : "Locating…")
+              : (lang === "fi" ? "Käytä sijaintiani" : "Use my location")}
+          </button>
         </div>
-        <div>
-          <label style={labelStyle}>{t.lngLabel}</label>
-          <input type="number" step="any" placeholder={DEFAULT_LNG} value={lng} onChange={e => setLng(e.target.value)} style={inputStyle} />
+        <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <div>
+            <label style={labelStyle}>{t.latLabel}</label>
+            <input
+              type="text"
+              inputMode="decimal"
+              autoComplete="off"
+              autoCapitalize="off"
+              placeholder={DEFAULT_LAT}
+              value={lat}
+              onChange={e => setLat(e.target.value)}
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>{t.lngLabel}</label>
+            <input
+              type="text"
+              inputMode="decimal"
+              autoComplete="off"
+              autoCapitalize="off"
+              placeholder={DEFAULT_LNG}
+              value={lng}
+              onChange={e => setLng(e.target.value)}
+              style={inputStyle}
+            />
+          </div>
         </div>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5 }}>
+          {lang === "fi"
+            ? "Sijaintia käytetään vain tähän resilienssiarvioon — ei seurata."
+            : "Location is used only for this resilience assessment — not tracked."}
+        </p>
+        {geoNote && (
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-cyan)" }}>{geoNote}</p>
+        )}
       </div>
 
-      <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div className="gryps-field-group">
+        <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.1em" }}>
+          {lang === "fi" ? "TOIMINTAPROFIILI" : "OPERATIONAL PROFILE"}
+        </p>
+        <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <div>
+            <label style={labelStyle}>{t.sectorLabel} *</label>
+            <select value={vertical} onChange={e => setVertical(e.target.value)} required style={{ ...selectStyle, color: vertical ? "var(--text)" : "var(--text-muted)" }}>
+              <option value="" disabled>{t.sectorPlaceholder}</option>
+              <option value="forestry">Forestry</option>
+              <option value="mining">Mining</option>
+              <option value="maritime">Maritime</option>
+              <option value="energy">Energy</option>
+              <option value="research">Research</option>
+              <option value="arctic">Arctic / Polar</option>
+              <option value="integrator">Systems Integrator</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>{t.autonomyLabel} *</label>
+            <select value={autonomy} onChange={e => setAutonomy(e.target.value)} required style={{ ...selectStyle, color: autonomy ? "var(--text)" : "var(--text-muted)" }}>
+              <option value="" disabled>{t.autonomyPlaceholder}</option>
+              <option value="manual">Manual operations</option>
+              <option value="remote-operated">Remote-operated</option>
+              <option value="autonomous">Autonomous</option>
+              <option value="mixed">Mixed</option>
+            </select>
+          </div>
+        </div>
         <div>
-          <label style={labelStyle}>{t.sectorLabel} *</label>
-          <select value={vertical} onChange={e => setVertical(e.target.value)} required style={{ ...selectStyle, color: vertical ? "var(--text)" : "var(--text-muted)" }}>
-            <option value="" disabled>{t.sectorPlaceholder}</option>
-            <option value="forestry">Forestry</option>
-            <option value="mining">Mining</option>
-            <option value="maritime">Maritime</option>
-            <option value="energy">Energy</option>
-            <option value="research">Research</option>
-            <option value="arctic">Arctic / Polar</option>
-            <option value="integrator">Systems Integrator</option>
-            <option value="other">Other</option>
+          <label style={labelStyle}>{t.criticalityLabel} *</label>
+          <select value={criticality} onChange={e => setCriticality(e.target.value)} required style={{ ...selectStyle, color: criticality ? "var(--text)" : "var(--text-muted)" }}>
+            <option value="" disabled>{t.criticalityPlaceholder}</option>
+            <option value="standard">Standard</option>
+            <option value="high">High criticality</option>
+            <option value="safety-critical">Safety-critical</option>
           </select>
         </div>
-        <div>
-          <label style={labelStyle}>{t.autonomyLabel} *</label>
-          <select value={autonomy} onChange={e => setAutonomy(e.target.value)} required style={{ ...selectStyle, color: autonomy ? "var(--text)" : "var(--text-muted)" }}>
-            <option value="" disabled>{t.autonomyPlaceholder}</option>
-            <option value="manual">Manual operations</option>
-            <option value="remote-operated">Remote-operated</option>
-            <option value="autonomous">Autonomous</option>
-            <option value="mixed">Mixed</option>
-          </select>
-        </div>
       </div>
 
-      <div>
-        <label style={labelStyle}>{t.criticalityLabel} *</label>
-        <select value={criticality} onChange={e => setCriticality(e.target.value)} required style={{ ...selectStyle, color: criticality ? "var(--text)" : "var(--text-muted)" }}>
-          <option value="" disabled>{t.criticalityPlaceholder}</option>
-          <option value="standard">Standard</option>
-          <option value="high">High criticality</option>
-          <option value="safety-critical">Safety-critical</option>
-        </select>
-      </div>
-
-      <div>
+      <div className="gryps-field-group">
         <label style={labelStyle}>{t.providersLabel}</label>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", marginBottom: 10, lineHeight: 1.5 }}>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", marginBottom: 4, lineHeight: 1.5 }}>
           {t.providersHint}
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -388,9 +582,8 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
                 type="button"
                 onClick={() => toggleProvider(p.id)}
                 style={{
-                  fontFamily: "var(--font-data)", fontSize: 10, letterSpacing: "0.04em",
-                  padding: "8px 12px", borderRadius: 6, cursor: "pointer",
-                  border: selected ? "1px solid #4FA8FF" : "1px solid var(--border2)",
+                  ...chipBase,
+                  border: selected ? "1px solid var(--accent-blue)" : "1px solid var(--border2)",
                   backgroundColor: selected ? "rgba(79,168,255,0.12)" : "var(--surface2)",
                   color: selected ? "var(--accent-blue)" : "var(--text-muted)",
                 }}
@@ -403,8 +596,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
             type="button"
             onClick={() => toggleProvider("none")}
             style={{
-              fontFamily: "var(--font-data)", fontSize: 10, letterSpacing: "0.04em",
-              padding: "8px 12px", borderRadius: 6, cursor: "pointer",
+              ...chipBase,
               border: providers.includes("none") ? "1px solid var(--accent-amber)" : "1px solid var(--border2)",
               backgroundColor: providers.includes("none") ? "rgba(217,119,6,0.12)" : "var(--surface2)",
               color: providers.includes("none") ? "var(--accent-amber)" : "var(--text-muted)",
@@ -415,12 +607,9 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         </div>
       </div>
 
-      <div style={{
-        backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
-        borderRadius: 8, padding: "14px 16px",
-      }}>
-        <label style={{ ...labelStyle, color: "var(--accent-blue)", display: "block", marginBottom: 4 }}>{t.emailLabel}</label>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5, marginBottom: 10 }}>
+      <div className="gryps-field-group" style={{ backgroundColor: "rgba(79,168,255,0.05)", borderColor: "rgba(79,168,255,0.2)" }}>
+        <label style={{ ...labelStyle, color: "var(--accent-blue)" }}>{t.emailLabel}</label>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5, marginBottom: 4 }}>
           {t.emailHint}
         </p>
         <input
@@ -430,34 +619,31 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           onChange={e => setEmail(e.target.value)}
           style={inputStyle}
         />
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", marginTop: 6 }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", marginTop: 2 }}>
           {t.emailOptionalNote}
         </p>
       </div>
 
       {(boundsError || error) && (
-        <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 6, padding: "10px 14px" }}>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-red)" }}>{boundsError || error}</p>
+        <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "var(--radius)", padding: "10px 14px" }}>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-red)" }}>{boundsError || error}</p>
         </div>
       )}
 
       <button
         type="submit"
+        className="gryps-cta-btn"
         disabled={loading || !vertical || !autonomy || !criticality}
         style={{
-          backgroundColor: loading ? "var(--surface2)" : "#4FA8FF",
-          color: loading ? "var(--text-muted)" : "#070B12",
-          border: "none", borderRadius: 6, padding: "13px 20px",
-          fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
-          cursor: loading ? "wait" : "pointer",
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-          transition: "background 0.15s",
+          width: "100%",
           opacity: (!vertical || !autonomy || !criticality) ? 0.5 : 1,
+          background: loading ? "var(--surface2)" : "var(--cta-gradient)",
+          color: loading ? "var(--text-muted)" : "#070B12",
         }}
       >
         {loading ? (
           <>
-            <span style={{ display: "inline-block", width: 12, height: 12, border: "2px solid var(--text-dim)", borderTopColor: "#4FA8FF", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+            <span style={{ display: "inline-block", width: 12, height: 12, border: "2px solid var(--text-dim)", borderTopColor: "var(--accent-blue)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
             {t.analysing}
           </>
         ) : (
@@ -507,37 +693,45 @@ function HeroScoreCountUp({ label }: { label: string }) {
 function HeroSignatureCard({ t }: { t: typeof COPY.en }) {
   const gc = gradeTextColor("D")
   return (
-    <div className="gryps-signature-card" style={{
-      backgroundColor: "var(--surface)", border: "1px solid var(--border)",
-      borderRadius: 10, padding: "20px 22px",
-      display: "flex", flexDirection: "column", gap: 14,
-    }}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
+    <div
+      className="gryps-signature-card gryps-signature-elevated"
+      style={{ display: "flex", flexDirection: "column", gap: 20 }}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
         <div>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 4 }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>
             RESILIENCE SIGNATURE
           </p>
-          <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14, color: "var(--text)" }}>
+          <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "var(--text-title)", color: "var(--text)" }}>
             68.2°N 27.4°E · Lapland
           </p>
         </div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }} aria-label="Score 40 out of 100, grade D">
+        <div style={{ display: "flex", alignItems: "baseline", gap: 10 }} aria-label="Score 40 out of 100, grade D">
           <span className="sr-only">Score 40 out of 100, grade D</span>
-          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: 32, fontWeight: 900, color: gc, lineHeight: 1 }}>40</span>
-          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: 16, fontWeight: 900, color: gc }}>D</span>
+          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: "clamp(2.75rem, 6vw, 3.5rem)", fontWeight: 900, color: gc, lineHeight: 1 }}>40</span>
+          <span
+            aria-hidden="true"
+            className="gryps-grade-badge"
+            style={{ color: gc, backgroundColor: gradeBadgeBg("D"), border: `1px solid ${gradeColor("D")}44` }}
+          >
+            D
+          </span>
         </div>
       </div>
       <div className="gryps-signature-divider" style={{ height: 1, backgroundColor: "var(--border)" }} />
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <div>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 4 }}>{t.topRiskLabel}</p>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-amber)", fontWeight: 600 }}>{t.heroTopRisk}</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 6 }}>{t.topRiskLabel}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--accent-amber)", fontWeight: 600 }}>{t.heroTopRisk}</p>
         </div>
         <div>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 4 }}>{t.topRecLabel}</p>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-cyan)", fontWeight: 600 }}>Iridium Certus · 90</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 6 }}>{t.topRecLabel}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--accent-cyan)", fontWeight: 600 }}>Iridium Certus · 90</p>
         </div>
       </div>
+      <p className="gryps-signature-detail" style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", lineHeight: 1.6, marginTop: 4 }}>
+        {t.nis2line}
+      </p>
     </div>
   )
 }
@@ -546,7 +740,7 @@ function HeroSignatureCard({ t }: { t: typeof COPY.en }) {
 function Stat({ value, label, href }: { value: string; label: string; href?: string }) {
   const inner = (
     <>
-      <span style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>{value}</span>
+      <span style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.02em" }}>{value}</span>
       <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.06em" }}>{label}</span>
     </>
   )
@@ -620,6 +814,7 @@ const COPY = {
     ctaH2:  "Resilience starts with knowing your score.",
     ctaSub: "Free Resilience Signature for any Nordic, Arctic, or Icelandic site. No account — connectivity risk scored in ~60 seconds.",
     ctaBtn: "Score my site — free",
+    viewSample: "View sample Signature →",
     footerTag:    "Built in Finland for high-latitude resilience.",
   },
   fi: {
@@ -680,11 +875,68 @@ const COPY = {
     ctaH2:  "Resilienssi alkaa pisteidesi tuntemisesta.",
     ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — yhteysriski pisteytetty ~60 sekunnissa.",
     ctaBtn: "Pisteytä kohteeni — ilmaiseksi",
+    viewSample: "Katso esimerkki-Signature →",
     footerTag:    "Rakennettu Suomessa korkean leveysasteen resilienssille.",
   },
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
+function exampleHref(ex: (typeof EXAMPLE_SIGNATURES)[number]): string {
+  const p = new URLSearchParams()
+  if (ex.input.lat != null) p.set("lat", String(ex.input.lat))
+  if (ex.input.lng != null) p.set("lng", String(ex.input.lng))
+  if (ex.input.sector) p.set("sector", ex.input.sector)
+  if (ex.input.autonomy_level) p.set("autonomy", ex.input.autonomy_level)
+  if (ex.input.operation_criticality) p.set("criticality", ex.input.operation_criticality)
+  return `/?${p.toString()}#advisor`
+}
+
+function ExampleCard({
+  ex, lang, viewSample,
+}: {
+  ex: (typeof EXAMPLE_SIGNATURES)[number]
+  lang: "en" | "fi"
+  viewSample: string
+}) {
+  const grade = ex.result.resilience_signature.grade
+  const gc = gradeTextColor(grade)
+  const border = gradeColor(grade)
+  return (
+    <a
+      href={exampleHref(ex)}
+      className="gryps-example-card"
+      style={{ borderLeftColor: border }}
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
+        <span
+          className="gryps-grade-badge"
+          style={{ color: gc, backgroundColor: gradeBadgeBg(grade), border: `1px solid ${border}44` }}
+        >
+          {ex.result.resilience_signature.score} · {grade}
+        </span>
+        <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.06em" }}>
+          {ex.input.sector?.toUpperCase()}
+        </span>
+      </div>
+      <p className="text-title" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 8, fontSize: "var(--text-title)" }}>
+        {lang === "fi" ? ex.titleFi : ex.title}
+      </p>
+      <p className="text-small" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", marginBottom: 12 }}>
+        {ex.result.resilience_signature.summary}
+      </p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "4px 8px", borderRadius: 6 }}>
+          {ex.input.autonomy_level}
+        </span>
+        <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "4px 8px", borderRadius: 6 }}>
+          {ex.input.operation_criticality}
+        </span>
+      </div>
+      <div className="gryps-example-reveal">{viewSample}</div>
+    </a>
+  )
+}
+
 export default function HomePage() {
   const [lang, setLang] = useState<"en" | "fi">("en")
   const [siteCount, setSiteCount] = useState<number | null>(null)
@@ -701,7 +953,7 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
 
-      {/* Non-commercial banner */}
+      {/* Non-commercial banner — single top disclosure */}
       <div className="gryps-banner gryps-no-print" style={{
         backgroundColor: "rgba(245,184,74,0.06)",
         borderBottom: "1px solid rgba(245,184,74,0.2)",
@@ -732,44 +984,42 @@ export default function HomePage() {
       />
 
       {/* Hero */}
-      <section className="gryps-section-pad gryps-no-print" style={{ paddingTop: 148, paddingBottom: 80, paddingLeft: 32, paddingRight: 32, maxWidth: 1200, margin: "0 auto" }}>
-        <div className="gryps-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "stretch" }}>
+      <section
+        id="gryps-hero"
+        className="gryps-section-pad gryps-hero-pad gryps-hero-aurora gryps-no-print"
+        style={{ paddingTop: 148, paddingBottom: "var(--section-y)", paddingLeft: "var(--pad-x)", paddingRight: "var(--pad-x)" }}
+      >
+        <div className="gryps-content">
+          <div className="gryps-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
 
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
-
-            <div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 8px #2ED47A" }} />
-                <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--accent-green)", boxShadow: "0 0 8px var(--accent-green)" }} />
+                <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
               </div>
 
               <HeroScoreCountUp label={t.scoreLabel} />
 
-              <h1 className="gryps-hero-h1" style={{
-                fontFamily: "var(--font-ui)", fontSize: 44, fontWeight: 700,
-                lineHeight: 1.15, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 24,
+              <h1 className="gryps-hero-h1 text-display" style={{
+                fontFamily: "var(--font-ui)", fontSize: "var(--text-display)", fontWeight: 700,
+                lineHeight: 1.15, letterSpacing: "-0.02em", color: "var(--text)", marginBottom: 20, marginTop: 8,
               }}>
                 {t.h1}
               </h1>
 
-              <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.85, maxWidth: 440, marginBottom: 24 }}>
+              <p className="gryps-hero-sub text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", maxWidth: 440, marginBottom: 28 }}>
                 {t.sub}
               </p>
 
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginBottom: 28 }}>
-                <a href="#advisor" style={{
-                  display: "inline-flex", alignItems: "center", gap: 8,
-                  backgroundColor: "#4FA8FF", color: "#070B12",
-                  fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
-                  padding: "12px 22px", borderRadius: 6, textDecoration: "none",
-                }}>
+                <a href="#advisor" className="gryps-cta-btn">
                   {t.advisorCta} <ArrowRight size={14} />
                 </a>
                 <a href="#examples" style={{
                   display: "inline-flex", alignItems: "center", gap: 6,
                   backgroundColor: "transparent", color: "var(--text-muted)",
-                  fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 13,
-                  padding: "12px 18px", borderRadius: 6, textDecoration: "none",
+                  fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 14,
+                  padding: "0 18px", minHeight: 48, borderRadius: "var(--radius)", textDecoration: "none",
                   border: "1px solid var(--border2)",
                 }}>
                   {t.heroSecondary}
@@ -777,168 +1027,160 @@ export default function HomePage() {
               </div>
 
               <span style={{
-                display: "inline-block", fontFamily: "var(--font-data)", fontSize: 10,
+                display: "inline-block", fontFamily: "var(--font-data)", fontSize: "var(--text-label)",
                 color: "var(--accent-amber)", letterSpacing: "0.06em",
                 backgroundColor: "rgba(245,184,74,0.08)", border: "1px solid rgba(245,184,74,0.25)",
-                borderRadius: 4, padding: "4px 10px",
+                borderRadius: 6, padding: "4px 10px", marginBottom: 32,
               }}>
                 {modelChip}
               </span>
-            </div>
-
-            <div>
-              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 16, marginTop: 32 }}>
-                {t.nis2line}
-              </p>
 
               {siteCount !== null && (
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
-                  <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 8px #2ED47A" }} />
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--accent-green)", boxShadow: "0 0 8px var(--accent-green)" }} />
                   <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--accent-green)", letterSpacing: "0.04em" }}>
                     {siteCount} {t.liveCounter}
                   </span>
                 </div>
               )}
 
-              <div className="gryps-stats-row" style={{ display: "flex", gap: 56, paddingBottom: 28, borderBottom: "1px solid var(--border)" }}>
+              <div className="gryps-stats-row" style={{ display: "flex", gap: 48, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
                 <Stat value={`${PROVIDER_INDEX_COUNT}`} label={t.statsL1} href="/providers" />
                 <Stat value="LEO–MEO–GEO" label={t.statsL2} />
                 <Stat value="70°N+" label={t.statsL3} />
               </div>
             </div>
-          </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <HeroSignatureCard t={t} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 16, paddingTop: 8 }}>
+              <HeroSignatureCard t={t} />
+            </div>
           </div>
         </div>
       </section>
 
       {/* Problem strip */}
-      <section className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", backgroundColor: "var(--surface)", padding: "48px 32px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <p className="label" style={{ textAlign: "center", marginBottom: 32, fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>{t.problemL}</p>
-          <div className="gryps-problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
-            {t.problems.map((item, i) => (
-              <div key={i} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {[<Shield key="s" size={16} color="#4FA8FF" />, <AlertTriangle key="a" size={16} color="#D97706" />, <Globe2 key="g" size={16} color="#6EE7F9" />][i]}
-                  <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{item.title}</span>
+      <FadeUp>
+        <section className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", backgroundColor: "var(--surface)" }}>
+          <div className="gryps-content">
+            <p className="label" style={{ textAlign: "center", marginBottom: 36 }}>{t.problemL}</p>
+            <div className="gryps-problem-grid-responsive">
+              {t.problems.map((item, i) => (
+                <div key={i} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    {[<Shield key="s" size={16} color="var(--accent-blue)" />, <AlertTriangle key="a" size={16} color="var(--accent-amber)" />, <Globe2 key="g" size={16} color="var(--accent-cyan)" />][i]}
+                    <span className="text-title" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", fontSize: "var(--text-title)" }}>{item.title}</span>
+                  </div>
+                  <p className="text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", fontSize: "var(--text-small)" }}>{item.body}</p>
                 </div>
-                <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.7 }}>{item.body}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </FadeUp>
 
       {/* Live Advisor */}
-      <section id="advisor" className="gryps-section-pad" style={{ padding: "64px 32px", maxWidth: 900, margin: "0 auto", scrollMarginTop: 80 }}>
-        <p className="gryps-no-print" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>DEMO RESILIENCE ADVISOR</p>
-        <h2 className="gryps-no-print" style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", marginBottom: 8, letterSpacing: "-0.01em" }}>
-          {t.advisorCta}
-        </h2>
-        <p className="gryps-no-print" style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", marginBottom: 32 }}>{t.advisorSub}</p>
-        <AdvisorForm t={t} lang={lang} />
-      </section>
+      <FadeUp>
+        <section id="advisor" className="gryps-section gryps-section-pad" style={{ scrollMarginTop: 80 }}>
+          <div className="gryps-content-narrow">
+            <p className="gryps-no-print label" style={{ marginBottom: 10 }}>DEMO RESILIENCE ADVISOR</p>
+            <h2 className="gryps-no-print text-display" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 10 }}>
+              {t.advisorCta}
+            </h2>
+            <p className="gryps-no-print text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", marginBottom: 28, fontSize: "var(--text-small)" }}>{t.advisorSub}</p>
+            <AdvisorForm t={t} lang={lang} />
+          </div>
+        </section>
+      </FadeUp>
 
       {/* How it works */}
-      <section className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 32 }}>{t.howL}</p>
-        <div className="gryps-steps-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
-          {t.steps.map((step, i) => {
-            const icons = [<MapPin key="mp" size={16} color="#4FA8FF" />, <Radio key="r" size={16} color="#4FA8FF" />, <Zap key="z" size={16} color="#4FA8FF" />, <ChevronRight key="cr" size={16} color="#4FA8FF" />]
-            return (
-              <div key={step.n} style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "20px" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                  {icons[i]}
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)" }}>{step.n}</span>
-                </div>
-                <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)", marginBottom: 8 }}>{step.title}</p>
-                <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>{step.body}</p>
-              </div>
-            )
-          })}
-        </div>
-      </section>
+      <FadeUp>
+        <section className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)" }}>
+          <div className="gryps-content">
+            <p className="label" style={{ marginBottom: 32 }}>{t.howL}</p>
+            <div className="gryps-steps-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+              {t.steps.map((step, i) => {
+                const icons = [<MapPin key="mp" size={16} color="var(--accent-blue)" />, <Radio key="r" size={16} color="var(--accent-blue)" />, <Zap key="z" size={16} color="var(--accent-blue)" />, <ChevronRight key="cr" size={16} color="var(--accent-blue)" />]
+                return (
+                  <div key={step.n} className="surface-card" style={{ padding: 22 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                      {icons[i]}
+                      <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)" }}>{step.n}</span>
+                    </div>
+                    <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "var(--text-title)", color: "var(--text)", marginBottom: 8 }}>{step.title}</p>
+                    <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", lineHeight: 1.6 }}>{step.body}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      </FadeUp>
 
       {/* Example signatures */}
-      <section id="examples" className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", maxWidth: 1200, margin: "0 auto" }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.examplesLabel}</p>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", marginBottom: 28, maxWidth: 560 }}>{t.examplesSub}</p>
-        <div className="gryps-problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
-          {EXAMPLE_SIGNATURES.map(ex => {
-            const gc = gradeTextColor(ex.result.resilience_signature.grade)
-            return (
-              <div key={ex.id} style={{
-                backgroundColor: "var(--surface)", border: "1px solid var(--border)",
-                borderRadius: 8, padding: "20px",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 28, fontWeight: 900, color: gc, lineHeight: 1 }}>
-                    {ex.result.resilience_signature.score}
-                  </span>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 14, fontWeight: 900, color: gc }}>
-                    {ex.result.resilience_signature.grade}
-                  </span>
-                </div>
-                <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)", marginBottom: 6 }}>
-                  {lang === "fi" ? ex.titleFi : ex.title}
-                </p>
-                <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 12 }}>
-                  {ex.result.resilience_signature.summary}
-                </p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "2px 8px", borderRadius: 3 }}>
-                    {ex.input.sector}
-                  </span>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "2px 8px", borderRadius: 3 }}>
-                    {ex.input.autonomy_level}
-                  </span>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "2px 8px", borderRadius: 3 }}>
-                    {ex.input.operation_criticality}
-                  </span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-        <div style={{ marginTop: 32, marginBottom: 32 }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 12 }}>
-            {lang === "en" ? "OPS CONSOLE · EXAMPLE SITES" : "OPS-KONSOLI · ESIMERKKIKOHTEET"}
-          </p>
-          <OpsConsoleMap lang={lang} />
-        </div>
-        <DriftMock lang={lang} />
-      </section>
+      <FadeUp>
+        <section id="examples" className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)" }}>
+          <div className="gryps-content">
+            <p className="label" style={{ marginBottom: 10 }}>{t.examplesLabel}</p>
+            <p className="text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", marginBottom: 28, maxWidth: 560, fontSize: "var(--text-small)" }}>{t.examplesSub}</p>
+
+            <div className="gryps-examples-grid">
+              {EXAMPLE_SIGNATURES.map(ex => (
+                <ExampleCard key={ex.id} ex={ex} lang={lang} viewSample={t.viewSample} />
+              ))}
+            </div>
+            <div className="gryps-examples-snap">
+              {EXAMPLE_SIGNATURES.map(ex => (
+                <ExampleCard key={`snap-${ex.id}`} ex={ex} lang={lang} viewSample={t.viewSample} />
+              ))}
+            </div>
+          </div>
+        </section>
+      </FadeUp>
+
+      {/* Full-bleed ops map */}
+      <FadeUp>
+        <section className="gryps-no-print" style={{ paddingTop: 8 }}>
+          <div className="gryps-content gryps-section-pad" style={{ paddingBottom: 16 }}>
+            <p className="label" style={{ marginBottom: 8 }}>
+              {lang === "en" ? "OPS CONSOLE · EXAMPLE SITES" : "OPS-KONSOLI · ESIMERKKIKOHTEET"}
+            </p>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", marginBottom: 0 }}>
+              {t.polarMapLabel}
+            </p>
+          </div>
+          <LazyOpsMap lang={lang} />
+          <div className="gryps-content gryps-section-pad" style={{ paddingTop: 28, paddingBottom: "var(--section-y)" }}>
+            <DriftMock lang={lang} />
+          </div>
+        </section>
+      </FadeUp>
 
       {/* CTA */}
-      <section className="gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", padding: "64px 32px", textAlign: "center" }}>
-        <GrypsMark size={44} animate />
-        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 700, color: "var(--text)", margin: "20px 0 10px", letterSpacing: "-0.01em" }}>
-          {t.ctaH2}
-        </h2>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", margin: "0 auto 32px", maxWidth: 480 }}>
-          {t.ctaSub}
-        </p>
-        <a href="#advisor" style={{
-          display: "inline-flex", alignItems: "center", gap: 8,
-          backgroundColor: "#4FA8FF", color: "#070B12",
-          fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
-          padding: "12px 24px", borderRadius: 6, textDecoration: "none",
-        }}>
-          {t.ctaBtn} <ArrowRight size={14} />
-        </a>
-      </section>
+      <FadeUp>
+        <section className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", textAlign: "center" }}>
+          <GrypsMark size={44} animate />
+          <h2 className="text-display" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", margin: "20px 0 12px" }}>
+            {t.ctaH2}
+          </h2>
+          <p className="text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", margin: "0 auto 32px", maxWidth: 480, fontSize: "var(--text-small)" }}>
+            {t.ctaSub}
+          </p>
+          <a href="#advisor" className="gryps-cta-btn">
+            {t.ctaBtn} <ArrowRight size={14} />
+          </a>
+        </section>
+      </FadeUp>
 
       <Footer
         lang={lang}
         footerRights={grypsCopyright(lang, lang === "en"
-          ? "Espoo, Finland · Non-commercial R&D prototype · No registered company · No revenue generated"
-          : "Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi · Ei rekisteröityä yritystä · Ei tuloja")}
+          ? "Non-commercial R&D prototype"
+          : "Ei-kaupallinen T&K-prototyyppi")}
         footerTag={t.footerTag}
         secondaryLink={{ href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" }}
       />
+
+      <StickyMobileCta label={t.navCta} />
     </div>
   )
 }
