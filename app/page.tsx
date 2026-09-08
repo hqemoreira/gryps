@@ -1274,26 +1274,22 @@ export default function HomePage() {
 
       {/* Full-bleed ops map */}
       <FadeUp>
-        <section className="gryps-no-print" style={{ paddingTop: 8 }}>
-          <div className="gryps-content gryps-section-pad" style={{ paddingBottom: 16 }}>
-            <p className="gryps-proof-band-label">{t.proofBand}</p>
-            <p className="label" style={{ marginBottom: 8 }}>
-              {lang === "en" ? "OPS CONSOLE · EXAMPLE SITES" : "OPS-KONSOLI · ESIMERKKIKOHTEET"}
-            </p>
-            <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", marginBottom: 0 }}>
-              {t.polarMapLabel}
-            </p>
-          </div>
-
-          <div className="gryps-content gryps-section-pad" style={{ paddingTop: 0, paddingBottom: 28 }}>
+        <section className="gryps-ops-band gryps-no-print">
+          <div className="gryps-content gryps-section-pad">
             <div className="gryps-polar-instrument">
               <div className="gryps-polar-instrument-copy">
-                <p className="label" style={{ marginBottom: 10 }}>{t.polarHeader}</p>
-                <h3 className="text-title" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 10, fontSize: "var(--text-title)" }}>
+                <p className="gryps-proof-band-label">{t.proofBand}</p>
+                <p className="label" style={{ marginBottom: 8 }}>
+                  {lang === "en" ? "OPS CONSOLE · EXAMPLE SITES" : "OPS-KONSOLI · ESIMERKKIKOHTEET"}
+                </p>
+                <h3 className="gryps-polar-instrument-title">
                   {t.polarInstrumentTitle}
                 </h3>
-                <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", lineHeight: 1.65, maxWidth: "42ch" }}>
+                <p className="gryps-polar-instrument-body">
                   {t.polarInstrumentBody}
+                </p>
+                <p className="gryps-polar-instrument-meta">
+                  {t.polarHeader} · {t.polarMapLabel}
                 </p>
               </div>
               <div className="gryps-polar-instrument-figure">
@@ -1303,7 +1299,7 @@ export default function HomePage() {
           </div>
 
           <LazyOpsMap lang={lang} />
-          <div className="gryps-content gryps-section-pad" style={{ paddingTop: 28, paddingBottom: "var(--section-y)" }}>
+          <div className="gryps-content gryps-section-pad" style={{ paddingTop: 24, paddingBottom: "var(--section-y)" }}>
             <DriftMock lang={lang} />
           </div>
         </section>

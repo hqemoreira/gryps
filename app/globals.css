@@ -836,21 +836,57 @@ body {
 }
 
 /* ── Polar instrument (ops + methodology) ────────────────────────────────── */
+.gryps-ops-band {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
 .gryps-polar-instrument {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 380px);
-  gap: 40px;
-  align-items: center;
-  padding: 28px 0 8px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 1.05fr);
+  gap: 28px 40px;
+  align-items: start;
+  padding: 20px 0 28px;
 }
 .gryps-polar-instrument-copy {
   min-width: 0;
+  padding-top: 8px;
+}
+.gryps-polar-instrument-title {
+  font-family: var(--font-ui);
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+.gryps-polar-instrument-body {
+  font-family: var(--font-ui);
+  font-size: var(--text-small);
+  color: var(--text-muted);
+  line-height: 1.65;
+  max-width: 38ch;
+  margin: 0 0 16px;
+}
+.gryps-polar-instrument-meta {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin: 0;
 }
 .gryps-polar-instrument-figure {
   width: 100%;
-  max-width: 380px;
+  max-width: 440px;
   margin-left: auto;
   aspect-ratio: 1 / 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--aurora-1) 8%, transparent), transparent 55%),
+    var(--surface);
+  padding: 8px;
 }
 .gryps-polar-figure {
   width: 100%;
@@ -918,12 +954,15 @@ body {
   .gryps-nav-link { display: none !important; }
   .gryps-polar-instrument {
     grid-template-columns: 1fr;
-    gap: 24px;
-    text-align: left;
+    gap: 20px;
+    padding: 16px 0 24px;
   }
   .gryps-polar-instrument-figure {
     margin: 0 auto;
-    max-width: 320px;
+    max-width: 300px;
+  }
+  .gryps-polar-instrument-copy {
+    padding-top: 0;
   }
 }
 
