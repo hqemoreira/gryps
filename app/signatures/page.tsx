@@ -90,6 +90,7 @@ export default function SignaturesPage() {
         ctaHref="/#advisor"
         ctaLabel={t.navCta}
         extraLinks={[
+          { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
           { href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
         ]}

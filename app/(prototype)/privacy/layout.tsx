@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Privacy — GRYPS non-commercial R&D prototype",
-  description: "How the GRYPS demonstration prototype handles voluntarily entered data — no marketing tracking, Mistral + Vercel processing for Resilience Signature output. Not a commercial service.",
+  description: "How the GRYPS R&D prototype handles voluntarily entered data — controller, processors, retention, and your rights. No marketing tracking. Not a commercial service.",
   alternates: { canonical: "https://gryps.vercel.app/privacy" },
 }
 

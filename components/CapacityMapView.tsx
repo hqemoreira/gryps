@@ -132,6 +132,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
         ctaHref="/#advisor"
         ctaLabel={t.navCta}
         extraLinks={[
+          { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
           { href: "/signatures", label: lang === "en" ? "Signatures" : "Signatuurit" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
         ]}

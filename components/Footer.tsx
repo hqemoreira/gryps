@@ -37,6 +37,9 @@ export function Footer({
               {secondaryLink.label}
             </Link>
           )}
+          <Link href="/about" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
+            {lang === "fi" ? "Tietoa" : "About"}
+          </Link>
           <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", textDecoration: "none" }}>
             {lang === "fi" ? "Menetelmä" : "Methodology"}
           </Link>

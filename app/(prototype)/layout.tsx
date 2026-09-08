@@ -10,6 +10,7 @@ export default function PrototypeLayout({ children }: { children: React.ReactNod
   const pathname = usePathname()
 
   const navLinks = [
+    { href: "/about", label: "About" },
     { href: "/methodology", label: "Methodology" },
     { href: "/providers", label: "Providers" },
     { href: "/terms", label: "Terms" },

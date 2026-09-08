@@ -605,6 +605,9 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
             {lang === "fi" ? "Ei yhteyttä" : "None"}
           </button>
         </div>
+        <a href="/providers" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.04em", marginTop: 4 }}>
+          {t.providersCoi}
+        </a>
       </div>
 
       <div className="gryps-field-group" style={{ backgroundColor: "rgba(79,168,255,0.05)", borderColor: "rgba(79,168,255,0.2)" }}>
@@ -780,7 +783,8 @@ const COPY = {
     latLabel:   "LATITUDE",
     lngLabel:   "LONGITUDE",
     providersLabel: "CURRENT CONNECTIVITY PROVIDERS",
-    providersHint:  "Select all providers currently in use. Choose None if no satellite path is documented.",
+    providersHint:  "Select all providers currently in use. Choose None if no satellite path is documented. GRYPS has no commercial relationship with any provider listed.",
+    providersCoi: "No commercial relationships with ranked providers — see Providers.",
     boundsHint: "Coordinates must be within Nordic/Arctic bounds (lat 55–85°, lng −30–40°).",
     emailLabel: "OPTIONAL EMAIL",
     emailHint:  "Optional — stored with this run so we can email the report / notify when live monitoring launches. Not a newsletter.",
@@ -841,7 +845,8 @@ const COPY = {
     latLabel:   "LEVEYSASTE",
     lngLabel:   "PITUUSASTE",
     providersLabel: "NYKYISET YHTEYSPALVELUNTARJOAJAT",
-    providersHint:  "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittipolkua ei ole dokumentoitu.",
+    providersHint:  "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittipolkua ei ole dokumentoitu. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
+    providersCoi: "Ei kaupallisia suhteita rankattuihin toimittajiin — katso Toimittajat.",
     boundsHint: "Koordinaattien on oltava pohjoismaisella/arktisella alueella (lat 55–85°, lng −30–40°).",
     emailLabel: "VALINNAINEN SÄHKÖPOSTI",
     emailHint:  "Valinnainen — tallennetaan tähän ajoon, jotta voimme lähettää raportin / ilmoittaa kun live-seuranta käynnistyy. Ei uutiskirjettä.",
@@ -976,6 +981,7 @@ export default function HomePage() {
         ctaHref="#advisor"
         ctaLabel={t.navCta}
         extraLinks={[
+          { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
           { href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
           { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
