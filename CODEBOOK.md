@@ -1,17 +1,19 @@
 # GRYPS — Codebook
 
 > Non-commercial R&D — assessment-first satellite connectivity resilience scoring for Nordic/Arctic industrial contexts (Resilience Signature).
-> Stack: Next.js 16 App Router · TypeScript · CSS custom properties · Neon (PostgreSQL) · Vercel
+> Stack: Next.js 16 App Router · TypeScript · CSS custom properties · MapLibre GL · Neon (PostgreSQL) · Vercel
 
 ---
 
 ## Public posture
 
 - **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC.
-- **Object:** Resilience Signature (versioned). Supporting surfaces: `/methodology`, `/providers`, `/signatures`, `/map` (Capacity).
+- **Object:** Resilience Signature (deterministic engine **v0.3**). Supporting surfaces: `/methodology`, `/providers`, `/signatures`, `/map` (Capacity), `/about`.
+- **Landing:** Arctic ops-console composition — sticky Signature card, polar atmosphere around (not through) the Signature, GrypsMark footer lockup.
 - **Legal chrome:** Terms/Privacy labeled non-commercial R&D — not multi-section commercial “Legal”.
 - **Monitoring:** illustrative T0/T1 drift mock only. No freemium / free-trial CTAs.
 - **SEO:** `Allow: /` + indexed metadata (unlike shelved portfolio prototypes).
+- **i18n:** EN + FI only; language preference persisted; natural Finnish (not calques).
 
 ---
 
@@ -22,6 +24,8 @@
 | Framework | Next.js 16 App Router | Server components + API routes in one repo |
 | Styling | CSS custom properties (no Tailwind) | Theme switching via `document.documentElement.style.setProperty` — zero runtime overhead |
 | Fonts | `next/font/google` — Space Grotesk + JetBrains Mono | Eliminates render-blocking Google Fonts import |
+| Maps | MapLibre GL + key-free Esri raster tiles | Ops console maps without a Carto/tile API key (`lib/basemap.ts`) |
+| Scoring | Deterministic Signature engine v0.3 (`lib/deterministic-score.ts`) | Reproducible score / grade / risks / ranked providers |
 | Database | Neon serverless PostgreSQL (EU Frankfurt) | EU data residency for Nordic operators |
 | Analytics | Vercel Analytics | Cookieless, GDPR-compliant by default |
 | Deployment | Vercel | ~30s deploys from git push |
@@ -81,6 +85,12 @@ const t = COPY[lang]
 ```
 
 Do not reintroduce `PricingTiers` or paid ladder copy. Assessment surfaces: `app/methodology/page.tsx`, `app/providers/page.tsx`, versioned Signature metadata in `lib/signature-meta.ts`.
+
+---
+
+## Polar atmosphere (landing)
+
+Landing polar geometry is an **ops / methodology instrument**, not a live constellation feed. Atmosphere and aurora motifs support the Signature card — they must not replace it or bleed through the score surface. Sticky mobile CTA hides when the footer enters view so copyright stays readable. Implementation: `components/PolarAtmosphere.tsx`, hero composition in `app/page.tsx`.
 
 ---
 
@@ -251,14 +261,27 @@ useEffect(() => {
 gryps/
 ├── app/
 │   ├── layout.tsx              # Root layout — fonts, JSON-LD, AnimatedFavicon
-│   ├── page.tsx                # Entire landing page — all components in one file
+│   ├── page.tsx                # Landing — ops-console hero + Signature
+│   ├── about/                  # About
+│   ├── methodology/            # Assessment methodology (EN/FI)
+│   ├── providers/              # Provider catalog
+│   ├── signatures/             # Versioned Signature list + [slug]
+│   ├── map/                    # Capacity Map (MapLibre)
 │   ├── icon.tsx                # Static PNG favicon (32×32) via ImageResponse
-│   └── legal/
-│       ├── layout.tsx          # Shared legal nav + footer
-│       ├── terms/page.tsx      # Plain Terms — EN/FI
-│       └── privacy/page.tsx    # Plain Privacy — EN/FI
-└── components/
-    └── AnimatedFavicon.tsx     # Canvas RAF favicon
+│   ├── legal/                  # Terms + Privacy (EN/FI)
+│   └── api/                    # advise, contact, signatures, submissions
+├── components/
+│   ├── OpsConsoleMap.tsx       # Shared MapLibre ops map
+│   ├── CapacityMap*.tsx        # Capacity map shell
+│   ├── SignaturesMap.tsx       # Signatures map
+│   ├── PolarAtmosphere.tsx     # Landing polar geometry
+│   ├── GrypsMark.tsx           # Mark / lockup
+│   └── Footer.tsx / Header.tsx
+└── lib/
+    ├── deterministic-score.ts  # Signature engine v0.3
+    ├── basemap.ts              # Esri raster tile URLs
+    ├── ops-map-style.ts        # Shared MapLibre style
+    └── scoring.ts / signatures-db.ts / …
 ```
 
 ---
@@ -350,11 +373,14 @@ Spatineo Capacity Map–lite view: one screen for the portfolio of sites in
   not real-time “link up/down.”
 - Optional side-panel fields (`real_data_score`, terrain, Bittimittari gap) are
   enrichment already on the row; null when unavailable (e.g. non-FI sites).
-- Map tiles: Leaflet + OSM-compatible free tiles (avoid Carto styles that now require an API key).
-  No Esri / paid map SaaS.
+- Map tiles: **MapLibre GL** + key-free **Esri** imagery / dark raster basemap
+  (`lib/basemap.ts`, `lib/ops-map-style.ts`). Carto free styles now require an
+  API key — do not revert to them. Keep Esri attribution badge visible.
+  Still no paid map SaaS contract and **no** live link monitoring.
 
 Implementation: `lib/capacity-status.ts`, `components/CapacityMap.tsx`,
-`components/CapacityMapView.tsx`, `app/map/page.tsx` (`force-dynamic`).
+`components/CapacityMapView.tsx`, `components/OpsConsoleMap.tsx`,
+`components/SignaturesMap.tsx`, `app/map/page.tsx` (`force-dynamic`).
 
 ---
 

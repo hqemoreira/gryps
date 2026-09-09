@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GRYPS
 
-## Getting Started
+Non-commercial R&D — assessment-first **Resilience Signature** scoring for satellite connectivity resilience in Nordic / Arctic industrial contexts. Scores and documents; does **not** live-monitor links or sell a NOC.
 
-First, run the development server:
+**Live:** [gryps.vercel.app](https://gryps.vercel.app)
+
+## Surfaces
+
+| Path | Purpose |
+|------|---------|
+| `/` | Ops-console landing + Signature |
+| `/methodology` | Scoring methodology (EN/FI) |
+| `/providers` | Provider catalog |
+| `/signatures` | Versioned Signature portfolio |
+| `/map` | Capacity Map (MapLibre) |
+| `/about` | About |
+| `/legal/privacy`, `/legal/terms` | Non-commercial R&D notices |
+
+## Stack
+
+- Next.js 16 App Router · TypeScript · CSS custom properties
+- Deterministic Signature engine v0.3 (`lib/deterministic-score.ts`)
+- MapLibre GL + key-free Esri raster basemap
+- Neon Postgres (EU) · Mistral · Vercel Analytics
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Set via Vercel CLI / dashboard — never commit secrets.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Purpose |
+|----------|---------|
+| `NEON_DATABASE_URL` | Postgres (signatures / submissions) |
+| `MISTRAL_API_KEY` | Advisor / scoring paths that call Mistral |
 
-## Learn More
+## Docs
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Architecture and house rules: [`CODEBOOK.md`](./CODEBOOK.md). Also see `AGENTS.md` / `CLAUDE.md` for agent conventions.
