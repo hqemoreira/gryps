@@ -40,7 +40,7 @@ export function DocShell({
           : "Ei-kaupallinen T&K-prototyyppi")}
         footerTag={lang === "en"
           ? "Built in Finland for high-latitude resilience."
-          : "Rakennettu Suomessa korkean leveysasteen resilienssille."}
+          : "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten."}
         secondaryLink={{ href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" }}
       />
     </div>

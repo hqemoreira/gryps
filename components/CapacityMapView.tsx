@@ -71,18 +71,18 @@ const COPY = {
     tagline: "KAPASITEETTIKARTTA",
     title: "Missä yhteyksiin voi luottaa — ja missä ei",
     disclosure:
-      "Havainnollistava portfolio signature_sites-taulusta. Tila kuvaa Resilience Signature -mallin arvioimaa yhteyden resilienssiasentoa (arvosana/pisteet) — ei live-yhteyden tai linkkien seurantaa. T&K-prototyyppi · ei-kaupallinen tutkimus.",
+      "Havainnollistava portfolio signature_sites-taulusta. Tila kuvaa Resilience Signature -mallin arvioimaa yhteyden resilienssiasentoa (arvosana/pisteet) — ei reaaliaikaista yhteyksien seurantaa. T&K-prototyyppi · ei-kaupallinen tutkimus.",
     all: "Kaikki",
     source: "Lähde",
     lastUpdated: "Viimeksi pisteytetty",
-    score: "Signatuuri",
+    score: "Signature",
     realData: "Reaalidatanäyttö",
     terrain: "Maasto",
     gap: "Todellinen kuilu",
     none: "Ei valittua kohdetta — napsauta karttapistettä.",
-    viewSig: "Koko signatuuri →",
+    viewSig: "Koko Signature →",
     empty: "Ei kohteita tällä suodattimella.",
-    navCta: "Pisteytä kohteesi",
+    navCta: "Pisteytä kohde",
     loadingMap: "LADATAAN KARTTAA…",
   },
 }
@@ -133,7 +133,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
         ctaLabel={t.navCta}
         extraLinks={[
           { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
-          { href: "/signatures", label: lang === "en" ? "Signatures" : "Signatuurit" },
+          { href: "/signatures", label: lang === "en" ? "Signatures" : "Signaturet" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
         ]}
       />

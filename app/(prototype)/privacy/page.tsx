@@ -51,24 +51,24 @@ const COPY = {
     whatH: "Mitä käsittelemme",
     whatItems: [
       "Kohteen koordinaatit, toimiala, autonomia, kriittisyys ja valitut yhteystoimittajat — Signaturen laskentaa varten.",
-      "Valinnainen sähköposti — vain jos syötät sen; tallennetaan kyseisen demolähetyksen kanssa raporttikopiota varten, tai kertaluonteista “ilmoita kun live-seuranta käynnistyy” -pyyntöä varten.",
+      "Valinnainen sähköposti — vain jos syötät sen; tallennetaan kyseisen demolähetyksen kanssa raporttikopiota varten tai kertaluonteista \"ilmoita, kun reaaliaikainen seuranta käynnistyy\" -pyyntöä varten.",
       "Vercelin tekniset hosting-lokit (pyyntömetadata) sivuston ylläpitoon tarpeen mukaan.",
     ],
     basisH: "Miksi käsittelemme",
     basisBody:
-      "Valitset itse demoarvioinnin. Käsittely rajautuu kyseisen tutkimusprototyyppitulosteen tuottamiseen ja mahdolliseen jakamiseen sekä prototyypin ylläpitoon/virheenkorjaukseen. Ei markkinointilistaa eikä tietojen myyntiä.",
+      "Valitset itse demoarvioinnin. Käsittely rajautuu kyseisen tutkimusprototyyppitulosteen tuottamiseen ja mahdolliseen jakamiseen sekä prototyypin ylläpitoon ja virheenkorjaukseen. Ei markkinointilistaa eikä tietojen myyntiä.",
     processorsH: "Käsittelijät",
     processorsItems: [
       "Vercel — hosting (EU/US-edge alustan konfiguraation mukaan).",
       "Neon Postgres (EU) — valinnainen demolähetysten ja antamiesi sähköpostien tallennus.",
-      "Mistral AI (EU-hostattu API) — vain valinnainen suositusproosa; se ei koskaan muuta determinististä pistettä, arvosanaa, riskejä tai rankattuja toimittajia.",
+      "Mistral AI (EU-hostattu API) — vain valinnainen suositusproosa; se ei koskaan muuta determinististä pistettä, arvosanaa, riskejä tai toimittajasuosituksia.",
     ],
     retentionH: "Säilytys",
     retentionBody:
       "Demolähetyksiä voidaan säilyttää tämän T&K-prototyypin oppimista ja virheenkorjausta varten. Voit pyytää poistoa Ehdot-sivun lomakkeella tai osoitteesta hello@gryps.eu.",
     rightsH: "Oikeutesi",
     rightsItems: [
-      "Pyytää pääsyä tai poistoa lähettämällesi henkilötiedolle (sähköposti ja siihen liittyvä lähetys).",
+      "Pyytää pääsyä lähettämääsi henkilötietoon tai sen poistoa (sähköposti ja siihen liittyvä lähetys).",
       "Peruuttaa valinnainen sähköpostisuostumus pyytämällä poistoa.",
       "Ei analytiikkaevästeitä eikä markkinointiseurantaa tässä prototyypissä.",
     ],

@@ -13,7 +13,7 @@ const COPY = {
     error: "Failed to send. Please try again.",
   },
   fi: {
-    heading: "Yhteydenotto",
+    heading: "Ota yhteyttä",
     namePlaceholder: "Nimesi (valinnainen)",
     emailPlaceholder: "sähköposti@esimerkki.fi",
     messagePlaceholder: "Viestisi…",

@@ -38,16 +38,16 @@ const COPY = {
     navCta: "Score your site",
   },
   fi: {
-    tagline:      "RESILIENCE-SIGNATUURIT",
+    tagline:      "RESILIENCE SIGNATURET",
     title:        "Pisteytetty yhteyden resilienssi Pohjoismaissa, arktisella alueella ja Islannissa",
-    disclosure:   "Havainnollistavia, synteettisiä kohteita esittelyyn — todelliset koordinaatit, luodut kohdeprofiilit ja todelliset Resilience Signature -pisteet samasta pisteytysmallista kuin live-Advisor. T&K-prototyyppi.",
+    disclosure:   "Havainnollistavia, synteettisiä kohteita esittelyyn — todelliset koordinaatit, luodut kohdeprofiilit ja todelliset Resilience Signature -pisteet samasta pisteytysmallista kuin Advisorilla. T&K-prototyyppi.",
     allSectors:   "Kaikki toimialat", allAutonomy: "Kaikki autonomiatasot", allCriticality: "Kaikki kriittisyystasot",
     map: "Kartta", list: "Lista",
-    loading: "LADATAAN SIGNATUUREITA…", noMatch: "Yksikään kohde ei vastaa suodattimia.",
+    loading: "LADATAAN SIGNATUREJA…", noMatch: "Yksikään kohde ei vastaa suodattimia.",
     ctaHeading: "Pisteytä oma kohteesi",
-    ctaSub: "Luo tutkimus-Signature omille koordinaateillesi — sama malli. Ei-kaupallinen demo.",
-    ctaBtn: "Suorita demo-Advisor",
-    navCta: "Pisteytä kohteesi",
+    ctaSub: "Luo tutkimus-Signature omille koordinaateillesi — sama malli kuin yllä olevissa portfoliokohteissa. Ei-kaupallinen demo.",
+    ctaBtn: "Avaa demo-Advisor",
+    navCta: "Pisteytä kohde",
   },
 }
 

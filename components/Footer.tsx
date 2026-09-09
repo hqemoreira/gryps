@@ -20,11 +20,11 @@ const COPY = {
     modelMeta: `MODEL ${MODEL_SHORT} · ESPOO, FINLAND`,
   },
   fi: {
-    tagDefault: "Rakennettu Suomessa korkean leveysasteen resilienssille.",
+    tagDefault: "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
     product: "TUOTE",
     resources: "RESURSSIT",
     legal: "OIKEUDELLINEN",
-    score: "Pisteytä kohteeni",
+    score: "Pisteytä kohde",
     map: "Kapasiteettikartta",
     providers: "Toimittajat",
     about: "Tietoa",

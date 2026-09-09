@@ -380,7 +380,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
 
   function useMyLocation() {
     if (!navigator.geolocation) {
-      setGeoNote(lang === "fi" ? "Sijaintia ei tueta tällä laitteella." : "Geolocation is not available on this device.")
+      setGeoNote(lang === "fi" ? "Sijaintipalvelua ei ole saatavilla tällä laitteella." : "Geolocation is not available on this device.")
       return
     }
     setGeoBusy(true)
@@ -976,21 +976,21 @@ const COPY = {
     footerTag:    "Built in Finland for high-latitude resilience.",
   },
   fi: {
-    tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT, ARKTINEN JA ISLANTI",
-    navCta:     "Pisteytä kohteeni · ilmaiseksi",
-    h1:         "Tiedä pisteesi ennen kuin Arktinen paljastaa sen puolestasi.",
-    sub:        "Pisteet, arvosana, riskit ja rankatut toimittajat pohjoismaisille, arktisille ja islantilaisille kohteille — ~60 sekunnissa. Ilmaiseksi. Ei tiliä.",
+    tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT, ARKTINEN ALUE JA ISLANTI",
+    navCta:     "Pisteytä kohde · ilmaiseksi",
+    h1:         "Tiedä pisteesi ennen kuin arktiset olosuhteet tekevät sen puolestasi.",
+    sub:        "Pisteet, arvosana, riskit ja toimittajasuositukset pohjoismaisille, arktisille ja islantilaisille kohteille — noin minuutissa. Ilmaiseksi. Ei tiliä.",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
     heroSecondary: "Katso esimerkki-Signature",
     modelChip:  "Tutkimusprototyyppi · Malli v0.3",
     sampleCta:  "Katso esimerkki-Signature",
     nis2line:   "Tukee NIS2/CER-valmiusdokumentaatiota · Espoo, Suomi · T&K-prototyyppi",
-    statsL1:    "Palveluntarjoajaa indeksoitu",
-    statsL2:    "Kaikki orbitaalityypit",
-    statsL3:    "Napapiirin kattavuus",
-    liveCounter: "kohdetta arvioitu pohjoismaisessa ja arktisessa portfoliossa",
-    proofBand:  "Havainnollistava · ei live-seurantaa",
-    advisorCta: "Pisteytä kohteeni · ilmaiseksi",
+    statsL1:    "Toimittajaa hakemistossa",
+    statsL2:    "Kaikki radat",
+    statsL3:    "Napaseudun kattavuus",
+    liveCounter: "kohdetta arvioitu Pohjoismaiden ja arktisen alueen portfoliossa",
+    proofBand:  "Havainnollistava · ei reaaliaikaista seurantaa",
+    advisorCta: "Pisteytä kohde · ilmaiseksi",
     advisorSub: "~60 sekuntia · Ei tiliä · Tutkimusprototyyppi",
     sectorLabel:        "TOIMIALA",
     sectorPlaceholder:  "Valitse toimiala",
@@ -1000,48 +1000,48 @@ const COPY = {
     criticalityPlaceholder: "Valitse kriittisyystaso",
     latLabel:   "LEVEYSASTE",
     lngLabel:   "PITUUSASTE",
-    providersLabel: "NYKYISET YHTEYSPALVELUNTARJOAJAT",
-    providersHint:  "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittipolkua ei ole dokumentoitu. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
-    providersCoi: "Ei kaupallisia suhteita rankattuihin toimittajiin — katso Toimittajat.",
-    boundsHint: "Koordinaattien on oltava pohjoismaisella/arktisella alueella (lat 55–85°, lng −30–40°).",
+    providersLabel: "NYKYISET YHTEYSTOIMITTAJAT",
+    providersHint:  "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittiyhteyttä ei ole dokumentoitu. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
+    providersCoi: "Ei kaupallisia suhteita suositeltuihin toimittajiin — katso Toimittajat.",
+    boundsHint: "Koordinaattien on oltava Pohjoismaiden tai arktisen alueen rajoissa (lat 55–85°, lng −30–40°).",
     emailLabel: "VALINNAINEN SÄHKÖPOSTI",
-    emailHint:  "Valinnainen — tallennetaan tähän ajoon, jotta voimme lähettää raportin / ilmoittaa kun live-seuranta käynnistyy. Ei uutiskirjettä.",
-    emailOptionalNote: "Näet tulokset joka tapauksessa. Generoinnin jälkeen: Kopioi jaettava linkki (?sid=).",
-    runAdvisor: "Pisteytä kohteeni · ilmaiseksi",
-    analysing:  "Analysoidaan kohdetta…",
-    analyseAnother: "Analysoi toinen kohde",
-    telemetryLabel:  "Tutkimusprototyyppi · havainnollistava moottorilähtö",
+    emailHint:  "Valinnainen — tallennetaan tämän ajon yhteyteen, jotta voimme lähettää raportin tai ilmoittaa, kun reaaliaikainen seuranta käynnistyy. Ei uutiskirjettä.",
+    emailOptionalNote: "Näet tulokset joka tapauksessa. Generoinnin jälkeen voit kopioida jaettavan linkin (?sid=).",
+    runAdvisor: "Pisteytä kohde · ilmaiseksi",
+    analysing:  "Arvioidaan kohdetta…",
+    analyseAnother: "Arvioi toinen kohde",
+    telemetryLabel:  "Tutkimusprototyyppi · havainnollistava moottorin tuloste",
     telemetryHeader: "MOOTTORILOKI",
     topRiskLabel: "PÄÄRISKI",
     topRecLabel:  "SUOS #1",
     heroTopRisk:  "Ei varayhteyttä",
     problemL: "Miksi kohteet kaatuvat ilman Signaturea",
     problems: [
-      { title: "Nolla marginaalia.", body: "Harvester −30°C:ssa, offshore-tarkistus, etäanturiklusteri — yhteyskatko on turvallisuustapahtuma, ei haitta." },
-      { title: "Yksi polku. Ei varaa.", body: "Useimmat kohteet käyttävät yhtä satelliittiyhteyttä ilman dokumentoitua varajärjestelmää. Ohitusgeometria pysyy näkymättömänä, kunnes se iskee operaatioihin." },
-      { title: "Dokumentoimaton riski.", body: "NIS2 ja CER edellyttävät yhä useammin yhteysriskin näyttöä. Resilience Signature tukee valmiusdokumentaatiota — ei sertifiointia tai oikeudellista neuvontaa." },
+      { title: "Ei pelivaraa.", body: "Hakkuukone −30 °C:ssa, merellä tehtävä kirjaus, etäanturiryhmä — yhteyskatko on turvallisuustapahtuma, ei harmiton häiriö." },
+      { title: "Yksi yhteys. Ei varasuunnitelmaa.", body: "Useimmilla kohteilla on vain yksi satelliittiyhteys ilman dokumentoitua varajärjestelmää. Ohitusgeometria ja radan katkokset pysyvät näkymättöminä, kunnes ne iskevät toimintaan." },
+      { title: "Dokumentoimaton riski.", body: "NIS2 ja CER edellyttävät yhä useammin näyttöä yhteysriskistä. Resilience Signature tukee valmiusdokumentaatiota — se ei ole sertifiointi eikä oikeudellinen neuvonta." },
     ],
     howL:  "Miten Resilience Advisor toimii",
     steps: [
-      { n: "01", title: "Syötä kohteen profiili",  body: "Koordinaatit, toimiala ja nykyiset toimittajat. Korkeus ja maasto huomioidaan automaattisesti." },
-      { n: "02", title: "Aseta autonomiataso",      body: "Manuaalinen, etäoperoitu, autonominen tai sekoitettu. Pisteytyksen painot muuttuvat operatiivisen yhteyksiriippuvuuden mukaan." },
-      { n: "03", title: "Aseta kriittisyys",        body: "Standardi, korkea tai turvallisuuskriittinen. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
-      { n: "04", title: "Luo Signature",           body: "Pisteet, arvosana, riskitekijät, redundanssiaukot, rankatut toimittajat ja selkokielinen suositus — sekunneissa." },
+      { n: "01", title: "Syötä kohteen tiedot",    body: "Koordinaatit, toimiala ja nykyiset toimittajat. Korkeus ja maasto otetaan huomioon automaattisesti." },
+      { n: "02", title: "Valitse autonomiataso",    body: "Manuaalinen, etäohjattu, autonominen tai yhdistelmä. Pisteytyksen painot muuttuvat sen mukaan, kuinka riippuvainen toiminta on yhteydestä." },
+      { n: "03", title: "Valitse kriittisyys",      body: "Tavanomainen, korkea tai turvallisuuskriittinen. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
+      { n: "04", title: "Luo Signature",           body: "Pisteet, arvosana, riskitekijät, redundanssiaukot, toimittajasuositukset ja selkokielinen suositus — sekunneissa." },
     ],
-    examplesLabel: "ESIMERKIT RESILIENCE-SIGNATUUREISTA",
-    examplesSub: "Ennalta lasketut esimerkit siitä, mitä Resilience Advisor tuottaa. Suorita Advisor yllä live-arviointia varten.",
-    polarHeader: "KATTAVUUSALUE · POHJOISMAAT, ARKTINEN JA ISLANTI",
-    polarMapLabel: "DEMO-KARTTA · EI LIVE-SEURANTAA",
-    polarInstrumentTitle: "Korkean leveysasteen geometria",
-    polarInstrumentBody: "Havainnollistava polaariprojektio — leveyspiirit ja ohitusellipsit Lapin esimerkkikohteelle. Ei live-konstellaatiotelemetriaa.",
-    polarFact1: "Esimerkkikohde 68.2°N · yksi Starlink-polku",
+    examplesLabel: "ESIMERKKEJÄ RESILIENCE SIGNATUREISTA",
+    examplesSub: "Ennalta lasketut esimerkit siitä, mitä Resilience Advisor tuottaa. Aja Advisor yllä saadaksesi oman arvion.",
+    polarHeader: "KATTAVUUSALUE · POHJOISMAAT, ARKTINEN ALUE JA ISLANTI",
+    polarMapLabel: "DEMOKARTTA · EI REAALIAIKAISTA SEURANTAA",
+    polarInstrumentTitle: "Korkeiden leveysasteiden geometria",
+    polarInstrumentBody: "Havainnollistava polaariprojektio — leveyspiirit ja ohitusellipsit Lapin esimerkkikohteelle. Ei reaaliaikaista konstellaatiotelemetriaa.",
+    polarFact1: "Esimerkkikohde 68.2°N · yksi Starlink-yhteys",
     polarFact2: "Leveysastepaino laskee yli 70°N",
     polarMethodLink: "Katso pisteytyskaava →",
-    ctaH2:  "Resilienssi alkaa pisteidesi tuntemisesta.",
-    ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — yhteysriski pisteytetty ~60 sekunnissa.",
-    ctaBtn: "Pisteytä kohteeni · ilmaiseksi",
+    ctaH2:  "Resilienssi alkaa siitä, että tiedät pisteesi.",
+    ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — yhteysriski pisteytetään noin minuutissa.",
+    ctaBtn: "Pisteytä kohde · ilmaiseksi",
     viewSample: "Katso esimerkki-Signature →",
-    footerTag:    "Rakennettu Suomessa korkean leveysasteen resilienssille.",
+    footerTag:    "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
   },
 }
 
@@ -1131,13 +1131,15 @@ export default function HomePage() {
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 1010,
         backdropFilter: "blur(12px)",
       }}>
-        R&D PROTOTYPE · ESPOO, FINLAND · {lang === "en" ? "NOT FOR SALE" : "EI MYYNNISSÄ"}
+        {lang === "en"
+          ? "R&D PROTOTYPE · ESPOO, FINLAND · NOT FOR SALE"
+          : "T&K-PROTOTYYPPI · ESPOO, SUOMI · EI MYYNNISSÄ"}
       </div>
       <div className="gryps-aurora-topline gryps-no-print" aria-hidden="true" />
 
       <Header
         topOffset={30}
-        tagline="CONNECTIVITY INTELLIGENCE"
+        tagline={lang === "fi" ? "YHTEYSRESILIENSSI" : "CONNECTIVITY INTELLIGENCE"}
         lang={lang}
         onLangChange={setLang}
         ctaHref="#advisor"
@@ -1165,13 +1167,13 @@ export default function HomePage() {
           }}>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+              <div className="gryps-hero-eyebrow" style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 20 }}>
                 <div style={{
-                  width: 6, height: 6, borderRadius: "50%",
+                  width: 6, height: 6, borderRadius: "50%", flexShrink: 0, marginTop: 4,
                   background: "var(--aurora-gradient)",
                   boxShadow: "0 0 10px color-mix(in srgb, var(--aurora-1) 60%, transparent)",
                 }} />
-                <span style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
+                <span className="gryps-hero-tag" style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
               </div>
 
               <h1 className="gryps-hero-h1 text-display" style={{
@@ -1182,7 +1184,7 @@ export default function HomePage() {
                 letterSpacing: "-0.02em",
                 color: "var(--text)",
                 marginBottom: 20,
-                maxWidth: "13ch",
+                maxWidth: lang === "fi" ? "22ch" : "13ch",
               }}>
                 {t.h1}
               </h1>

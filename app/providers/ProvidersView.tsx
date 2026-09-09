@@ -13,10 +13,10 @@ const COVERAGE_LABEL: Record<DocLang, Record<string, string>> = {
   },
   fi: {
     full: "70°N+ ilmoitettu",
-    improving: "70°N+ paranee",
+    improving: "70°N+ paranemassa",
     limited: "70°N+ rajallinen",
     planned: "Suunnitteilla",
-    unsuitable: "Ei sovellu napaseudun primääriksi",
+    unsuitable: "Ei sovellu napaseudun pääyhteydeksi",
   },
 }
 
@@ -32,12 +32,12 @@ const COPY = {
   },
   fi: {
     eyebrow: `GRYPS · TOIMITTAJAHAKEMISTO · ${PROVIDER_INDEX_COUNT} OPERAATTORIA`,
-    h1: "Rankkauksessa viitatut operaattorit",
+    h1: "Suosituksissa viitatut operaattorit",
     intro:
-      "Tämä on kuratoitu lista julkisesti tunnetuista satelliittioperaattoreista — ei live-kattavuuskartta, SLA eikä kumppanuus. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin. Kattavuusmerkinnät perustuvat fysiikkaan ja julkaistuun orbitaaliluokkaan, ei mitattuun ohitusdataan.",
-    headers: ["Toimittaja", "Orbitaali", "Luokka", "70°N+", "Huomio"] as const,
+      "Tämä on kuratoitu lista julkisesti tunnetuista satelliittioperaattoreista — ei reaaliaikainen kattavuuskartta, SLA eikä kumppanuus. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin. Kattavuusmerkinnät perustuvat fysiikkaan ja julkaistuun rataluokkaan, ei mitattuun ohitusdataan.",
+    headers: ["Toimittaja", "Rata", "Luokka", "70°N+", "Huomio"] as const,
     methodologyLink: "Pisteytysmenetelmä",
-    advisorLink: "Aja demo-Advisor",
+    advisorLink: "Avaa demo-Advisor",
   },
 } as const
 

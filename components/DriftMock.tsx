@@ -128,7 +128,7 @@ export function DriftMock({ lang = "en" }: { lang?: "en" | "fi" }) {
           </div>
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-amber)", marginTop: 8 }}>
             {drop > 0
-              ? (lang === "fi" ? `Pisteet laskeneet ${drop} T0:sta.` : `Score down ${drop} from T0.`)
+              ? (lang === "fi" ? `Pisteet laskeneet ${drop} T0-tasosta.` : `Score down ${drop} from T0.`)
               : (lang === "fi" ? "T0-lähtötaso." : "At T0 baseline.")}
           </p>
         </div>
@@ -181,7 +181,7 @@ export function DriftMock({ lang = "en" }: { lang?: "en" | "fi" }) {
           backgroundColor: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)",
         }}>
           {lang === "fi"
-            ? "Syy (havainnollistus): Iridium-ohitusgeometria heikkeni ~12 % Q3:ssa / kausivaihtelu."
+            ? "Syy (havainnollistus): Iridium-ohitusgeometria heikkeni noin 12 % Q3:ssa / kausivaihtelu."
             : "Reason (illustrative): Iridium pass geometry degraded ~12% in Q3 / seasonal window."}
         </p>
       )}

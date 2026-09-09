@@ -1063,11 +1063,25 @@ body {
   }
   .gryps-nav-cta {
     font-size: 11px;
-    padding: 0 12px;
+    padding: 0 10px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+    max-width: min(100%, 9.5rem);
   }
   .gryps-banner { font-size: 8px !important; letter-spacing: 0.03em !important; padding: 6px 12px !important; }
   .gryps-section-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .gryps-hero-h1 { font-size: clamp(1.85rem, 7.5vw, 2.15rem) !important; }
+  .gryps-hero-tag {
+    letter-spacing: 0.08em !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  .gryps-hero-h1 {
+    font-size: clamp(1.85rem, 7.5vw, 2.15rem) !important;
+    max-width: 100% !important;
+    overflow-wrap: break-word;
+  }
   .gryps-hero-sub { font-size: 15px !important; max-width: 100% !important; }
   .gryps-stats-row { gap: 20px !important; flex-wrap: wrap !important; }
   .gryps-steps-grid { grid-template-columns: 1fr !important; }

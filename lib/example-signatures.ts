@@ -12,7 +12,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
   {
     id: "maritime-offshore",
     title: "Maritime — Offshore Platform, Arctic Norway",
-    titleFi: "Merenkulku — Offshore-alusta, arktinen Norja",
+    titleFi: "Merenkulku — Merellä toimiva alusta, arktinen Norja",
     input: {
       lat: 71.0, lng: 25.9,
       sector: "maritime",
@@ -84,7 +84,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
   {
     id: "forestry-mixed",
     title: "Forestry — Harvester Fleet, Finnish Lapland",
-    titleFi: "Metsätalous — Harvesterilaivaston, Suomen Lappi",
+    titleFi: "Metsätalous — Hakkuukonelaivasto, Suomen Lappi",
     input: {
       lat: 68.2, lng: 27.4,
       sector: "forestry",

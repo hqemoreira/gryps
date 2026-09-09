@@ -29,10 +29,10 @@ const COPY = {
     eyebrow: "GRYPS · TIETOA",
     h1: "Kuka on GRYPS:n takana",
     intro:
-      "GRYPS on ei-kaupallinen tutkimus- ja kehitysprototyyppi, jota ylläpitää Henrique Moreira Espoossa, Suomessa. Se pisteyttää satelliittiyhteyden resilienssiä pohjoismaisissa, arktisissa ja islantilaisissa kohteissa — oppimista ja portfoliodemonstraatiota varten, ei kaupallisena palveluna.",
+      "GRYPS on ei-kaupallinen tutkimus- ja kehitysprototyyppi, jota ylläpitää Henrique Moreira Espoossa. Se pisteyttää satelliittiyhteyksien resilienssiä pohjoismaisissa, arktisissa ja islantilaisissa kohteissa — oppimista ja portfoliodemonstraatiota varten, ei kaupallisena palveluna.",
     purposeH2: "Tarkoitus",
     purposeP:
-      "Kriittisten toimijoiden on yhä useammin dokumentoitava yhteysriski. GRYPS tuottaa versioidun Resilience Signaturen (pisteet, arvosana, riskit, rankatut vaihtoehdot) noin minuutissa, jotta yksittäisen toimittajan ja korkean leveysasteen aukot näkyvät ennen kuin niistä tulee turvallisuustapahtumia. Tulosteet tukevat NIS2/CER-valmiusdokumentaatiota — ne eivät ole sertifiointi tai oikeudellinen neuvonta.",
+      "Kriittisten toimijoiden on yhä useammin dokumentoitava yhteysriski. GRYPS tuottaa versioidun Resilience Signaturen (pisteet, arvosana, riskit, toimittajasuositukset) noin minuutissa, jotta yhden toimittajan ja korkeiden leveysasteiden riskit näkyvät ennen kuin niistä tulee turvallisuustapahtumia. Tulosteet tukevat NIS2/CER-valmiusdokumentaatiota — ne eivät ole sertifiointi eivätkä oikeudellinen neuvonta.",
     identityH2: "Identiteetti",
     identityItems: [
       "Ylläpitäjä: Henrique Moreira · Espoo, Suomi",
@@ -45,7 +45,7 @@ const COPY = {
     providers: "Toimittajahakemisto (ei kaupallisia suhteita)",
     privacy: "Tietosuoja",
     terms: "Ehdot ja yhteydenotto",
-    advisor: "Aja demo-Advisor",
+    advisor: "Avaa demo-Advisor",
   },
 } as const
 

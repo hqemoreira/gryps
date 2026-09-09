@@ -28,7 +28,7 @@ const COPY = {
       "Ei rekisteröityä yritystä. Ei tuloja. Ei kaupallista toimintaa.",
       "Ei takuita. Sisältö ja demo-Resilience Signature -tulosteet tarjotaan sellaisenaan tiedotus- ja oppimistarkoituksiin.",
       "Tätä T&K-prototyyppiä ei myydä eikä tarjota kaupallisena palveluna.",
-      "Advisor ei ole kenttämittaus, live-kattavuus eikä vakuutus tai oikeudellinen neuvonta.",
+      "Advisor ei ole kenttämittaus, reaaliaikainen satelliittikattavuus eikä vakuutus tai oikeudellinen neuvonta.",
       "Käytä alla olevaa yhteydenottolomaketta tavoittaaksesi ylläpitäjän.",
     ],
     privacyLink: "Tietosuoja →",
