@@ -7,13 +7,21 @@
 
 ## Public posture
 
-- **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC.
+- **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC. Forge is private ops (noindex).
 - **Object:** Resilience Signature (deterministic engine **v0.3**). Supporting surfaces: `/methodology`, `/providers`, `/signatures`, `/map` (Capacity), `/about`.
 - **Landing:** Arctic ops-console composition — sticky Signature card, polar atmosphere around (not through) the Signature, GrypsMark footer lockup.
 - **Legal chrome:** Terms/Privacy labeled non-commercial R&D — not multi-section commercial “Legal”.
 - **Monitoring:** illustrative T0/T1 drift mock only. No freemium / free-trial CTAs.
 - **SEO:** `Allow: /` + indexed metadata (unlike shelved portfolio prototypes).
 - **i18n:** EN + FI only; language preference persisted; natural Finnish (not calques).
+- **GitHub front door:** public `README.md` (posture + stack + how to run); architecture stays in this codebook. Proprietary `LICENSE` harmonized with sibling portfolio repos.
+
+### Changelog — 2026-09
+
+- Public README shipped as GitHub front door (posture + stack + how to run); architecture stays in this codebook.
+- Proprietary LICENSE harmonized across the portfolio (same wording family as sibling repos).
+- Active/indexed: Portfolio + GRYPS only. Forge is private ops (noindex).
+- Signature engine v0.3; MapLibre + Esri basemap; Arctic ops-console landing; FI mobile polish + language persistence.
 
 ---
 
