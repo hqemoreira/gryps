@@ -1,0 +1,35 @@
+Copyright (c) 2026 Henrique Moreira
+All rights reserved.
+
+PROPRIETARY SOFTWARE LICENSE
+
+This repository contains proprietary source code owned exclusively by
+Henrique Moreira ("ghostcat0to1").
+
+PERMITTED:
+- Viewing and reading this code for educational and reference purposes
+- Forking this repository on GitHub for the purpose of submitting
+  pull requests or issues to the original repository
+- Running this code locally for personal, non-commercial evaluation
+
+NOT PERMITTED without explicit written permission from the copyright holder:
+- Using this code, in whole or in part, in any commercial product or service
+- Copying, modifying, merging, publishing, distributing, or sublicensing
+  this code or any derivative works
+- Deploying this code to serve third parties
+- Reverse engineering this code to build a competing product or service
+- Removing or altering this copyright notice
+
+PRODUCT:     GRYPS
+DESCRIPTION: Non-commercial R&D — Resilience Signature scoring
+WEBSITE:     https://gryps.vercel.app
+
+This software is provided "as is", without warranty of any kind.
+The author accepts no liability arising from the use of this software.
+
+For licensing inquiries or commercial use:
+  Email:  hqe.moreira@gmail.com
+  Web:    https://henriquemoreira.eu
+  GitHub: https://github.com/ghostcat0to1
+
+(c) 2026 Henrique Moreira. All Rights Reserved.

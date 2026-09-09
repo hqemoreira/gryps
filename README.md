@@ -42,3 +42,7 @@ Set via Vercel CLI / dashboard — never commit secrets.
 ## Docs
 
 Architecture and house rules: [`CODEBOOK.md`](./CODEBOOK.md). Also see `AGENTS.md` / `CLAUDE.md` for agent conventions.
+
+## License
+
+Proprietary — see [`LICENSE`](./LICENSE). All rights reserved.
