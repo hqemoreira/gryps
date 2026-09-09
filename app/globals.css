@@ -298,6 +298,36 @@ body {
   pointer-events: none;
 }
 
+/* Homepage disclosure + nav share one fixed stack so FI wrap never clips under nav */
+.gryps-top-chrome {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1010;
+}
+.gryps-top-chrome .gryps-banner {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  z-index: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+  padding: 6px 16px;
+}
+.gryps-top-chrome .gryps-aurora-topline {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  z-index: auto;
+}
+.gryps-top-chrome .gryps-nav-inner {
+  width: 100%;
+}
+
 .gryps-signature-elevated {
   position: relative;
   z-index: 2;
@@ -1064,21 +1094,27 @@ body {
   .gryps-nav-cta {
     font-size: 11px;
     padding: 0 10px;
-    white-space: normal;
-    text-align: center;
-    line-height: 1.25;
-    max-width: min(100%, 9.5rem);
+    white-space: nowrap;
+    max-width: none;
   }
-  .gryps-banner { font-size: 8px !important; letter-spacing: 0.03em !important; padding: 6px 12px !important; }
+  .gryps-banner,
+  .gryps-top-chrome .gryps-banner {
+    font-size: 8px !important;
+    letter-spacing: 0.02em !important;
+    padding: 6px 12px !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    line-height: 1.35 !important;
+  }
   .gryps-section-pad { padding-left: 20px !important; padding-right: 20px !important; }
   .gryps-hero-tag {
-    letter-spacing: 0.08em !important;
+    letter-spacing: 0.06em !important;
     overflow-wrap: anywhere;
     word-break: break-word;
     max-width: 100%;
   }
   .gryps-hero-h1 {
-    font-size: clamp(1.85rem, 7.5vw, 2.15rem) !important;
+    font-size: clamp(1.7rem, 7vw, 2.05rem) !important;
     max-width: 100% !important;
     overflow-wrap: break-word;
   }
@@ -1162,7 +1198,11 @@ body {
 }
 
 @media (max-width: 400px) {
-  .gryps-banner { font-size: 7px !important; letter-spacing: 0.01em !important; }
+  .gryps-banner,
+  .gryps-top-chrome .gryps-banner {
+    font-size: 7px !important;
+    letter-spacing: 0.01em !important;
+  }
 }
 
 /* ── Print — Resilience Signature PDF export ──────────────────────────────── */

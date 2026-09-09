@@ -8,6 +8,7 @@ type ExtraLink = { href: string; label: string }
 
 export function Header({
   topOffset = 0,
+  embedded = false,
   tagline,
   lang,
   onLangChange,
@@ -17,6 +18,8 @@ export function Header({
   extraLinks,
 }: {
   topOffset?: number
+  /** When true, sits in TopChrome flow (not independently fixed). */
+  embedded?: boolean
   tagline?: string
   lang?: "en" | "fi"
   onLangChange?: (l: "en" | "fi") => void
@@ -32,11 +35,11 @@ export function Header({
     <header
       className="gryps-nav-inner"
       style={{
-        position: "fixed",
-        top: topOffset,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
+        position: embedded ? "relative" : "fixed",
+        top: embedded ? undefined : topOffset,
+        left: embedded ? undefined : 0,
+        right: embedded ? undefined : 0,
+        zIndex: embedded ? undefined : 1000,
         borderBottom: "1px solid var(--border)",
         backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
         backdropFilter: "blur(12px)",

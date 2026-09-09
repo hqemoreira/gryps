@@ -8,6 +8,7 @@ import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useTheme } from "@/context/ThemeContext"
+import { useLang } from "@/lib/use-lang"
 
 const SignaturesMap = dynamic(() => import("@/components/SignaturesMap").then(m => m.SignaturesMap), {
   ssr: false,
@@ -52,7 +53,7 @@ const COPY = {
 }
 
 export default function SignaturesPage() {
-  const [lang, setLang] = useState<"en" | "fi">("en")
+  const [lang, setLang] = useLang()
   const { dark } = useTheme()
   const t = COPY[lang]
 

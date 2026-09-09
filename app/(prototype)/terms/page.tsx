@@ -1,7 +1,7 @@
 "use client"
-import { useState } from "react"
 import Link from "next/link"
 import { ContactForm } from "@/components/ContactForm"
+import { useLang } from "@/lib/use-lang"
 
 const COPY = {
   en: {
@@ -37,7 +37,7 @@ const COPY = {
 }
 
 export default function TermsPage() {
-  const [lang, setLang] = useState<"en" | "fi">("en")
+  const [lang, setLang] = useLang()
   const t = COPY[lang]
 
   return (

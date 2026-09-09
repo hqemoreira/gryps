@@ -5,7 +5,9 @@ import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type Real
 import { GrypsMark } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
+import { TopChrome } from "@/components/TopChrome"
 import { grypsCopyright } from "@/lib/gryps-copyright"
+import { useLang } from "@/lib/use-lang"
 import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
 import { PROVIDER_INDEX_COUNT } from "@/lib/providers"
 import { DriftMock } from "@/components/DriftMock"
@@ -976,8 +978,8 @@ const COPY = {
     footerTag:    "Built in Finland for high-latitude resilience.",
   },
   fi: {
-    tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT, ARKTINEN ALUE JA ISLANTI",
-    navCta:     "Pisteytä kohde · ilmaiseksi",
+    tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT · ARKTIS · ISLANTI",
+    navCta:     "Pisteytä kohde",
     h1:         "Tiedä pisteesi ennen kuin arktiset olosuhteet tekevät sen puolestasi.",
     sub:        "Pisteet, arvosana, riskit ja toimittajasuositukset pohjoismaisille, arktisille ja islantilaisille kohteille — noin minuutissa. Ilmaiseksi. Ei tiliä.",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
@@ -990,7 +992,7 @@ const COPY = {
     statsL3:    "Napaseudun kattavuus",
     liveCounter: "kohdetta arvioitu Pohjoismaiden ja arktisen alueen portfoliossa",
     proofBand:  "Havainnollistava · ei reaaliaikaista seurantaa",
-    advisorCta: "Pisteytä kohde · ilmaiseksi",
+    advisorCta: "Pisteytä kohde",
     advisorSub: "~60 sekuntia · Ei tiliä · Tutkimusprototyyppi",
     sectorLabel:        "TOIMIALA",
     sectorPlaceholder:  "Valitse toimiala",
@@ -1007,7 +1009,7 @@ const COPY = {
     emailLabel: "VALINNAINEN SÄHKÖPOSTI",
     emailHint:  "Valinnainen — tallennetaan tämän ajon yhteyteen, jotta voimme lähettää raportin tai ilmoittaa, kun reaaliaikainen seuranta käynnistyy. Ei uutiskirjettä.",
     emailOptionalNote: "Näet tulokset joka tapauksessa. Generoinnin jälkeen voit kopioida jaettavan linkin (?sid=).",
-    runAdvisor: "Pisteytä kohde · ilmaiseksi",
+    runAdvisor: "Pisteytä kohde",
     analysing:  "Arvioidaan kohdetta…",
     analyseAnother: "Arvioi toinen kohde",
     telemetryLabel:  "Tutkimusprototyyppi · havainnollistava moottorin tuloste",
@@ -1039,7 +1041,7 @@ const COPY = {
     polarMethodLink: "Katso pisteytyskaava →",
     ctaH2:  "Resilienssi alkaa siitä, että tiedät pisteesi.",
     ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — yhteysriski pisteytetään noin minuutissa.",
-    ctaBtn: "Pisteytä kohde · ilmaiseksi",
+    ctaBtn: "Pisteytä kohde",
     viewSample: "Katso esimerkki-Signature →",
     footerTag:    "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
   },
@@ -1103,8 +1105,10 @@ function ExampleCard({
 }
 
 export default function HomePage() {
-  const [lang, setLang] = useState<"en" | "fi">("en")
+  const [lang, setLang] = useLang()
   const [siteCount, setSiteCount] = useState<number | null>(null)
+  const [chromeH, setChromeH] = useState(82)
+  const chromeRef = useRef<HTMLDivElement>(null)
   const t = COPY[lang]
   const modelChip = useMemo(() => t.modelChip.replace("v0.3", modelVersionDisplay()), [t.modelChip])
 
@@ -1115,48 +1119,59 @@ export default function HomePage() {
       .catch(() => setSiteCount(null))
   }, [])
 
+  useEffect(() => {
+    const el = chromeRef.current
+    if (!el) return
+    const sync = () => setChromeH(Math.ceil(el.getBoundingClientRect().height))
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [lang])
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
 
-      {/* Non-commercial banner — single top disclosure */}
-      <div className="gryps-banner gryps-no-print" style={{
-        backgroundColor: "rgba(245,184,74,0.06)",
-        borderBottom: "1px solid rgba(245,184,74,0.2)",
-        padding: "6px 32px",
-        textAlign: "center",
-        fontFamily: "var(--font-data)",
-        fontSize: 9,
-        color: "var(--accent-amber)",
-        letterSpacing: "0.07em",
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 1010,
-        backdropFilter: "blur(12px)",
-      }}>
-        {lang === "en"
-          ? "R&D PROTOTYPE · ESPOO, FINLAND · NOT FOR SALE"
-          : "T&K-PROTOTYYPPI · ESPOO, SUOMI · EI MYYNNISSÄ"}
-      </div>
-      <div className="gryps-aurora-topline gryps-no-print" aria-hidden="true" />
-
-      <Header
-        topOffset={30}
-        tagline={lang === "fi" ? "YHTEYSRESILIENSSI" : "CONNECTIVITY INTELLIGENCE"}
-        lang={lang}
-        onLangChange={setLang}
-        ctaHref="#advisor"
-        ctaLabel={t.navCta}
-        extraLinks={[
-          { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
-          { href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" },
-          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
-          { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
-        ]}
-      />
+      <TopChrome
+        ref={chromeRef}
+        banner={
+          <div className="gryps-banner" style={{
+            backgroundColor: "rgba(245,184,74,0.06)",
+            borderBottom: "1px solid rgba(245,184,74,0.2)",
+            textAlign: "center",
+            fontFamily: "var(--font-data)",
+            fontSize: 9,
+            color: "var(--accent-amber)",
+            letterSpacing: "0.06em",
+            backdropFilter: "blur(12px)",
+          }}>
+            {lang === "en"
+              ? "R&D PROTOTYPE · ESPOO, FINLAND · NOT FOR SALE"
+              : "T&K-PROTOTYYPPI · ESPOO · EI MYYNNISSÄ"}
+          </div>
+        }
+      >
+        <Header
+          embedded
+          tagline={lang === "fi" ? "YHTEYSRESILIENSSI" : "CONNECTIVITY INTELLIGENCE"}
+          lang={lang}
+          onLangChange={setLang}
+          ctaHref="#advisor"
+          ctaLabel={t.navCta}
+          extraLinks={[
+            { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
+            { href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" },
+            { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
+            { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
+          ]}
+        />
+      </TopChrome>
 
       {/* Hero */}
       <section
         id="gryps-hero"
         className="gryps-section-pad gryps-hero-pad gryps-hero-aurora gryps-no-print"
-        style={{ paddingTop: 148, paddingBottom: "var(--section-y)", paddingLeft: "var(--pad-x)", paddingRight: "var(--pad-x)" }}
+        style={{ paddingTop: chromeH + 24, paddingBottom: "var(--section-y)", paddingLeft: "var(--pad-x)", paddingRight: "var(--pad-x)" }}
       >
         <div className="gryps-content">
           <div className="gryps-hero-grid" style={{
@@ -1184,7 +1199,7 @@ export default function HomePage() {
                 letterSpacing: "-0.02em",
                 color: "var(--text)",
                 marginBottom: 20,
-                maxWidth: lang === "fi" ? "22ch" : "13ch",
+                maxWidth: lang === "fi" ? "min(100%, 24ch)" : "13ch",
               }}>
                 {t.h1}
               </h1>

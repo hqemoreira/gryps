@@ -6,6 +6,7 @@ import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useTheme } from "@/context/ThemeContext"
+import { useLang } from "@/lib/use-lang"
 import {
   CAPACITY_STATUS_COLOR,
   capacityStatusLabel,
@@ -102,7 +103,7 @@ function formatWhen(iso: string | null, lang: "en" | "fi"): string {
 }
 
 export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
-  const [lang, setLang] = useState<"en" | "fi">("en")
+  const [lang, setLang] = useLang()
   const { dark } = useTheme()
   const t = COPY[lang]
   const [filter, setFilter] = useState<CapacityStatus | "all">("all")

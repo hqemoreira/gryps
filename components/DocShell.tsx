@@ -1,10 +1,11 @@
 "use client"
-import { useState, type ReactNode } from "react"
+import { type ReactNode } from "react"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { grypsCopyright } from "@/lib/gryps-copyright"
+import { useLang, type Lang } from "@/lib/use-lang"
 
-export type DocLang = "en" | "fi"
+export type DocLang = Lang
 
 export function DocShell({
   children,
@@ -15,7 +16,7 @@ export function DocShell({
   ctaHref?: string
   ctaLabel?: string
 }) {
-  const [lang, setLang] = useState<DocLang>("en")
+  const [lang, setLang] = useLang()
   const content = typeof children === "function" ? children(lang) : children
 
   return (
