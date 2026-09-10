@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { getSiteBySlug, getAllSites } from "@/lib/signatures-db"
 import { ResilienceOutput } from "@/components/ResilienceOutput"
+import { GrypsPrintBrand } from "@/components/GrypsMark"
 import { gradeColor } from "@/lib/resilience-colors"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
@@ -73,6 +74,7 @@ export default async function SignatureSitePage({ params }: Props) {
         </div>
 
         <div className="gryps-print-target">
+          <GrypsPrintBrand />
           {/* Site header */}
           <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>
             RESILIENCE SIGNATURE

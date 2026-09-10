@@ -18,6 +18,7 @@
 
 ### Changelog — 2026-09
 
+- Advisor funnel: anonymous abbreviated Initial Assessment → email magic-link unlock → full report. No Google Sign-In.
 - Public README shipped as GitHub front door (posture + stack + how to run); architecture stays in this codebook.
 - Proprietary LICENSE harmonized across the portfolio (same wording family as sibling repos).
 - Active/indexed: Portfolio + GRYPS only. Forge is private ops (noindex).
@@ -323,10 +324,25 @@ something addressed here.
 
 | Key | Used in | Purpose |
 |---|---|---|
-| `NEON_DATABASE_URL` | `api/advise/route.ts`, `lib/signatures-db.ts` | Neon PostgreSQL connection string |
-| `MISTRAL_API_KEY` | `lib/scoring.ts` | Mistral AI resilience scoring |
+| `NEON_DATABASE_URL` | `api/advise/*`, `lib/signatures-db.ts`, `api/notify/verify` | Neon PostgreSQL connection string |
+| `MISTRAL_API_KEY` | `lib/scoring.ts` | Optional Mistral recommendation prose |
+| `RESEND_API_KEY` | `lib/mail.ts` | Send unlock confirmation emails (magic link) |
+| `RESEND_FROM` | `lib/mail.ts` | From address, e.g. `GRYPS <hello@gryps.eu>` (falls back to Resend onboarding sender) |
+| `NEXT_PUBLIC_APP_URL` | `lib/mail.ts` | Canonical site origin for magic-link URLs (prefer over Vercel preview host) |
+| `ALLOW_DEV_VERIFY_URL` | `api/advise/unlock` | If `1`, return `devVerifyUrl` when mail send fails (also auto in non-production) |
 
-Set in: Vercel → gryps project → Settings → Environment Variables
+Set in: Vercel → gryps project → Settings → Environment Variables  
+(or `vercel env add` for each key). Do not commit secrets.
+
+### Advisor funnel (product)
+
+- Anonymous `/api/advise` returns **abbreviated** result; full `output` JSON stays in `advisor_submissions`.
+- Unlock: `POST /api/advise/unlock` → `notify_requests` row + Resend magic link → `GET /api/notify/verify?token=…` sets `verified_at` / `unlocked_at`.
+- Soft anonymous budget: client `localStorage` key `gryps-anon-runs` (max 3) + existing IP rate limit (5/hour).
+- Non-identifying feedback: `POST /api/advise/feedback` → `advisor_submissions.use_case`.
+- Forge should prefer **verified** `notify_requests` (+ contact emails) as identified interest; raw anonymous runs stay Anonymous.
+
+Manual unlock tests: `henrique+test@henriquemoreira.eu`.
 
 ---
 
@@ -351,7 +367,7 @@ legal pages (footer-linked). Both locales must stay aligned on:
 - Non-commercial research / demonstration prototype — no company, no revenue, no sale
 - AI processing disclosed: **Mistral** (+ Vercel hosting) for demonstration Resilience Signature
 - No marketing tracking / analytics cookies claimed in Privacy
-- Optional email may be stored with demo submissions in Neon (EU); deletion via `hqe.moreira@gmail.com`
+- Optional email only when the user requests full-assessment unlock / save / updates; confirmation via magic link (Resend). Deletion via `hello@gryps.eu` or Terms contact form
 - Point-of-exposure UI: `[AI]` badge remains on Advisor outputs; Terms link is `/legal/terms`
 
 This is product copy/compliance alignment — not legal advice.
@@ -399,6 +415,8 @@ Implementation: `lib/capacity-status.ts`, `components/CapacityMap.tsx`,
 | Key | Type | Class |
 |---|---|---|
 | `gryps-theme` | localStorage | Functional UI preference |
+| `gryps-lang` | localStorage | Language preference (EN/FI) |
+| `gryps-anon-runs` | localStorage | Soft count of free anonymous Advisor runs |
 | Vercel Analytics (`@vercel/analytics`) | — | Cookieless |
 
 No advertising trackers.

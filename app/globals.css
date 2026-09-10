@@ -84,6 +84,35 @@ body {
 
 .mono { font-family: var(--font-data); }
 .gryps-print-only { display: none; }
+/* Screen: keep letterhead out of the layout (still in DOM for print). */
+.gryps-print-letterhead {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.gryps-print-letterhead-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.gryps-print-letterhead-wordmark {
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  color: #0B1220;
+  line-height: 1.1;
+}
+.gryps-print-letterhead-sub {
+  font-family: var(--font-data), ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #555555;
+  line-height: 1.2;
+}
 .gryps-basemap-dim {
   filter: brightness(0.72) saturate(0.85);
 }
@@ -1228,7 +1257,31 @@ body {
 
   header, footer, .gryps-no-print, .gryps-sticky-cta { display: none !important; }
 
-  .gryps-print-target { margin: 0; padding: 24px; }
+  /* Leave room at top so fixed letterhead does not collide with score card */
+  .gryps-print-target {
+    margin: 0;
+    padding: 56px 24px 24px;
+    position: relative;
+  }
+
+  /* Top-left corner letterhead on every printed page (company-doc pattern) */
+  .gryps-print-letterhead {
+    display: flex !important;
+    position: fixed !important;
+    top: 0.45in !important;
+    left: 0.5in !important;
+    z-index: 9999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   .gryps-print-only { display: block !important; }
   .gryps-print-target > * { break-inside: avoid; }
   a { text-decoration: none !important; color: inherit !important; }
