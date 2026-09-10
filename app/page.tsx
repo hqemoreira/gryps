@@ -1324,6 +1324,7 @@ export default function HomePage() {
             { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
             { href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" },
             { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
+            { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
             { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
           ]}
         />

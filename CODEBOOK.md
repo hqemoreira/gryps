@@ -8,16 +8,17 @@
 ## Public posture
 
 - **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC. Forge is private ops (noindex).
-- **Object:** Resilience Signature (deterministic engine **v0.3**). Supporting surfaces: `/methodology`, `/providers`, `/signatures`, `/map` (Capacity), `/about`.
+- **Object:** Resilience Signature (deterministic engine **v0.3**). Supporting surfaces: `/methodology`, `/providers`, `/signatures`, `/map` (Capacity), `/about`, `/knowledge`.
 - **Landing:** Arctic ops-console composition — sticky Signature card, polar atmosphere around (not through) the Signature, GrypsMark footer lockup.
 - **Legal chrome:** Terms/Privacy labeled non-commercial R&D — not multi-section commercial “Legal”.
 - **Monitoring:** illustrative T0/T1 drift mock only. No freemium / free-trial CTAs.
-- **SEO:** `Allow: /` + indexed metadata (unlike shelved portfolio prototypes). Ops loop (not public UI): Search Console + Keyword Planner scripts under `scripts/seo/` → `seo/*.json` → knowledge-page proposals for issue #3.
+- **SEO:** `Allow: /` + indexed metadata (unlike shelved portfolio prototypes). Ops loop (not public UI): Search Console + Keyword Planner scripts under `scripts/seo/` → `seo/*.json` → `/knowledge` notes for issue #3.
 - **i18n:** EN + FI only; language preference persisted; natural Finnish (not calques).
 - **GitHub front door:** public `README.md` (posture + stack + how to run); architecture stays in this codebook. Proprietary `LICENSE` harmonized with sibling portfolio repos.
 
 ### Changelog — 2026-09
 
+- Knowledge notes at `/knowledge` (EN+FI, FAQ JSON-LD) seeded from early GSC + issue #3 backlog; `seo:propose` early-stage fallback.
 - SEO ops scaffold: `npm run seo:gsc` / `seo:planner` / `seo:propose` (GSC first; Planner stub until Ads token). Local GSC setup helper: `npm run seo:setup-gsc` → credentials under `~/.config/gryps/` (never repo `.env*`).
 - Advisor funnel: anonymous abbreviated Initial Assessment → email magic-link unlock → full report. No Google Sign-In.
 - Public README shipped as GitHub front door (posture + stack + how to run); architecture stays in this codebook.

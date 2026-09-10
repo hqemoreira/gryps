@@ -15,6 +15,7 @@ const COPY = {
     providers: "Providers",
     about: "About",
     methodology: "Methodology",
+    knowledge: "Knowledge",
     terms: "Terms",
     privacy: "Privacy",
     modelMeta: `MODEL ${MODEL_SHORT} · ESPOO, FINLAND`,
@@ -29,6 +30,7 @@ const COPY = {
     providers: "Toimittajat",
     about: "Tietoa",
     methodology: "Menetelmä",
+    knowledge: "Tieto",
     terms: "Ehdot",
     privacy: "Tietosuoja",
     modelMeta: `MALLI ${MODEL_SHORT} · ESPOO, SUOMI`,
@@ -80,6 +82,7 @@ export function Footer({
               <p className="gryps-footer-col-label">{t.resources}</p>
               <Link href="/about">{t.about}</Link>
               <Link href="/methodology">{t.methodology}</Link>
+              <Link href="/knowledge">{t.knowledge}</Link>
             </div>
             <div className="gryps-footer-col">
               <p className="gryps-footer-col-label">{t.legal}</p>
