@@ -4,7 +4,7 @@ import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTria
 import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
 import { HelpImproveGryps, InitialAssessment, UnlockFullAssessment } from "@/components/AdvisorFunnel"
 import { isAbbreviatedAssessment, type AbbreviatedAssessment } from "@/lib/abbreviate-result"
-import { GrypsMark } from "@/components/GrypsMark"
+import { GrypsMark, GrypsPrintBrand } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { TopChrome } from "@/components/TopChrome"
@@ -347,6 +347,7 @@ function SignatureReveal({
   return (
     <div>
       <div className="gryps-print-target" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <GrypsPrintBrand />
         {depth === "full" && full ? (
           <ResilienceOutput result={full} input={assessmentInputs} realData={realData} lang={lang} />
         ) : abbreviated ? (

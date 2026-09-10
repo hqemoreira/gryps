@@ -2,7 +2,6 @@
 import { useState } from "react"
 import type { AbbreviatedAssessment } from "@/lib/abbreviate-result"
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors"
-import { GrypsPrintBrand } from "@/components/GrypsMark"
 
 type Lang = "en" | "fi"
 
@@ -61,7 +60,6 @@ export function InitialAssessment({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <GrypsPrintBrand subtitle={lang === "fi" ? "Alustava resilienssiarvio" : "Initial Assessment"} />
       <div style={{
         backgroundColor: "var(--surface)",
         border: `1px solid ${gc}44`,

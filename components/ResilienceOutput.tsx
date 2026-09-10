@@ -6,7 +6,6 @@ import { gradeColor, gradeTextColor, type AdvisoryResult, type AssessmentInputs,
 import { computeComplianceFlags } from "@/lib/compliance"
 import { redundancyTiers } from "@/lib/redundancy-tiers"
 import { MODEL_VERSION } from "@/lib/signature-meta"
-import { GrypsPrintBrand } from "@/components/GrypsMark"
 
 // Re-exported as TYPES only (types are erased at compile time, no client-boundary
 // issue). Do NOT re-export gradeColor/gradeTextColor themselves here — a Server
@@ -493,8 +492,6 @@ export function ResilienceOutput({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
-      <GrypsPrintBrand />
-
       <div className="gryps-no-print" style={{ display: "flex", justifyContent: "flex-end", gap: 8, flexWrap: "wrap" }}>
         <button
           type="button"
