@@ -3,9 +3,8 @@ import { scoreSite } from "@/lib/scoring"
 import { abbreviateResult } from "@/lib/abbreviate-result"
 import { ensureAdvisorSchema, getSql } from "@/lib/db-schema"
 
-const RATE_LIMIT_MAX = 30
-// Abuse protection only — soft anonymous product budget is tracked client-side
-// for analytics, not used as a hard CTA block during the prototype phase.
+const RATE_LIMIT_MAX = 200
+// Prototype: generous ceiling so local testing is not blocked. Still caps abuse.
 
 function getClientIp(req: NextRequest): string {
   const forwarded = req.headers.get("x-forwarded-for")

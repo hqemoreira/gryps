@@ -394,22 +394,17 @@ function SignatureReveal({
 }
 
 function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
-  const qp = getQueryParams()
-  const [lat, setLat] = useState(qp.get("lat") ?? DEFAULT_LAT)
-  const [lng, setLng] = useState(qp.get("lng") ?? DEFAULT_LNG)
-  const [vertical, setVertical] = useState(qp.get("sector") ?? "")
-  const [providers, setProviders] = useState<string[]>(() => {
-    const fromParam = parseProvidersParam(qp.get("providers"))
-    if (fromParam.length) return fromParam
-    const legacy = qp.get("setup")
-    if (legacy) return inferProvidersFromSetup(legacy)
-    return []
-  })
-  const [legacySetup] = useState(qp.get("setup") ?? "")
-  const [autonomy, setAutonomy] = useState(qp.get("autonomy") ?? "")
-  const [criticality, setCriticality] = useState(qp.get("criticality") ?? "")
+  // Do not read window search params in useState initializers — SSR returns empty
+  // and React hydration keeps those empty values, leaving the Score CTA disabled.
+  const [lat, setLat] = useState(DEFAULT_LAT)
+  const [lng, setLng] = useState(DEFAULT_LNG)
+  const [vertical, setVertical] = useState("")
+  const [providers, setProviders] = useState<string[]>([])
+  const [legacySetup, setLegacySetup] = useState("")
+  const [autonomy, setAutonomy] = useState("")
+  const [criticality, setCriticality] = useState("")
   const [loading, setLoading] = useState(false)
-  const [depth, setDepth] = useState<"abbreviated" | "full">(qp.get("unlocked") === "1" ? "full" : "abbreviated")
+  const [depth, setDepth] = useState<"abbreviated" | "full">("abbreviated")
   const [abbreviated, setAbbreviated] = useState<AbbreviatedAssessment | null>(null)
   const [fullResult, setFullResult] = useState<AdvisoryResult | null>(null)
   const [realData, setRealData] = useState<RealDataEvidence | undefined>(undefined)
@@ -418,27 +413,51 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const [boundsError, setBoundsError] = useState("")
   const [geoBusy, setGeoBusy] = useState(false)
   const [geoNote, setGeoNote] = useState("")
-  const [shareId, setShareId] = useState<string | null>(qp.get("sid"))
-  const [unlockBanner, setUnlockBanner] = useState<string | null>(() => {
-    const unlock = qp.get("unlock")
-    if (unlock === "invalid" || unlock === "expired" || unlock === "error") {
-      return lang === "fi"
-        ? "Vahvistuslinkki ei kelpaa tai on vanhentunut. Pyydä uusi linkki tuloksista."
-        : "That confirmation link is invalid or expired. Request a new one from your results."
-    }
-    return null
-  })
+  const [shareId, setShareId] = useState<string | null>(null)
+  const [unlockBanner, setUnlockBanner] = useState<string | null>(null)
+  const restoredSid = useRef<string | null>(null)
 
   const hasResult = depth === "full" ? !!fullResult : !!abbreviated
 
+  // Hydrate from URL + restore shared / unlocked assessment once on mount.
   useEffect(() => {
-    const sid = getQueryParams().get("sid")
-    if (!sid || hasResult) return
-    const wantFull = getQueryParams().get("unlocked") === "1"
+    const q = getQueryParams()
+    const latQ = q.get("lat")
+    const lngQ = q.get("lng")
+    const sectorQ = q.get("sector")
+    const autonomyQ = q.get("autonomy")
+    const criticalityQ = q.get("criticality")
+    const providersQ = parseProvidersParam(q.get("providers"))
+    const setupQ = q.get("setup") ?? ""
+    const sid = q.get("sid")
+    const unlock = q.get("unlock")
+    const wantFull = q.get("unlocked") === "1"
+
+    if (latQ) setLat(latQ)
+    if (lngQ) setLng(lngQ)
+    if (sectorQ) setVertical(sectorQ)
+    if (autonomyQ) setAutonomy(autonomyQ)
+    if (criticalityQ) setCriticality(criticalityQ)
+    if (providersQ.length) setProviders(providersQ)
+    else if (setupQ) setProviders(inferProvidersFromSetup(setupQ))
+    if (setupQ) setLegacySetup(setupQ)
+    if (sid) setShareId(sid)
+
+    if (unlock === "invalid" || unlock === "expired" || unlock === "error") {
+      setUnlockBanner(
+        lang === "fi"
+          ? "Vahvistuslinkki ei kelpaa tai on vanhentunut. Pyydä uusi linkki tuloksista."
+          : "That confirmation link is invalid or expired. Request a new one from your results.",
+      )
+    }
+
+    if (!sid || restoredSid.current === sid) return
+    restoredSid.current = sid
+
     fetch(`/api/submissions/${sid}`)
-      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(r => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then(data => {
-        if (!data.result) return
+        if (!data?.result) return
         const inp = data.input ?? {}
         const coords = inp.site_coordinates as { lat?: number; lng?: number } | undefined
         if (coords?.lat != null) setLat(String(coords.lat))
@@ -454,8 +473,13 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         setShareId(String(data.id))
         if (data.use_case) setUseCase(String(data.use_case))
 
-        if (data.depth === "full" || data.unlocked) {
-          if (isAbbreviatedAssessment(data.result)) return
+        if (data.unlocked === true || data.depth === "full") {
+          if (isAbbreviatedAssessment(data.result)) {
+            setAbbreviated(data.result)
+            setDepth("abbreviated")
+            setFullResult(null)
+            return
+          }
           setFullResult(data.result as AdvisoryResult)
           setDepth("full")
           setAbbreviated(null)
@@ -467,14 +491,25 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
                 : "Email confirmed — full assessment unlocked.",
             )
           }
-        } else if (isAbbreviatedAssessment(data.result)) {
+          return
+        }
+
+        if (isAbbreviatedAssessment(data.result)) {
           setAbbreviated(data.result)
           setDepth("abbreviated")
           setFullResult(null)
+        } else {
+          // Older rows stored full output before the funnel gate.
+          setFullResult(data.result as AdvisoryResult)
+          setDepth("full")
+          setAbbreviated(null)
         }
       })
-      .catch(() => {})
-  }, [hasResult, lang])
+      .catch(err => {
+        console.error("Failed to restore submission", sid, err)
+        restoredSid.current = null
+      })
+  }, [lang])
 
   function toggleProvider(id: string) {
     setProviders(prev => {
@@ -562,7 +597,6 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         setAbbreviated(data.result)
         setDepth("abbreviated")
       } else {
-        // Fallback if API ever returns full (should not for anonymous).
         setFullResult(data.result as AdvisoryResult)
         setDepth("full")
       }
@@ -577,6 +611,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       if (data.id) {
         shareParams.set("sid", String(data.id))
         setShareId(String(data.id))
+        restoredSid.current = String(data.id)
       }
       const qs = shareParams.toString()
       if (qs) window.history.replaceState(null, "", `?${qs}#advisor`)
