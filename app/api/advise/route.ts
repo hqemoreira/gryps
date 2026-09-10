@@ -3,9 +3,9 @@ import { scoreSite } from "@/lib/scoring"
 import { abbreviateResult } from "@/lib/abbreviate-result"
 import { ensureAdvisorSchema, getSql } from "@/lib/db-schema"
 
-const RATE_LIMIT_MAX = 5
-// Soft anonymous budget for the funnel (client also tracks localStorage).
-// IP window remains 5/hour as abuse protection; messaging frames the product limit.
+const RATE_LIMIT_MAX = 30
+// Abuse protection only — soft anonymous product budget is tracked client-side
+// for analytics, not used as a hard CTA block during the prototype phase.
 
 function getClientIp(req: NextRequest): string {
   const forwarded = req.headers.get("x-forwarded-for")
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
           {
             error:
-              "You've reached the free assessment limit for now. Verify your email on a prior result to unlock full reports, or try again in an hour.",
+              "You've reached the assessment rate limit for now — try again in an hour.",
           },
           { status: 429 },
         )

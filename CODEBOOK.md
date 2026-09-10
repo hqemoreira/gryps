@@ -338,7 +338,7 @@ Set in: Vercel → gryps project → Settings → Environment Variables
 
 - Anonymous `/api/advise` returns **abbreviated** result; full `output` JSON stays in `advisor_submissions`.
 - Unlock: `POST /api/advise/unlock` → `notify_requests` row + Resend magic link → `GET /api/notify/verify?token=…` sets `verified_at` / `unlocked_at`.
-- Soft anonymous budget: client `localStorage` key `gryps-anon-runs` (max 3) + existing IP rate limit (5/hour).
+- Soft anonymous budget: client tracks `gryps-anon-runs` for analytics only (no hard CTA block). IP rate limit: 30/hour on `/api/advise`.
 - Non-identifying feedback: `POST /api/advise/feedback` → `advisor_submissions.use_case`.
 - Forge should prefer **verified** `notify_requests` (+ contact emails) as identified interest; raw anonymous runs stay Anonymous.
 
@@ -416,7 +416,7 @@ Implementation: `lib/capacity-status.ts`, `components/CapacityMap.tsx`,
 |---|---|---|
 | `gryps-theme` | localStorage | Functional UI preference |
 | `gryps-lang` | localStorage | Language preference (EN/FI) |
-| `gryps-anon-runs` | localStorage | Soft count of free anonymous Advisor runs |
+| `gryps-anon-runs` | localStorage | Soft count of Advisor runs (analytics; not a hard gate) |
 | Vercel Analytics (`@vercel/analytics`) | — | Cookieless |
 
 No advertising trackers.

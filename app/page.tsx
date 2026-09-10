@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
-import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle, LocateFixed } from "lucide-react"
+import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle, LocateFixed, Download } from "lucide-react"
 import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
 import { HelpImproveGryps, InitialAssessment, UnlockFullAssessment } from "@/components/AdvisorFunnel"
 import { isAbbreviatedAssessment, type AbbreviatedAssessment } from "@/lib/abbreviate-result"
@@ -226,7 +226,6 @@ function getQueryParams(): URLSearchParams {
 }
 
 const ANON_RUNS_KEY = "gryps-anon-runs"
-const ANON_RUNS_MAX = 3
 
 function readAnonRuns(): number {
   try {
@@ -243,6 +242,12 @@ function bumpAnonRuns(): number {
     localStorage.setItem(ANON_RUNS_KEY, String(next))
   } catch { /* ignore */ }
   return next
+}
+
+function clearAnonRuns(): void {
+  try {
+    localStorage.removeItem(ANON_RUNS_KEY)
+  } catch { /* ignore */ }
 }
 
 function SignatureReveal({
@@ -352,6 +357,20 @@ function SignatureReveal({
           <ResilienceOutput result={full} input={assessmentInputs} realData={realData} lang={lang} />
         ) : abbreviated ? (
           <>
+            <div className="gryps-no-print" style={{ display: "flex", justifyContent: "flex-end" }}>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
+                  borderRadius: 6, padding: "8px 14px", cursor: "pointer",
+                  fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
+                }}
+              >
+                <Download size={13} /> {lang === "fi" ? "Lataa PDF" : "Download PDF"}
+              </button>
+            </div>
             <InitialAssessment result={abbreviated} lang={lang} />
             <UnlockFullAssessment submissionId={submissionId} lang={lang} />
           </>
@@ -400,7 +419,6 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const [geoBusy, setGeoBusy] = useState(false)
   const [geoNote, setGeoNote] = useState("")
   const [shareId, setShareId] = useState<string | null>(qp.get("sid"))
-  const [anonRuns, setAnonRuns] = useState(() => readAnonRuns())
   const [unlockBanner, setUnlockBanner] = useState<string | null>(() => {
     const unlock = qp.get("unlock")
     if (unlock === "invalid" || unlock === "expired" || unlock === "error") {
@@ -441,6 +459,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           setFullResult(data.result as AdvisoryResult)
           setDepth("full")
           setAbbreviated(null)
+          clearAnonRuns()
           if (wantFull) {
             setUnlockBanner(
               lang === "fi"
@@ -503,11 +522,6 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     e.preventDefault()
     if (!vertical || !autonomy || !criticality) return
 
-    if (readAnonRuns() >= ANON_RUNS_MAX) {
-      setError(t.anonLimit)
-      return
-    }
-
     const latNum = lat ? parseFloat(lat) : parseFloat(DEFAULT_LAT)
     const lngNum = lng ? parseFloat(lng) : parseFloat(DEFAULT_LNG)
     if (!coordsInNordicBounds(latNum, lngNum)) {
@@ -542,8 +556,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       const data = await res.json()
       if (!res.ok || !data.result) throw new Error(data.error ?? "Analysis failed")
 
-      const runs = bumpAnonRuns()
-      setAnonRuns(runs)
+      bumpAnonRuns()
 
       if (isAbbreviatedAssessment(data.result)) {
         setAbbreviated(data.result)
@@ -643,8 +656,6 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     fontFamily: "var(--font-data)", fontSize: 11, letterSpacing: "0.04em",
     padding: "10px 14px", minHeight: 44, borderRadius: "var(--radius)", cursor: "pointer",
   }
-
-  const atAnonLimit = anonRuns >= ANON_RUNS_MAX
 
   return (
     <form onSubmit={handleSubmit} className="gryps-console-panel" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -805,10 +816,10 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       <button
         type="submit"
         className="gryps-cta-btn"
-        disabled={loading || atAnonLimit || !vertical || !autonomy || !criticality}
+        disabled={loading || !vertical || !autonomy || !criticality}
         style={{
           width: "100%",
-          opacity: (atAnonLimit || !vertical || !autonomy || !criticality) ? 0.5 : 1,
+          opacity: (!vertical || !autonomy || !criticality) ? 0.5 : 1,
           background: loading ? "var(--surface2)" : "var(--cta-gradient)",
           color: loading ? "var(--text-muted)" : "#070B12",
         }}
@@ -1055,7 +1066,6 @@ const COPY = {
     providersCoi: "No commercial relationships with ranked providers — see Providers.",
     boundsHint: "Coordinates must be within Nordic/Arctic bounds (lat 55–85°, lng −30–40°).",
     noAccountNote: "No account required. Free initial assessment — email only if you unlock the full analysis.",
-    anonLimit: "You've used your free initial assessments on this device. Unlock a prior result with email to continue, or clear local trial data.",
     runAdvisor: "Score my site · free",
     analysing:  "Analysing your site…",
     analyseAnother: "Analyse another site",
@@ -1122,7 +1132,6 @@ const COPY = {
     providersCoi: "Ei kaupallisia suhteita suositeltuihin toimittajiin — katso Toimittajat.",
     boundsHint: "Koordinaattien on oltava Pohjoismaiden tai arktisen alueen rajoissa (lat 55–85°, lng −30–40°).",
     noAccountNote: "Ei tiliä tarvita. Ilmainen alustava arvio — sähköposti vain, jos avaat täyden analyysin.",
-    anonLimit: "Olet käyttänyt ilmaiset alustavat arviot tällä laitteella. Avaa aiempi tulos sähköpostilla jatkaaksesi, tai tyhjennä paikallinen kokeiludata.",
     runAdvisor: "Pisteytä kohde",
     analysing:  "Arvioidaan kohdetta…",
     analyseAnother: "Arvioi toinen kohde",
