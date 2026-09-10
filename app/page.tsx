@@ -309,9 +309,11 @@ function SignatureReveal({
   }, [abbreviated, full, assessmentInputs.lat, assessmentInputs.lng])
 
   const [visible, setVisible] = useState(0)
-  const [done, setDone] = useState(false)
+  // Skip telemetry delay when restoring a full unlocked report (also avoids blank PDF page 1).
+  const [done, setDone] = useState(() => depth === "full" && !!full)
 
   useEffect(() => {
+    if (done) return
     let i = 0
     const id = setInterval(() => {
       i += 1
@@ -322,7 +324,7 @@ function SignatureReveal({
       }
     }, 450)
     return () => clearInterval(id)
-  }, [lines])
+  }, [lines, done])
 
   if (!done) {
     return (
@@ -656,7 +658,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     return (
       <div>
         {unlockBanner && (
-          <div style={{
+          <div className="gryps-no-print" style={{
             marginBottom: 16, padding: "12px 14px",
             backgroundColor: "rgba(46,212,122,0.08)", border: "1px solid rgba(46,212,122,0.25)",
             borderRadius: "var(--radius)",

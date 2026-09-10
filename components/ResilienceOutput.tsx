@@ -491,7 +491,7 @@ export function ResilienceOutput({
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
+    <div className="gryps-report-body" style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 8 }}>
       <div className="gryps-no-print" style={{ display: "flex", justifyContent: "flex-end", gap: 8, flexWrap: "wrap" }}>
         <button
           type="button"
