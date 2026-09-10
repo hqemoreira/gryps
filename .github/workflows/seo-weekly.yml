@@ -1,0 +1,67 @@
+name: SEO weekly GSC loop
+
+# Automates: npm run seo:gsc → npm run seo:propose
+# Repo secrets:
+#   GSC_SERVICE_ACCOUNT_JSON  (required) — full service-account JSON
+#   GSC_SITE_URL              (optional) — default https://gryps.vercel.app/
+
+on:
+  schedule:
+    # Mondays 07:00 UTC
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: seo-weekly
+  cancel-in-progress: false
+
+jobs:
+  pull-and-propose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Pull Search Console + propose pages
+        env:
+          GSC_SITE_URL: ${{ secrets.GSC_SITE_URL }}
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GSC_SERVICE_ACCOUNT_JSON:-}" ]; then
+            echo "Missing secret GSC_SERVICE_ACCOUNT_JSON"
+            exit 1
+          fi
+          export GSC_SITE_URL="${GSC_SITE_URL:-https://gryps.vercel.app/}"
+          npm run seo:gsc
+          npm run seo:propose
+
+      - name: Upload SEO artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-weekly-${{ github.run_id }}
+          path: |
+            seo/gsc-latest.json
+            seo/proposals-latest.json
+          retention-days: 90
+
+      - name: Comment on issue #4
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          npx --yes tsx scripts/seo/format-weekly-comment.ts > /tmp/seo-weekly-comment.md
+          gh issue comment 4 --repo "$GITHUB_REPOSITORY" --body-file /tmp/seo-weekly-comment.md

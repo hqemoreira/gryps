@@ -11,7 +11,8 @@
     "seo:gsc": "npx --yes tsx scripts/seo/pull-gsc.ts",
     "seo:planner": "npx --yes tsx scripts/seo/pull-planner.ts",
     "seo:propose": "npx --yes tsx scripts/seo/propose-pages.ts",
-    "seo:setup-gsc": "powershell -ExecutionPolicy Bypass -File scripts/seo/setup-gsc.ps1 -Pull"
+    "seo:setup-gsc": "powershell -ExecutionPolicy Bypass -File scripts/seo/setup-gsc.ps1 -Pull",
+    "seo:weekly-comment": "npx --yes tsx scripts/seo/format-weekly-comment.ts"
   },
   "dependencies": {
     "@mistralai/mistralai": "^2.4.1",

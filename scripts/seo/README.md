@@ -70,6 +70,22 @@ npm run seo:planner -- --topic "satellite connectivity arctic"
 npm run seo:propose
 ```
 
+### Automated weekly loop (GitHub Actions)
+
+Workflow: `.github/workflows/seo-weekly.yml`
+
+- **Schedule:** Mondays 07:00 UTC (`workflow_dispatch` for manual runs)
+- **Does:** `seo:gsc` → `seo:propose` → upload artifacts → comment on [issue #4](https://github.com/ghostcat0to1/gryps/issues/4)
+
+**One-time secrets** (GitHub → Settings → Secrets and variables → Actions):
+
+| Secret | Required | Value |
+|---|---|---|
+| `GSC_SERVICE_ACCOUNT_JSON` | Yes | Full contents of the service-account JSON key |
+| `GSC_SITE_URL` | No | Default `https://gryps.vercel.app/` |
+
+Do not commit the key. Restricted GSC user on the property is enough.
+
 Outputs land in `seo/` (gitignored except examples). Commit only curated briefs you want in git history — not raw API dumps with account noise if you prefer privacy.
 
 ---
