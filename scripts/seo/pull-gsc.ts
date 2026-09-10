@@ -13,6 +13,7 @@ import {
   todayIso,
   writeJson,
 } from "./lib"
+import { applyGscDefaults, loadSeoEnvFile } from "./env"
 
 type GscRow = {
   keys?: string[]
@@ -36,6 +37,8 @@ type Opportunity = MetricRow & {
 }
 
 async function main() {
+  loadSeoEnvFile()
+  applyGscDefaults()
   const args = parseArgs(process.argv.slice(2))
   const days = Number(args.days ?? process.env.GSC_DAYS ?? 28)
   const rowLimit = Number(args.limit ?? process.env.GSC_ROW_LIMIT ?? 250)

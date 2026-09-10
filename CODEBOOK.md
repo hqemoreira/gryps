@@ -18,7 +18,7 @@
 
 ### Changelog — 2026-09
 
-- SEO ops scaffold: `npm run seo:gsc` / `seo:planner` / `seo:propose` (GSC first; Planner stub until Ads token).
+- SEO ops scaffold: `npm run seo:gsc` / `seo:planner` / `seo:propose` (GSC first; Planner stub until Ads token). Local GSC setup helper: `npm run seo:setup-gsc` → credentials under `~/.config/gryps/` (never repo `.env*`).
 - Advisor funnel: anonymous abbreviated Initial Assessment → email magic-link unlock → full report. No Google Sign-In.
 - Public README shipped as GitHub front door (posture + stack + how to run); architecture stays in this codebook.
 - Proprietary LICENSE harmonized across the portfolio (same wording family as sibling repos).

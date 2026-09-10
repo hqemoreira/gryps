@@ -29,11 +29,24 @@ Copy these into local env (never commit secrets). Prefer `vercel env add` for an
 
 ### One-time Google setup (Search Console)
 
+**Windows helper (recommended):**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/seo/setup-gsc.ps1 -Pull
+```
+
+This opens the GCP + Search Console pages, waits for the JSON key at  
+`%USERPROFILE%\.config\gryps\gsc-service-account.json`, writes  
+`%USERPROFILE%\.config\gryps\seo.env`, sets User env vars, then pulls.
+
+Manual steps (same outcome):
+
 1. Create/select a GCP project.
-2. Enable **Google Search Console API**.
-3. Create a **service account** → Keys → JSON (store outside the repo).
-4. In [Search Console](https://search.google.com/search-console) → Users → add the service account email (**Full** or at least restricted read).
+2. Enable **Google Search Console API**: https://console.cloud.google.com/apis/library/searchconsole.googleapis.com
+3. Create a **service account** → Keys → JSON (store **outside** the repo, e.g. `%USERPROFILE%\.config\gryps\gsc-service-account.json`).
+4. In [Search Console](https://search.google.com/search-console) → Users → add the service account email (**Restricted** is enough).
 5. Confirm the property matches `GSC_SITE_URL` (URL-prefix vs Domain property matters).
+6. Do **not** put the key in repo `.env` / `.env.local` — use `seo.env` under `~/.config/gryps/` or User env vars.
 
 ### One-time Google setup (Keyword Planner — later)
 
