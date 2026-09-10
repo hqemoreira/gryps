@@ -42,3 +42,8 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# SEO API dumps (ops tooling — keep examples + .gitkeep)
+/seo/*
+!/seo/.gitkeep
+!/seo/gsc-example.json

@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:score": "npx --yes tsx scripts/verify-deterministic.ts"
+    "test:score": "npx --yes tsx scripts/verify-deterministic.ts",
+    "seo:gsc": "npx --yes tsx scripts/seo/pull-gsc.ts",
+    "seo:planner": "npx --yes tsx scripts/seo/pull-planner.ts",
+    "seo:propose": "npx --yes tsx scripts/seo/propose-pages.ts"
   },
   "dependencies": {
     "@mistralai/mistralai": "^2.4.1",
@@ -32,6 +35,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "googleapis": "^178.1.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

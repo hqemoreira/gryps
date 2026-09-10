@@ -1,0 +1,89 @@
+{
+  "pulledAt": "2026-09-10T12:00:00.000Z",
+  "siteUrl": "https://gryps.vercel.app/",
+  "range": { "startDate": "2026-08-13", "endDate": "2026-09-10", "days": 28 },
+  "previousRange": { "startDate": "2026-07-16", "endDate": "2026-08-13" },
+  "totals": {
+    "queryRows": 3,
+    "pageRows": 2,
+    "queryPageRows": 3,
+    "opportunityCount": 2,
+    "risingCount": 1
+  },
+  "topQueries": [
+    {
+      "key": "satellite connectivity arctic",
+      "clicks": 12,
+      "impressions": 480,
+      "ctr": 0.025,
+      "position": 14.2
+    },
+    {
+      "key": "starlink forestry finland",
+      "clicks": 4,
+      "impressions": 210,
+      "ctr": 0.019,
+      "position": 18.6
+    },
+    {
+      "key": "leo vs geo remote operations",
+      "clicks": 8,
+      "impressions": 160,
+      "ctr": 0.05,
+      "position": 9.1
+    }
+  ],
+  "topPages": [
+    {
+      "key": "https://gryps.vercel.app/",
+      "clicks": 20,
+      "impressions": 900,
+      "ctr": 0.022,
+      "position": 16.0
+    },
+    {
+      "key": "https://gryps.vercel.app/methodology",
+      "clicks": 6,
+      "impressions": 120,
+      "ctr": 0.05,
+      "position": 11.4
+    }
+  ],
+  "queryPage": [],
+  "risingImpressions": [
+    {
+      "key": "starlink forestry finland",
+      "clicks": 4,
+      "impressions": 210,
+      "ctr": 0.019,
+      "position": 18.6,
+      "prevImpressions": 80,
+      "impressionDelta": 130,
+      "impressionLift": 1.625
+    }
+  ],
+  "opportunities": [
+    {
+      "key": "satellite connectivity arctic",
+      "clicks": 12,
+      "impressions": 480,
+      "ctr": 0.025,
+      "position": 14.2,
+      "score": 0.72,
+      "reason": "Impressions with weak position (page-2 / deep page-1 opportunity)"
+    },
+    {
+      "key": "starlink forestry finland",
+      "clicks": 4,
+      "impressions": 210,
+      "ctr": 0.019,
+      "position": 18.6,
+      "score": 0.68,
+      "reason": "Impressions with weak position (page-2 / deep page-1 opportunity)"
+    }
+  ],
+  "notes": [
+    "Example fixture for npm run seo:propose without live GSC credentials.",
+    "Replace by running: npm run seo:gsc"
+  ]
+}

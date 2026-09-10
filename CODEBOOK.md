@@ -12,12 +12,13 @@
 - **Landing:** Arctic ops-console composition — sticky Signature card, polar atmosphere around (not through) the Signature, GrypsMark footer lockup.
 - **Legal chrome:** Terms/Privacy labeled non-commercial R&D — not multi-section commercial “Legal”.
 - **Monitoring:** illustrative T0/T1 drift mock only. No freemium / free-trial CTAs.
-- **SEO:** `Allow: /` + indexed metadata (unlike shelved portfolio prototypes).
+- **SEO:** `Allow: /` + indexed metadata (unlike shelved portfolio prototypes). Ops loop (not public UI): Search Console + Keyword Planner scripts under `scripts/seo/` → `seo/*.json` → knowledge-page proposals for issue #3.
 - **i18n:** EN + FI only; language preference persisted; natural Finnish (not calques).
 - **GitHub front door:** public `README.md` (posture + stack + how to run); architecture stays in this codebook. Proprietary `LICENSE` harmonized with sibling portfolio repos.
 
 ### Changelog — 2026-09
 
+- SEO ops scaffold: `npm run seo:gsc` / `seo:planner` / `seo:propose` (GSC first; Planner stub until Ads token).
 - Advisor funnel: anonymous abbreviated Initial Assessment → email magic-link unlock → full report. No Google Sign-In.
 - Public README shipped as GitHub front door (posture + stack + how to run); architecture stays in this codebook.
 - Proprietary LICENSE harmonized across the portfolio (same wording family as sibling repos).
