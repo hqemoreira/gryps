@@ -906,48 +906,48 @@ body {
   padding-top: 8px;
 }
 .gryps-polar-instrument {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   align-items: center;
-  gap: 24px 32px;
-  padding: 18px 20px;
+  gap: 28px 40px;
+  padding: 22px 24px;
   margin: 12px 0 20px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
 }
 .gryps-polar-instrument-figure {
-  flex: 0 0 auto;
-  width: min(100%, 260px);
+  width: 100%;
+  max-width: none;
   aspect-ratio: 1 / 1;
+  min-height: min(42vh, 420px);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background:
     radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--aurora-1) 10%, transparent), transparent 55%),
     var(--surface-elevated);
-  padding: 6px;
+  padding: 10px;
 }
 .gryps-polar-instrument-copy {
-  flex: 1 1 240px;
   min-width: 0;
-  padding-top: 0;
+  padding: 8px 4px 8px 0;
 }
 .gryps-polar-instrument-title {
   font-family: var(--font-ui);
-  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: var(--text);
-  margin: 0 0 10px;
+  margin: 0 0 12px;
 }
 .gryps-polar-instrument-body {
   font-family: var(--font-ui);
   font-size: var(--text-small);
   color: var(--text-muted);
-  line-height: 1.6;
-  max-width: 40ch;
-  margin: 0 0 12px;
+  line-height: 1.65;
+  max-width: none;
+  margin: 0 0 14px;
 }
 .gryps-polar-instrument-facts {
   list-style: none;
@@ -1114,15 +1114,18 @@ body {
   }
   .gryps-nav-link { display: none !important; }
   .gryps-polar-instrument {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
+    grid-template-columns: 1fr;
+    gap: 18px;
     padding: 16px;
     margin: 8px 0 16px;
   }
   .gryps-polar-instrument-figure {
-    width: min(100%, 240px);
+    width: min(100%, 360px);
+    min-height: 0;
     margin: 0 auto;
+  }
+  .gryps-polar-instrument-copy {
+    padding: 0;
   }
 }
 

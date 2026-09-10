@@ -1513,7 +1513,7 @@ export default function HomePage() {
           <div className="gryps-content gryps-section-pad">
             <div className="gryps-polar-instrument">
               <div className="gryps-polar-instrument-figure">
-                <PolarAtmosphere variant="full" animate className="gryps-polar-figure" />
+                <PolarAtmosphere variant="full" animate interactive className="gryps-polar-figure" />
               </div>
               <div className="gryps-polar-instrument-copy">
                 <p className="gryps-proof-band-label">{t.proofBand}</p>
