@@ -380,8 +380,10 @@ via `grypsCopyright()` in `components/Footer.tsx`.
 
 ## Capacity map (`/map`)
 
-Spatineo Capacity Map–lite view: one screen for the portfolio of sites in
-`signature_sites`, coloured by connectivity **posture** status.
+**Modeled Connectivity Intelligence Map** — dominant MapLibre view of
+`signature_sites`, coloured by connectivity posture status. Filters: status,
+sector, orbit. Site panel shows resilience / confidence / latency / provider
+and deep-links to Advisor (`?lat&lng&sector…#advisor`). Not live RF.
 
 | Status | Derived from |
 |---|---|

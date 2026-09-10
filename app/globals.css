@@ -1185,8 +1185,14 @@ body {
   .gryps-signature-divider { display: none !important; }
   .gryps-filter-select { flex: 1 1 100% !important; width: 100% !important; }
   .gryps-view-toggle { flex: 1 1 100% !important; margin-left: 0 !important; }
-  .gryps-capacity-grid { grid-template-columns: 1fr !important; }
-  .gryps-capacity-grid > div:first-child { min-height: 360px !important; height: 360px !important; }
+  .gryps-capacity-grid { grid-template-columns: 1fr !important; min-height: 0 !important; }
+  .gryps-capacity-grid > div:first-child {
+    min-height: min(58vh, 520px) !important;
+    height: min(58vh, 520px) !important;
+  }
+  .gryps-capacity-grid > aside {
+    max-height: none !important;
+  }
   input, select, textarea {
     font-size: 16px !important;
   }

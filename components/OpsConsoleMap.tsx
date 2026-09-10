@@ -84,6 +84,9 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         `
         el.appendChild(core)
 
+        const advisorUrl = `/?lat=${lat}&lng=${lng}&sector=${encodeURIComponent(ex.input.sector)}&autonomy=${encodeURIComponent(ex.input.autonomy_level)}&criticality=${encodeURIComponent(ex.input.operation_criticality)}#advisor`
+        const assessLabel = lang === "fi" ? "Aja arvio →" : "Run an assessment →"
+
         const popup = new maplibregl.Popup({
           offset: 20,
           closeButton: true,
@@ -97,7 +100,8 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
               <span style="font-family: ui-monospace, monospace; font-size: 28px; font-weight: 800; color: ${color};">${score}</span>
               <span style="font-family: ui-monospace, monospace; font-size: 16px; font-weight: 800; color: ${color};">${grade}</span>
             </div>
-            <div style="font-size: 11px; color: #D97706;"><strong>Top risk:</strong> ${topRisk}</div>
+            <div style="font-size: 11px; color: #D97706; margin-bottom: 10px;"><strong>Top risk:</strong> ${topRisk}</div>
+            <a href="${advisorUrl}" style="font-size: 12px; font-weight: 700; color: #4FA8FF; text-decoration: none;">${assessLabel}</a>
           </div>
         `)
 
@@ -128,7 +132,8 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
           <div style="font-size: 10px; letter-spacing: 0.08em; color: #64748B; margin-bottom: 4px;">HERO SITE</div>
           <div style="font-size: 13px; font-weight: 700; color: #F7FAFC; margin-bottom: 6px;">68.2°N · 27.4°E · Lapland</div>
           <div style="font-family: ui-monospace, monospace; font-size: 22px; font-weight: 800; color: #D97706;">40 · D</div>
-          <div style="font-size: 11px; color: #D97706; margin-top: 6px;">Top risk: No backup path</div>
+          <div style="font-size: 11px; color: #D97706; margin-top: 6px; margin-bottom: 10px;">Top risk: No backup path</div>
+          <a href="/?lat=68.2&lng=27.4&sector=forestry&autonomy=autonomous&criticality=high#advisor" style="font-size: 12px; font-weight: 700; color: #4FA8FF; text-decoration: none;">${lang === "fi" ? "Aja arvio →" : "Run an assessment →"}</a>
         </div>
       `)
       pulse.addEventListener("click", () => {

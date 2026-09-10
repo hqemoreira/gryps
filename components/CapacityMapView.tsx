@@ -1,5 +1,5 @@
 "use client"
-import { useMemo, useState, type CSSProperties } from "react"
+import { useMemo, useState, type CSSProperties, type ReactNode } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { Header } from "@/components/Header"
@@ -12,6 +12,7 @@ import {
   capacityStatusLabel,
   type CapacityStatus,
 } from "@/lib/capacity-status"
+import { MODEL_VERSION } from "@/lib/signature-meta"
 
 export type CapacitySiteView = {
   slug: string
@@ -31,6 +32,11 @@ export type CapacitySiteView = {
   real_data_score: number | null
   terrain_penalty_score: number | null
   real_world_gap_score: number | null
+  top_provider: string | null
+  top_confidence: number | null
+  top_orbit: string | null
+  latency_estimate: string | null
+  recommendation: string | null
   source: "signature_sites"
 }
 
@@ -51,44 +57,69 @@ const CapacityMap = dynamic(
 
 const COPY = {
   en: {
-    tagline: "CAPACITY MAP",
-    title: "Where connectivity posture holds — and where it does not",
+    tagline: "MODELED CONNECTIVITY INTELLIGENCE",
+    title: "Connectivity Intelligence Map",
+    lead:
+      "Explore modeled satellite connectivity capacity across remote Nordic and Arctic operating environments. Select a site for resilience, confidence, and latency signals — then run a personalized assessment.",
     disclosure:
-      "Illustrative portfolio from signature_sites. Status is derived from the Resilience Signature model (grade/score), not live link monitoring. R&D prototype · non-commercial research.",
+      "GRYPS uses deterministic Signature Model scoring to estimate connectivity resilience. Results are model-based — not a live RF measurement or live constellation feed. Research prototype · non-commercial.",
+    modelMeta: `${MODEL_VERSION} · Deterministic intelligence model`,
+    hint: "Pan · zoom · select a site",
     all: "All",
+    status: "Status",
+    sector: "Sector",
+    orbit: "Orbit",
     source: "Source",
     lastUpdated: "Last scored",
-    score: "Signature",
+    score: "Resilience",
+    confidence: "Coverage confidence",
+    latency: "Latency / failover",
+    provider: "Recommended provider",
+    orbitClass: "Orbital class",
     realData: "Real-data evidence",
     terrain: "Terrain",
     gap: "Real-world gap",
-    none: "No site selected — click a point on the map.",
+    none: "Select a site on the map to inspect modeled connectivity intelligence.",
     viewSig: "Full signature →",
+    runAdvisor: "Run an assessment →",
     empty: "No sites in this filter.",
     navCta: "Score your site",
-    loadingMap: "LOADING MAP…",
+    methodology: "Methodology",
   },
   fi: {
-    tagline: "KAPASITEETTIKARTTA",
-    title: "Missä yhteyksiin voi luottaa — ja missä ei",
+    tagline: "MALLINNETTU YHTEYDEN ÄLYKKYYS",
+    title: "Yhteyden älykartta",
+    lead:
+      "Tutki mallinnettua satelliittiyhteyden kapasiteettia pohjoismaisissa ja arktisissa toimintaympäristöissä. Valitse kohde resilienssi-, luottamus- ja latenssisignaaleille — ja aja sitten räätälöity arvio.",
     disclosure:
-      "Havainnollistava portfolio signature_sites-taulusta. Tila kuvaa Resilience Signature -mallin arvioimaa yhteyden resilienssiasentoa (arvosana/pisteet) — ei reaaliaikaista yhteyksien seurantaa. T&K-prototyyppi · ei-kaupallinen tutkimus.",
+      "GRYPS arvioi yhteyden resilienssiä deterministisellä Signature-mallilla. Tulokset ovat mallipohjaisia — eivät reaaliaikaista RF-mittausta tai konstellaatiotelemetriaa. T&K-prototyyppi · ei-kaupallinen.",
+    modelMeta: `${MODEL_VERSION} · Deterministinen älymalli`,
+    hint: "Vieritä · zoom · valitse kohde",
     all: "Kaikki",
+    status: "Tila",
+    sector: "Toimiala",
+    orbit: "Rata",
     source: "Lähde",
     lastUpdated: "Viimeksi pisteytetty",
-    score: "Signature",
+    score: "Resilienssi",
+    confidence: "Kattavuusluottamus",
+    latency: "Latenssi / failover",
+    provider: "Suositeltu toimittaja",
+    orbitClass: "Rataluokka",
     realData: "Reaalidatanäyttö",
     terrain: "Maasto",
     gap: "Todellinen kuilu",
-    none: "Ei valittua kohdetta — napsauta karttapistettä.",
+    none: "Valitse karttapiste nähdäksesi mallinnetun yhteysälyn.",
     viewSig: "Koko Signature →",
+    runAdvisor: "Aja arvio →",
     empty: "Ei kohteita tällä suodattimella.",
     navCta: "Pisteytä kohde",
-    loadingMap: "LADATAAN KARTTAA…",
+    methodology: "Menetelmä",
   },
 }
 
 const STATUSES: CapacityStatus[] = ["ok", "degraded", "down", "unknown"]
+const ORBITS = ["LEO", "MEO", "GEO", "Polar"] as const
 
 function formatWhen(iso: string | null, lang: "en" | "fi"): string {
   if (!iso) return "—"
@@ -102,17 +133,46 @@ function formatWhen(iso: string | null, lang: "en" | "fi"): string {
   }
 }
 
+function confidenceBand(n: number | null, lang: "en" | "fi"): string {
+  if (n == null) return "—"
+  const band = n >= 80 ? (lang === "fi" ? "Korkea" : "High")
+    : n >= 60 ? (lang === "fi" ? "Keskitaso" : "Medium")
+    : (lang === "fi" ? "Matala" : "Low")
+  return `${band} (${n}%)`
+}
+
+function advisorHref(site: CapacitySiteView): string {
+  const p = new URLSearchParams()
+  p.set("lat", String(site.lat))
+  p.set("lng", String(site.lng))
+  if (site.sector) p.set("sector", site.sector)
+  if (site.autonomy_level) p.set("autonomy", site.autonomy_level)
+  if (site.operation_criticality) p.set("criticality", site.operation_criticality)
+  return `/?${p.toString()}#advisor`
+}
+
 export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
   const [lang, setLang] = useLang()
   const { dark } = useTheme()
   const t = COPY[lang]
-  const [filter, setFilter] = useState<CapacityStatus | "all">("all")
+  const [statusFilter, setStatusFilter] = useState<CapacityStatus | "all">("all")
+  const [sectorFilter, setSectorFilter] = useState<string>("all")
+  const [orbitFilter, setOrbitFilter] = useState<string>("all")
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
 
-  const filtered = useMemo(
-    () => (filter === "all" ? sites : sites.filter(s => s.status === filter)),
-    [sites, filter],
-  )
+  const sectors = useMemo(() => {
+    const set = new Set(sites.map(s => s.sector).filter(Boolean))
+    return Array.from(set).sort()
+  }, [sites])
+
+  const filtered = useMemo(() => {
+    return sites.filter(s => {
+      if (statusFilter !== "all" && s.status !== statusFilter) return false
+      if (sectorFilter !== "all" && s.sector !== sectorFilter) return false
+      if (orbitFilter !== "all" && s.top_orbit !== orbitFilter) return false
+      return true
+    })
+  }, [sites, statusFilter, sectorFilter, orbitFilter])
 
   const selected = useMemo(
     () => sites.find(s => s.slug === selectedSlug) ?? null,
@@ -135,77 +195,112 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
         extraLinks={[
           { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
           { href: "/signatures", label: lang === "en" ? "Signatures" : "Signaturet" },
-          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
+          { href: "/methodology", label: t.methodology },
         ]}
       />
 
       <div style={{
-        flex: 1, maxWidth: 1280, width: "100%", margin: "0 auto",
-        padding: "24px 32px 40px", paddingTop: 90,
-        display: "flex", flexDirection: "column", gap: 16,
+        flex: 1, maxWidth: 1400, width: "100%", margin: "0 auto",
+        padding: "16px 24px 32px", paddingTop: 84,
+        display: "flex", flexDirection: "column", gap: 12,
       }}>
-        <div>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>
+        <div style={{ maxWidth: 820 }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 6 }}>
             {t.tagline}
           </p>
           <h1 style={{
-            fontFamily: "var(--font-ui)", fontSize: 26, fontWeight: 700,
-            color: "var(--text)", marginBottom: 12, letterSpacing: "-0.01em",
+            fontFamily: "var(--font-ui)", fontSize: 24, fontWeight: 700,
+            color: "var(--text)", marginBottom: 8, letterSpacing: "-0.01em",
           }}>
             {t.title}
           </h1>
-          <div style={{
-            backgroundColor: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)",
-            borderRadius: 6, padding: "10px 14px", maxWidth: 720,
-          }}>
-            <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-amber)", lineHeight: 1.6 }}>
-              {t.disclosure}
-            </p>
-          </div>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.55, marginBottom: 8 }}>
+            {t.lead}
+          </p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.04em", marginBottom: 8 }}>
+            {t.modelMeta} · {t.hint}
+          </p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--accent-amber)", lineHeight: 1.55, maxWidth: 720 }}>
+            {t.disclosure}{" "}
+            <Link href="/methodology" style={{ color: "var(--accent-blue)", textDecoration: "none", fontWeight: 600 }}>
+              {t.methodology} →
+            </Link>
+          </p>
         </div>
 
-        {/* Status filters */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
-          <button
-            type="button"
-            onClick={() => setFilter("all")}
-            style={chipStyle(filter === "all")}
-          >
-            {t.all} · {sites.length}
-          </button>
-          {STATUSES.map(st => (
-            <button
-              key={st}
-              type="button"
-              onClick={() => setFilter(st)}
-              style={{
-                ...chipStyle(filter === st),
-                borderColor: filter === st ? CAPACITY_STATUS_COLOR[st] : "var(--border2)",
-              }}
-            >
-              <span style={{
-                width: 8, height: 8, borderRadius: "50%",
-                backgroundColor: CAPACITY_STATUS_COLOR[st], display: "inline-block",
-              }} />
-              {capacityStatusLabel(st, lang)} · {counts[st]}
+        {/* Filters */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <FilterRow label={t.status}>
+            <button type="button" onClick={() => setStatusFilter("all")} style={chipStyle(statusFilter === "all")}>
+              {t.all} · {sites.length}
             </button>
-          ))}
+            {STATUSES.map(st => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => setStatusFilter(st)}
+                style={{
+                  ...chipStyle(statusFilter === st),
+                  borderColor: statusFilter === st ? CAPACITY_STATUS_COLOR[st] : "var(--border2)",
+                }}
+              >
+                <span style={{
+                  width: 8, height: 8, borderRadius: "50%",
+                  backgroundColor: CAPACITY_STATUS_COLOR[st], display: "inline-block",
+                }} />
+                {capacityStatusLabel(st, lang)} · {counts[st]}
+              </button>
+            ))}
+          </FilterRow>
+
+          <FilterRow label={t.sector}>
+            <button type="button" onClick={() => setSectorFilter("all")} style={chipStyle(sectorFilter === "all")}>
+              {t.all}
+            </button>
+            {sectors.map(sec => (
+              <button
+                key={sec}
+                type="button"
+                onClick={() => setSectorFilter(sec)}
+                style={chipStyle(sectorFilter === sec)}
+              >
+                {sec}
+              </button>
+            ))}
+          </FilterRow>
+
+          <FilterRow label={t.orbit}>
+            <button type="button" onClick={() => setOrbitFilter("all")} style={chipStyle(orbitFilter === "all")}>
+              {t.all}
+            </button>
+            {ORBITS.map(orb => (
+              <button
+                key={orb}
+                type="button"
+                onClick={() => setOrbitFilter(orb)}
+                style={chipStyle(orbitFilter === orb)}
+              >
+                {orb}
+              </button>
+            ))}
+          </FilterRow>
         </div>
 
-        {/* Map + panel */}
+        {/* Map dominates the section */}
         <div
           className="gryps-capacity-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr minmax(280px, 340px)",
-            gap: 16,
-            minHeight: 520,
+            gridTemplateColumns: "minmax(0, 1fr) minmax(280px, 360px)",
+            gap: 14,
             flex: 1,
+            minHeight: "min(72vh, 780px)",
           }}
         >
           <div style={{
-            minHeight: 420, height: "100%",
+            minHeight: "min(70vh, 720px)", height: "100%",
             border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden",
+            position: "relative",
           }}>
             {filtered.length === 0 ? (
               <div style={{
@@ -226,8 +321,8 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
 
           <aside style={{
             backgroundColor: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: 10, padding: 20, display: "flex", flexDirection: "column", gap: 14,
-            minHeight: 280,
+            borderRadius: 10, padding: 20, display: "flex", flexDirection: "column", gap: 12,
+            minHeight: 280, maxHeight: "min(72vh, 780px)", overflow: "auto",
           }}>
             {!selected ? (
               <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.6 }}>
@@ -235,7 +330,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
               </p>
             ) : (
               <>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                   <span style={{
                     fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
                     letterSpacing: "0.08em", padding: "4px 8px", borderRadius: 4,
@@ -250,55 +345,84 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                 </div>
 
                 <h2 style={{
-                  fontFamily: "var(--font-ui)", fontSize: 16, fontWeight: 700,
-                  color: "var(--text)", lineHeight: 1.35,
+                  fontFamily: "var(--font-ui)", fontSize: 17, fontWeight: 700,
+                  color: "var(--text)", lineHeight: 1.35, margin: 0,
                 }}>
                   {selected.name}
                 </h2>
 
+                {(selected.municipality || selected.country) && (
+                  <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", margin: 0 }}>
+                    {[selected.municipality, selected.country].filter(Boolean).join(" · ")} · {selected.lat.toFixed(2)}°N · {selected.lng.toFixed(2)}°E
+                  </p>
+                )}
+
+                <div style={{
+                  display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10,
+                  padding: "12px 0", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)",
+                }}>
+                  <Metric
+                    label={t.score}
+                    value={selected.score != null && selected.grade ? `${selected.score} / 100` : "—"}
+                    sub={selected.grade ? `Grade ${selected.grade}` : undefined}
+                  />
+                  <Metric
+                    label={t.confidence}
+                    value={confidenceBand(selected.top_confidence, lang)}
+                  />
+                  <Metric
+                    label={t.orbitClass}
+                    value={selected.top_orbit ?? "—"}
+                  />
+                  <Metric
+                    label={t.latency}
+                    value={selected.latency_estimate ?? "—"}
+                  />
+                </div>
+
+                {selected.top_provider && (
+                  <Row label={t.provider} value={selected.top_provider} />
+                )}
                 {selected.summary && (
-                  <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.55 }}>
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.55, margin: 0 }}>
                     {selected.summary}
                   </p>
                 )}
 
-                <dl style={{ display: "flex", flexDirection: "column", gap: 10, margin: 0 }}>
-                  <Row label={t.source} value="signature_sites · Resilience Signature model" />
+                <dl style={{ display: "flex", flexDirection: "column", gap: 8, margin: 0 }}>
                   <Row label={t.lastUpdated} value={formatWhen(selected.last_scored_at, lang)} />
-                  <Row
-                    label={t.score}
-                    value={
-                      selected.score != null && selected.grade
-                        ? `${selected.score} (${selected.grade})`
-                        : "—"
-                    }
-                  />
-                  {(selected.municipality || selected.country) && (
-                    <Row
-                      label={lang === "en" ? "Location" : "Sijainti"}
-                      value={[selected.municipality, selected.country].filter(Boolean).join(" · ")}
-                    />
-                  )}
                   {selected.real_data_score != null && (
                     <Row label={t.realData} value={String(selected.real_data_score)} />
                   )}
                   {selected.terrain_penalty_score != null && (
                     <Row label={t.terrain} value={String(selected.terrain_penalty_score)} />
                   )}
-                  {selected.real_world_gap_score != null && (
-                    <Row label={t.gap} value={String(selected.real_world_gap_score)} />
-                  )}
                 </dl>
 
-                <Link
-                  href={`/signatures/${selected.slug}`}
-                  style={{
-                    marginTop: "auto", fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 700,
-                    color: "var(--accent-blue)", textDecoration: "none",
-                  }}
-                >
-                  {t.viewSig}
-                </Link>
+                <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 10, paddingTop: 8 }}>
+                  <Link
+                    href={advisorHref(selected)}
+                    className="gryps-cta-btn"
+                    style={{
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      textDecoration: "none", width: "100%", minHeight: 44,
+                      background: "var(--cta-gradient)", color: "#070B12",
+                      fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
+                      borderRadius: "var(--radius)",
+                    }}
+                  >
+                    {t.runAdvisor}
+                  </Link>
+                  <Link
+                    href={`/signatures/${selected.slug}`}
+                    style={{
+                      fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
+                      color: "var(--accent-blue)", textDecoration: "none", textAlign: "center",
+                    }}
+                  >
+                    {t.viewSig}
+                  </Link>
+                </div>
               </>
             )}
           </aside>
@@ -310,6 +434,36 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
         footerRights={grypsCopyright(lang, lang === "en" ? "Espoo, Finland · Non-commercial R&D prototype" : "Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi")}
         secondaryLink={{ href: "/", label: lang === "en" ? "Back to GRYPS" : "Takaisin GRYPS:iin" }}
       />
+    </div>
+  )
+}
+
+function FilterRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+      <span style={{
+        fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)",
+        letterSpacing: "0.1em", minWidth: 56,
+      }}>
+        {label.toUpperCase()}
+      </span>
+      {children}
+    </div>
+  )
+}
+
+function Metric({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 4 }}>
+        {label.toUpperCase()}
+      </p>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, fontWeight: 700, color: "var(--text)", margin: 0, lineHeight: 1.3 }}>
+        {value}
+      </p>
+      {sub && (
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", margin: "2px 0 0" }}>{sub}</p>
+      )}
     </div>
   )
 }

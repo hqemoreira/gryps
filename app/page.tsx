@@ -1127,12 +1127,13 @@ const COPY = {
     examplesLabel: "EXAMPLE RESILIENCE SIGNATURES",
     examplesSub: "Pre-computed examples showing what the Resilience Advisor produces. Run the Advisor above for a live assessment.",
     polarHeader: "COVERAGE ZONE · NORDIC, ARCTIC & ICELAND",
-    polarMapLabel: "DEMO MAP · NOT LIVE MONITORING",
-    polarInstrumentTitle: "High-latitude geometry",
-    polarInstrumentBody: "Illustrative polar projection — latitude rings and orbital-pass ellipses for the Lapland sample site. Not live constellation telemetry.",
+    polarMapLabel: "MODELED INTELLIGENCE · NOT LIVE RF",
+    polarInstrumentTitle: "Modeled Connectivity Intelligence",
+    polarInstrumentBody: "Deterministic Signature scoring across remote operating environments — explore the Capacity Map, then run a site assessment. Not live constellation telemetry.",
     polarFact1: "Sample site 68.2°N · single Starlink path",
     polarFact2: "Latitude weight drops above 70°N",
     polarMethodLink: "See scoring formula →",
+    capacityMapLink: "Open Connectivity Intelligence Map →",
     ctaH2:  "Resilience starts with knowing your score.",
     ctaSub: "Free initial Resilience Signature for any Nordic, Arctic, or Icelandic site. No account — unlock the full analysis with email when you want deeper detail.",
     ctaBtn: "Score my site · free",
@@ -1193,12 +1194,13 @@ const COPY = {
     examplesLabel: "ESIMERKKEJÄ RESILIENCE SIGNATUREISTA",
     examplesSub: "Ennalta lasketut esimerkit siitä, mitä Resilience Advisor tuottaa. Aja Advisor yllä saadaksesi oman arvion.",
     polarHeader: "KATTAVUUSALUE · POHJOISMAAT, ARKTINEN ALUE JA ISLANTI",
-    polarMapLabel: "DEMOKARTTA · EI REAALIAIKAISTA SEURANTAA",
-    polarInstrumentTitle: "Korkeiden leveysasteiden geometria",
-    polarInstrumentBody: "Havainnollistava polaariprojektio — leveyspiirit ja ohitusellipsit Lapin esimerkkikohteelle. Ei reaaliaikaista konstellaatiotelemetriaa.",
+    polarMapLabel: "MALLINNETTU ÄLY · EI REAALIAIKAISTA RF:ÄÄ",
+    polarInstrumentTitle: "Mallinnettu yhteyden äly",
+    polarInstrumentBody: "Deterministinen Signature-pisteytys etäisissä toimintaympäristöissä — tutki kapasiteettikarttaa ja aja sitten kohdearvio. Ei reaaliaikaista konstellaatiotelemetriaa.",
     polarFact1: "Esimerkkikohde 68.2°N · yksi Starlink-yhteys",
     polarFact2: "Leveysastepaino laskee yli 70°N",
     polarMethodLink: "Katso pisteytyskaava →",
+    capacityMapLink: "Avaa yhteyden älykartta →",
     ctaH2:  "Resilienssi alkaa siitä, että tiedät pisteesi.",
     ctaSub: "Ilmainen alustava Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — avaa täysi analyysi sähköpostilla, kun tarvitset syvemmän näkymän.",
     ctaBtn: "Pisteytä kohde",
@@ -1529,6 +1531,7 @@ export default function HomePage() {
                   <li>{t.polarFact2}</li>
                 </ul>
                 <a href="/methodology" className="gryps-polar-instrument-link">{t.polarMethodLink}</a>
+                <a href="/map" className="gryps-polar-instrument-link" style={{ display: "block", marginTop: 8 }}>{t.capacityMapLink}</a>
                 <p className="gryps-polar-instrument-meta">
                   {t.polarMapLabel}
                 </p>
