@@ -84,6 +84,7 @@ body {
 
 .mono { font-family: var(--font-data); }
 .gryps-print-only { display: none; }
+.gryps-print-brand { display: none; }
 .gryps-basemap-dim {
   filter: brightness(0.72) saturate(0.85);
 }
@@ -1230,6 +1231,7 @@ body {
 
   .gryps-print-target { margin: 0; padding: 24px; }
   .gryps-print-only { display: block !important; }
+  .gryps-print-brand { display: flex !important; }
   .gryps-print-target > * { break-inside: avoid; }
   a { text-decoration: none !important; color: inherit !important; }
 }

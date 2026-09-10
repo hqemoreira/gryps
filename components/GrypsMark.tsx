@@ -23,3 +23,39 @@ export function GrypsMark({ size = 36, animate = false }: { size?: number; anima
     </svg>
   )
 }
+
+/** Screen-hidden brand lockup for print / Save as PDF (nav is `.gryps-no-print`). */
+export function GrypsPrintBrand({
+  subtitle = "Connectivity Resilience Advisor",
+}: {
+  subtitle?: string
+}) {
+  return (
+    <div
+      className="gryps-print-brand gryps-print-only"
+      style={{
+        alignItems: "center",
+        gap: 10,
+        marginBottom: 20,
+        paddingBottom: 14,
+        borderBottom: "1px solid var(--border)",
+      }}
+    >
+      <GrypsMark size={32} />
+      <div>
+        <p style={{
+          fontFamily: "var(--font-ui)", fontWeight: 800, fontSize: 18,
+          color: "var(--text)", letterSpacing: "0.08em", lineHeight: 1.1, margin: 0,
+        }}>
+          GRYPS
+        </p>
+        <p style={{
+          fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)",
+          letterSpacing: "0.1em", margin: "4px 0 0",
+        }}>
+          {subtitle}
+        </p>
+      </div>
+    </div>
+  )
+}
