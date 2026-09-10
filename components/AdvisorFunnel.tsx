@@ -159,7 +159,8 @@ export function UnlockFullAssessment({
   const [topics, setTopics] = useState<string[]>(["full_assessment"])
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle")
   const [error, setError] = useState("")
-  const [devUrl, setDevUrl] = useState<string | null>(null)
+  const [verifyUrl, setVerifyUrl] = useState<string | null>(null)
+  const [emailSent, setEmailSent] = useState(true)
 
   const t = lang === "fi" ? {
     headline: "Haluatko täyden arvion?",
@@ -168,6 +169,8 @@ export function UnlockFullAssessment({
     submit: "Avaa täysi arvio",
     sending: "Lähetetään…",
     success: "Tarkista sähköpostisi — vahvistuslinkki avaa täyden arvion.",
+    successManual: "Sähköpostia ei voitu lähettää (Resend-rajoitus). Avaa vahvistuslinkki alla:",
+    openLink: "Avaa täysi arvio",
     footnote: "Ei tiliä tarvita. Lähetämme vain vahvistuslinkin.",
     topicFull: "Täysi arvio tälle kohteelle",
     topicReports: "Ilmoitus, kun täydet raportit julkaistaan",
@@ -181,6 +184,8 @@ export function UnlockFullAssessment({
     submit: "Get full assessment",
     sending: "Sending…",
     success: "Check your email — the confirmation link unlocks the full assessment.",
+    successManual: "Email could not be sent (Resend domain/test limit). Open the confirmation link below:",
+    openLink: "Open full assessment",
     footnote: "No account required. We only send a confirmation link.",
     topicFull: "Full assessment for this site",
     topicReports: "Notify when full reports launch",
@@ -218,7 +223,8 @@ export function UnlockFullAssessment({
     }
     setStatus("sending")
     setError("")
-    setDevUrl(null)
+    setVerifyUrl(null)
+    setEmailSent(true)
     try {
       const res = await fetch("/api/advise/unlock", {
         method: "POST",
@@ -237,7 +243,9 @@ export function UnlockFullAssessment({
         window.location.href = `/?sid=${submissionId}&unlocked=1#advisor`
         return
       }
-      if (data.devVerifyUrl) setDevUrl(data.devVerifyUrl as string)
+      const link = (data.verifyUrl ?? data.devVerifyUrl) as string | undefined
+      if (link) setVerifyUrl(link)
+      setEmailSent(data.emailSent !== false || !link)
       setStatus("sent")
     } catch (err) {
       setStatus("error")
@@ -252,12 +260,20 @@ export function UnlockFullAssessment({
         borderRadius: 8, padding: "18px 20px",
       }}>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--accent-green)", lineHeight: 1.55 }}>
-          {t.success}
+          {emailSent && !verifyUrl ? t.success : t.successManual}
         </p>
-        {devUrl && (
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)", marginTop: 10, wordBreak: "break-all" }}>
-            Dev verify: <a href={devUrl} style={{ color: "var(--accent-cyan)" }}>{devUrl}</a>
-          </p>
+        {verifyUrl && (
+          <a
+            href={verifyUrl}
+            style={{
+              display: "inline-flex", marginTop: 14, padding: "10px 16px", minHeight: 44,
+              alignItems: "center", borderRadius: 6, textDecoration: "none",
+              background: "var(--cta-gradient)", color: "#070B12",
+              fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
+            }}
+          >
+            {t.openLink}
+          </a>
         )}
       </div>
     )

@@ -327,22 +327,23 @@ something addressed here.
 | `NEON_DATABASE_URL` | `api/advise/*`, `lib/signatures-db.ts`, `api/notify/verify` | Neon PostgreSQL connection string |
 | `MISTRAL_API_KEY` | `lib/scoring.ts` | Optional Mistral recommendation prose |
 | `RESEND_API_KEY` | `lib/mail.ts` | Send unlock confirmation emails (magic link) |
-| `RESEND_FROM` | `lib/mail.ts` | From address, e.g. `GRYPS <hello@gryps.eu>` (falls back to Resend onboarding sender) |
+| `RESEND_FROM` | `lib/mail.ts` | From address on a **verified** Resend domain, e.g. `GRYPS <hello@gryps.eu>`. Until the domain is verified, Resend only delivers to the account owner (`hqe.moreira@gmail.com`) and rejects addresses like `henrique+test@…`. |
 | `NEXT_PUBLIC_APP_URL` | `lib/mail.ts` | Canonical site origin for magic-link URLs (prefer over Vercel preview host) |
-| `ALLOW_DEV_VERIFY_URL` | `api/advise/unlock` | If `1`, return `devVerifyUrl` when mail send fails (also auto in non-production) |
 
 Set in: Vercel → gryps project → Settings → Environment Variables  
 (or `vercel env add` for each key). Do not commit secrets.
+
+When Resend rejects a send (unverified domain / test-mode recipient), `/api/advise/unlock` still returns `verifyUrl` so the UI can unlock without inbox delivery. After `gryps.eu` (or another domain) is verified at [resend.com/domains](https://resend.com/domains), set `RESEND_FROM` accordingly and test mail will reach `henrique+test@henriquemoreira.eu`.
 
 ### Advisor funnel (product)
 
 - Anonymous `/api/advise` returns **abbreviated** result; full `output` JSON stays in `advisor_submissions`.
 - Unlock: `POST /api/advise/unlock` → `notify_requests` row + Resend magic link → `GET /api/notify/verify?token=…` sets `verified_at` / `unlocked_at`.
-- Soft anonymous budget: client tracks `gryps-anon-runs` for analytics only (no hard CTA block). IP rate limit: 30/hour on `/api/advise`.
+- Soft anonymous budget: client tracks `gryps-anon-runs` for analytics only (no hard CTA block). IP rate limit is generous for prototype testing.
 - Non-identifying feedback: `POST /api/advise/feedback` → `advisor_submissions.use_case`.
 - Forge should prefer **verified** `notify_requests` (+ contact emails) as identified interest; raw anonymous runs stay Anonymous.
 
-Manual unlock tests: `henrique+test@henriquemoreira.eu`.
+Manual unlock tests: prefer `hqe.moreira@gmail.com` until the domain is verified; otherwise use the on-page verify link.
 
 ---
 

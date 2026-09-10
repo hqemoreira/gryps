@@ -85,20 +85,17 @@ export async function POST(req: NextRequest) {
   const verifyUrl = `${appBaseUrl(req.url)}/api/notify/verify?token=${token}`
   const sent = await sendUnlockEmail({ to: email, verifyUrl, locale })
 
-  // Dev / missing Resend: still succeed but expose verify URL so manual testing works.
+  // Resend test mode / unverified domain often rejects non-account recipients.
+  // Always return the magic link so unlock still works during the prototype.
   if (!sent.ok) {
-    const allowDevLink = process.env.NODE_ENV !== "production" || process.env.ALLOW_DEV_VERIFY_URL === "1"
-    if (allowDevLink) {
-      console.warn("Unlock email not sent:", sent.error, "devVerifyUrl=", verifyUrl)
-      return NextResponse.json({
-        ok: true,
-        pending: true,
-        emailSent: false,
-        warning: sent.error,
-        devVerifyUrl: verifyUrl,
-      })
-    }
-    return NextResponse.json({ error: sent.error }, { status: 503 })
+    console.warn("Unlock email not sent:", sent.error, "verifyUrl=", verifyUrl)
+    return NextResponse.json({
+      ok: true,
+      pending: true,
+      emailSent: false,
+      warning: sent.error,
+      verifyUrl,
+    })
   }
 
   return NextResponse.json({ ok: true, pending: true, emailSent: true })
