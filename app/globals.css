@@ -1006,23 +1006,60 @@ body {
   max-width: 260px;
   margin: 0 auto;
 }
+.gryps-polar-figure-lg {
+  width: 100%;
+  max-width: none;
+  min-height: min(62vh, 640px);
+  aspect-ratio: 1 / 1;
+  max-height: 720px;
+  margin: 0 auto;
+}
 .gryps-polar-method {
-  margin: 0 0 36px;
-  padding: 20px;
+  margin: 0 0 40px;
+  padding: 16px 16px 20px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--surface) 70%, transparent);
   text-align: center;
+  width: 100%;
+  max-width: min(920px, 100%);
+  margin-left: auto;
+  margin-right: auto;
 }
 .gryps-polar-method figcaption {
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
   color: var(--text-muted);
-  margin-top: 14px;
-  max-width: 42ch;
+  margin-top: 16px;
+  max-width: 62ch;
   margin-left: auto;
   margin-right: auto;
+}
+.gryps-polar-orbit-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.gryps-polar-orbit-controls button {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text-muted);
+}
+.gryps-polar-orbit-controls button.is-active {
+  border-color: var(--accent-blue);
+  background: rgba(79, 168, 255, 0.12);
+  color: var(--accent-blue);
 }
 .gryps-polar-orbit-dash {
   animation: gryps-polar-dash 28s linear infinite;
@@ -1031,12 +1068,26 @@ body {
   animation-duration: 42s;
   animation-direction: reverse;
 }
+.gryps-polar-site-pulse {
+  animation: gryps-polar-site-pulse 2.4s ease-in-out infinite;
+}
 @keyframes gryps-polar-dash {
   to { stroke-dashoffset: -120; }
 }
+@keyframes gryps-polar-site-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
 @media (prefers-reduced-motion: reduce) {
   .gryps-polar-orbit-dash,
-  .gryps-polar-orbit-dash-slow { animation: none; }
+  .gryps-polar-orbit-dash-slow,
+  .gryps-polar-site-pulse { animation: none; }
+}
+@media (max-width: 720px) {
+  .gryps-polar-figure-lg {
+    min-height: min(52vh, 420px);
+    max-height: 480px;
+  }
 }
 
 /* ── Responsive overrides ────────────────────────────────────────────────── */
