@@ -186,12 +186,6 @@ const UI = {
     art50: "Art. 50 EU AI Act",
     generated: "Generated",
     printAttr: "GRYPS · Connectivity Resilience Advisor · gryps.vercel.app",
-    notifyCta: "Get notified when full reports launch",
-    notifyPlaceholder: "your@email.com",
-    notifySubmit: "Notify me",
-    notifySubmitting: "Submitting…",
-    notifySuccess: "You're on the list — we'll be in touch.",
-    notifyNote: "No spam. One-time notification only.",
     measured: "measured",
     medianDownload: "Mbit/s median download",
     medianLatency: "ms median latency",
@@ -277,12 +271,6 @@ const UI = {
     art50: "50 artikla, EU:n tekoälylaki",
     generated: "Luotu",
     printAttr: "GRYPS · Connectivity Resilience Advisor · gryps.vercel.app",
-    notifyCta: "Saat ilmoituksen, kun täydet raportit julkaistaan",
-    notifyPlaceholder: "sähköposti@esimerkki.fi",
-    notifySubmit: "Ilmoita minulle",
-    notifySubmitting: "Lähetetään…",
-    notifySuccess: "Olet listalla — olemme yhteydessä.",
-    notifyNote: "Ei roskapostia. Vain kertaluonteinen ilmoitus.",
     measured: "mitattu",
     medianDownload: "Mbit/s mediaanilataus",
     medianLatency: "ms mediaaniviive",
@@ -294,73 +282,6 @@ const UI = {
 } as const
 
 type UiCopy = (typeof UI)[UiLang]
-
-function NotifyCta({ t }: { t: UiCopy }) {
-  const [email, setEmail] = useState("")
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle")
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!email) return
-    setStatus("sending")
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, message: "Notify me when full reports launch", name: null }),
-      })
-      if (!res.ok) throw new Error()
-      setStatus("sent")
-    } catch {
-      setStatus("error")
-    }
-  }
-
-  if (status === "sent") {
-    return (
-      <div style={{
-        backgroundColor: "rgba(46,212,122,0.06)", border: "1px solid rgba(46,212,122,0.2)",
-        borderRadius: 8, padding: "16px 20px", textAlign: "center",
-      }}>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-green)" }}>{t.notifySuccess}</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="gryps-no-print" style={{
-      backgroundColor: "rgba(79,168,255,0.04)", border: "1px solid rgba(79,168,255,0.15)",
-      borderRadius: 8, padding: "16px 20px",
-    }}>
-      <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)", marginBottom: 8 }}>
-        {t.notifyCta}
-      </p>
-      <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, alignItems: "center" }}>
-        <input
-          type="email"
-          required
-          placeholder={t.notifyPlaceholder}
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          style={{
-            flex: 1, backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
-            borderRadius: 6, padding: "8px 12px", fontFamily: "var(--font-data)",
-            fontSize: 12, color: "var(--text)", outline: "none",
-          }}
-        />
-        <button type="submit" disabled={status === "sending"} style={{
-          backgroundColor: "#4FA8FF", color: "#070B12", border: "none",
-          borderRadius: 6, padding: "8px 16px", fontFamily: "var(--font-ui)",
-          fontWeight: 700, fontSize: 12, cursor: status === "sending" ? "wait" : "pointer",
-          flexShrink: 0,
-        }}>
-          {status === "sending" ? t.notifySubmitting : t.notifySubmit}
-        </button>
-      </form>
-      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", marginTop: 6 }}>{t.notifyNote}</p>
-    </div>
-  )
-}
 
 function AssessmentInputsPanel({ input, t }: { input: AssessmentInputs; t: UiCopy }) {
   const strictAutonomy = input.autonomy_level === "autonomous" || input.autonomy_level === "mixed"
@@ -837,8 +758,6 @@ export function ResilienceOutput({
           {t.generated} {dateLabel} · {t.printAttr} · {result.modelVersion ?? MODEL_VERSION}
         </p>
       </div>
-
-      <NotifyCta t={t} />
     </div>
   )
 }

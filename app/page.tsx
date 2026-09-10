@@ -2,6 +2,8 @@
 import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
 import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle, LocateFixed } from "lucide-react"
 import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
+import { HelpImproveGryps, InitialAssessment, UnlockFullAssessment } from "@/components/AdvisorFunnel"
+import { isAbbreviatedAssessment, type AbbreviatedAssessment } from "@/lib/abbreviate-result"
 import { GrypsMark } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
@@ -223,41 +225,83 @@ function getQueryParams(): URLSearchParams {
   return new URLSearchParams(window.location.search)
 }
 
+const ANON_RUNS_KEY = "gryps-anon-runs"
+const ANON_RUNS_MAX = 3
+
+function readAnonRuns(): number {
+  try {
+    const n = Number(localStorage.getItem(ANON_RUNS_KEY) ?? "0")
+    return Number.isFinite(n) && n > 0 ? n : 0
+  } catch {
+    return 0
+  }
+}
+
+function bumpAnonRuns(): number {
+  const next = readAnonRuns() + 1
+  try {
+    localStorage.setItem(ANON_RUNS_KEY, String(next))
+  } catch { /* ignore */ }
+  return next
+}
+
 function SignatureReveal({
-  result,
+  depth,
+  abbreviated,
+  full,
   assessmentInputs,
   realData,
+  submissionId,
+  useCase,
   lang,
   t,
   onReset,
 }: {
-  result: AdvisoryResult
+  depth: "abbreviated" | "full"
+  abbreviated?: AbbreviatedAssessment | null
+  full?: AdvisoryResult | null
   assessmentInputs: AssessmentInputs
   realData?: RealDataEvidence
+  submissionId: number | null
+  useCase?: string | null
   lang: "en" | "fi"
   t: typeof COPY.en
   onReset: () => void
 }) {
   const lines = useMemo(() => {
-    const sig = result.resilience_signature
     const lat = assessmentInputs.lat ?? 68.2
     const lng = assessmentInputs.lng ?? 27.4
     const rows: { tag: string; color: string; text: string }[] = [
       { tag: "GRYPS-INIT", color: "var(--accent-blue)", text: `Evaluating site profile for ${lat}°N · ${lng}°E…` },
     ]
-    for (const r of result.risk_factors.slice(0, 3)) {
-      rows.push({ tag: "RISK-FACT", color: "var(--accent-amber)", text: `${r.label} · ${r.severity}` })
+    if (abbreviated) {
+      const sig = abbreviated.resilience_signature
+      for (const r of abbreviated.top_risks.slice(0, 2)) {
+        rows.push({ tag: "RISK-FACT", color: "var(--accent-amber)", text: `${r.label} · ${r.severity}` })
+      }
+      rows.push({
+        tag: "OPTIONS",
+        color: "var(--accent-cyan)",
+        text: `${abbreviated.recommended.provider} · confidence ${abbreviated.recommended.confidence}`,
+      })
+      rows.push({ tag: "SIGNATURE", color: "var(--accent-green)", text: `Resilience Signature computed: ${sig.score} · ${sig.grade}` })
+      rows.push({ tag: "REPORT", color: "var(--accent-green)", text: "Initial assessment ready — full report gated" })
+    } else if (full) {
+      const sig = full.resilience_signature
+      for (const r of full.risk_factors.slice(0, 3)) {
+        rows.push({ tag: "RISK-FACT", color: "var(--accent-amber)", text: `${r.label} · ${r.severity}` })
+      }
+      for (const g of full.redundancy_gaps.slice(0, 2)) {
+        rows.push({ tag: "GAP", color: "var(--accent-amber)", text: g.label })
+      }
+      for (const o of full.connectivity_options.slice(0, 3)) {
+        rows.push({ tag: "OPTIONS", color: "var(--accent-cyan)", text: `${o.provider} · confidence ${o.confidence}` })
+      }
+      rows.push({ tag: "SIGNATURE", color: "var(--accent-green)", text: `Resilience Signature computed: ${sig.score} · ${sig.grade}` })
+      rows.push({ tag: "REPORT", color: "var(--accent-green)", text: "Assessment complete — full advisory output ready" })
     }
-    for (const g of result.redundancy_gaps.slice(0, 2)) {
-      rows.push({ tag: "GAP", color: "var(--accent-amber)", text: g.label })
-    }
-    for (const o of result.connectivity_options.slice(0, 3)) {
-      rows.push({ tag: "OPTIONS", color: "var(--accent-cyan)", text: `${o.provider} · confidence ${o.confidence}` })
-    }
-    rows.push({ tag: "SIGNATURE", color: "var(--accent-green)", text: `Resilience Signature computed: ${sig.score} · ${sig.grade}` })
-    rows.push({ tag: "REPORT", color: "var(--accent-green)", text: "Assessment complete — advisory output ready" })
     return rows
-  }, [result, assessmentInputs.lat, assessmentInputs.lng])
+  }, [abbreviated, full, assessmentInputs.lat, assessmentInputs.lng])
 
   const [visible, setVisible] = useState(0)
   const [done, setDone] = useState(false)
@@ -302,8 +346,16 @@ function SignatureReveal({
 
   return (
     <div>
-      <div className="gryps-print-target">
-        <ResilienceOutput result={result} input={assessmentInputs} realData={realData} lang={lang} />
+      <div className="gryps-print-target" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        {depth === "full" && full ? (
+          <ResilienceOutput result={full} input={assessmentInputs} realData={realData} lang={lang} />
+        ) : abbreviated ? (
+          <>
+            <InitialAssessment result={abbreviated} lang={lang} />
+            <UnlockFullAssessment submissionId={submissionId} lang={lang} />
+          </>
+        ) : null}
+        <HelpImproveGryps submissionId={submissionId} lang={lang} initialUseCase={useCase} />
       </div>
       <button
         className="gryps-no-print"
@@ -336,24 +388,38 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const [legacySetup] = useState(qp.get("setup") ?? "")
   const [autonomy, setAutonomy] = useState(qp.get("autonomy") ?? "")
   const [criticality, setCriticality] = useState(qp.get("criticality") ?? "")
-  const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<AdvisoryResult | null>(null)
+  const [depth, setDepth] = useState<"abbreviated" | "full">(qp.get("unlocked") === "1" ? "full" : "abbreviated")
+  const [abbreviated, setAbbreviated] = useState<AbbreviatedAssessment | null>(null)
+  const [fullResult, setFullResult] = useState<AdvisoryResult | null>(null)
   const [realData, setRealData] = useState<RealDataEvidence | undefined>(undefined)
+  const [useCase, setUseCase] = useState<string | null>(null)
   const [error, setError] = useState("")
   const [boundsError, setBoundsError] = useState("")
   const [geoBusy, setGeoBusy] = useState(false)
   const [geoNote, setGeoNote] = useState("")
-  const [, setShareId] = useState<string | null>(qp.get("sid"))
+  const [shareId, setShareId] = useState<string | null>(qp.get("sid"))
+  const [anonRuns, setAnonRuns] = useState(() => readAnonRuns())
+  const [unlockBanner, setUnlockBanner] = useState<string | null>(() => {
+    const unlock = qp.get("unlock")
+    if (unlock === "invalid" || unlock === "expired" || unlock === "error") {
+      return lang === "fi"
+        ? "Vahvistuslinkki ei kelpaa tai on vanhentunut. Pyydä uusi linkki tuloksista."
+        : "That confirmation link is invalid or expired. Request a new one from your results."
+    }
+    return null
+  })
+
+  const hasResult = depth === "full" ? !!fullResult : !!abbreviated
 
   useEffect(() => {
     const sid = getQueryParams().get("sid")
-    if (!sid || result) return
+    if (!sid || hasResult) return
+    const wantFull = getQueryParams().get("unlocked") === "1"
     fetch(`/api/submissions/${sid}`)
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(data => {
         if (!data.result) return
-        setResult(data.result as AdvisoryResult)
         const inp = data.input ?? {}
         const coords = inp.site_coordinates as { lat?: number; lng?: number } | undefined
         if (coords?.lat != null) setLat(String(coords.lat))
@@ -367,9 +433,28 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           setProviders(inferProvidersFromSetup(String(inp.current_setup)))
         }
         setShareId(String(data.id))
+        if (data.use_case) setUseCase(String(data.use_case))
+
+        if (data.depth === "full" || data.unlocked) {
+          if (isAbbreviatedAssessment(data.result)) return
+          setFullResult(data.result as AdvisoryResult)
+          setDepth("full")
+          setAbbreviated(null)
+          if (wantFull) {
+            setUnlockBanner(
+              lang === "fi"
+                ? "Sähköposti vahvistettu — täysi arvio avattu."
+                : "Email confirmed — full assessment unlocked.",
+            )
+          }
+        } else if (isAbbreviatedAssessment(data.result)) {
+          setAbbreviated(data.result)
+          setDepth("abbreviated")
+          setFullResult(null)
+        }
       })
       .catch(() => {})
-  }, [result])
+  }, [hasResult, lang])
 
   function toggleProvider(id: string) {
     setProviders(prev => {
@@ -417,6 +502,11 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     e.preventDefault()
     if (!vertical || !autonomy || !criticality) return
 
+    if (readAnonRuns() >= ANON_RUNS_MAX) {
+      setError(t.anonLimit)
+      return
+    }
+
     const latNum = lat ? parseFloat(lat) : parseFloat(DEFAULT_LAT)
     const lngNum = lng ? parseFloat(lng) : parseFloat(DEFAULT_LNG)
     if (!coordsInNordicBounds(latNum, lngNum)) {
@@ -431,8 +521,10 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
 
     setLoading(true)
     setError("")
-    setResult(null)
+    setAbbreviated(null)
+    setFullResult(null)
     setRealData(undefined)
+    setUnlockBanner(null)
     try {
       const res = await fetch("/api/advise", {
         method: "POST",
@@ -444,12 +536,22 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           current_setup: setupStr,
           autonomy_level: autonomy,
           operation_criticality: criticality,
-          email: email || undefined,
         }),
       })
       const data = await res.json()
       if (!res.ok || !data.result) throw new Error(data.error ?? "Analysis failed")
-      setResult(data.result as AdvisoryResult)
+
+      const runs = bumpAnonRuns()
+      setAnonRuns(runs)
+
+      if (isAbbreviatedAssessment(data.result)) {
+        setAbbreviated(data.result)
+        setDepth("abbreviated")
+      } else {
+        // Fallback if API ever returns full (should not for anonymous).
+        setFullResult(data.result as AdvisoryResult)
+        setDepth("full")
+      }
       setRealData(data.realData ?? undefined)
       const shareParams = new URLSearchParams()
       shareParams.set("lat", String(latNum))
@@ -490,7 +592,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     letterSpacing: "0.1em", display: "block", marginBottom: 8,
   }
 
-  if (result) {
+  if (hasResult) {
     const assessmentInputs: AssessmentInputs = {
       lat: lat ? parseFloat(lat) : parseFloat(DEFAULT_LAT),
       lng: lng ? parseFloat(lng) : parseFloat(DEFAULT_LNG),
@@ -499,16 +601,40 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       operation_criticality: criticality,
       current_setup: providers.length ? providersToSetupString(providers) : legacySetup || undefined,
     }
+    const revealKey = depth === "full"
+      ? (fullResult?.issuedAt ?? `${fullResult?.resilience_signature.score}-${fullResult?.resilience_signature.grade}`)
+      : (abbreviated?.issuedAt ?? `${abbreviated?.resilience_signature.score}-${abbreviated?.recommended.provider}`)
     return (
-      <SignatureReveal
-        key={result.issuedAt ?? `${result.resilience_signature.score}-${result.resilience_signature.grade}`}
-        result={result}
-        assessmentInputs={assessmentInputs}
-        realData={realData}
-        lang={lang}
-        t={t}
-        onReset={() => { setResult(null); setRealData(undefined); setLoading(false) }}
-      />
+      <div>
+        {unlockBanner && (
+          <div style={{
+            marginBottom: 16, padding: "12px 14px",
+            backgroundColor: "rgba(46,212,122,0.08)", border: "1px solid rgba(46,212,122,0.25)",
+            borderRadius: "var(--radius)",
+          }}>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-green)" }}>{unlockBanner}</p>
+          </div>
+        )}
+        <SignatureReveal
+          key={revealKey}
+          depth={depth}
+          abbreviated={abbreviated}
+          full={fullResult}
+          assessmentInputs={assessmentInputs}
+          realData={realData}
+          submissionId={shareId ? Number(shareId) : null}
+          useCase={useCase}
+          lang={lang}
+          t={t}
+          onReset={() => {
+            setAbbreviated(null)
+            setFullResult(null)
+            setRealData(undefined)
+            setLoading(false)
+            setUnlockBanner(null)
+          }}
+        />
+      </div>
     )
   }
 
@@ -516,6 +642,8 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     fontFamily: "var(--font-data)", fontSize: 11, letterSpacing: "0.04em",
     padding: "10px 14px", minHeight: 44, borderRadius: "var(--radius)", cursor: "pointer",
   }
+
+  const atAnonLimit = anonRuns >= ANON_RUNS_MAX
 
   return (
     <form onSubmit={handleSubmit} className="gryps-console-panel" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -663,36 +791,23 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         </a>
       </div>
 
-      <div className="gryps-field-group" style={{ backgroundColor: "rgba(79,168,255,0.05)", borderColor: "rgba(79,168,255,0.2)" }}>
-        <label style={{ ...labelStyle, color: "var(--accent-blue)" }}>{t.emailLabel}</label>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5, marginBottom: 4 }}>
-          {t.emailHint}
-        </p>
-        <input
-          type="email"
-          placeholder="your@company.com"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          style={inputStyle}
-        />
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", marginTop: 2 }}>
-          {t.emailOptionalNote}
-        </p>
-      </div>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.04em" }}>
+        {t.noAccountNote}
+      </p>
 
-      {(boundsError || error) && (
+      {(boundsError || error || unlockBanner) && (
         <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "var(--radius)", padding: "10px 14px" }}>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-red)" }}>{boundsError || error}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-red)" }}>{boundsError || error || unlockBanner}</p>
         </div>
       )}
 
       <button
         type="submit"
         className="gryps-cta-btn"
-        disabled={loading || !vertical || !autonomy || !criticality}
+        disabled={loading || atAnonLimit || !vertical || !autonomy || !criticality}
         style={{
           width: "100%",
-          opacity: (!vertical || !autonomy || !criticality) ? 0.5 : 1,
+          opacity: (atAnonLimit || !vertical || !autonomy || !criticality) ? 0.5 : 1,
           background: loading ? "var(--surface2)" : "var(--cta-gradient)",
           color: loading ? "var(--text-muted)" : "#070B12",
         }}
@@ -913,7 +1028,7 @@ const COPY = {
     tag:        "CONNECTIVITY RESILIENCE · NORDIC, ARCTIC & ICELAND OPERATIONS",
     navCta:     "Score my site · free",
     h1:         "Know your score before the Arctic finds it for you.",
-    sub:        "Score, grade, risks, and ranked providers for Nordic, Arctic, and Icelandic sites — in ~60 seconds. Free. No account.",
+    sub:        "Score, grade, and a ranked provider for Nordic, Arctic, and Icelandic sites — in ~60 seconds. Free initial assessment. No account.",
     scoreLabel: "Score: {score}/100 · Grade {grade}",
     heroSecondary: "See a sample Signature",
     modelChip:  "Research prototype · Model v0.3",
@@ -925,7 +1040,7 @@ const COPY = {
     liveCounter: "sites assessed in the Nordic & Arctic portfolio",
     proofBand:  "Illustrative · not live monitoring",
     advisorCta: "Score my site · free",
-    advisorSub: "~60 seconds · No account · Research prototype",
+    advisorSub: "~60 seconds · No account · Initial assessment free",
     sectorLabel:        "OPERATIONAL SECTOR",
     sectorPlaceholder:  "Select sector",
     autonomyLabel:      "AUTONOMY LEVEL",
@@ -938,9 +1053,8 @@ const COPY = {
     providersHint:  "Select all providers currently in use. Choose None if no satellite path is documented. GRYPS has no commercial relationship with any provider listed.",
     providersCoi: "No commercial relationships with ranked providers — see Providers.",
     boundsHint: "Coordinates must be within Nordic/Arctic bounds (lat 55–85°, lng −30–40°).",
-    emailLabel: "OPTIONAL EMAIL",
-    emailHint:  "Optional — stored with this run so we can email the report / notify when live monitoring launches. Not a newsletter.",
-    emailOptionalNote: "You'll see results either way. After generate, use Copy shareable link (?sid=).",
+    noAccountNote: "No account required. Free initial assessment — email only if you unlock the full analysis.",
+    anonLimit: "You've used your free initial assessments on this device. Unlock a prior result with email to continue, or clear local trial data.",
     runAdvisor: "Score my site · free",
     analysing:  "Analysing your site…",
     analyseAnother: "Analyse another site",
@@ -960,7 +1074,7 @@ const COPY = {
       { n: "01", title: "Enter site profile",    body: "Coordinates, sector, and current providers. Elevation and terrain are factored automatically." },
       { n: "02", title: "Set autonomy level",    body: "Manual, remote-operated, autonomous, or mixed. Scoring weights shift with operational dependency on connectivity." },
       { n: "03", title: "Set criticality",       body: "Standard, high, or safety-critical. A safety-critical autonomous site with no redundancy cannot score above 50." },
-      { n: "04", title: "Generate a Signature", body: "Score, grade, risk factors, redundancy gaps, ranked providers, and plain-language recommendation — in seconds." },
+      { n: "04", title: "Generate a Signature", body: "Free initial assessment with score and top recommendation. Unlock the full analysis with email confirmation." },
     ],
     examplesLabel: "EXAMPLE RESILIENCE SIGNATURES",
     examplesSub: "Pre-computed examples showing what the Resilience Advisor produces. Run the Advisor above for a live assessment.",
@@ -972,7 +1086,7 @@ const COPY = {
     polarFact2: "Latitude weight drops above 70°N",
     polarMethodLink: "See scoring formula →",
     ctaH2:  "Resilience starts with knowing your score.",
-    ctaSub: "Free Resilience Signature for any Nordic, Arctic, or Icelandic site. No account — connectivity risk scored in ~60 seconds.",
+    ctaSub: "Free initial Resilience Signature for any Nordic, Arctic, or Icelandic site. No account — unlock the full analysis with email when you want deeper detail.",
     ctaBtn: "Score my site · free",
     viewSample: "View sample Signature →",
     footerTag:    "Built in Finland for high-latitude resilience.",
@@ -981,7 +1095,7 @@ const COPY = {
     tag:        "YHTEYDEN RESILIENSSI · POHJOISMAAT · ARKTIS · ISLANTI",
     navCta:     "Pisteytä kohde",
     h1:         "Tiedä pisteesi ennen kuin arktiset olosuhteet tekevät sen puolestasi.",
-    sub:        "Pisteet, arvosana, riskit ja toimittajasuositukset pohjoismaisille, arktisille ja islantilaisille kohteille — noin minuutissa. Ilmaiseksi. Ei tiliä.",
+    sub:        "Pisteet, arvosana ja suositeltu toimittaja pohjoismaisille, arktisille ja islantilaisille kohteille — noin minuutissa. Ilmainen alustava arvio. Ei tiliä.",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
     heroSecondary: "Katso esimerkki-Signature",
     modelChip:  "Tutkimusprototyyppi · Malli v0.3",
@@ -993,7 +1107,7 @@ const COPY = {
     liveCounter: "kohdetta arvioitu Pohjoismaiden ja arktisen alueen portfoliossa",
     proofBand:  "Havainnollistava · ei reaaliaikaista seurantaa",
     advisorCta: "Pisteytä kohde",
-    advisorSub: "~60 sekuntia · Ei tiliä · Tutkimusprototyyppi",
+    advisorSub: "~60 sekuntia · Ei tiliä · Ilmainen alustava arvio",
     sectorLabel:        "TOIMIALA",
     sectorPlaceholder:  "Valitse toimiala",
     autonomyLabel:      "AUTONOMIATASO",
@@ -1006,9 +1120,8 @@ const COPY = {
     providersHint:  "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittiyhteyttä ei ole dokumentoitu. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
     providersCoi: "Ei kaupallisia suhteita suositeltuihin toimittajiin — katso Toimittajat.",
     boundsHint: "Koordinaattien on oltava Pohjoismaiden tai arktisen alueen rajoissa (lat 55–85°, lng −30–40°).",
-    emailLabel: "VALINNAINEN SÄHKÖPOSTI",
-    emailHint:  "Valinnainen — tallennetaan tämän ajon yhteyteen, jotta voimme lähettää raportin tai ilmoittaa, kun reaaliaikainen seuranta käynnistyy. Ei uutiskirjettä.",
-    emailOptionalNote: "Näet tulokset joka tapauksessa. Generoinnin jälkeen voit kopioida jaettavan linkin (?sid=).",
+    noAccountNote: "Ei tiliä tarvita. Ilmainen alustava arvio — sähköposti vain, jos avaat täyden analyysin.",
+    anonLimit: "Olet käyttänyt ilmaiset alustavat arviot tällä laitteella. Avaa aiempi tulos sähköpostilla jatkaaksesi, tai tyhjennä paikallinen kokeiludata.",
     runAdvisor: "Pisteytä kohde",
     analysing:  "Arvioidaan kohdetta…",
     analyseAnother: "Arvioi toinen kohde",
@@ -1028,7 +1141,7 @@ const COPY = {
       { n: "01", title: "Syötä kohteen tiedot",    body: "Koordinaatit, toimiala ja nykyiset toimittajat. Korkeus ja maasto otetaan huomioon automaattisesti." },
       { n: "02", title: "Valitse autonomiataso",    body: "Manuaalinen, etäohjattu, autonominen tai yhdistelmä. Pisteytyksen painot muuttuvat sen mukaan, kuinka riippuvainen toiminta on yhteydestä." },
       { n: "03", title: "Valitse kriittisyys",      body: "Tavanomainen, korkea tai turvallisuuskriittinen. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
-      { n: "04", title: "Luo Signature",           body: "Pisteet, arvosana, riskitekijät, redundanssiaukot, toimittajasuositukset ja selkokielinen suositus — sekunneissa." },
+      { n: "04", title: "Luo Signature",           body: "Ilmainen alustava arvio pisteineen ja ykkössuosituksineen. Avaa täysi analyysi sähköpostivahvistuksella." },
     ],
     examplesLabel: "ESIMERKKEJÄ RESILIENCE SIGNATUREISTA",
     examplesSub: "Ennalta lasketut esimerkit siitä, mitä Resilience Advisor tuottaa. Aja Advisor yllä saadaksesi oman arvion.",
@@ -1040,7 +1153,7 @@ const COPY = {
     polarFact2: "Leveysastepaino laskee yli 70°N",
     polarMethodLink: "Katso pisteytyskaava →",
     ctaH2:  "Resilienssi alkaa siitä, että tiedät pisteesi.",
-    ctaSub: "Ilmainen Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — yhteysriski pisteytetään noin minuutissa.",
+    ctaSub: "Ilmainen alustava Resilience Signature mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — avaa täysi analyysi sähköpostilla, kun tarvitset syvemmän näkymän.",
     ctaBtn: "Pisteytä kohde",
     viewSample: "Katso esimerkki-Signature →",
     footerTag:    "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
