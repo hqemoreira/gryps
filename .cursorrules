@@ -5,11 +5,12 @@
 
 # Research / prototype phase (not a business)
 - GRYPS is a non-commercial R&D / portfolio prototype. Do not add monetization or commercial go-to-market in this phase.
-- Explicitly deferred: payments, subscriptions, customer billing, sales CRM, commercial lead capture, customer contracts, paid reports, customer onboarding, team collaboration, commercial API, marketplace, advertising.
+- Explicitly deferred (internal project control — do not publish as a public “deferred commercial” table): payments, subscriptions, customer billing, sales CRM, commercial lead capture, customer contracts, paid reports, customer onboarding, team collaboration, commercial API, marketplace, advertising.
 - Prefer language: Research · Prototype · Experimental · Assessment · Methodology · Evidence · Scenario · Intelligence.
 - Avoid language: “Buy” · “Get a quote” · “For customers” · “Our solution” · “Book a consultation” · “Enterprise plans” (and similar sales/customer phrasing).
 - Canonical CTA remains Generate Resilience Signature — never freemium, trial, or pricing-ladder CTAs.
-- Roadmap of completed sprints + deferred list: `lib/research-roadmap.ts`, public page `/roadmap`.
+- Public posture page: `/research-prototype` (product-facing only). Do not publish career objectives (“Can Henrique independently…”) or personal administrative / unemployment-benefit notes in the GRYPS UI.
+- Separation: product UI = research prototype; `/case-study` = portfolio demonstration; personal project-control notes (full sprint rationale, benefit context) stay outside the public product (e.g. private Notion).
 
 # Typography — dashes (EN + FI user-facing copy)
 - Hyphen `-` (U+002D): compounds, prefixes, IDs (`non-commercial`, `safety-critical`, `deterministic-v0.3`). Finnish open-compound attachments keep a space before the hyphen (`Signature -pisteet`).

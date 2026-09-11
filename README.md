@@ -10,7 +10,7 @@ Non-commercial R&D — assessment-first **Resilience Signature** scoring for sat
 |------|---------|
 | `/` | Ops-console landing + Signature |
 | `/case-study` | Portfolio case study |
-| `/roadmap` | Research roadmap · deferred commercial list |
+| `/research-prototype` | Research & Prototype posture |
 | `/methodology` | Research methodology (EN/FI) |
 | `/data-sources` · `/assumptions` · `/limitations` · `/changelog` | Research quality docs |
 | `/research` | Research Library |

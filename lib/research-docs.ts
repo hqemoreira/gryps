@@ -21,6 +21,7 @@ export const PROTOTYPE_DISCLAIMER_FI =
   "GRYPS on kokeellinen tutkimusprototyyppi. Tulokset ovat suuntaa-antavia, eikä niitä tule tulkita kaupallisena hankintana, kattavuussertifiointina tai teknisena neuvontana."
 
 export type ResearchDocId =
+  | "research-prototype"
   | "methodology"
   | "research"
   | "data-sources"
@@ -34,6 +35,7 @@ export const RESEARCH_DOC_NAV: {
   en: string
   fi: string
 }[] = [
+  { id: "research-prototype", href: "/research-prototype", en: "Research & Prototype", fi: "Tutkimus ja prototyyppi" },
   { id: "methodology", href: "/methodology", en: "Methodology", fi: "Menetelmä" },
   { id: "research", href: "/research", en: "Research Library", fi: "Research Library" },
   { id: "data-sources", href: "/data-sources", en: "Data sources", fi: "Datalähteet" },
@@ -230,8 +232,8 @@ export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
         fi: "Demonstraatiokehys AI- / digiratkaisu- / automaatio- / business analyst -rooleihin — ei kaupallistamista.",
       },
       {
-        en: "Public roadmap: completed sprints 1–9, deferred commercial features, preferred research language.",
-        fi: "Julkinen roadmap: valmiit sprintit 1–9, siirretty kaupallinen toiminnallisuus, suositeltu tutkimuskieli.",
+        en: "Public Research & Prototype posture page; commercial features remain outside current scope. Detailed project-control notes stay out of the product UI.",
+        fi: "Julkinen Tutkimus ja prototyyppi -asemasivu; kaupalliset ominaisuudet pysyvät nykyisen laajuuden ulkopuolella. Yksityiskohtaiset projektinhallintamuistiinpanot eivät ole tuote-UI:ssa.",
       },
     ],
   },
