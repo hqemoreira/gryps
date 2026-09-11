@@ -186,11 +186,13 @@ body {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  flex-shrink: 0;
+  flex: 0 1 auto;
+  min-width: 0;
   min-height: 44px;
   position: relative;
   z-index: 2;
-  max-width: min(100%, 420px);
+  max-width: min(100%, 360px);
+  overflow: hidden;
 }
 .gryps-nav-wordmark {
   font-family: var(--font-ui);
@@ -209,6 +211,8 @@ body {
   flex-wrap: nowrap;
   flex: 1 1 auto;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 .gryps-nav-label {
   font-family: var(--font-ui);
@@ -232,6 +236,8 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+  flex: 1 1 0;
+  max-width: 200px;
 }
 .gryps-nav-lang {
   display: flex;
@@ -1106,8 +1112,10 @@ body {
 }
 
 /* ── Responsive overrides ────────────────────────────────────────────────── */
-@media (max-width: 1200px) {
+/* Tagline yields to nav once Scenarios + Workspace join the bar */
+@media (max-width: 1480px) {
   .gryps-nav-tagline { display: none !important; }
+  .gryps-nav-brand { max-width: none; }
   .gryps-nav-actions { gap: 8px 12px; }
 }
 
