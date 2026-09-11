@@ -48,12 +48,12 @@ export function Header({
       <Link href="/" className="gryps-nav-brand">
         <GrypsMark size={28} animate />
         <span className="gryps-nav-wordmark">GRYPS</span>
+        {tagline && (
+          <span className="gryps-nav-tagline">{tagline}</span>
+        )}
       </Link>
 
       <div className="gryps-nav-actions">
-        {tagline && (
-          <span className="gryps-nav-label gryps-nav-tagline">{tagline}</span>
-        )}
         {links.map(link => (
           <Link key={link.href} href={link.href} className="gryps-nav-label gryps-nav-link">
             {link.label}

@@ -29,7 +29,7 @@ export function DocShell({
         extraLinks={[
           { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
           { href: "/research", label: "Research Library" },
-          { href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" },
+          { href: "/map", label: lang === "en" ? "Explore" : "Tutki" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
           { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
           { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
@@ -44,7 +44,7 @@ export function DocShell({
         footerTag={lang === "en"
           ? "Built in Finland for high-latitude resilience."
           : "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten."}
-        secondaryLink={{ href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" }}
+        secondaryLink={{ href: "/map", label: lang === "en" ? "Explore" : "Tutki" }}
       />
     </div>
   )

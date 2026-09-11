@@ -1326,7 +1326,7 @@ export default function HomePage() {
           extraLinks={[
             { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
             { href: "/research", label: "Research Library" },
-            { href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" },
+            { href: "/map", label: lang === "en" ? "Explore" : "Tutki" },
             { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
             { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
             { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
@@ -1581,7 +1581,7 @@ export default function HomePage() {
           ? "Non-commercial R&D prototype"
           : "Ei-kaupallinen T&K-prototyyppi")}
         footerTag={t.footerTag}
-        secondaryLink={{ href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" }}
+        secondaryLink={{ href: "/map", label: lang === "en" ? "Explore" : "Tutki" }}
       />
 
       <StickyMobileCta label={t.navCta} />

@@ -100,7 +100,7 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
         ctaHref="/#advisor"
         ctaLabel={t.navCta}
         extraLinks={[
-          { href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" },
+          { href: "/map", label: lang === "en" ? "Explore" : "Tutki" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
           { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
         ]}
@@ -252,7 +252,7 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
         footerRights={grypsCopyright(lang, lang === "en"
           ? "Non-commercial R&D prototype"
           : "Ei-kaupallinen T&K-prototyyppi")}
-        secondaryLink={{ href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" }}
+        secondaryLink={{ href: "/map", label: lang === "en" ? "Explore" : "Tutki" }}
       />
     </div>
   )
