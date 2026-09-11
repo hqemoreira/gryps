@@ -23,6 +23,9 @@ export type AbbreviatedAssessment = {
   top_risks: { label: string; severity: string }[]
   priorities_applied?: AdvisorPriorityId[]
   overall_score_explanation?: string
+  evidence_theme?: string
+  evidence_confidence?: { band: "High" | "Medium" | "Low"; score: number }
+  methodology_blurb?: string
   issuedAt?: string
   modelVersion?: string
   inputHash?: string
@@ -107,6 +110,18 @@ export function abbreviateResult(full: AdvisoryResult): AbbreviatedAssessment {
     })),
     priorities_applied: intel?.priorities_applied,
     overall_score_explanation: full.intelligence?.overall_score_explanation,
+    evidence_theme: full.evidence?.environment_theme,
+    evidence_confidence: full.evidence
+      ? {
+          band: full.evidence.confidence.band,
+          score: full.evidence.confidence.score,
+        }
+      : undefined,
+    methodology_blurb: full.evidence?.methodology_summary
+      ? full.evidence.methodology_summary.length > 180
+        ? `${full.evidence.methodology_summary.slice(0, 177)}…`
+        : full.evidence.methodology_summary
+      : undefined,
     issuedAt: full.issuedAt,
     modelVersion: full.modelVersion,
     inputHash: full.inputHash,

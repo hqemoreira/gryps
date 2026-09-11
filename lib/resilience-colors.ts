@@ -29,9 +29,11 @@ export type ScoreComposition = {
 
 import type { AdvisorIntelligence } from "@/lib/advisor-intelligence"
 import type { AdvisorPriorityId } from "@/lib/advisor-priorities"
+import type { EvidencePackage } from "@/lib/evidence-model"
 
 export type { AdvisorIntelligence }
 export type { AdvisorPriorityId }
+export type { EvidencePackage }
 
 export type AdvisoryResult = {
   resilience_signature: { score: number; grade: string; summary: string }
@@ -47,6 +49,8 @@ export type AdvisoryResult = {
   score_composition?: ScoreComposition
   /** Sprint 4 — structured recommendation, score explainers, comparison */
   intelligence?: AdvisorIntelligence
+  /** Sprint 5 — research → data → scoring → recommendation evidence */
+  evidence?: EvidencePackage
 }
 
 export type AssessmentInputs = {

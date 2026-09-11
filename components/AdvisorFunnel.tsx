@@ -14,9 +14,10 @@ const COPY = {
     orbital: "Orbital type",
     latency: "Typical orbital-class latency (reference)",
     why: "Model commentary",
-    teaser: "This is an abbreviated preview. Unlock the detailed assessment for provider comparison, risk factors, redundancy options, and evidence behind this Signature.",
+    teaser: "This is an abbreviated preview. Unlock the detailed assessment for the evidence chain, provider comparison, risk factors, and methodology behind this Signature.",
     model: "Research prototype · Non-commercial · Model-based analysis",
     confidenceNote: "Confidence reflects confidence in the assessment/data basis, not guaranteed service availability.",
+    evidence: "Evidence",
   },
   fi: {
     title: "GRYPS Advisor — Alustava arvio",
@@ -26,9 +27,10 @@ const COPY = {
     orbital: "Rataluokka",
     latency: "Tyypillinen rataluokan latenssi (viite)",
     why: "Mallikommentti",
-    teaser: "Tämä on lyhennetty esikatselu. Avaa yksityiskohtainen arvio saadaksesi toimittajavertailun, riskitekijät, redundanssivaihtoehdot ja Signaturen taustan.",
+    teaser: "Tämä on lyhennetty esikatselu. Avaa yksityiskohtainen arvio saadaksesi näyttöketjun, toimittajavertailun, riskitekijät ja menetelmän tämän Signaturen taustalla.",
     model: "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi",
     confidenceNote: "Luottamus kuvaa arvioinnin/dataperustan varmuutta, ei palvelun saatavuustakuuta.",
+    evidence: "Näyttö",
   },
 } as const
 
@@ -153,6 +155,31 @@ export function InitialAssessment({
               {" — "}
               {rec.best_if[0].condition}
             </p>
+          </div>
+        )}
+
+        {(result.evidence_theme || result.methodology_blurb) && (
+          <div style={{
+            marginTop: 12, padding: "10px 12px",
+            backgroundColor: "rgba(34,211,238,0.06)", border: "1px solid rgba(34,211,238,0.2)",
+            borderRadius: 8,
+          }}>
+            <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-cyan)", letterSpacing: "0.08em", marginBottom: 4 }}>
+              {t.evidence}
+            </p>
+            {result.evidence_theme && (
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text)", marginBottom: 4 }}>
+                {result.evidence_theme}
+                {result.evidence_confidence
+                  ? ` · ${result.evidence_confidence.band} (${result.evidence_confidence.score}%)`
+                  : ""}
+              </p>
+            )}
+            {result.methodology_blurb && (
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.55 }}>
+                {result.methodology_blurb}
+              </p>
+            )}
           </div>
         )}
       </div>

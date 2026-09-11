@@ -5,6 +5,7 @@ import {
   priorityRankBonus,
   type AdvisorIntelligence,
 } from "@/lib/advisor-intelligence"
+import { buildEvidencePackage, type EvidencePackage } from "@/lib/evidence-model"
 
 /**
  * Deterministic Resilience Signature engine (Model v0.3).
@@ -83,9 +84,10 @@ export type DeterministicResult = {
   caps_applied: string[]
   score_composition: ScoreComposition
   intelligence?: AdvisorIntelligence
+  evidence?: EvidencePackage
 }
 
-type ProviderMeta = {
+export type ProviderMeta = {
   id: ProviderId
   name: string
   orbit: "LEO" | "MEO" | "GEO"
@@ -425,9 +427,22 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
     priorities,
   })
 
+  const evidence = buildEvidencePackage({
+    lat,
+    sector,
+    providers,
+    priorities,
+    recommendedProvider: intelligence.recommendation.provider !== "—"
+      ? intelligence.recommendation.provider
+      : connectivity_options[0]?.provider,
+    score,
+    grade,
+  })
+
   const caveats = [
     "Research prototype — illustrative deterministic engine output (Model v0.3).",
     "Mission priorities re-rank recommendations; they do not change the Signature score.",
+    "Indicative research intelligence — not procurement advice or a site survey.",
     "Not a substitute for an on-site RF / sky-view survey.",
     ...(caps_applied.length
       ? [`Hard cap(s) applied: ${caps_applied.join(", ")}.`]
@@ -457,6 +472,7 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
     caps_applied,
     score_composition,
     intelligence,
+    evidence,
   }
 }
 

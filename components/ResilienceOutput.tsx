@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck, Download } from "lucide-react"
 import { gradeColor, gradeTextColor, type AdvisoryResult, type AssessmentInputs, type ScoreComposition } from "@/lib/resilience-colors"
 import type { AdvisorIntelligence, ComparisonRow, ScoreExplanation } from "@/lib/advisor-intelligence"
+import type { EvidencePackage } from "@/lib/evidence-model"
 import { PRIORITY_LABELS, type AdvisorPriorityId } from "@/lib/advisor-priorities"
 import { computeComplianceFlags } from "@/lib/compliance"
 import { redundancyTiers } from "@/lib/redundancy-tiers"
@@ -163,6 +164,17 @@ const UI = {
     scoreExplainLabel: "SCORE EXPLAINED",
     scoreExplainSub: "Each major component, with transparent model commentary.",
     overallResilience: "Resilience",
+    evidenceLabel: "EVIDENCE CHAIN",
+    evidenceSub: "Research → data → scoring → recommendation. Attribution for this Signature.",
+    evidenceTheme: "Environment",
+    evidenceConfidence: "Assessment confidence",
+    evidenceFreshness: "Data freshness",
+    evidenceAssumptions: "Assumptions",
+    evidenceLimitations: "Limitations",
+    evidenceSources: "Sources & attribution",
+    evidenceResearch: "Research references",
+    evidenceMethod: "Methodology",
+    evidenceIndicative: "Indicative research intelligence — not procurement advice or a site survey.",
     scoreComposition: "HOW THIS SCORE WAS COMPUTED",
     scoreCompositionSub: "Model v0.3 component breakdown before hard caps. Full formula on the methodology page.",
     scoreRawSum: "Raw sum",
@@ -278,6 +290,17 @@ const UI = {
     scoreExplainLabel: "PISTEET SELITYKSINEEN",
     scoreExplainSub: "Kukin pääkomponentti läpinäkyvällä mallikommentilla.",
     overallResilience: "Resilienssi",
+    evidenceLabel: "NÄYTTÖKETJU",
+    evidenceSub: "Tutkimus → data → pisteytys → suositus. Tämän Signaturen attribuutio.",
+    evidenceTheme: "Ympäristö",
+    evidenceConfidence: "Arviointiluottamus",
+    evidenceFreshness: "Datan tuoreus",
+    evidenceAssumptions: "Oletukset",
+    evidenceLimitations: "Rajoitteet",
+    evidenceSources: "Lähteet ja attribuutio",
+    evidenceResearch: "Tutkimusviitteet",
+    evidenceMethod: "Menetelmä",
+    evidenceIndicative: "Suuntaa-antava tutkimusäly — ei hankintaneuvontaa eikä paikkamitasta.",
     scoreComposition: "MITEN TÄMÄ PISTE LASKETTIIN",
     scoreCompositionSub: "Mallin v0.3 komponenttijako ennen kovia kattoja. Täysi kaava menetelmäsivulla.",
     scoreRawSum: "Raakasumma",
@@ -553,6 +576,162 @@ function IntelligencePanel({ intelligence, t }: { intelligence: AdvisorIntellige
   )
 }
 
+function EvidencePanel({ evidence, t }: { evidence: EvidencePackage; t: UiCopy }) {
+  const band = bandLabel(evidence.confidence.band, t)
+  const sourceById = new Map(evidence.sources.map(s => [s.id, s]))
+
+  return (
+    <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 4 }}>{t.evidenceLabel}</p>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14, lineHeight: 1.5 }}>{t.evidenceSub}</p>
+
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text)", lineHeight: 1.6, marginBottom: 14 }}>
+        {evidence.methodology_summary}
+      </p>
+
+      <div style={{
+        display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16,
+      }}>
+        <span style={{
+          fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)",
+          border: "1px solid var(--border)", borderRadius: 4, padding: "3px 8px",
+        }}>
+          {t.evidenceTheme}: {evidence.environment_theme}
+        </span>
+        <span style={{
+          fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)",
+          border: "1px solid rgba(79,168,255,0.35)", borderRadius: 4, padding: "3px 8px",
+        }}>
+          {t.evidenceConfidence}: {band} ({evidence.confidence.score}%)
+        </span>
+      </div>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.55, marginBottom: 16 }}>
+        {evidence.confidence.rationale}
+      </p>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 18 }}>
+        {evidence.chain.map((step, i) => (
+          <div key={step.id} style={{
+            display: "grid",
+            gridTemplateColumns: "28px 1fr",
+            gap: 10,
+            paddingBottom: i < evidence.chain.length - 1 ? 14 : 0,
+            marginBottom: i < evidence.chain.length - 1 ? 0 : 0,
+          }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{
+                width: 22, height: 22, borderRadius: 11,
+                backgroundColor: "var(--surface2)", border: "1px solid var(--accent-cyan)",
+                fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-cyan)",
+                display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700,
+              }}>
+                {i + 1}
+              </div>
+              {i < evidence.chain.length - 1 && (
+                <div style={{ width: 1, flex: 1, minHeight: 12, backgroundColor: "var(--border)", marginTop: 4 }} />
+              )}
+            </div>
+            <div style={{ paddingBottom: i < evidence.chain.length - 1 ? 4 : 0 }}>
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-cyan)", letterSpacing: "0.08em", marginBottom: 4 }}>
+                {step.label.toUpperCase()}
+              </p>
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.55 }}>
+                {step.summary}
+              </p>
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", marginTop: 4 }}>
+                {step.sourceIds
+                  .map(id => sourceById.get(id)?.title)
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }} className="gryps-output-grid">
+        <div>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 8 }}>{t.evidenceAssumptions}</p>
+          <ul style={{ margin: 0, paddingLeft: 16 }}>
+            {evidence.assumptions.map((a, i) => (
+              <li key={i} style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5, marginBottom: 4 }}>{a}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 8 }}>{t.evidenceLimitations}</p>
+          <ul style={{ margin: 0, paddingLeft: 16 }}>
+            {evidence.limitations.map((a, i) => (
+              <li key={i} style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5, marginBottom: 4 }}>{a}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 14, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 8 }}>{t.evidenceFreshness}</p>
+        <dl style={{ display: "flex", flexDirection: "column", gap: 6, margin: 0 }}>
+          {[
+            ["Model", evidence.data_freshness.model],
+            ["Catalog", evidence.data_freshness.catalog],
+            ["Datasets", evidence.data_freshness.reference_datasets],
+            ["Knowledge", evidence.data_freshness.knowledge],
+          ].map(([k, v]) => (
+            <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+              <dt style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)" }}>{k}</dt>
+              <dd style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", margin: 0, textAlign: "right" }}>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <div style={{ marginBottom: 14 }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 8 }}>{t.evidenceSources}</p>
+        <ul style={{ margin: 0, paddingLeft: 16 }}>
+          {evidence.sources.map(s => (
+            <li key={s.id} style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.55, marginBottom: 6 }}>
+              {s.url ? (
+                <Link href={s.url} style={{ color: "var(--accent-blue)", textDecoration: "none" }}>{s.title}</Link>
+              ) : (
+                <span style={{ color: "var(--text)" }}>{s.title}</span>
+              )}
+              {" — "}
+              {s.attribution}
+              {s.freshness ? ` · ${s.freshness}` : ""}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div style={{ marginBottom: 12 }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 8 }}>{t.evidenceResearch}</p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {evidence.research_links.map(l => (
+            <Link
+              key={l.href}
+              href={l.href}
+              style={{
+                fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)",
+                border: "1px solid rgba(79,168,255,0.25)", borderRadius: 4, padding: "4px 8px",
+                textDecoration: "none",
+              }}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--accent-amber)", lineHeight: 1.5, marginTop: 8 }}>
+        {t.evidenceIndicative}
+      </p>
+      <Link href="/methodology" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)", marginTop: 10, display: "inline-block" }}>
+        {t.evidenceMethod} →
+      </Link>
+    </div>
+  )
+}
+
 function ComparisonTable({ rows, t }: { rows: ComparisonRow[]; t: UiCopy }) {
   if (!rows.length) return null
   return (
@@ -699,7 +878,7 @@ export function ResilienceOutput({
   lang?: UiLang
 }) {
   const t = UI[lang]
-  const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats, score_composition, intelligence } = result
+  const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats, score_composition, intelligence, evidence } = result
   const gc = gradeColor(sig.grade)
   const gtc = gradeTextColor(sig.grade)
   const flags = computeComplianceFlags(result, input)
@@ -795,6 +974,8 @@ export function ResilienceOutput({
       {intelligence && intelligence.comparison.length > 0 && (
         <ComparisonTable rows={intelligence.comparison} t={t} />
       )}
+
+      {evidence && <EvidencePanel evidence={evidence} t={t} />}
 
       {realData && <RealDataEvidencePanel data={realData} t={t} lang={lang} />}
 

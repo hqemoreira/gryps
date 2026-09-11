@@ -18,14 +18,22 @@ const UI = {
     redundancy: "Redundancy considerations",
     methodology: "Methodology & evidence",
     methodologyBody:
-      "Score, grade, risks, and ranked options are deterministic Model v0.3 output. Orbital-class latency/reliability notes are reference / model commentary — not measured site performance or a provider SLA. Confidence reflects assessment/data basis, not guaranteed service availability.",
+      "Each curated assessment follows the GRYPS evidence chain: operating environment → relevant research → connectivity characteristics → Model v0.3 scoring → provider recommendation. Score, grade, risks, and ranks are deterministic. Orbital-class notes are reference / model commentary — not measured site performance or a provider SLA. Confidence reflects assessment/data basis, not guaranteed service availability. Recommendations are indicative — not procurement advice.",
     prototype: "Research prototype · Non-commercial · Model-based analysis — not procurement advice or a site survey.",
     location: "Location",
     vertical: "Vertical",
     autonomy: "Autonomy",
     criticality: "Criticality",
     setup: "Current setup",
-    viewMethod: "Full methodology →",
+    viewMethod: "Full research methodology →",
+    chainLabel: "Evidence chain",
+    chainSteps: [
+      "Operating environment",
+      "Relevant research",
+      "Connectivity characteristics",
+      "GRYPS scoring factors",
+      "Provider recommendation",
+    ],
     ctaTitle: "Generate Resilience Signature",
     ctaBody: "Run the same model on your coordinates. Free · No account required.",
     ctaBtn: "Generate Resilience Signature",
@@ -42,14 +50,22 @@ const UI = {
     redundancy: "Redundanssinäkökohdat",
     methodology: "Menetelmä ja näyttö",
     methodologyBody:
-      "Piste, arvosana, riskit ja sijoitetut vaihtoehdot ovat deterministisen mallin v0.3 tuloste. Rataluokan latenssi-/luotettavuushuomiot ovat viite- / mallikommenttia — eivät mitattua kohdesuorituskykyä tai toimittajan SLA:ta. Luottamus kuvaa arvioinnin/dataperustan varmuutta, ei palvelun saatavuustakuuta.",
+      "Jokainen kuratoitu arvio seuraa GRYPS-näyttöketjua: toimintaympäristö → relevantti tutkimus → yhteyden ominaisuudet → mallin v0.3 pisteytys → toimittajasuositus. Piste, arvosana, riskit ja sijoitukset ovat deterministisiä. Rataluokan huomiot ovat viite- / mallikommenttia — eivät mitattua kohdesuorituskykyä tai toimittajan SLA:ta. Luottamus kuvaa arvioinnin/dataperustan varmuutta, ei palvelun saatavuustakuuta. Suositukset ovat suuntaa-antavia — eivät hankintaneuvontaa.",
     prototype: "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi — ei hankintaneuvontaa eikä paikkamitasta.",
     location: "Sijainti",
     vertical: "Toimiala",
     autonomy: "Autonomia",
     criticality: "Kriittisyys",
     setup: "Nykyinen kokoonpano",
-    viewMethod: "Täysi menetelmä →",
+    viewMethod: "Täysi tutkimusmenetelmä →",
+    chainLabel: "Näyttöketju",
+    chainSteps: [
+      "Toimintaympäristö",
+      "Relevantti tutkimus",
+      "Yhteyden ominaisuudet",
+      "GRYPS-pisteytystekijät",
+      "Toimittajasuositus",
+    ],
     ctaTitle: "Luo Resilience Signature",
     ctaBody: "Aja sama malli omille koordinaateillesi. Ilmainen · Ei tiliä tarvita.",
     ctaBtn: "Luo Resilience Signature",
@@ -166,9 +182,31 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
 
       {section(t.methodology, (
         <>
+          <p style={{
+            fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)",
+            letterSpacing: "0.1em", marginBottom: 10,
+          }}>
+            {t.chainLabel}
+          </p>
+          <ol style={{
+            margin: "0 0 16px", paddingLeft: 18,
+            fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.7,
+          }}>
+            {t.chainSteps.map(step => (
+              <li key={step} style={{ marginBottom: 4 }}>{step}</li>
+            ))}
+          </ol>
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 12 }}>
             {t.methodologyBody}
           </p>
+          {result.evidence && (
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text)", lineHeight: 1.6, marginBottom: 12 }}>
+              {result.evidence.environment_theme}
+              {" · "}
+              {lang === "fi" ? "Arviointiluottamus" : "Assessment confidence"}{" "}
+              {result.evidence.confidence.band} ({result.evidence.confidence.score}%)
+            </p>
+          )}
           <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)", textDecoration: "none" }}>
             {t.viewMethod}
           </Link>

@@ -2,9 +2,9 @@ import type { Metadata } from "next"
 import { MethodologyView } from "./MethodologyView"
 
 export const metadata: Metadata = {
-  title: "Methodology — How GRYPS scores connectivity resilience",
+  title: "Methodology — GRYPS Research Methodology",
   description:
-    "GRYPS Model v0.3 is a deterministic research prototype that scores satellite connectivity resilience for remote Nordic and Arctic operations. This page explains the 0–100 score, grade bands, component weights, hard caps, and what the advisor is not. Available in English and Finnish.",
+    "GRYPS Research Methodology: how an experimental Connectivity Intelligence framework connects environment, research, reference data, and Model v0.3 scoring to indicative Resilience Signatures — not procurement advice. English and Finnish.",
   alternates: { canonical: "https://gryps.vercel.app/methodology" },
 }
 
@@ -14,10 +14,10 @@ const jsonLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "What is GRYPS?",
+      name: "What is GRYPS Research Methodology?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "GRYPS is a non-commercial research prototype that scores satellite connectivity resilience for remote Nordic, Arctic, and Icelandic industrial operations. It produces a versioned Resilience Signature — an assessment at time T0, designed so later monitoring can show drift.",
+        text: "GRYPS is an experimental Connectivity Intelligence framework. It connects operating environment, relevant research, connectivity characteristics, deterministic Model v0.3 scoring, and provider recommendations into an evidence chain. Outputs are indicative research assessments — not procurement advice or live monitoring.",
       },
     },
     {
@@ -33,7 +33,7 @@ const jsonLd = {
       name: "What is GRYPS not?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "GRYPS is not a site survey, not live satellite coverage, not insurance, and not a substitute for professional connectivity engineering or legal advice. Outputs are illustrative research-prototype assessments.",
+        text: "GRYPS is not a site survey, not live satellite coverage, not insurance, not procurement advice, and not a substitute for professional connectivity engineering or legal advice. Outputs are illustrative research-prototype assessments.",
       },
     },
   ],
