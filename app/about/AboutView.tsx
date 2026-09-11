@@ -22,6 +22,9 @@ const COPY = {
     methodology: "Scoring methodology",
     scenarios: "Mission scenarios",
     workspace: "Research Workspace",
+    dataSources: "Data sources",
+    limitations: "Limitations",
+    changelog: "Methodology changelog",
     providers: "Provider index (no commercial relationships)",
     privacy: "Privacy",
     terms: "Terms & contact",
@@ -46,6 +49,9 @@ const COPY = {
     methodology: "Pisteytysmenetelmä",
     scenarios: "Tehtäväskenaariot",
     workspace: "Research Workspace",
+    dataSources: "Datalähteet",
+    limitations: "Rajoitteet",
+    changelog: "Menetelmän muutosloki",
     providers: "Toimittajahakemisto (ei kaupallisia suhteita)",
     privacy: "Tietosuoja",
     terms: "Ehdot ja yhteydenotto",
@@ -76,6 +82,9 @@ function AboutArticle({ lang }: { lang: DocLang }) {
       <h2 style={h2}>{t.linksH2}</h2>
       <ul style={{ ...ul, listStyle: "none", paddingLeft: 0 }}>
         <li style={{ marginBottom: 8 }}><Link href="/methodology" style={{ color: "var(--accent-blue)" }}>{t.methodology}</Link></li>
+        <li style={{ marginBottom: 8 }}><Link href="/data-sources" style={{ color: "var(--accent-blue)" }}>{t.dataSources}</Link></li>
+        <li style={{ marginBottom: 8 }}><Link href="/limitations" style={{ color: "var(--accent-blue)" }}>{t.limitations}</Link></li>
+        <li style={{ marginBottom: 8 }}><Link href="/changelog" style={{ color: "var(--accent-blue)" }}>{t.changelog}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>{t.scenarios}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/workspace" style={{ color: "var(--accent-blue)" }}>{t.workspace}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/providers" style={{ color: "var(--accent-blue)" }}>{t.providers}</Link></li>

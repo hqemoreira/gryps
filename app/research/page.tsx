@@ -6,7 +6,7 @@ import { resolveResearchAssessment } from "@/lib/research-resolve"
 export const metadata: Metadata = {
   title: "Research Library — Connectivity Resilience Assessments | GRYPS",
   description:
-    "Curated GRYPS research assessments of modeled satellite connectivity resilience across Nordic, Arctic, and Icelandic operating environments. Research prototype · non-commercial · model-based analysis.",
+    "Curated GRYPS research assessments of modeled satellite connectivity resilience across Nordic, Arctic, and Icelandic operating environments. GRYPS Methodology v0.4 · experimental research prototype — indicative, not procurement or certification.",
   alternates: { canonical: "https://gryps.vercel.app/research" },
   openGraph: {
     title: "GRYPS Research Library",

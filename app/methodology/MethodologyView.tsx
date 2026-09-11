@@ -3,14 +3,16 @@ import type { CSSProperties } from "react"
 import Link from "next/link"
 import { DocShell, type DocLang } from "@/components/DocShell"
 import { PolarAtmosphere } from "@/components/PolarAtmosphere"
-import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/signature-meta"
+import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav"
+import { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL } from "@/lib/signature-meta"
 
 const COPY = {
   en: {
-    eyebrow: `GRYPS RESEARCH METHODOLOGY · ${MODEL_VERSION}`,
+    eyebrow: `${METHODOLOGY_LABEL} · ${MODEL_VERSION}`,
     h1: "GRYPS Research Methodology",
     intro:
       "GRYPS is an experimental Connectivity Intelligence framework for Nordic, Arctic, and Icelandic remote operations. It connects research context, reference data, and a deterministic scoring model to produce indicative Resilience Signatures — not procurement advice, not a site survey, and not live network monitoring.",
+    versionNote: `Documentation framework ${METHODOLOGY_LABEL}. Scoring engine ${SCORING_ENGINE} remains reproducible for identical inputs.`,
     postureH2: "Research posture",
     postureP:
       "GRYPS is non-commercial R&D. Recommendations are indicative outputs of a research prototype. They support human judgement for readiness documentation; they do not certify compliance, sell terminals, or replace professional connectivity engineering.",
@@ -97,15 +99,20 @@ const COPY = {
     researchLink: "Research Library",
     scenariosLink: "Mission scenarios",
     workspaceLink: "Research Workspace",
+    dataSourcesLink: "Data sources",
+    assumptionsLink: "Assumptions",
+    limitationsLink: "Limitations",
+    changelogLink: "Changelog",
     knowledgeLink: "Knowledge",
     providersLink: "Provider index",
     advisorLink: "Generate Resilience Signature",
   },
   fi: {
-    eyebrow: `GRYPS-TUTKIMUSMENETELMÄ · ${MODEL_VERSION}`,
+    eyebrow: `${METHODOLOGY_LABEL} · ${MODEL_VERSION}`,
     h1: "GRYPS-tutkimusmenetelmä",
     intro:
       "GRYPS on kokeellinen Connectivity Intelligence -kehys pohjoismaisille, arktisille ja islantilaisille etäkohteille. Se yhdistää tutkimuskokonaisuuden, viitedatan ja deterministisen pisteytysmallin suuntaa-antaviksi Resilience Signatureiksi — ei hankintaneuvontaa, ei paikkamitasta eikä live-verkon seurantaa.",
+    versionNote: `Dokumentaatiokehys ${METHODOLOGY_LABEL}. Pisteytysmoottori ${SCORING_ENGINE} pysyy toistettavana samoilla syötteillä.`,
     postureH2: "Tutkimusasema",
     postureP:
       "GRYPS on ei-kaupallinen T&K. Suositukset ovat tutkimusprototyypin suuntaa-antavia tulosteita. Ne tukevat ihmisen harkintaa valmiusdokumentaatiossa; ne eivät sertifioi vaatimustenmukaisuutta, myy terminaaleja eivätkä korvaa ammattimaista yhteyssuunnittelua.",
@@ -192,6 +199,10 @@ const COPY = {
     researchLink: "Research Library",
     scenariosLink: "Tehtäväskenaariot",
     workspaceLink: "Research Workspace",
+    dataSourcesLink: "Datalähteet",
+    assumptionsLink: "Oletukset",
+    limitationsLink: "Rajoitteet",
+    changelogLink: "Muutosloki",
     knowledgeLink: "Tietopankki",
     providersLink: "Toimittajahakemisto",
     advisorLink: "Luo Resilience Signature",
@@ -202,13 +213,18 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
   const t = COPY[lang]
   return (
     <article style={{ maxWidth: 920, margin: "0 auto", padding: "32px 24px 0" }}>
+      <ResearchDocsNav lang={lang} active="methodology" />
       <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>{t.eyebrow}</p>
       <h1 style={{ fontFamily: "var(--font-ui)", fontSize: 36, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em", margin: "16px 0 20px", maxWidth: 720 }}>
         {t.h1}
       </h1>
-      <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 16, color: "var(--text-muted)", lineHeight: 1.75, marginBottom: 28, maxWidth: 720 }}>
+      <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 16, color: "var(--text-muted)", lineHeight: 1.75, marginBottom: 12, maxWidth: 720 }}>
         {t.intro}
       </p>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", marginBottom: 16, lineHeight: 1.55 }}>
+        {t.versionNote}
+      </p>
+      <PrototypeDisclaimerBanner lang={lang} />
 
       <figure className="gryps-polar-method">
         <PolarAtmosphere
@@ -289,6 +305,14 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
 
         <p style={{ ...p, marginTop: 40 }}>
           <Link href="/research" style={{ color: "var(--accent-blue)" }}>{t.researchLink}</Link>
+          {" · "}
+          <Link href="/data-sources" style={{ color: "var(--accent-blue)" }}>{t.dataSourcesLink}</Link>
+          {" · "}
+          <Link href="/assumptions" style={{ color: "var(--accent-blue)" }}>{t.assumptionsLink}</Link>
+          {" · "}
+          <Link href="/limitations" style={{ color: "var(--accent-blue)" }}>{t.limitationsLink}</Link>
+          {" · "}
+          <Link href="/changelog" style={{ color: "var(--accent-blue)" }}>{t.changelogLink}</Link>
           {" · "}
           <Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>{t.scenariosLink}</Link>
           {" · "}

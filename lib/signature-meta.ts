@@ -1,9 +1,9 @@
 import { createHash } from "crypto"
 import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors"
 import { gradeFromDeterministicScore } from "@/lib/deterministic-score"
-import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/model-constants"
+import { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL } from "@/lib/model-constants"
 
-export { MODEL_VERSION, SCORING_ENGINE }
+export { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL }
 
 export function gradeFromScore(score: number): "A" | "B" | "C" | "D" | "F" {
   return gradeFromDeterministicScore(score)

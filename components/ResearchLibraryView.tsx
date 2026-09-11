@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
+import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useLang } from "@/lib/use-lang"
 import {
@@ -108,6 +109,7 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
       />
 
       <main style={{ maxWidth: 960, margin: "0 auto", padding: "100px 24px 80px" }}>
+        <ResearchDocsNav lang={lang} active="research" />
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>
           {t.eyebrow}
         </p>
@@ -123,6 +125,7 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
         }}>
           {t.lead}
         </p>
+        <PrototypeDisclaimerBanner lang={lang} />
         <p style={{
           fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-dim)",
           lineHeight: 1.6, maxWidth: 640, marginBottom: 28,

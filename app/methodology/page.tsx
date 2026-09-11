@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
 import { MethodologyView } from "./MethodologyView"
+import { METHODOLOGY_LABEL } from "@/lib/model-constants"
 
 export const metadata: Metadata = {
-  title: "Methodology — GRYPS Research Methodology",
+  title: `Methodology — ${METHODOLOGY_LABEL}`,
   description:
-    "GRYPS Research Methodology: how an experimental Connectivity Intelligence framework connects environment, research, reference data, and Model v0.3 scoring to indicative Resilience Signatures — not procurement advice. English and Finnish.",
+    "GRYPS Methodology v0.4: experimental Connectivity Intelligence — evidence chain, Model v0.3 scoring, data provenance, assumptions, and limitations. Indicative research — not procurement advice.",
   alternates: { canonical: "https://gryps.vercel.app/methodology" },
 }
 
@@ -17,7 +18,7 @@ const jsonLd = {
       name: "What is GRYPS Research Methodology?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "GRYPS is an experimental Connectivity Intelligence framework. It connects operating environment, relevant research, connectivity characteristics, deterministic Model v0.3 scoring, and provider recommendations into an evidence chain. Outputs are indicative research assessments — not procurement advice or live monitoring.",
+        text: "GRYPS Methodology v0.4 is the documentation framework for an experimental Connectivity Intelligence prototype. It connects operating environment, research, reference data, and deterministic Model v0.3 scoring. Outputs are indicative — not procurement, coverage certification, or engineering advice.",
       },
     },
     {
@@ -33,7 +34,7 @@ const jsonLd = {
       name: "What is GRYPS not?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "GRYPS is not a site survey, not live satellite coverage, not insurance, not procurement advice, and not a substitute for professional connectivity engineering or legal advice. Outputs are illustrative research-prototype assessments.",
+        text: "GRYPS is an experimental research prototype. Results are indicative and should not be interpreted as commercial procurement, coverage certification or engineering advice.",
       },
     },
   ],
