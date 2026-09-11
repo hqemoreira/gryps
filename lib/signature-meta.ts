@@ -1,11 +1,9 @@
 import { createHash } from "crypto"
 import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors"
 import { gradeFromDeterministicScore } from "@/lib/deterministic-score"
+import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/model-constants"
 
-/** Bump when scoring rules change. Monitoring diffs this field. */
-export const MODEL_VERSION = "gryps-signature-v0.3"
-/** Numeric score authority — Mistral is optional prose only */
-export const SCORING_ENGINE = "deterministic-v0.3"
+export { MODEL_VERSION, SCORING_ENGINE }
 
 export function gradeFromScore(score: number): "A" | "B" | "C" | "D" | "F" {
   return gradeFromDeterministicScore(score)

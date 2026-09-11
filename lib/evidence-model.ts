@@ -6,7 +6,7 @@
 
 import type { AdvisorPriorityId } from "@/lib/advisor-priorities"
 import type { ProviderMeta, SectorId } from "@/lib/deterministic-score"
-import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/signature-meta"
+import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/model-constants"
 
 export type EvidenceSourceType = "model" | "catalog" | "dataset" | "research" | "reference"
 
