@@ -7,7 +7,7 @@ const COPY = {
     eyebrow: "GRYPS · ABOUT",
     h1: "Who is behind GRYPS",
     intro:
-      "GRYPS is a non-commercial research & development prototype maintained by Henrique Moreira in Espoo, Finland. It scores satellite connectivity resilience for remote Nordic, Arctic, and Icelandic operations — for learning and portfolio demonstration, not as a commercial service.",
+      "GRYPS is a non-commercial research & development prototype maintained by Henrique Moreira in Espoo, Finland. It scores satellite connectivity resilience for remote Nordic, Arctic, and Icelandic operations — for learning and portfolio demonstration, not as a commercial service. See the portfolio case study for the full problem → approach → prototype narrative.",
     purposeH2: "Purpose",
     purposeP:
       "Critical operators increasingly need to document connectivity risk. GRYPS produces a versioned Resilience Signature (score, grade, risks, ranked options) in about a minute so teams can see single-provider and high-latitude gaps before they become safety events. Outputs support NIS2/CER readiness documentation — they are not certification or legal advice.",
@@ -19,6 +19,7 @@ const COPY = {
       "Model v0.3 · deterministic scoring engine",
     ],
     linksH2: "Learn more",
+    caseStudy: "Portfolio case study",
     methodology: "Scoring methodology",
     scenarios: "Mission scenarios",
     workspace: "Research Workspace",
@@ -34,7 +35,7 @@ const COPY = {
     eyebrow: "GRYPS · TIETOA",
     h1: "Kuka on GRYPS:n takana",
     intro:
-      "GRYPS on ei-kaupallinen tutkimus- ja kehitysprototyyppi, jota ylläpitää Henrique Moreira Espoossa. Se pisteyttää satelliittiyhteyksien resilienssiä pohjoismaisissa, arktisissa ja islantilaisissa kohteissa — oppimista ja portfoliodemonstraatiota varten, ei kaupallisena palveluna.",
+      "GRYPS on ei-kaupallinen tutkimus- ja kehitysprototyyppi, jota ylläpitää Henrique Moreira Espoossa. Se pisteyttää satelliittiyhteyksien resilienssiä pohjoismaisissa, arktisissa ja islantilaisissa kohteissa — oppimista ja portfoliodemonstraatiota varten, ei kaupallisena palveluna. Katso portfoliocase study kokonaisuudesta: ongelma → lähestymistapa → prototyyppi.",
     purposeH2: "Tarkoitus",
     purposeP:
       "Kriittisten toimijoiden on yhä useammin dokumentoitava yhteysriski. GRYPS tuottaa versioidun Resilience Signaturen (pisteet, arvosana, riskit, toimittajasuositukset) noin minuutissa, jotta yhden toimittajan ja korkeiden leveysasteiden riskit näkyvät ennen kuin niistä tulee turvallisuustapahtumia. Tulosteet tukevat NIS2/CER-valmiusdokumentaatiota — ne eivät ole sertifiointi eivätkä oikeudellinen neuvonta.",
@@ -46,6 +47,7 @@ const COPY = {
       "Malli v0.3 · deterministinen pisteytysmoottori",
     ],
     linksH2: "Lue lisää",
+    caseStudy: "Portfoliocase study",
     methodology: "Pisteytysmenetelmä",
     scenarios: "Tehtäväskenaariot",
     workspace: "Research Workspace",
@@ -81,6 +83,7 @@ function AboutArticle({ lang }: { lang: DocLang }) {
 
       <h2 style={h2}>{t.linksH2}</h2>
       <ul style={{ ...ul, listStyle: "none", paddingLeft: 0 }}>
+        <li style={{ marginBottom: 8 }}><Link href="/case-study" style={{ color: "var(--accent-blue)" }}>{t.caseStudy}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/methodology" style={{ color: "var(--accent-blue)" }}>{t.methodology}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/data-sources" style={{ color: "var(--accent-blue)" }}>{t.dataSources}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/limitations" style={{ color: "var(--accent-blue)" }}>{t.limitations}</Link></li>

@@ -215,6 +215,23 @@ export type ChangelogEntry = {
 /** Methodology / prototype evolution — demonstrates how the research model advances. */
 export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
   {
+    version: "v0.5",
+    date: METHODOLOGY_RELEASED,
+    title: "Portfolio / Demonstration Layer",
+    titleFi: "Portfolio- / demonstraatiokerros",
+    scoringEngine: SCORING_ENGINE,
+    items: [
+      {
+        en: "Portfolio case study: problem, research question, approach, live prototype links, learnings, and explicit non-production limits.",
+        fi: "Portfoliocase study: ongelma, tutkimuskysymys, lähestymistapa, live-prototyyppilinkit, opit ja eksplisiittiset ei-tuotantorajat.",
+      },
+      {
+        en: "Demonstration framing for AI / digital solutions / automation / business-analyst roles — not monetization.",
+        fi: "Demonstraatiokehys AI- / digiratkaisu- / automaatio- / business analyst -rooleihin — ei kaupallistamista.",
+      },
+    ],
+  },
+  {
     version: "v0.4",
     date: METHODOLOGY_RELEASED,
     title: "Prototype Research Quality",

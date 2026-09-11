@@ -3,10 +3,12 @@ import { ResearchLibraryView } from "@/components/ResearchLibraryView"
 import { getAllResearchEntries } from "@/lib/research-library"
 import { resolveResearchAssessment } from "@/lib/research-resolve"
 
+import { METHODOLOGY_LABEL } from "@/lib/model-constants"
+
 export const metadata: Metadata = {
   title: "Research Library — Connectivity Resilience Assessments | GRYPS",
   description:
-    "Curated GRYPS research assessments of modeled satellite connectivity resilience across Nordic, Arctic, and Icelandic operating environments. GRYPS Methodology v0.4 · experimental research prototype — indicative, not procurement or certification.",
+    `Curated GRYPS research assessments of modeled satellite connectivity resilience across Nordic, Arctic, and Icelandic operating environments. ${METHODOLOGY_LABEL} · experimental research prototype — indicative, not procurement or certification.`,
   alternates: { canonical: "https://gryps.vercel.app/research" },
   openGraph: {
     title: "GRYPS Research Library",

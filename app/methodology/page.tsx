@@ -5,7 +5,7 @@ import { METHODOLOGY_LABEL } from "@/lib/model-constants"
 export const metadata: Metadata = {
   title: `Methodology — ${METHODOLOGY_LABEL}`,
   description:
-    "GRYPS Methodology v0.4: experimental Connectivity Intelligence — evidence chain, Model v0.3 scoring, data provenance, assumptions, and limitations. Indicative research — not procurement advice.",
+    `${METHODOLOGY_LABEL}: experimental Connectivity Intelligence — evidence chain, Model v0.3 scoring, data provenance, assumptions, and limitations. Indicative research — not procurement advice.`,
   alternates: { canonical: "https://gryps.vercel.app/methodology" },
 }
 
@@ -18,7 +18,7 @@ const jsonLd = {
       name: "What is GRYPS Research Methodology?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "GRYPS Methodology v0.4 is the documentation framework for an experimental Connectivity Intelligence prototype. It connects operating environment, research, reference data, and deterministic Model v0.3 scoring. Outputs are indicative — not procurement, coverage certification, or engineering advice.",
+        text: `${METHODOLOGY_LABEL} is the documentation framework for an experimental Connectivity Intelligence prototype. It connects operating environment, research, reference data, and deterministic Model v0.3 scoring. Outputs are indicative — not procurement, coverage certification, or engineering advice.`,
       },
     },
     {

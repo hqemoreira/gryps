@@ -14,7 +14,7 @@ const COPY = {
     eyebrow: `GRYPS · CHANGELOG · ${METHODOLOGY_LABEL}`,
     h1: "Methodology changelog",
     intro:
-      "How the GRYPS research model and documentation evolve. Current methodology framework is v0.4; the deterministic scoring engine remains reproducible under its own version tag.",
+      `How the GRYPS research model and documentation evolve. Current methodology framework is ${METHODOLOGY_VERSION}; the deterministic scoring engine remains reproducible under its own version tag.`,
     current: "Current",
     scoring: "Scoring engine",
     modelTag: "Signature model tag",
@@ -23,7 +23,7 @@ const COPY = {
     eyebrow: `GRYPS · MUUTOSLOKI · ${METHODOLOGY_LABEL}`,
     h1: "Menetelmän muutosloki",
     intro:
-      "Miten GRYPS:n tutkimusmalli ja dokumentaatio kehittyvät. Nykyinen menetelmäkehys on v0.4; deterministinen pisteytysmoottori pysyy toistettavana omalla versiotunnuksellaan.",
+      `Miten GRYPS:n tutkimusmalli ja dokumentaatio kehittyvät. Nykyinen menetelmäkehys on ${METHODOLOGY_VERSION}; deterministinen pisteytysmoottori pysyy toistettavana omalla versiotunnuksellaan.`,
     current: "Nykyinen",
     scoring: "Pisteytysmoottori",
     modelTag: "Signature-mallitunnus",

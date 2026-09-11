@@ -17,6 +17,7 @@ const COPY = {
     workspace: "Workspace",
     providers: "Providers",
     about: "About",
+    caseStudy: "Case study",
     methodology: "Methodology",
     knowledge: "Knowledge",
     dataSources: "Data sources",
@@ -39,6 +40,7 @@ const COPY = {
     workspace: "Workspace",
     providers: "Toimittajat",
     about: "Tietoa",
+    caseStudy: "Case study",
     methodology: "Menetelmä",
     knowledge: "Tieto",
     dataSources: "Datalähteet",
@@ -98,6 +100,7 @@ export function Footer({
             <div className="gryps-footer-col">
               <p className="gryps-footer-col-label">{t.resources}</p>
               <Link href="/about">{t.about}</Link>
+              <Link href="/case-study">{t.caseStudy}</Link>
               <Link href="/methodology">{t.methodology}</Link>
               <Link href="/data-sources">{t.dataSources}</Link>
               <Link href="/assumptions">{t.assumptions}</Link>

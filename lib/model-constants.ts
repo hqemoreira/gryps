@@ -10,6 +10,6 @@ export const SCORING_ENGINE = "deterministic-v0.3"
  * May advance for provenance & quality work without changing the score formula.
  * See lib/research-docs.ts and /changelog.
  */
-export const METHODOLOGY_VERSION = "v0.4"
-export const METHODOLOGY_LABEL = "GRYPS Methodology v0.4"
+export const METHODOLOGY_VERSION = "v0.5"
+export const METHODOLOGY_LABEL = "GRYPS Methodology v0.5"
 
