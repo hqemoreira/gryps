@@ -1,11 +1,11 @@
 import { MetadataRoute } from 'next'
-import { getAllSites } from '@/lib/signatures-db'
 import { KNOWLEDGE_ARTICLES } from '@/lib/knowledge-articles'
+import { getAllResearchEntries } from '@/lib/research-library'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: 'https://gryps.vercel.app', lastModified: new Date(), changeFrequency: 'monthly', priority: 1 },
-    { url: 'https://gryps.vercel.app/signatures', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+    { url: 'https://gryps.vercel.app/research', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: 'https://gryps.vercel.app/map', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: 'https://gryps.vercel.app/about', lastModified: new Date(), changeFrequency: 'yearly', priority: 0.7 },
     { url: 'https://gryps.vercel.app/methodology', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
@@ -22,17 +22,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  try {
-    const sites = await getAllSites()
-    const sitePages: MetadataRoute.Sitemap = sites.map(s => ({
-      url: `https://gryps.vercel.app/signatures/${s.slug}`,
-      lastModified: new Date(s.last_scored_at),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    }))
-    return [...staticPages, ...knowledgePages, ...sitePages]
-  } catch (err) {
-    console.error('Failed to load signature sites for sitemap:', err)
-    return [...staticPages, ...knowledgePages]
-  }
+  const researchPages: MetadataRoute.Sitemap = getAllResearchEntries().map(e => ({
+    url: `https://gryps.vercel.app/research/${e.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.75,
+  }))
+
+  return [...staticPages, ...knowledgePages, ...researchPages]
 }

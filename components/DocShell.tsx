@@ -28,6 +28,7 @@ export function DocShell({
         ctaLabel={lang === "fi" ? "Luo Resilience Signature" : ctaLabel}
         extraLinks={[
           { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
+          { href: "/research", label: "Research Library" },
           { href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
           { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },

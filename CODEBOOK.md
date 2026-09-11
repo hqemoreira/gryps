@@ -8,17 +8,20 @@
 ## Public posture
 
 - **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC. Forge is private ops (noindex).
-- **Object:** Resilience Signature (deterministic engine **v0.3**). Product vocabulary: Connectivity Intelligence → Advisor action **Generate Resilience Signature** → output **Resilience Signature** → map **Explore Connectivity Intelligence**. Supporting surfaces: `/methodology`, `/providers`, `/signatures`, `/map`, `/about`, `/knowledge`.
+- **Object:** Resilience Signature (deterministic engine **v0.3**). Product vocabulary: Connectivity Intelligence → Advisor action **Generate Resilience Signature** → output **Resilience Signature** → map **Explore Connectivity Intelligence**. Supporting surfaces: `/methodology`, `/providers`, `/research` (Research Library), `/map`, `/about`, `/knowledge`. Thin `/signatures/[slug]` Site XX pages are **noindex** and excluded from the sitemap (kept for map/dev).
 - **Landing:** Arctic ops-console composition — sticky Signature card, polar atmosphere around (not through) the Signature, GrypsMark footer lockup.
 - **Legal chrome:** Terms/Privacy labeled non-commercial R&D — not multi-section commercial “Legal”.
 - **Monitoring:** illustrative T0/T1 drift mock only. No freemium / free-trial CTAs. Prototype line: Research prototype · Non-commercial · Model-based analysis.
 - **Claims:** Confidence = assessment/data-basis confidence (not availability %). Provider orbital notes = reference / model commentary (not SLA). Optional Mistral prose must not invent availability %, precise latency SLAs, or live telemetry.
-- **SEO:** `Allow: /` + indexed metadata (unlike shelved portfolio prototypes). Ops loop (not public UI): Search Console + Keyword Planner scripts under `scripts/seo/` → `seo/*.json` → `/knowledge` notes for issue #3.
+- **Research Library:** Curated 8–12 named assessments at `/research` — not customer cases. Catalog in `lib/research-library.ts`.
+- **SEO:** `Allow: /` + indexed metadata; `Disallow: /signatures/`. Ops loop (not public UI): Search Console + Keyword Planner scripts under `scripts/seo/` → `seo/*.json` → `/knowledge` notes for issue #3.
 - **i18n:** EN + FI only; language preference persisted; natural Finnish (not calques).
 - **GitHub front door:** public `README.md` (posture + stack + how to run); architecture stays in this codebook. Proprietary `LICENSE` harmonized with sibling portfolio repos.
 
 ### Changelog — 2026-09
 
+- Research Library (`/research`): curated 12 named assessments from existing examples + seeds; thin Site XX noindex + removed from sitemap; `/signatures` redirects to `/research`.
+- Product language + claim hygiene: canonical CTA **Generate Resilience Signature**; confidence ≠ availability; provenance labels on Signature output.
 - Knowledge notes at `/knowledge` (EN+FI, FAQ JSON-LD) seeded from early GSC + issue #3 backlog; `seo:propose` early-stage fallback; weekly GitHub Action `.github/workflows/seo-weekly.yml` (needs `GSC_SERVICE_ACCOUNT_JSON` secret).
 - SEO ops scaffold: `npm run seo:gsc` / `seo:planner` / `seo:propose` (GSC first; Planner stub until Ads token). Local GSC setup helper: `npm run seo:setup-gsc` → credentials under `~/.config/gryps/` (never repo `.env*`).
 - Advisor funnel: anonymous abbreviated Initial Assessment → email magic-link unlock → full report. No Google Sign-In.

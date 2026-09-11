@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet"
 import Link from "next/link"
 import "leaflet/dist/leaflet.css"
 import { basemapTiles } from "@/lib/basemap"
+import { publicSignatureHref } from "@/lib/research-library"
 
 type SiteSummary = {
   slug: string
@@ -66,7 +67,7 @@ export function SignaturesMap({ sites, dark = true }: { sites: SiteSummary[]; da
               <p style={{ fontSize: 20, fontWeight: 900, color: POPUP_TEXT_COLOR[site.grade], marginBottom: 6 }}>
                 {site.score} <span style={{ fontSize: 12 }}>({site.grade})</span>
               </p>
-              <Link href={`/signatures/${site.slug}`} style={{ fontSize: 12, color: POPUP_LINK_COLOR, fontWeight: 700 }}>
+              <Link href={publicSignatureHref(site.slug)} style={{ fontSize: 12, color: POPUP_LINK_COLOR, fontWeight: 700 }}>
                 View full signature →
               </Link>
             </div>

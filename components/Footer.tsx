@@ -12,6 +12,7 @@ const COPY = {
     legal: "LEGAL",
     score: "Generate Resilience Signature",
     map: "Explore Connectivity Intelligence",
+    research: "Research Library",
     providers: "Providers",
     about: "About",
     methodology: "Methodology",
@@ -27,6 +28,7 @@ const COPY = {
     legal: "OIKEUDELLINEN",
     score: "Luo Resilience Signature",
     map: "Tutki Connectivity Intelligencea",
+    research: "Research Library",
     providers: "Toimittajat",
     about: "Tietoa",
     methodology: "Menetelmä",
@@ -73,6 +75,7 @@ export function Footer({
               <p className="gryps-footer-col-label">{t.product}</p>
               <Link href="/#advisor">{t.score}</Link>
               <Link href="/map">{t.map}</Link>
+              <Link href="/research">{t.research}</Link>
               <Link href="/providers">{t.providers}</Link>
               {showExtra && secondaryLink && (
                 <Link href={secondaryLink.href}>{secondaryLink.label}</Link>

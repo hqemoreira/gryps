@@ -13,6 +13,7 @@ import {
   type CapacityStatus,
 } from "@/lib/capacity-status"
 import { MODEL_VERSION } from "@/lib/signature-meta"
+import { publicSignatureHref } from "@/lib/research-library"
 
 export type CapacitySiteView = {
   slug: string
@@ -196,7 +197,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
         ctaLabel={t.navCta}
         extraLinks={[
           { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
-          { href: "/signatures", label: lang === "en" ? "Signatures" : "Signaturet" },
+          { href: "/research", label: "Research Library" },
           { href: "/methodology", label: t.methodology },
         ]}
       />
@@ -419,7 +420,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                     {t.runAdvisor}
                   </Link>
                   <Link
-                    href={`/signatures/${selected.slug}`}
+                    href={publicSignatureHref(selected.slug)}
                     style={{
                       fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
                       color: "var(--accent-blue)", textDecoration: "none", textAlign: "center",

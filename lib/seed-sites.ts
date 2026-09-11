@@ -1,8 +1,6 @@
-// Synthesized-but-realistic Nordic/Arctic sites for the /signatures demonstration map.
-// Coordinates are real Nordic/Arctic industrial regions; sites themselves are illustrative,
-// not actual operators. Scores are NOT hand-picked — each site's resilience_signature is
-// generated once by the same Mistral scoring model as the live Advisor (lib/scoring.ts),
-// seeded via /api/seed-signatures, so grade spread emerges from the model, not from us.
+// Synthesized Nordic/Arctic sites for the Capacity map / internal portfolio.
+// Public Research Library is curated separately in lib/research-library.ts (8–12 assessments).
+// Thin Site XX pages remain available at /signatures/[slug] for map/dev but are noindex.
 
 export type SeedSite = {
   slug: string

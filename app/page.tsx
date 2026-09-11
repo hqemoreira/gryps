@@ -11,6 +11,7 @@ import { TopChrome } from "@/components/TopChrome"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useLang } from "@/lib/use-lang"
 import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
+import { researchSlugForExampleId } from "@/lib/research-library"
 import { PROVIDER_INDEX_COUNT } from "@/lib/providers"
 import { DriftMock } from "@/components/DriftMock"
 import { PolarAtmosphere } from "@/components/PolarAtmosphere"
@@ -1124,8 +1125,8 @@ const COPY = {
       { n: "03", title: "Set criticality",       body: "Standard, high, or safety-critical. A safety-critical autonomous site with no redundancy cannot score above 50." },
       { n: "04", title: "Generate Resilience Signature", body: "Free initial assessment with score and top recommendation. Unlock the detailed assessment with email confirmation." },
     ],
-    examplesLabel: "EXAMPLE RESILIENCE SIGNATURES",
-    examplesSub: "Pre-computed examples of Connectivity Intelligence output. Generate a Resilience Signature above for your site.",
+    examplesLabel: "RESEARCH LIBRARY",
+    examplesSub: "Curated Connectivity Intelligence assessments. Open a research Signature, or generate your own above.",
     polarHeader: "CONNECTIVITY INTELLIGENCE · NORDIC, ARCTIC & ICELAND",
     polarMapLabel: "MODELED INTELLIGENCE · NOT LIVE RF",
     polarInstrumentTitle: "Explore Connectivity Intelligence",
@@ -1137,7 +1138,7 @@ const COPY = {
     ctaH2:  "Start with a Resilience Signature.",
     ctaSub: "Free Connectivity Intelligence for any Nordic, Arctic, or Icelandic site. No account — unlock the detailed assessment with email when you want deeper detail.",
     ctaBtn: "Generate Resilience Signature",
-    viewSample: "View sample Signature →",
+    viewSample: "View research assessment →",
     footerTag:    "Built in Finland for high-latitude resilience.",
   },
   fi: {
@@ -1191,8 +1192,8 @@ const COPY = {
       { n: "03", title: "Valitse kriittisyys",      body: "Tavanomainen, korkea tai turvallisuuskriittinen. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
       { n: "04", title: "Luo Resilience Signature", body: "Ilmainen alustava arvio pisteineen ja ykkössuosituksineen. Avaa yksityiskohtainen arvio sähköpostivahvistuksella." },
     ],
-    examplesLabel: "ESIMERKKEJÄ RESILIENCE SIGNATUREISTA",
-    examplesSub: "Ennalta lasketut esimerkit Connectivity Intelligence -tulosteesta. Luo Resilience Signature yllä omalle kohteellesi.",
+    examplesLabel: "RESEARCH LIBRARY",
+    examplesSub: "Kuratoituja Connectivity Intelligence -arvioita. Avaa tutkimus-Signature tai luo oma yllä.",
     polarHeader: "CONNECTIVITY INTELLIGENCE · POHJOISMAAT, ARKTINEN ALUE JA ISLANTI",
     polarMapLabel: "MALLINNETTU ÄLY · EI REAALIAIKAISTA RF:ÄÄ",
     polarInstrumentTitle: "Tutki Connectivity Intelligencea",
@@ -1204,13 +1205,15 @@ const COPY = {
     ctaH2:  "Aloita Resilience Signaturella.",
     ctaSub: "Ilmainen Connectivity Intelligence mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — avaa yksityiskohtainen arvio sähköpostilla, kun tarvitset syvemmän näkymän.",
     ctaBtn: "Luo Resilience Signature",
-    viewSample: "Katso esimerkki-Signature →",
+    viewSample: "Katso tutkimusarvio →",
     footerTag:    "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
   },
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 function exampleHref(ex: (typeof EXAMPLE_SIGNATURES)[number]): string {
+  const researchSlug = researchSlugForExampleId(ex.id)
+  if (researchSlug) return `/research/${researchSlug}`
   const p = new URLSearchParams()
   if (ex.input.lat != null) p.set("lat", String(ex.input.lat))
   if (ex.input.lng != null) p.set("lng", String(ex.input.lng))
@@ -1322,6 +1325,7 @@ export default function HomePage() {
           ctaLabel={t.navCta}
           extraLinks={[
             { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
+            { href: "/research", label: "Research Library" },
             { href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" },
             { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
             { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
@@ -1504,6 +1508,14 @@ export default function HomePage() {
                 <ExampleCard key={`snap-${ex.id}`} ex={ex} lang={lang} viewSample={t.viewSample} />
               ))}
             </div>
+            <p style={{ marginTop: 24 }}>
+              <a href="/research" style={{
+                fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
+                color: "var(--accent-blue)", textDecoration: "none",
+              }}>
+                {lang === "en" ? "Browse Research Library →" : "Selaa Research Librarya →"}
+              </a>
+            </p>
           </div>
         </section>
       </FadeUp>
