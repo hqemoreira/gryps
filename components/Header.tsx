@@ -1,6 +1,7 @@
 "use client"
 import Link from "next/link"
-import { useEffect, useId, useRef, useState } from "react"
+import { usePathname } from "next/navigation"
+import { useEffect, useId, useRef, useState, type MouseEvent as ReactMouseEvent } from "react"
 import { ChevronDown, Sun, Moon } from "lucide-react"
 import { GrypsMark } from "@/components/GrypsMark"
 import { useTheme } from "@/context/ThemeContext"
@@ -41,12 +42,23 @@ export function Header({
   useIaNav?: boolean
 }) {
   const { dark, toggleDark } = useTheme()
+  const pathname = usePathname()
   const links = extraLinks ?? (extraLink ? [extraLink] : [])
   const headerRef = useRef<HTMLElement>(null)
   const [openMode, setOpenMode] = useState<IaModeId | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const menuId = useId()
   const chromeCta = ctaLabel ?? (lang === "fi" ? CTA_SHORT.fi : CTA_SHORT.en)
+
+  function goHome(e: ReactMouseEvent<HTMLAnchorElement>) {
+    setOpenMode(null)
+    setMobileOpen(false)
+    // Same-route Link does not remount — scroll to top explicitly when already home.
+    if (pathname === "/") {
+      e.preventDefault()
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }
 
   useEffect(() => {
     if (embedded) return
@@ -104,7 +116,7 @@ export function Header({
         backdropFilter: "blur(12px)",
       }}
     >
-      <Link href="/" className="gryps-nav-brand" onClick={() => { setOpenMode(null); setMobileOpen(false) }}>
+      <Link href="/" className="gryps-nav-brand" onClick={goHome} aria-label="GRYPS home">
         <GrypsMark size={28} animate />
         <span className="gryps-nav-wordmark">GRYPS</span>
         {tagline && (

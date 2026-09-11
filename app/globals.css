@@ -218,7 +218,8 @@ body {
   min-width: 0;
   flex-wrap: nowrap;
   flex: 1 1 auto;
-  overflow: hidden;
+  /* visible so Explore / Assess / Research flyouts are not clipped */
+  overflow: visible;
   position: relative;
   z-index: 1;
 }
@@ -336,11 +337,16 @@ body {
   min-width: 280px;
   max-width: min(360px, calc(100vw - 32px));
   padding: 8px;
-  background: var(--surface);
+  background: var(--surface-elevated, var(--surface));
   border: 1px solid var(--border2);
   border-radius: 8px;
   box-shadow: var(--shadow-card);
-  z-index: 1100;
+  z-index: 1200;
+}
+/* Keep right-edge menus (Research) on-screen */
+.gryps-ia-mode:last-child .gryps-ia-panel {
+  left: auto;
+  right: 0;
 }
 .gryps-ia-panel-link {
   display: flex;
@@ -542,6 +548,7 @@ body {
   left: 0;
   right: 0;
   z-index: 1010;
+  overflow: visible;
 }
 .gryps-top-chrome .gryps-banner {
   position: relative;
@@ -563,6 +570,7 @@ body {
 }
 .gryps-top-chrome .gryps-nav-inner {
   width: 100%;
+  overflow: visible;
 }
 
 .gryps-signature-elevated {
