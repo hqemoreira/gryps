@@ -10,7 +10,7 @@ export type DocLang = Lang
 export function DocShell({
   children,
   ctaHref = "/#advisor",
-  ctaLabel = "Demo analysis",
+  ctaLabel = "Generate Resilience Signature",
 }: {
   children: ReactNode | ((lang: DocLang) => ReactNode)
   ctaHref?: string
@@ -25,10 +25,10 @@ export function DocShell({
         lang={lang}
         onLangChange={setLang}
         ctaHref={ctaHref}
-        ctaLabel={lang === "fi" ? "Demo-analyysi" : ctaLabel}
+        ctaLabel={lang === "fi" ? "Luo Resilience Signature" : ctaLabel}
         extraLinks={[
           { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
-          { href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" },
+          { href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
           { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
           { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
@@ -43,7 +43,7 @@ export function DocShell({
         footerTag={lang === "en"
           ? "Built in Finland for high-latitude resilience."
           : "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten."}
-        secondaryLink={{ href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" }}
+        secondaryLink={{ href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" }}
       />
     </div>
   )

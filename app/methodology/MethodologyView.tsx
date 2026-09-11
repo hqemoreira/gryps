@@ -29,7 +29,7 @@ const COPY = {
       { title: "Redundancy (0–30)", body: "0 providers → 0; 1 → 8; 2 → 22 (+6 if independent orbital types / LEO broadband+narrowband); ≥3 → 28." },
       { title: "Latitude (0–20)", body: "≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8. Forestry sites below 300 m elevation: −4 (canopy/terrain)." },
       { title: "Operational profile (0–15)", body: "manual 15 · remote-operated 11 · mixed 8 · autonomous 5." },
-      { title: "Provider confidence (0–30)", body: "average catalog confidence × 0.30. GEO providers above 70°N use a degraded confidence." },
+      { title: "Provider confidence (0–30)", body: "average catalog confidence × 0.30. GEO providers above 70°N use a degraded confidence. Confidence reflects assessment/data basis — not guaranteed service availability." },
     ],
     gradesH2: "Grades",
     gradesP: "A = ≥90 · B = 75–89 · C = 60–74 · D = 40–59 · F = <40 (spec band E maps to F in the UI).",
@@ -49,7 +49,7 @@ const COPY = {
     versionH2: "Versioning (monitoring later)",
     versionP: `Every Signature carries issuedAt, modelVersion (${MODEL_VERSION}), and inputHash. Monitoring is the same engine at T1, T2 — not a second product. Live drift alerting is not built yet; the homepage drift slider is illustrative only.`,
     providersLink: "Provider index",
-    advisorLink: "Run the demo advisor",
+    advisorLink: "Generate Resilience Signature",
   },
   fi: {
     eyebrow: `GRYPS · MENETELMÄ · ${MODEL_VERSION}`,
@@ -74,7 +74,7 @@ const COPY = {
       { title: "Redundanssi (0–30)", body: "0 toimittajaa → 0; 1 → 8; 2 → 22 (+6 jos itsenäiset radat / LEO broadband+narrowband); ≥3 → 28." },
       { title: "Leveysaste (0–20)", body: "≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8. Metsäkohteet alle 300 m korkeudessa: −4 (latvus/maasto)." },
       { title: "Toimintaprofiili (0–15)", body: "manuaalinen 15 · etäohjattu 11 · yhdistelmä 8 · autonominen 5." },
-      { title: "Toimittajaluottamus (0–30)", body: "hakemiston keskimääräinen luottamus × 0.30. GEO-toimittajat yli 70°N käyttävät heikennettyä luottamusta." },
+      { title: "Toimittajaluottamus (0–30)", body: "hakemiston keskimääräinen luottamus × 0.30. GEO-toimittajat yli 70°N käyttävät heikennettyä luottamusta. Luottamus kuvaa arvioinnin/dataperustan varmuutta — ei palvelun saatavuustakuuta." },
     ],
     gradesH2: "Arvosanat",
     gradesP: "A = ≥90 · B = 75–89 · C = 60–74 · D = 40–59 · F = <40 (spesifikaation E näkyy käyttöliittymässä F:nä).",
@@ -94,7 +94,7 @@ const COPY = {
     versionH2: "Versiointi (seuranta myöhemmin)",
     versionP: `Jokainen Signature sisältää issuedAt-, modelVersion- (${MODEL_VERSION}) ja inputHash-kentät. Seuranta on sama moottori hetkillä T1 ja T2 — ei erillinen tuote. Reaaliaikaisia ajautumahälytyksiä ei ole vielä rakennettu; etusivun ajautumaliukusäädin on vain havainnollistus.`,
     providersLink: "Toimittajahakemisto",
-    advisorLink: "Avaa demo-Advisor",
+    advisorLink: "Luo Resilience Signature",
   },
 } as const
 

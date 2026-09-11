@@ -8,7 +8,7 @@ const UI = {
     eyebrow: "GRYPS · KNOWLEDGE",
     h1: "Connectivity intelligence notes",
     intro:
-      "Short, citeable explainers for remote Nordic and Arctic satellite connectivity — written for humans and answer engines. Modeled intelligence · not live RF. Each note deep-links to methodology, Capacity map, and the Advisor.",
+      "Short, citeable explainers for remote Nordic and Arctic satellite connectivity — written for humans and answer engines. Modeled intelligence · not live RF. Each note deep-links to methodology, Explore Connectivity Intelligence, and Generate Resilience Signature.",
     phase2: "Knowledge",
     phase3: "Discovery",
     updated: "Updated",
@@ -17,7 +17,7 @@ const UI = {
     eyebrow: "GRYPS · TIETOSISÄLTÖ",
     h1: "Yhteysälyn muistiinpanot",
     intro:
-      "Lyhyitä, siteerattavia selityksiä pohjoismaisista ja arktisista satelliittiyhteyksistä — ihmisille ja vastausmoottoreille. Mallinnettua älyä · ei reaaliaikaista RF:ää. Jokainen muistiinpano linkittää menetelmään, Capacity-karttaan ja Advisoriin.",
+      "Lyhyitä, siteerattavia selityksiä pohjoismaisista ja arktisista satelliittiyhteyksistä — ihmisille ja vastausmoottoreille. Mallinnettua älyä · ei reaaliaikaista RF:ää. Jokainen muistiinpano linkittää menetelmään, Connectivity Intelligence -karttaan ja Resilience Signature -luontiin.",
     phase2: "Tieto",
     phase3: "Löydettävyys",
     updated: "Päivitetty",

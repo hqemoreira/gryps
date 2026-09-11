@@ -59,7 +59,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         "Not insurance, certification, or legal advice.",
       ],
       ctaH2: "Next step",
-      ctaBody: "Explore modeled regions on the Capacity map, then run a site assessment in the Advisor.",
+      ctaBody: "Explore modeled regions via Connectivity Intelligence, then Generate Resilience Signature in the Advisor.",
     },
     fi: {
       title: "Satelliittiyhteydet Arktiksella — mitä etätoimintojen tulee tarkistaa",
@@ -203,7 +203,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         "Not a substitute for forestry OEM or integrator engineering.",
       ],
       ctaH2: "Next step",
-      ctaBody: "Open the Capacity map for Nordic context, then score a forestry site in the Advisor.",
+      ctaBody: "Open Explore Connectivity Intelligence for Nordic context, then Generate Resilience Signature for a forestry site.",
     },
     fi: {
       title: "Metsätalouden satelliittiyhteydet Suomessa",
@@ -329,7 +329,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         },
         {
           h2: "How to use GRYPS here",
-          body: "Pick a representative lat/lng (yard or landing), set sector to forestry, choose autonomy/criticality honestly, and compare single- vs multi-provider setups in the Advisor. Pair with the Capacity map for regional modeled context.",
+          body: "Pick a representative lat/lng (yard or landing), set sector to forestry, choose autonomy/criticality honestly, and compare single- vs multi-provider setups when you Generate Resilience Signature. Pair with Explore Connectivity Intelligence for regional modeled context.",
         },
       ],
       limitationsH2: "Limitations",
@@ -370,7 +370,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         "Varhainen SEO-signaali — editorial-tietosisältö, ei todiste hakumäärästä.",
       ],
       ctaH2: "Seuraava askel",
-      ctaBody: "Pisteytä metsälogistiikkakohde ja lue sitten Suomen metsäyhteysopas.",
+      ctaBody: "Luo Resilience Signature metsälogistiikkakohteelle ja lue sitten Suomen metsäyhteysopas.",
     },
   },
 ]

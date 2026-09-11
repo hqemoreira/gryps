@@ -57,12 +57,12 @@ const CapacityMap = dynamic(
 
 const COPY = {
   en: {
-    tagline: "MODELED CONNECTIVITY INTELLIGENCE",
-    title: "Connectivity Intelligence Map",
+    tagline: "EXPLORE CONNECTIVITY INTELLIGENCE",
+    title: "Explore Connectivity Intelligence",
     lead:
-      "Explore modeled satellite connectivity capacity across remote Nordic and Arctic operating environments. Select a site for resilience, confidence, and latency signals — then run a personalized assessment.",
+      "Modeled satellite connectivity resilience across remote Nordic and Arctic operating environments. Select a site for Signature score, assessment confidence, and orbital-class signals — then generate a Resilience Signature.",
     disclosure:
-      "GRYPS uses deterministic Signature Model scoring to estimate connectivity resilience. Results are model-based — not a live RF measurement or live constellation feed. Research prototype · non-commercial.",
+      "GRYPS uses deterministic Signature Model scoring to estimate connectivity resilience. Results are model-based — not a live RF measurement or live constellation feed. Research prototype · Non-commercial · Model-based analysis.",
     modelMeta: `${MODEL_VERSION} · Deterministic intelligence model`,
     hint: "Pan · zoom · select a site",
     all: "All",
@@ -72,27 +72,28 @@ const COPY = {
     source: "Source",
     lastUpdated: "Last scored",
     score: "Resilience",
-    confidence: "Coverage confidence",
-    latency: "Latency / failover",
+    confidence: "Assessment confidence",
+    confidenceNote: "Confidence reflects the assessment/data basis — not guaranteed service availability.",
+    latency: "Failover switching (model)",
     provider: "Recommended provider",
     orbitClass: "Orbital class",
-    realData: "Real-data evidence",
+    realData: "Reference data",
     terrain: "Terrain",
     gap: "Real-world gap",
-    none: "Select a site on the map to inspect modeled connectivity intelligence.",
-    viewSig: "Full signature →",
-    runAdvisor: "Run an assessment →",
+    none: "Select a site on the map to inspect modeled Connectivity Intelligence.",
+    viewSig: "Full Signature →",
+    runAdvisor: "Generate Resilience Signature →",
     empty: "No sites in this filter.",
-    navCta: "Score your site",
+    navCta: "Generate Resilience Signature",
     methodology: "Methodology",
   },
   fi: {
-    tagline: "MALLINNETTU YHTEYDEN ÄLYKKYYS",
-    title: "Yhteyden älykartta",
+    tagline: "TUTKI CONNECTIVITY INTELLIGENCEA",
+    title: "Tutki Connectivity Intelligencea",
     lead:
-      "Tutki mallinnettua satelliittiyhteyden kapasiteettia pohjoismaisissa ja arktisissa toimintaympäristöissä. Valitse kohde resilienssi-, luottamus- ja latenssisignaaleille — ja aja sitten räätälöity arvio.",
+      "Mallinnettu satelliittiyhteyden resilienssi pohjoismaisissa ja arktisissa toimintaympäristöissä. Valitse kohde Signature-pisteille, arviointiluottamukselle ja rataluokkasignaaleille — ja luo sitten Resilience Signature.",
     disclosure:
-      "GRYPS arvioi yhteyden resilienssiä deterministisellä Signature-mallilla. Tulokset ovat mallipohjaisia — eivät reaaliaikaista RF-mittausta tai konstellaatiotelemetriaa. T&K-prototyyppi · ei-kaupallinen.",
+      "GRYPS arvioi yhteyden resilienssiä deterministisellä Signature-mallilla. Tulokset ovat mallipohjaisia — eivät reaaliaikaista RF-mittausta tai konstellaatiotelemetriaa. Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi.",
     modelMeta: `${MODEL_VERSION} · Deterministinen älymalli`,
     hint: "Vieritä · zoom · valitse kohde",
     all: "Kaikki",
@@ -102,18 +103,19 @@ const COPY = {
     source: "Lähde",
     lastUpdated: "Viimeksi pisteytetty",
     score: "Resilienssi",
-    confidence: "Kattavuusluottamus",
-    latency: "Latenssi / failover",
+    confidence: "Arviointiluottamus",
+    confidenceNote: "Luottamus kuvaa arvioinnin/dataperustan varmuutta — ei palvelun saatavuustakuuta.",
+    latency: "Failover-vaihto (malli)",
     provider: "Suositeltu toimittaja",
     orbitClass: "Rataluokka",
-    realData: "Reaalidatanäyttö",
+    realData: "Viitedata",
     terrain: "Maasto",
     gap: "Todellinen kuilu",
-    none: "Valitse karttapiste nähdäksesi mallinnetun yhteysälyn.",
+    none: "Valitse karttapiste nähdäksesi mallinnetun Connectivity Intelligencen.",
     viewSig: "Koko Signature →",
-    runAdvisor: "Aja arvio →",
+    runAdvisor: "Luo Resilience Signature →",
     empty: "Ei kohteita tällä suodattimella.",
-    navCta: "Pisteytä kohde",
+    navCta: "Luo Resilience Signature",
     methodology: "Menetelmä",
   },
 }
@@ -379,6 +381,9 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                     value={selected.latency_estimate ?? "—"}
                   />
                 </div>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5, margin: 0 }}>
+                  {t.confidenceNote}
+                </p>
 
                 {selected.top_provider && (
                   <Row label={t.provider} value={selected.top_provider} />

@@ -38,21 +38,21 @@ function orbitalTypeFrom(type: string): string {
   return type.split(/\s+/)[0] || type
 }
 
-/** Typical latency bands from publicly known orbital-class conventions (not SLA claims). */
+/** Typical latency bands from publicly known orbital-class conventions (reference — not SLA or site measurement). */
 function latencyEstimateFor(type: string, provider: string): string | null {
   const p = provider.toLowerCase()
   const t = type.toLowerCase()
   if (p.includes("iridium") || p.includes("certus") || p.includes("globalstar") || t.includes("polar") || t.includes("narrowband")) {
-    return "~150–300 ms"
+    return "~150–300 ms (orbital-class reference)"
   }
   if (p.includes("starlink") || p.includes("oneweb") || p.includes("kuiper") || p.includes("telesat") || (t.includes("leo") && t.includes("broadband"))) {
-    return "~20–50 ms"
+    return "~20–50 ms (orbital-class reference)"
   }
-  if (t.includes("meo")) return "~100–150 ms"
+  if (t.includes("meo")) return "~100–150 ms (orbital-class reference)"
   if (t.includes("geo") || p.includes("inmarsat") || p.includes("viasat") || p.includes("vsat")) {
-    return "~500–700 ms"
+    return "~500–700 ms (orbital-class reference)"
   }
-  if (t.includes("leo")) return "~20–50 ms"
+  if (t.includes("leo")) return "~20–50 ms (orbital-class reference)"
   return null
 }
 

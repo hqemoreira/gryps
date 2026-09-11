@@ -10,23 +10,25 @@ const COPY = {
     title: "GRYPS Advisor — Initial Assessment",
     recommended: "Recommended",
     resilience: "Resilience",
-    coverage: "Coverage confidence",
+    coverage: "Assessment confidence",
     orbital: "Orbital type",
-    latency: "Estimated latency",
-    why: "Why this ranking",
-    teaser: "This is an abbreviated preview. Unlock the full assessment for provider comparison, resilience factors, latency analysis, and hardware guidance.",
-    model: "Deterministic Model v0.3 — illustrative research output, not a coverage guarantee",
+    latency: "Typical orbital-class latency (reference)",
+    why: "Model commentary",
+    teaser: "This is an abbreviated preview. Unlock the detailed assessment for provider comparison, risk factors, redundancy options, and evidence behind this Signature.",
+    model: "Research prototype · Non-commercial · Model-based analysis",
+    confidenceNote: "Confidence reflects confidence in the assessment/data basis, not guaranteed service availability.",
   },
   fi: {
     title: "GRYPS Advisor — Alustava arvio",
     recommended: "Suositus",
     resilience: "Resilienssi",
-    coverage: "Kattavuusluottamus",
+    coverage: "Arviointiluottamus",
     orbital: "Rataluokka",
-    latency: "Arvioitu latenssi",
-    why: "Miksi tämä sijoitus",
-    teaser: "Tämä on lyhennetty esikatselu. Avaa täysi arvio saadaksesi toimittajavertailun, resilienssitekijät, latenssianalyysin ja laiteohjeet.",
-    model: "Deterministinen malli v0.3 — havainnollistava tutkimustulos, ei kattavuustakuuta",
+    latency: "Tyypillinen rataluokan latenssi (viite)",
+    why: "Mallikommentti",
+    teaser: "Tämä on lyhennetty esikatselu. Avaa yksityiskohtainen arvio saadaksesi toimittajavertailun, riskitekijät, redundanssivaihtoehdot ja Signaturen taustan.",
+    model: "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi",
+    confidenceNote: "Luottamus kuvaa arvioinnin/dataperustan varmuutta, ei palvelun saatavuustakuuta.",
   },
 } as const
 
@@ -141,6 +143,9 @@ export function InitialAssessment({
       <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.55 }}>
         {t.teaser}
       </p>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5, textAlign: "center" }}>
+        {t.confidenceNote}
+      </p>
       <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.06em", textAlign: "center" }}>
         {t.model}
       </p>
@@ -163,35 +168,35 @@ export function UnlockFullAssessment({
   const [emailSent, setEmailSent] = useState(true)
 
   const t = lang === "fi" ? {
-    headline: "Haluatko täyden arvion?",
-    body: "Avaa yksityiskohtainen GRYPS-analyysi: toimittajavertailu, resilienssitekijät, latenssianalyysi, laiteohjeet ja suositukset.",
+    headline: "Haluatko yksityiskohtaisen arvion?",
+    body: "Avaa yksityiskohtainen GRYPS-analyysi: toimittajavertailu, riskitekijät, redundanssivaihtoehdot ja Signaturen tausta.",
     placeholder: "sähköposti@esimerkki.fi",
-    submit: "Avaa täysi arvio",
+    submit: "Avaa yksityiskohtainen arvio",
     sending: "Lähetetään…",
-    success: "Tarkista sähköpostisi — vahvistuslinkki avaa täyden arvion.",
+    success: "Tarkista sähköpostisi — vahvistuslinkki avaa yksityiskohtaisen arvion.",
     successManual: "Sähköpostia ei voitu lähettää (Resend-rajoitus). Avaa vahvistuslinkki alla:",
-    openLink: "Avaa täysi arvio",
+    openLink: "Avaa yksityiskohtainen arvio",
     footnote: "Ei tiliä tarvita. Lähetämme vain vahvistuslinkin.",
-    topicFull: "Täysi arvio tälle kohteelle",
+    topicFull: "Yksityiskohtainen arvio tälle kohteelle",
     topicReports: "Ilmoitus, kun täydet raportit julkaistaan",
     topicMonitor: "Päivitykset / seuranta myöhemmin",
-    needId: "Arviota ei voitu tallentaa — yritä ajaa Advisor uudelleen.",
-    needEmail: "Sähköposti vaaditaan täyden arvion avaamiseen.",
+    needId: "Arviota ei voitu tallentaa — yritä luoda Signature uudelleen.",
+    needEmail: "Sähköposti vaaditaan yksityiskohtaisen arvion avaamiseen.",
   } : {
-    headline: "Want the full assessment?",
-    body: "Unlock the detailed GRYPS analysis, including provider comparison, resilience factors, latency analysis, hardware guidance and recommendations.",
+    headline: "Unlock the detailed assessment",
+    body: "Get the full provider comparison, risk factors, redundancy options, and evidence behind this Signature.",
     placeholder: "your@email.com",
-    submit: "Get full assessment",
+    submit: "Unlock detailed assessment",
     sending: "Sending…",
-    success: "Check your email — the confirmation link unlocks the full assessment.",
+    success: "Check your email — the confirmation link unlocks the detailed assessment.",
     successManual: "Email could not be sent (Resend domain/test limit). Open the confirmation link below:",
-    openLink: "Open full assessment",
+    openLink: "Open detailed assessment",
     footnote: "No account required. We only send a confirmation link.",
-    topicFull: "Full assessment for this site",
+    topicFull: "Detailed assessment for this site",
     topicReports: "Notify when full reports launch",
     topicMonitor: "Updates / monitoring later",
-    needId: "Assessment was not saved — try running the Advisor again.",
-    needEmail: "Email is required to unlock the full assessment.",
+    needId: "Assessment was not saved — try generating a Signature again.",
+    needEmail: "Email is required to unlock the detailed assessment.",
   }
 
   const topicOptions = [

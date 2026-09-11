@@ -276,7 +276,7 @@ function rankBackups(selected: ProviderMeta[], lat: number): RankedProvider[] {
           note: reason,
           elevation: p.orbit === "GEO" && lat > 70 ? "Low elevation at site latitude" : "Clear sky-view assumed",
           coverage: p.orbit === "LEO" ? "High-latitude capable" : "Latitude-constrained GEO",
-          failover_latency: p.class === "narrowband" ? "Minutes (manual/terminal swap)" : "Seconds–minutes (failover config)",
+          failover_latency: p.class === "narrowband" ? "Model estimate: minutes (manual/terminal swap)" : "Model estimate: seconds–minutes (failover config)",
         } satisfies RankedProvider,
       }
     })

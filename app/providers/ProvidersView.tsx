@@ -28,7 +28,7 @@ const COPY = {
       "This is a curated list of publicly known satellite operators — not a live coverage map, SLA, or partnership. GRYPS has no commercial relationship with any provider listed. Coverage notes are physics and published orbit class, not measured pass data.",
     headers: ["Provider", "Orbit", "Class", "70°N+", "Note"] as const,
     methodologyLink: "Scoring methodology",
-    advisorLink: "Run the demo advisor",
+    advisorLink: "Generate Resilience Signature",
   },
   fi: {
     eyebrow: `GRYPS · TOIMITTAJAHAKEMISTO · ${PROVIDER_INDEX_COUNT} OPERAATTORIA`,
@@ -37,7 +37,7 @@ const COPY = {
       "Tämä on kuratoitu lista julkisesti tunnetuista satelliittioperaattoreista — ei reaaliaikainen kattavuuskartta, SLA eikä kumppanuus. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin. Kattavuusmerkinnät perustuvat fysiikkaan ja julkaistuun rataluokkaan, ei mitattuun ohitusdataan.",
     headers: ["Toimittaja", "Rata", "Luokka", "70°N+", "Huomio"] as const,
     methodologyLink: "Pisteytysmenetelmä",
-    advisorLink: "Avaa demo-Advisor",
+    advisorLink: "Luo Resilience Signature",
   },
 } as const
 

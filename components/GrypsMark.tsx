@@ -52,7 +52,7 @@ function GrypsMarkPrint({ size = 28 }: { size?: number }) {
  * Hidden on screen; in-flow top-left brand on the first printed page.
  */
 export function GrypsPrintBrand({
-  subtitle = "Connectivity Resilience Advisor",
+  subtitle = "Connectivity Intelligence",
 }: {
   subtitle?: string
 }) {

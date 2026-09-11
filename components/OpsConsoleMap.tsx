@@ -85,7 +85,7 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         el.appendChild(core)
 
         const advisorUrl = `/?lat=${lat}&lng=${lng}&sector=${encodeURIComponent(ex.input.sector)}&autonomy=${encodeURIComponent(ex.input.autonomy_level)}&criticality=${encodeURIComponent(ex.input.operation_criticality)}#advisor`
-        const assessLabel = lang === "fi" ? "Aja arvio →" : "Run an assessment →"
+        const assessLabel = lang === "fi" ? "Luo Resilience Signature →" : "Generate Resilience Signature →"
 
         const popup = new maplibregl.Popup({
           offset: 20,
@@ -133,7 +133,7 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
           <div style="font-size: 13px; font-weight: 700; color: #F7FAFC; margin-bottom: 6px;">68.2°N · 27.4°E · Lapland</div>
           <div style="font-family: ui-monospace, monospace; font-size: 22px; font-weight: 800; color: #D97706;">40 · D</div>
           <div style="font-size: 11px; color: #D97706; margin-top: 6px; margin-bottom: 10px;">Top risk: No backup path</div>
-          <a href="/?lat=68.2&lng=27.4&sector=forestry&autonomy=autonomous&criticality=high#advisor" style="font-size: 12px; font-weight: 700; color: #4FA8FF; text-decoration: none;">${lang === "fi" ? "Aja arvio →" : "Run an assessment →"}</a>
+          <a href="/?lat=68.2&lng=27.4&sector=forestry&autonomy=autonomous&criticality=high#advisor" style="font-size: 12px; font-weight: 700; color: #4FA8FF; text-decoration: none;">${lang === "fi" ? "Luo Resilience Signature →" : "Generate Resilience Signature →"}</a>
         </div>
       `)
       pulse.addEventListener("click", () => {

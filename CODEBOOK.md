@@ -8,10 +8,11 @@
 ## Public posture
 
 - **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC. Forge is private ops (noindex).
-- **Object:** Resilience Signature (deterministic engine **v0.3**). Supporting surfaces: `/methodology`, `/providers`, `/signatures`, `/map` (Capacity), `/about`, `/knowledge`.
+- **Object:** Resilience Signature (deterministic engine **v0.3**). Product vocabulary: Connectivity Intelligence → Advisor action **Generate Resilience Signature** → output **Resilience Signature** → map **Explore Connectivity Intelligence**. Supporting surfaces: `/methodology`, `/providers`, `/signatures`, `/map`, `/about`, `/knowledge`.
 - **Landing:** Arctic ops-console composition — sticky Signature card, polar atmosphere around (not through) the Signature, GrypsMark footer lockup.
 - **Legal chrome:** Terms/Privacy labeled non-commercial R&D — not multi-section commercial “Legal”.
-- **Monitoring:** illustrative T0/T1 drift mock only. No freemium / free-trial CTAs.
+- **Monitoring:** illustrative T0/T1 drift mock only. No freemium / free-trial CTAs. Prototype line: Research prototype · Non-commercial · Model-based analysis.
+- **Claims:** Confidence = assessment/data-basis confidence (not availability %). Provider orbital notes = reference / model commentary (not SLA). Optional Mistral prose must not invent availability %, precise latency SLAs, or live telemetry.
 - **SEO:** `Allow: /` + indexed metadata (unlike shelved portfolio prototypes). Ops loop (not public UI): Search Console + Keyword Planner scripts under `scripts/seo/` → `seo/*.json` → `/knowledge` notes for issue #3.
 - **i18n:** EN + FI only; language preference persisted; natural Finnish (not calques).
 - **GitHub front door:** public `README.md` (posture + stack + how to run); architecture stays in this codebook. Proprietary `LICENSE` harmonized with sibling portfolio repos.

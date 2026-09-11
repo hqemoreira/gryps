@@ -30,34 +30,32 @@ const SEV_ICON: Record<string, typeof ShieldAlert> = {
 }
 
 // General, publicly-known orbital-class characteristics — deliberately static,
-// not model-generated. These are physics/industry-convention facts about a
-// class of system, not claims about any specific company's current service,
-// pricing, or contractual terms. Never edit this to reference a specific SLA
-// percentage as if guaranteed by a named provider, or language implying
-// partnership.
+// not model-generated. These are physics/industry-convention reference notes
+// about a class of system — not measurements, SLAs, or commitments for any
+// named provider. Always shown under "Model commentary / reference".
 type OrbitalCharacteristics = { latency: string; reliability: string; hardware: string }
 
 const GEO_CHARS: OrbitalCharacteristics = {
-  latency: "~500–700ms round-trip (typical for geostationary orbit, ~35,800km altitude)",
-  reliability: "Carrier-grade geostationary services typically target 99.9%+ availability as an industry norm",
+  latency: "~500–700 ms round-trip — typical published range for geostationary orbit (~35,800 km); not a site measurement",
+  reliability: "GEO services are typically designed for continuous coverage within the visible equatorial arc — design intent, not a GRYPS-measured availability rate",
   hardware: "Fixed, precisely-aimed dish antenna with clear line-of-sight to the equatorial arc; higher power draw",
 }
 
 const POLAR_NARROWBAND_CHARS: OrbitalCharacteristics = {
-  latency: "~150–300ms round-trip (typical for polar-orbit narrowband constellations)",
-  reliability: "Polar-orbit constellations designed for global/high-latitude coverage typically emphasize continuous availability over throughput as an industry norm",
+  latency: "~150–300 ms round-trip — typical published range for polar-orbit narrowband; not a site measurement",
+  reliability: "Polar-orbit narrowband systems are typically designed for high-latitude reach with modest throughput — design intent, not a GRYPS-measured availability rate",
   hardware: "Small omnidirectional or low-profile fixed antenna, modest power requirements, no steerable/tracking hardware needed",
 }
 
 const LEO_BROADBAND_CHARS: OrbitalCharacteristics = {
-  latency: "~20–50ms round-trip (typical for broadband LEO constellations, ~340–1,200km altitude)",
-  reliability: "Broadband LEO constellations typically target high availability via multi-satellite handoff and orbital redundancy as an industry norm",
+  latency: "~20–50 ms round-trip — typical published range for broadband LEO (~340–1,200 km); not a site measurement",
+  reliability: "Broadband LEO systems typically rely on multi-satellite handoff for path continuity — design intent, not a GRYPS-measured availability rate",
   hardware: "Compact, often self-orienting phased-array antenna requiring a clear view of the sky; moderate power requirements",
 }
 
 const MEO_CHARS: OrbitalCharacteristics = {
-  latency: "~100–150ms round-trip (typical for medium Earth orbit)",
-  reliability: "MEO constellations are typically positioned as a middle ground between GEO reliability and LEO latency as an industry norm",
+  latency: "~100–150 ms round-trip — typical published range for medium Earth orbit; not a site measurement",
+  reliability: "MEO systems are typically positioned between GEO and LEO on latency vs coverage trade-offs — design intent, not a GRYPS-measured availability rate",
   hardware: "Steerable/tracking antenna required given the moving orbital path; larger aperture than typical LEO terminals",
 }
 
@@ -123,8 +121,8 @@ const UI = {
     currentSetup: "CURRENT SETUP",
     notSpecified: "Not specified",
     stricter: "stricter threshold applied",
-    realData: "REAL-DATA EVIDENCE",
-    realDataSub: "Deterministic score computed from measured third-party data — not AI-generated, not blended into the Resilience Score above. This is live computation against real datasets.",
+    realData: "REFERENCE DATA",
+    realDataSub: "Source-backed third-party datasets — not AI-generated, not blended into the Resilience Score above.",
     realWorldGap: "Real-world gap (55%)",
     terrainPenalty: "Terrain penalty (45%)",
     bittiNA: "Not available — Bittimittari (Traficom) covers Finland only",
@@ -138,6 +136,7 @@ const UI = {
     complianceFail: "AT RISK",
     complianceNote: "Compliance flags are indicative, based on the scoring model's assessment of connectivity resilience posture. They do not constitute legal or regulatory advice. A Signature supports readiness documentation — it is not certification.",
     recommendation: "RECOMMENDATION",
+    recommendationNote: "Model commentary: interpretive explanation from the deterministic assessment (optional prose polish). Not a measurement of live network performance or a provider SLA.",
     scoreComposition: "HOW THIS SCORE WAS COMPUTED",
     scoreCompositionSub: "Model v0.3 component breakdown before hard caps. Full formula on the methodology page.",
     scoreRawSum: "Raw sum",
@@ -153,22 +152,27 @@ const UI = {
     redundancyGaps: "REDUNDANCY GAPS",
     scoreImpact: "↓ SCORE IMPACT",
     connectivityOptions: "CONNECTIVITY OPTIONS",
-    confidence: "CONFIDENCE",
-    latency: "LATENCY ",
-    reliability: "RELIABILITY ",
+    confidence: "ASSESSMENT CONFIDENCE",
+    confidenceClarify: "Confidence reflects confidence in the assessment/data basis, not guaranteed service availability.",
+    latency: "LATENCY (REFERENCE) ",
+    reliability: "RELIABILITY (MODEL COMMENTARY) ",
     hardware: "HARDWARE ",
     orbitalDisclaimer:
-      "General technical characteristics based on publicly available industry information — not official provider specifications, current commercial terms, or an endorsement of any provider. GRYPS has no commercial relationship with the providers listed.",
-    provenanceLabel: "DATA PROVENANCE",
-    provenanceScoringModel: "Scoring engine",
-    provenanceScoringModelValue: "deterministic-v0.3 (reproducible; optional Mistral prose only — never changes score)",
-    provenanceRealDataSources: "Real-data sources",
+      "Orbital-class notes are reference / model commentary based on publicly available industry information — not official provider specifications, measured site performance, SLAs, or an endorsement. GRYPS has no commercial relationship with the providers listed.",
+    provenanceLabel: "PROVENANCE",
+    provenanceScoringModel: "Model output",
+    provenanceScoringModelValue: "deterministic-v0.3 (reproducible score/grade/risks/ranks; optional Mistral prose never changes numbers)",
+    provenanceCommentary: "Model commentary",
+    provenanceCommentaryValue: "Interpretive explanation generated from the model — not live telemetry or a provider commitment",
+    provenanceRealDataSources: "Reference data",
     provenanceBittimittari: "Bittimittari (Traficom, Finland) — municipality-level broadband speed/latency, CC BY 4.0",
     provenanceEuDem: "EU-DEM (Copernicus/EEA) — 25m resolution elevation data, accessed via OpenTopoData",
     provenanceDate: "Assessment date",
     provenanceModelVersion: "Model version",
     provenanceInputHash: "Input hash",
     provenanceNotLive: "Illustrative / not live constellation data",
+    provenanceConfidence: "Confidence",
+    provenanceConfidenceValue: "Assessment/data-basis confidence — not probability of service availability",
     terrainExplain: "Terrain score is independent of the Resilience Score: higher variance in a ~5 km EU-DEM sample reduces this evidence score. It is not blended into the 0–100 Signature.",
     shareLink: "Copy shareable link",
     shareCopied: "Link copied",
@@ -178,14 +182,14 @@ const UI = {
     tierDefense: "Defense-in-depth",
     whyConfidence: "WHY THIS RANKING",
     elevationField: "ELEVATION / SKY VIEW ",
-    coverageField: "COVERAGE ",
-    failoverField: "FAILOVER LATENCY ",
-    provenanceNote: "Numeric score, grade, risks, and ranked providers are deterministic and reproducible for the same inputs. Optional Mistral text may polish the recommendation paragraph only. Real-data evidence (EU-DEM / Bittimittari) is separate and not blended into the Signature score.",
+    coverageField: "COVERAGE (MODEL) ",
+    failoverField: "FAILOVER SWITCHING (MODEL) ",
+    provenanceNote: "Numeric score, grade, risks, and ranked providers are deterministic model output. Optional Mistral text may polish the recommendation paragraph only. Reference data (EU-DEM / Bittimittari) is separate and not blended into the Signature score.",
     aiBadgeTitle:
       "EU AI Act Art. 50 — optional AI-generated recommendation prose (Mistral). Limited-risk system. Score itself is deterministic Model v0.3. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.",
     art50: "Art. 50 EU AI Act",
     generated: "Generated",
-    printAttr: "GRYPS · Connectivity Resilience Advisor · gryps.vercel.app",
+    printAttr: "GRYPS · Connectivity Intelligence · gryps.vercel.app",
     measured: "measured",
     medianDownload: "Mbit/s median download",
     medianLatency: "ms median latency",
@@ -208,8 +212,8 @@ const UI = {
     currentSetup: "NYKYINEN KOKOONPANO",
     notSpecified: "Ei ilmoitettu",
     stricter: "tiukempi kynnys käytössä",
-    realData: "REAALIDATANÄYTTÖ",
-    realDataSub: "Deterministinen pistemäärä mitatusta kolmannen osapuolen datasta — ei tekoälyn tuottama, eikä sekoitettu yllä olevaan Resilience-pisteeseen. Tämä on reaaliaikaista laskentaa todellisista tietoaineistoista.",
+    realData: "VIITEDATA",
+    realDataSub: "Lähteisiin perustuvat kolmannen osapuolen aineistot — ei tekoälyn tuottamia, eikä sekoitettu yllä olevaan Resilience-pisteeseen.",
     realWorldGap: "Todellinen kuilu (55 %)",
     terrainPenalty: "Maastorangaistus (45 %)",
     bittiNA: "Ei saatavilla — Bittimittari (Traficom) kattaa vain Suomen",
@@ -223,6 +227,7 @@ const UI = {
     complianceFail: "RISKISSÄ",
     complianceNote: "Valmiusliput ovat suuntaa-antavia ja perustuvat pisteytysmallin arvioon yhteyden resilienssiasemasta. Ne eivät ole oikeudellista tai sääntelyneuvontaa. Signature tukee valmiusdokumentaatiota — se ei ole sertifiointi.",
     recommendation: "SUOSITUS",
+    recommendationNote: "Mallikommentti: tulkinnallinen selitys deterministisestä arviosta (valinnainen proosan viimeistely). Ei live-verkon mittaus eikä toimittajan SLA.",
     scoreComposition: "MITEN TÄMÄ PISTE LASKETTIIN",
     scoreCompositionSub: "Mallin v0.3 komponenttijako ennen kovia kattoja. Täysi kaava menetelmäsivulla.",
     scoreRawSum: "Raakasumma",
@@ -238,42 +243,47 @@ const UI = {
     redundancyGaps: "REDUNDANSSIAUKOT",
     scoreImpact: "↓ VAIKUTUS PISTEISIIN",
     connectivityOptions: "YHTEYSVAIHTOEHDOT",
-    confidence: "LUOTTAMUS",
-    latency: "LATENSSI ",
-    reliability: "LUOTETTAVUUS ",
+    confidence: "ARVIOINTILUOTTAMUS",
+    confidenceClarify: "Luottamus kuvaa arvioinnin/dataperustan varmuutta, ei palvelun saatavuustakuuta.",
+    latency: "LATENSSI (VIITE) ",
+    reliability: "LUOTETTAVUUS (MALLIKOMMENTTI) ",
     hardware: "LAITTEISTO ",
     orbitalDisclaimer:
-      "Yleiset tekniset ominaisuudet perustuvat julkisesti saatavilla olevaan toimialatietoon — eivät virallisia toimittajamäärityksiä, nykyisiä kaupallisia ehtoja tai minkään toimittajan suositusta. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
-    provenanceLabel: "TIETOJEN ALKUPERÄ",
-    provenanceScoringModel: "Pisteytysmoottori",
-    provenanceScoringModelValue: "deterministic-v0.3 (toistettava; valinnainen Mistral-proosa — ei muuta pistettä)",
-    provenanceRealDataSources: "Reaalidatan lähteet",
-    provenanceBittimittari: "Bittimittari (Traficom, Suomi) — kuntakohtainen laajakaistaanopeus/-viive, CC BY 4.0",
-    provenanceEuDem: "EU-DEM (Copernicus/EEA) — 25 m korkeusdata, OpenTopoData-rajapinnalla",
-    provenanceDate: "Arvioinnin päivämäärä",
+      "Rataluokan huomiot ovat viite- / mallikommenttia julkisesta toimialatiedosta — eivät virallisia toimittajamäärityksiä, mitattua kohdesuorituskykyä, SLA:ita tai suosituksia. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
+    provenanceLabel: "ALKUPERÄ",
+    provenanceScoringModel: "Mallituloste",
+    provenanceScoringModelValue: "deterministic-v0.3 (toistettava piste/arvosana/riskit/sijoitukset; valinnainen Mistral-proosa ei muuta lukuja)",
+    provenanceCommentary: "Mallikommentti",
+    provenanceCommentaryValue: "Mallista johdettu tulkinnallinen selitys — ei live-telemetriaa eikä toimittajan sitoumusta",
+    provenanceRealDataSources: "Viitedata",
+    provenanceBittimittari: "Bittimittari (Traficom, Suomi) — kunta-tason laajakaistan nopeus/latenssi, CC BY 4.0",
+    provenanceEuDem: "EU-DEM (Copernicus/EEA) — 25 m korkeustieto, OpenTopoData",
+    provenanceDate: "Arviointipäivä",
     provenanceModelVersion: "Malliversio",
-    provenanceInputHash: "Syötteen tiiviste",
-    provenanceNotLive: "Havainnollistava / ei reaaliaikaista konstellaatiodataa",
-    terrainExplain: "Maastopiste on erillinen Resilience-pisteestä: suurempi vaihtelu ~5 km EU-DEM-otoksessa laskee tätä näyttöpistettä. Sitä ei sekoiteta 0–100 Signatureen.",
+    provenanceInputHash: "Syötehash",
+    provenanceNotLive: "Havainnollistava / ei live-konstellaatiodataa",
+    provenanceConfidence: "Luottamus",
+    provenanceConfidenceValue: "Arvioinnin/dataperustan luottamus — ei palvelun saatavuuden todennäköisyys",
+    terrainExplain: "Maastopiste on riippumaton Resilience-pisteestä: suurempi vaihtelu ~5 km EU-DEM-otoksessa laskee tätä näyttöpistettä. Sitä ei sekoiteta 0–100 Signatureen.",
     shareLink: "Kopioi jaettava linkki",
     shareCopied: "Linkki kopioitu",
     redundancyTiers: "REDUNDANSSIVAIHTOEHDOT (KUSTANNUSTASOT)",
     tierEssential: "Välttämätön",
     tierStandard: "Standardi",
     tierDefense: "Monitasoinen suojaus",
-    whyConfidence: "MIKSI TÄMÄ SIJAINTI",
-    elevationField: "KORKEUSKULMA / TAIVAS ",
-    coverageField: "KATTAVUUS ",
-    failoverField: "VAIHTOVIIVE ",
-    provenanceNote: "Pisteet, arvosana, riskit ja toimittajasuositukset ovat deterministisiä ja toistettavia samoilla syötteillä. Valinnainen Mistral-teksti voi hioa vain suosituskappaleen. Reaalidatanäyttö (EU-DEM / Bittimittari) on erillinen eikä sekoitu Signature-pisteeseen.",
+    whyConfidence: "MIKSI TÄMÄ SIJOITUS",
+    elevationField: "KORKEUS / TAIVASNÄKYMÄ ",
+    coverageField: "KATTAVUUS (MALLI) ",
+    failoverField: "FAILOVER-VAIHTO (MALLI) ",
+    provenanceNote: "Numeerinen piste, arvosana, riskit ja sijoitetut toimittajat ovat determinististä mallitulostetta. Valinnainen Mistral-teksti voi viimeistellä vain suosituskappaleen. Viitedata (EU-DEM / Bittimittari) on erillinen eikä sekoitu Signature-pisteeseen.",
     aiBadgeTitle:
-      "EU:n tekoälylaki 50 artikla — valinnainen tekoälyn tuottama suositusproosa (Mistral). Rajoitetun riskin järjestelmä. Itse piste on deterministinen malli v0.3. Ei takuu verkkojen saatavuudesta. Tukee ihmisen harkintaa; ei automatisoituja oikeudellisia päätöksiä.",
-    art50: "50 artikla, EU:n tekoälylaki",
+      "EU AI Act Art. 50 — valinnainen tekoälyn tuottama suositusproosa (Mistral). Rajoitetun riskin järjestelmä. Piste itsessään on deterministinen malli v0.3. Ei verkon saatavuustakuuta. Tukee ihmisen harkintaa; ei automaattisia oikeudellisia päätöksiä.",
+    art50: "Art. 50 EU AI Act",
     generated: "Luotu",
-    printAttr: "GRYPS · Connectivity Resilience Advisor · gryps.vercel.app",
+    printAttr: "GRYPS · Connectivity Intelligence · gryps.vercel.app",
     measured: "mitattu",
     medianDownload: "Mbit/s mediaanilataus",
-    medianLatency: "ms mediaaniviive",
+    medianLatency: "ms mediaanilatenssi",
     measurements: "mittausta",
     elevation: "m korkeus",
     variance: "m vaihtelu ~5 km otoksessa",
@@ -565,6 +575,9 @@ export function ResilienceOutput({
       }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.recommendation}</p>
         <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.55, marginTop: 10 }}>
+          {t.recommendationNote}
+        </p>
       </div>
 
       <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
@@ -685,7 +698,10 @@ export function ResilienceOutput({
             )
           })}
         </div>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5, marginTop: 12 }}>
+          {t.confidenceClarify}
+        </p>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 8, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
           {t.orbitalDisclaimer}
         </p>
       </div>
@@ -714,6 +730,14 @@ export function ResilienceOutput({
           <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
             <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceScoringModel}</span>
             <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceScoringModelValue}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceCommentary}</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceCommentaryValue}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceConfidence}</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceConfidenceValue}</span>
           </div>
           <div>
             <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em" }}>{t.provenanceRealDataSources}</span>

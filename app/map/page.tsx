@@ -4,14 +4,14 @@ import { capacityStatusFromSignature } from "@/lib/capacity-status"
 import { CapacityMapView, type CapacitySiteView } from "@/components/CapacityMapView"
 
 export const metadata: Metadata = {
-  title: "Connectivity Intelligence Map — Modeled Capacity | GRYPS",
+  title: "Explore Connectivity Intelligence | GRYPS",
   description:
-    "Explore modeled satellite connectivity resilience across Nordic, Arctic, and Icelandic sites. Deterministic GRYPS Signature scores — not live RF. Run an assessment for your location.",
+    "Explore modeled satellite connectivity resilience across Nordic, Arctic, and Icelandic sites. Deterministic GRYPS Signature scores — not live RF. Generate a Resilience Signature for your location.",
   alternates: { canonical: "https://gryps.vercel.app/map" },
   openGraph: {
-    title: "Connectivity Intelligence Map | GRYPS",
+    title: "Explore Connectivity Intelligence | GRYPS",
     description:
-      "Modeled connectivity capacity across remote Nordic and Arctic operations. Research prototype — not live network monitoring.",
+      "Modeled Connectivity Intelligence across remote Nordic and Arctic operations. Research prototype · Non-commercial · Model-based analysis.",
   },
 }
 

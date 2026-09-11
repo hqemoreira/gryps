@@ -29,26 +29,26 @@ const COPY = {
   en: {
     tagline:      "RESILIENCE SIGNATURES",
     title:        "Scored connectivity resilience across the Nordic, Arctic, and Iceland",
-    disclosure:   "Illustrative, synthesized sites for demonstration — real coordinates, generated site profiles, and real Resilience Signature scores from the same scoring model as the live Advisor. R&D prototype.",
+    disclosure:   "Illustrative, synthesized sites for demonstration — real coordinates, generated site profiles, and real Resilience Signature scores from the same scoring model as the Advisor. Research prototype · Non-commercial · Model-based analysis.",
     allSectors:   "All sectors", allAutonomy: "All autonomy levels", allCriticality: "All criticality",
     map: "Map", list: "List",
     loading: "LOADING SIGNATURES…", noMatch: "No sites match these filters.",
-    ctaHeading: "Score your own site",
-    ctaSub: "Generate a research Resilience Signature for your coordinates — same model as the portfolio sites above. Non-commercial demo.",
-    ctaBtn: "Run the demo Advisor",
-    navCta: "Score your site",
+    ctaHeading: "Generate your Resilience Signature",
+    ctaSub: "Free · No account required. Same deterministic model as the portfolio sites above.",
+    ctaBtn: "Generate Resilience Signature",
+    navCta: "Generate Resilience Signature",
   },
   fi: {
     tagline:      "RESILIENCE SIGNATURET",
     title:        "Pisteytetty yhteyden resilienssi Pohjoismaissa, arktisella alueella ja Islannissa",
-    disclosure:   "Havainnollistavia, synteettisiä kohteita esittelyyn — todelliset koordinaatit, luodut kohdeprofiilit ja todelliset Resilience Signature -pisteet samasta pisteytysmallista kuin Advisorilla. T&K-prototyyppi.",
+    disclosure:   "Havainnollistavia, synteettisiä kohteita esittelyyn — todelliset koordinaatit, luodut kohdeprofiilit ja todelliset Resilience Signature -pisteet samasta pisteytysmallista kuin Advisorilla. Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi.",
     allSectors:   "Kaikki toimialat", allAutonomy: "Kaikki autonomiatasot", allCriticality: "Kaikki kriittisyystasot",
     map: "Kartta", list: "Lista",
     loading: "LADATAAN SIGNATUREJA…", noMatch: "Yksikään kohde ei vastaa suodattimia.",
-    ctaHeading: "Pisteytä oma kohteesi",
-    ctaSub: "Luo tutkimus-Signature omille koordinaateillesi — sama malli kuin yllä olevissa portfoliokohteissa. Ei-kaupallinen demo.",
-    ctaBtn: "Avaa demo-Advisor",
-    navCta: "Pisteytä kohde",
+    ctaHeading: "Luo Resilience Signature",
+    ctaSub: "Ilmainen · Ei tiliä tarvita. Sama deterministinen malli kuin yllä olevissa portfoliokohteissa.",
+    ctaBtn: "Luo Resilience Signature",
+    navCta: "Luo Resilience Signature",
   },
 }
 
@@ -92,7 +92,7 @@ export default function SignaturesPage() {
         ctaLabel={t.navCta}
         extraLinks={[
           { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
-          { href: "/map", label: lang === "en" ? "Capacity map" : "Kapasiteettikartta" },
+          { href: "/map", label: lang === "en" ? "Explore Connectivity Intelligence" : "Tutki Connectivity Intelligencea" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
         ]}
       />

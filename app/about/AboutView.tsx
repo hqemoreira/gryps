@@ -23,7 +23,7 @@ const COPY = {
     providers: "Provider index (no commercial relationships)",
     privacy: "Privacy",
     terms: "Terms & contact",
-    advisor: "Run the demo advisor",
+    advisor: "Generate Resilience Signature",
   },
   fi: {
     eyebrow: "GRYPS · TIETOA",
@@ -45,7 +45,7 @@ const COPY = {
     providers: "Toimittajahakemisto (ei kaupallisia suhteita)",
     privacy: "Tietosuoja",
     terms: "Ehdot ja yhteydenotto",
-    advisor: "Avaa demo-Advisor",
+    advisor: "Luo Resilience Signature",
   },
 } as const
 

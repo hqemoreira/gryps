@@ -58,7 +58,7 @@ export default async function SignatureSitePage({ params }: Props) {
 
       <Header
         ctaHref="/#advisor"
-        ctaLabel="Score your site"
+        ctaLabel="Generate Resilience Signature"
         extraLink={{ href: "/signatures", label: "← All signatures" }}
       />
 
@@ -69,7 +69,7 @@ export default async function SignatureSitePage({ params }: Props) {
           borderRadius: 6, padding: "8px 14px", marginBottom: 24,
         }}>
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--accent-amber)" }}>
-            Illustrative, synthesized site for demonstration — R&D prototype.
+            Illustrative, synthesized site for demonstration — Research prototype · Non-commercial · Model-based analysis.
           </p>
         </div>
 
@@ -111,10 +111,10 @@ export default async function SignatureSitePage({ params }: Props) {
         {/* CTA */}
         <div className="gryps-no-print" style={{ borderTop: "1px solid var(--border)", marginTop: 48, paddingTop: 40, textAlign: "center" }}>
           <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 10 }}>
-            Score your own site
+            Generate your Resilience Signature
           </h2>
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", marginBottom: 24, maxWidth: 420, margin: "0 auto 24px" }}>
-            This site scored {score} ({grade}) using the same free Advisor available to you right now.
+            This site scored {score} ({grade}) using the same free Advisor available to you. Free · No account required.
           </p>
           <Link href="/#advisor" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
@@ -122,7 +122,7 @@ export default async function SignatureSitePage({ params }: Props) {
             fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13,
             padding: "12px 24px", borderRadius: 6, textDecoration: "none",
           }}>
-            Run the free Advisor <ArrowRight size={14} />
+            Generate Resilience Signature <ArrowRight size={14} />
           </Link>
         </div>
       </div>
