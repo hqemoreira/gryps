@@ -100,6 +100,7 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
         ctaHref="/#advisor"
         ctaLabel={t.navCta}
         extraLinks={[
+          { href: "/scenarios", label: lang === "en" ? "Scenarios" : "Skenaariot" },
           { href: "/map", label: lang === "en" ? "Explore" : "Tutki" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
           { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },

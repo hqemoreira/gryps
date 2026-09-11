@@ -239,6 +239,7 @@ function pickSources(sector: SectorId, lat: number): EvidenceSource[] {
 function researchLinks(sector: SectorId, lat: number): { label: string; href: string }[] {
   const links = [
     { label: "GRYPS Research Methodology", href: "/methodology" },
+    { label: "Mission scenarios", href: "/scenarios" },
     { label: "Research Library", href: "/research" },
     { label: "Arctic connectivity notes", href: "/knowledge/satellite-connectivity-arctic" },
     { label: "LEO · MEO · GEO reference", href: "/knowledge/leo-vs-meo-vs-geo-remote-operations" },

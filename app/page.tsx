@@ -1188,7 +1188,8 @@ const COPY = {
       { n: "04", title: "Generate Resilience Signature", body: "Free initial assessment with score and top recommendation. Unlock the detailed assessment with email confirmation." },
     ],
     examplesLabel: "RESEARCH LIBRARY",
-    examplesSub: "Curated Connectivity Intelligence assessments. Open a research Signature, or generate your own above.",
+    examplesSub: "Curated Connectivity Intelligence assessments. Open a research Signature, explore mission scenarios, or generate your own above.",
+    scenariosLink: "Mission scenarios →",
     polarHeader: "CONNECTIVITY INTELLIGENCE · NORDIC, ARCTIC & ICELAND",
     polarMapLabel: "MODELED INTELLIGENCE · NOT LIVE RF",
     polarInstrumentTitle: "Explore Connectivity Intelligence",
@@ -1257,7 +1258,8 @@ const COPY = {
       { n: "04", title: "Luo Resilience Signature", body: "Ilmainen alustava arvio pisteineen ja ykkössuosituksineen. Avaa yksityiskohtainen arvio sähköpostivahvistuksella." },
     ],
     examplesLabel: "RESEARCH LIBRARY",
-    examplesSub: "Kuratoituja Connectivity Intelligence -arvioita. Avaa tutkimus-Signature tai luo oma yllä.",
+    examplesSub: "Kuratoituja Connectivity Intelligence -arvioita. Avaa tutkimus-Signature, tutki tehtäväskenaarioita tai luo oma yllä.",
+    scenariosLink: "Tehtäväskenaariot →",
     polarHeader: "CONNECTIVITY INTELLIGENCE · POHJOISMAAT, ARKTINEN ALUE JA ISLANTI",
     polarMapLabel: "MALLINNETTU ÄLY · EI REAALIAIKAISTA RF:ÄÄ",
     polarInstrumentTitle: "Tutki Connectivity Intelligencea",
@@ -1390,6 +1392,7 @@ export default function HomePage() {
           extraLinks={[
             { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
             { href: "/research", label: "Research Library" },
+            { href: "/scenarios", label: lang === "en" ? "Scenarios" : "Skenaariot" },
             { href: "/map", label: lang === "en" ? "Explore" : "Tutki" },
             { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
             { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
@@ -1572,12 +1575,18 @@ export default function HomePage() {
                 <ExampleCard key={`snap-${ex.id}`} ex={ex} lang={lang} viewSample={t.viewSample} />
               ))}
             </div>
-            <p style={{ marginTop: 24 }}>
+            <p style={{ marginTop: 24, display: "flex", flexWrap: "wrap", gap: 16 }}>
               <a href="/research" style={{
                 fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
                 color: "var(--accent-blue)", textDecoration: "none",
               }}>
                 {lang === "en" ? "Browse Research Library →" : "Selaa Research Librarya →"}
+              </a>
+              <a href="/scenarios" style={{
+                fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
+                color: "var(--accent-blue)", textDecoration: "none",
+              }}>
+                {t.scenariosLink}
               </a>
             </p>
           </div>

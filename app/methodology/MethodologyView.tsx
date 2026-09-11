@@ -95,6 +95,7 @@ const COPY = {
     versionH2: "Versioning (monitoring later)",
     versionP: `Every Signature carries issuedAt, modelVersion (${MODEL_VERSION}), and inputHash. Monitoring is the same engine at T1, T2 — not a second product. Live drift alerting is not built yet; the homepage drift slider is illustrative only.`,
     researchLink: "Research Library",
+    scenariosLink: "Mission scenarios",
     knowledgeLink: "Knowledge",
     providersLink: "Provider index",
     advisorLink: "Generate Resilience Signature",
@@ -188,6 +189,7 @@ const COPY = {
     versionH2: "Versiointi (seuranta myöhemmin)",
     versionP: `Jokainen Signature sisältää issuedAt-, modelVersion- (${MODEL_VERSION}) ja inputHash-kentät. Seuranta on sama moottori hetkillä T1 ja T2 — ei erillinen tuote. Reaaliaikaisia ajautumahälytyksiä ei ole vielä rakennettu; etusivun ajautumaliukusäädin on vain havainnollistus.`,
     researchLink: "Research Library",
+    scenariosLink: "Tehtäväskenaariot",
     knowledgeLink: "Tietopankki",
     providersLink: "Toimittajahakemisto",
     advisorLink: "Luo Resilience Signature",
@@ -285,6 +287,8 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
 
         <p style={{ ...p, marginTop: 40 }}>
           <Link href="/research" style={{ color: "var(--accent-blue)" }}>{t.researchLink}</Link>
+          {" · "}
+          <Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>{t.scenariosLink}</Link>
           {" · "}
           <Link href="/knowledge" style={{ color: "var(--accent-blue)" }}>{t.knowledgeLink}</Link>
           {" · "}

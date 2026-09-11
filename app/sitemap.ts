@@ -1,11 +1,13 @@
 import { MetadataRoute } from 'next'
 import { KNOWLEDGE_ARTICLES } from '@/lib/knowledge-articles'
 import { getAllResearchEntries } from '@/lib/research-library'
+import { getAllMissionScenarios } from '@/lib/mission-scenarios'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: 'https://gryps.vercel.app', lastModified: new Date(), changeFrequency: 'monthly', priority: 1 },
     { url: 'https://gryps.vercel.app/research', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+    { url: 'https://gryps.vercel.app/scenarios', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.88 },
     { url: 'https://gryps.vercel.app/map', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: 'https://gryps.vercel.app/about', lastModified: new Date(), changeFrequency: 'yearly', priority: 0.7 },
     { url: 'https://gryps.vercel.app/methodology', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
@@ -29,5 +31,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }))
 
-  return [...staticPages, ...knowledgePages, ...researchPages]
+  const scenarioPages: MetadataRoute.Sitemap = getAllMissionScenarios().map(s => ({
+    url: `https://gryps.vercel.app/scenarios/${s.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.78,
+  }))
+
+  return [...staticPages, ...knowledgePages, ...researchPages, ...scenarioPages]
 }

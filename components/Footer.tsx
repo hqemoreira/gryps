@@ -13,6 +13,7 @@ const COPY = {
     score: "Generate Resilience Signature",
     map: "Explore",
     research: "Research Library",
+    scenarios: "Scenarios",
     providers: "Providers",
     about: "About",
     methodology: "Methodology",
@@ -29,6 +30,7 @@ const COPY = {
     score: "Luo Resilience Signature",
     map: "Tutki",
     research: "Research Library",
+    scenarios: "Skenaariot",
     providers: "Toimittajat",
     about: "Tietoa",
     methodology: "Menetelmä",
@@ -76,6 +78,7 @@ export function Footer({
               <Link href="/#advisor">{t.score}</Link>
               <Link href="/map">{t.map}</Link>
               <Link href="/research">{t.research}</Link>
+              <Link href="/scenarios">{t.scenarios}</Link>
               <Link href="/providers">{t.providers}</Link>
               {showExtra && secondaryLink && (
                 <Link href={secondaryLink.href}>{secondaryLink.label}</Link>
