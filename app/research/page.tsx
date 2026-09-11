@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { ResearchLibraryView } from "@/components/ResearchLibraryView"
-import { getAllResearchEntries, resolveResearchAssessment } from "@/lib/research-library"
+import { getAllResearchEntries } from "@/lib/research-library"
+import { resolveResearchAssessment } from "@/lib/research-resolve"
 
 export const metadata: Metadata = {
   title: "Research Library — Connectivity Resilience Assessments | GRYPS",

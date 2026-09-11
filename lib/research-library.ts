@@ -1,5 +1,5 @@
 /**
- * GRYPS Research Library — curated public assessments.
+ * GRYPS Research Library — curated public assessments (client-safe catalog).
  *
  * Sprint 2 audit of 33 seed sites + 4 homepage examples:
  *
@@ -9,18 +9,13 @@
  *          site-22 Kittilä, site-25 Jokkmokk, site-31 Straumsvík, site-32 Akureyri
  *
  * 🟡 Potential (kept in DB/map, noindex, not in public library)
- *   site-01, 02, 05, 06, 11, 13, 14, 15, 19, 22-adjacent duplicates, 24, 28, 33…
- *
  * 🔴 Thin / synthetic (noindex, excluded from sitemap & research nav)
- *   Remaining Site XX pages — useful for map/dev, not public research assets.
+ *
+ * Server-only resolution (DB / scoring) lives in lib/research-resolve.ts —
+ * do not import scoring or Neon from this module (breaks client bundles).
  */
 
-import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
-import { SEED_SITES } from "@/lib/seed-sites"
-import { scoreSiteSync } from "@/lib/scoring"
-import { getSiteBySlug } from "@/lib/signatures-db"
 import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors"
-import { MODEL_VERSION } from "@/lib/signature-meta"
 
 export type ResearchVertical = "forestry" | "mining" | "maritime" | "arctic" | "infrastructure"
 export type ResearchRegion = "nordics" | "arctic" | "iceland"
@@ -339,70 +334,6 @@ export type ResolvedResearchAssessment = {
   result: AdvisoryResult
   modelVersion: string
   fromDatabase: boolean
-}
-
-export async function resolveResearchAssessment(slug: string): Promise<ResolvedResearchAssessment | null> {
-  const entry = getResearchEntry(slug)
-  if (!entry) return null
-
-  if (entry.source === "example") {
-    const ex = EXAMPLE_SIGNATURES.find(e => e.id === entry.sourceId)
-    if (!ex) return null
-    return {
-      entry,
-      input: ex.input,
-      result: ex.result,
-      modelVersion: ex.result.modelVersion ?? MODEL_VERSION,
-      fromDatabase: false,
-    }
-  }
-
-  // Prefer stored Signature when available; fall back to deterministic re-score from seed inputs.
-  try {
-    const row = await getSiteBySlug(entry.sourceId)
-    if (row) {
-      return {
-        entry,
-        input: {
-          lat: row.lat,
-          lng: row.lng,
-          sector: row.sector,
-          autonomy_level: row.autonomy_level,
-          operation_criticality: row.operation_criticality,
-          current_setup: row.current_setup ?? undefined,
-        },
-        result: row.output,
-        modelVersion: row.output.modelVersion ?? MODEL_VERSION,
-        fromDatabase: true,
-      }
-    }
-  } catch {
-    // fall through to seed sync score
-  }
-
-  const seed = SEED_SITES.find(s => s.slug === entry.sourceId)
-  if (!seed) return null
-  const result = scoreSiteSync({
-    site_coordinates: { lat: seed.lat, lng: seed.lng },
-    sector: seed.sector,
-    autonomy_level: seed.autonomy_level,
-    operation_criticality: seed.operation_criticality,
-    current_setup: seed.current_setup,
-  })
-  return {
-    entry,
-    input: {
-      lat: seed.lat,
-      lng: seed.lng,
-      sector: seed.sector,
-      autonomy_level: seed.autonomy_level,
-      operation_criticality: seed.operation_criticality,
-      current_setup: seed.current_setup,
-    },
-    result,
-    modelVersion: result.modelVersion ?? MODEL_VERSION,
-    fromDatabase: false,
-  }
 }
 
 export const RESEARCH_VERTICALS: { id: ResearchVertical | "all"; en: string; fi: string }[] = [

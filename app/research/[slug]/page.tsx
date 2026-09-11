@@ -7,8 +7,8 @@ import { grypsCopyright } from "@/lib/gryps-copyright"
 import {
   getAllResearchEntries,
   getResearchEntry,
-  resolveResearchAssessment,
 } from "@/lib/research-library"
+import { resolveResearchAssessment } from "@/lib/research-resolve"
 
 type Props = { params: Promise<{ slug: string }> }
 
