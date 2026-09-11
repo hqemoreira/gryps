@@ -1,4 +1,5 @@
 import { Mistral } from "@mistralai/mistralai"
+import { normalizePriorities } from "@/lib/advisor-priorities"
 import { scoreDeterministic, type ScoreInput } from "@/lib/deterministic-score"
 import { applyHardRules, versionSignature } from "@/lib/signature-meta"
 import type { AdvisoryResult } from "@/lib/resilience-colors"
@@ -14,6 +15,7 @@ type AdviseBody = {
   autonomy_level?: string
   operation_criticality?: string
   elevation_m?: number
+  priorities?: string[]
   email?: string
 }
 
@@ -27,6 +29,7 @@ function toScoreInput(body: AdviseBody): ScoreInput {
     providers: body.providers,
     current_setup: body.current_setup,
     elevation_m: body.elevation_m,
+    priorities: normalizePriorities(body.priorities),
   }
 }
 
@@ -50,7 +53,9 @@ async function enrichRecommendation(base: AdvisoryResult, body: AdviseBody): Pro
             sector: body.vertical ?? body.sector,
             autonomy: body.autonomy_level,
             criticality: body.operation_criticality,
+            priorities: normalizePriorities(body.priorities),
             signature: base.resilience_signature,
+            recommendation_package: base.intelligence?.recommendation,
             top_risks: base.risk_factors.slice(0, 2),
             top_options: base.connectivity_options.slice(0, 2),
           }),
@@ -82,6 +87,7 @@ export async function scoreSite(body: object): Promise<ResilienceOutput> {
     caveats: det.caveats,
     caps_applied: det.caps_applied,
     score_composition: det.score_composition,
+    intelligence: det.intelligence,
   }
 
   const withProse: AdvisoryResult = {
@@ -113,6 +119,7 @@ export function scoreSiteSync(body: object): ResilienceOutput {
     caveats: det.caveats,
     caps_applied: det.caps_applied,
     score_composition: det.score_composition,
+    intelligence: det.intelligence,
   }
   return versionSignature(
     applyHardRules(structured, {

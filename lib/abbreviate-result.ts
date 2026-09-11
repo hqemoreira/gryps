@@ -1,4 +1,5 @@
 import type { AdvisoryResult } from "@/lib/resilience-colors"
+import type { AdvisorPriorityId } from "@/lib/advisor-priorities"
 
 /** Anonymous / gated teaser — enough to prove value, not the full research dump. */
 export type AbbreviatedAssessment = {
@@ -16,8 +17,12 @@ export type AbbreviatedAssessment = {
     latencyEstimate: string | null
     orbitalType: string
     why: string
+    primary_reason?: string
+    best_if?: { provider: string; condition: string }[]
   }
   top_risks: { label: string; severity: string }[]
+  priorities_applied?: AdvisorPriorityId[]
+  overall_score_explanation?: string
   issuedAt?: string
   modelVersion?: string
   inputHash?: string
@@ -57,6 +62,11 @@ function latencyEstimateFor(type: string, provider: string): string | null {
 }
 
 function shortWhy(full: AdvisoryResult, topNote: string | undefined): string {
+  const intel = full.intelligence?.recommendation
+  if (intel?.primary_reason) {
+    const s = intel.primary_reason.trim()
+    return s.length > 200 ? `${s.slice(0, 197)}…` : s
+  }
   const note = (topNote ?? "").trim()
   if (note) return note.length > 160 ? `${note.slice(0, 157)}…` : note
   const rec = (full.recommendation ?? "").trim()
@@ -68,9 +78,10 @@ function shortWhy(full: AdvisoryResult, topNote: string | undefined): string {
 /** Strip a full AdvisoryResult to the anonymous Initial Assessment surface. */
 export function abbreviateResult(full: AdvisoryResult): AbbreviatedAssessment {
   const top = full.connectivity_options[0]
-  const provider = top?.provider ?? "—"
-  const type = top?.type ?? "—"
-  const confidence = top?.confidence ?? 0
+  const intel = full.intelligence?.recommendation
+  const provider = intel?.provider ?? top?.provider ?? "—"
+  const type = intel?.type ?? top?.type ?? "—"
+  const confidence = intel?.confidence ?? top?.confidence ?? 0
 
   return {
     depth: "abbreviated",
@@ -83,15 +94,19 @@ export function abbreviateResult(full: AdvisoryResult): AbbreviatedAssessment {
       provider,
       type,
       confidence,
-      confidenceBand: confidenceBand(confidence),
+      confidenceBand: intel?.confidenceBand ?? confidenceBand(confidence),
       latencyEstimate: latencyEstimateFor(type, provider),
       orbitalType: orbitalTypeFrom(type),
       why: shortWhy(full, top?.note),
+      primary_reason: intel?.primary_reason,
+      best_if: intel?.best_if?.slice(0, 1),
     },
     top_risks: full.risk_factors.slice(0, 2).map(r => ({
       label: r.label,
       severity: r.severity,
     })),
+    priorities_applied: intel?.priorities_applied,
+    overall_score_explanation: full.intelligence?.overall_score_explanation,
     issuedAt: full.issuedAt,
     modelVersion: full.modelVersion,
     inputHash: full.inputHash,

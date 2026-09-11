@@ -138,6 +138,23 @@ export function InitialAssessment({
             {rec.why}
           </p>
         </div>
+
+        {rec.best_if?.[0] && (
+          <div style={{
+            marginTop: 12, padding: "10px 12px",
+            backgroundColor: "var(--surface2)", border: "1px solid var(--border)",
+            borderRadius: 8,
+          }}>
+            <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 4 }}>
+              {lang === "fi" ? "Paras jos…" : "Best if…"}
+            </p>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.55 }}>
+              <span style={{ fontWeight: 700, color: "var(--accent-blue)" }}>{rec.best_if[0].provider}</span>
+              {" — "}
+              {rec.best_if[0].condition}
+            </p>
+          </div>
+        )}
       </div>
 
       <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.55 }}>

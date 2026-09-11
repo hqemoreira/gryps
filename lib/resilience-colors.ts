@@ -27,6 +27,12 @@ export type ScoreComposition = {
   caps_applied: string[]
 }
 
+import type { AdvisorIntelligence } from "@/lib/advisor-intelligence"
+import type { AdvisorPriorityId } from "@/lib/advisor-priorities"
+
+export type { AdvisorIntelligence }
+export type { AdvisorPriorityId }
+
 export type AdvisoryResult = {
   resilience_signature: { score: number; grade: string; summary: string }
   risk_factors: { label: string; severity: string; detail: string }[]
@@ -39,6 +45,8 @@ export type AdvisoryResult = {
   inputHash?: string
   caps_applied?: string[]
   score_composition?: ScoreComposition
+  /** Sprint 4 — structured recommendation, score explainers, comparison */
+  intelligence?: AdvisorIntelligence
 }
 
 export type AssessmentInputs = {
@@ -48,6 +56,7 @@ export type AssessmentInputs = {
   autonomy_level: string
   operation_criticality: string
   current_setup?: string
+  priorities?: AdvisorPriorityId[]
 }
 
 // Vivid, theme-independent — for BACKGROUND fills (buttons, decorative dots) where

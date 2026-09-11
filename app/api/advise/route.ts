@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { scoreSite } from "@/lib/scoring"
 import { abbreviateResult } from "@/lib/abbreviate-result"
+import { normalizePriorities } from "@/lib/advisor-priorities"
 import { ensureAdvisorSchema, getSql } from "@/lib/db-schema"
 
 const RATE_LIMIT_MAX = 200
@@ -29,6 +30,7 @@ export async function POST(req: NextRequest) {
   if (current_setup != null && typeof current_setup !== "string") {
     input.current_setup = undefined
   }
+  input.priorities = normalizePriorities(input.priorities)
 
   const ip = getClientIp(req)
   const sql = getSql()

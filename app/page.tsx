@@ -17,6 +17,7 @@ import { DriftMock } from "@/components/DriftMock"
 import { PolarAtmosphere } from "@/components/PolarAtmosphere"
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors"
 import { ADVISOR_PROVIDERS, providersToSetupString, scoreDeterministic } from "@/lib/deterministic-score"
+import { ADVISOR_PRIORITIES, PRIORITY_LABELS, type AdvisorPriorityId } from "@/lib/advisor-priorities"
 import { MODEL_VERSION } from "@/lib/signature-meta"
 import dynamic from "next/dynamic"
 
@@ -406,6 +407,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const [legacySetup, setLegacySetup] = useState("")
   const [autonomy, setAutonomy] = useState("")
   const [criticality, setCriticality] = useState("")
+  const [priorities, setPriorities] = useState<AdvisorPriorityId[]>([])
   const [loading, setLoading] = useState(false)
   const [depth, setDepth] = useState<"abbreviated" | "full">("abbreviated")
   const [abbreviated, setAbbreviated] = useState<AbbreviatedAssessment | null>(null)
@@ -431,6 +433,11 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     const autonomyQ = q.get("autonomy")
     const criticalityQ = q.get("criticality")
     const providersQ = parseProvidersParam(q.get("providers"))
+    const prioritiesQ = (q.get("priorities") ?? "")
+      .split(",")
+      .map(s => s.trim())
+      .filter((s): s is AdvisorPriorityId => (ADVISOR_PRIORITIES as readonly string[]).includes(s))
+      .slice(0, 3)
     const setupQ = q.get("setup") ?? ""
     const sid = q.get("sid")
     const unlock = q.get("unlock")
@@ -443,6 +450,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     if (criticalityQ) setCriticality(criticalityQ)
     if (providersQ.length) setProviders(providersQ)
     else if (setupQ) setProviders(inferProvidersFromSetup(setupQ))
+    if (prioritiesQ.length) setPriorities(prioritiesQ)
     if (setupQ) setLegacySetup(setupQ)
     if (sid) setShareId(sid)
 
@@ -472,6 +480,16 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           setProviders(inp.providers.map(String))
         } else if (inp.current_setup) {
           setProviders(inferProvidersFromSetup(String(inp.current_setup)))
+        }
+        if (Array.isArray(inp.priorities) && inp.priorities.length) {
+          setPriorities(
+            inp.priorities
+              .map(String)
+              .filter((s: string): s is AdvisorPriorityId =>
+                (ADVISOR_PRIORITIES as readonly string[]).includes(s),
+              )
+              .slice(0, 3),
+          )
         }
         setShareId(String(data.id))
         if (data.use_case) setUseCase(String(data.use_case))
@@ -520,6 +538,14 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       const withoutNone = prev.filter(p => p !== "none")
       if (withoutNone.includes(id)) return withoutNone.filter(p => p !== id)
       return [...withoutNone, id]
+    })
+  }
+
+  function togglePriority(id: AdvisorPriorityId) {
+    setPriorities(prev => {
+      if (prev.includes(id)) return prev.filter(p => p !== id)
+      if (prev.length >= 3) return prev
+      return [...prev, id]
     })
   }
 
@@ -589,6 +615,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           current_setup: setupStr,
           autonomy_level: autonomy,
           operation_criticality: criticality,
+          priorities,
         }),
       })
       const data = await res.json()
@@ -611,6 +638,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       if (autonomy) shareParams.set("autonomy", autonomy)
       if (criticality) shareParams.set("criticality", criticality)
       if (providers.length) shareParams.set("providers", providers.join(","))
+      if (priorities.length) shareParams.set("priorities", priorities.join(","))
       if (data.id) {
         shareParams.set("sid", String(data.id))
         setShareId(String(data.id))
@@ -652,6 +680,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       autonomy_level: autonomy,
       operation_criticality: criticality,
       current_setup: providers.length ? providersToSetupString(providers) : legacySetup || undefined,
+      priorities: priorities.length ? priorities : undefined,
     }
     const revealKey = depth === "full"
       ? (fullResult?.issuedAt ?? `${fullResult?.resilience_signature.score}-${fullResult?.resilience_signature.grade}`)
@@ -839,6 +868,37 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         <a href="/providers" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.04em", marginTop: 4 }}>
           {t.providersCoi}
         </a>
+      </div>
+
+      <div className="gryps-field-group">
+        <label style={labelStyle}>{t.prioritiesLabel}</label>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", marginBottom: 4, lineHeight: 1.5 }}>
+          {t.prioritiesHint}
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {ADVISOR_PRIORITIES.map(id => {
+            const selected = priorities.includes(id)
+            const atCap = !selected && priorities.length >= 3
+            return (
+              <button
+                key={id}
+                type="button"
+                disabled={atCap}
+                onClick={() => togglePriority(id)}
+                style={{
+                  ...chipBase,
+                  opacity: atCap ? 0.45 : 1,
+                  cursor: atCap ? "not-allowed" : "pointer",
+                  border: selected ? "1px solid var(--accent-cyan)" : "1px solid var(--border2)",
+                  backgroundColor: selected ? "rgba(34,211,238,0.12)" : "var(--surface2)",
+                  color: selected ? "var(--accent-cyan)" : "var(--text-muted)",
+                }}
+              >
+                {PRIORITY_LABELS[id][lang]}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.04em" }}>
@@ -1102,6 +1162,8 @@ const COPY = {
     providersLabel: "CURRENT CONNECTIVITY PROVIDERS",
     providersHint:  "Select all providers currently in use. Choose None if no satellite path is documented. GRYPS has no commercial relationship with any provider listed.",
     providersCoi: "No commercial relationships with ranked providers — see Providers.",
+    prioritiesLabel: "MISSION PRIORITIES (OPTIONAL)",
+    prioritiesHint: "Select up to 3. Same site can recommend differently — priorities re-rank options; they do not change the Signature score.",
     boundsHint: "Coordinates must be within Nordic/Arctic bounds (lat 55–85°, lng −30–40°).",
     noAccountNote: "Free · No account required. Email only if you unlock the detailed assessment.",
     runAdvisor: "Generate Resilience Signature",
@@ -1121,8 +1183,8 @@ const COPY = {
     howL:  "How the Advisor works",
     steps: [
       { n: "01", title: "Enter site profile",    body: "Coordinates, sector, and current providers. Elevation and terrain are factored automatically." },
-      { n: "02", title: "Set autonomy level",    body: "Manual, remote-operated, autonomous, or mixed. Scoring weights shift with operational dependency on connectivity." },
-      { n: "03", title: "Set criticality",       body: "Standard, high, or safety-critical. A safety-critical autonomous site with no redundancy cannot score above 50." },
+      { n: "02", title: "Set autonomy & criticality", body: "Operational dependency and criticality shift Signature weights. Safety-critical autonomous sites without redundancy cannot score above 50." },
+      { n: "03", title: "Set mission priorities", body: "Optional: uptime, latency, bandwidth, redundancy, coverage, mobility, or deployment simplicity — re-ranks recommendations for this mission." },
       { n: "04", title: "Generate Resilience Signature", body: "Free initial assessment with score and top recommendation. Unlock the detailed assessment with email confirmation." },
     ],
     examplesLabel: "RESEARCH LIBRARY",
@@ -1169,6 +1231,8 @@ const COPY = {
     providersLabel: "NYKYISET YHTEYSTOIMITTAJAT",
     providersHint:  "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittiyhteyttä ei ole dokumentoitu. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
     providersCoi: "Ei kaupallisia suhteita suositeltuihin toimittajiin — katso Toimittajat.",
+    prioritiesLabel: "TEHTÄVÄN PRIORITEETIT (VALINNAINEN)",
+    prioritiesHint: "Valitse enintään 3. Sama kohde voi tuottaa eri suosituksen — prioriteetit järjestävät vaihtoehdot uudelleen; ne eivät muuta Signature-pistettä.",
     boundsHint: "Koordinaattien on oltava Pohjoismaiden tai arktisen alueen rajoissa (lat 55–85°, lng −30–40°).",
     noAccountNote: "Ilmainen · Ei tiliä tarvita. Sähköposti vain, jos avaat yksityiskohtaisen arvion.",
     runAdvisor: "Luo Resilience Signature",
@@ -1188,8 +1252,8 @@ const COPY = {
     howL:  "Miten Advisor toimii",
     steps: [
       { n: "01", title: "Syötä kohteen tiedot",    body: "Koordinaatit, toimiala ja nykyiset toimittajat. Korkeus ja maasto otetaan huomioon automaattisesti." },
-      { n: "02", title: "Valitse autonomiataso",    body: "Manuaalinen, etäohjattu, autonominen tai yhdistelmä. Pisteytyksen painot muuttuvat sen mukaan, kuinka riippuvainen toiminta on yhteydestä." },
-      { n: "03", title: "Valitse kriittisyys",      body: "Tavanomainen, korkea tai turvallisuuskriittinen. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
+      { n: "02", title: "Autonomia ja kriittisyys", body: "Toiminnan riippuvuus ja kriittisyys muuttavat Signature-painoja. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
+      { n: "03", title: "Tehtävän prioriteetit", body: "Valinnainen: käytettävyys, latenssi, kaista, redundanssi, kattavuus, liikkuvuus tai käyttöönoton yksinkertaisuus — järjestää suositukset uudelleen tälle tehtävälle." },
       { n: "04", title: "Luo Resilience Signature", body: "Ilmainen alustava arvio pisteineen ja ykkössuosituksineen. Avaa yksityiskohtainen arvio sähköpostivahvistuksella." },
     ],
     examplesLabel: "RESEARCH LIBRARY",

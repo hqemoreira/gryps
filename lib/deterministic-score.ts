@@ -1,6 +1,15 @@
+import { normalizePriorities, type AdvisorPriorityId } from "@/lib/advisor-priorities"
+import {
+  applyPriorityRanking,
+  buildAdvisorIntelligence,
+  priorityRankBonus,
+  type AdvisorIntelligence,
+} from "@/lib/advisor-intelligence"
+
 /**
  * Deterministic Resilience Signature engine (Model v0.3).
- * Score / grade / risks / ranked providers are fully reproducible.
+ * Score / grade / risks are fully reproducible for the same site profile.
+ * Mission priorities (v0.3 intelligence layer) re-rank recommendations only.
  */
 
 export type ProviderId =
@@ -35,6 +44,8 @@ export type ScoreInput = {
   /** Legacy free-text setup — still parsed for share links */
   current_setup?: string
   elevation_m?: number
+  /** Mission priorities — re-rank recommendations; do not change Signature score */
+  priorities?: AdvisorPriorityId[]
 }
 
 export type RiskFactor = { label: string; severity: "low" | "medium" | "high" | "critical"; detail: string }
@@ -71,6 +82,7 @@ export type DeterministicResult = {
   caveats: string[]
   caps_applied: string[]
   score_composition: ScoreComposition
+  intelligence?: AdvisorIntelligence
 }
 
 type ProviderMeta = {
@@ -245,7 +257,11 @@ function buildRisks(
   return risks.slice(0, 4)
 }
 
-function rankBackups(selected: ProviderMeta[], lat: number): RankedProvider[] {
+function rankBackups(
+  selected: ProviderMeta[],
+  lat: number,
+  priorities: AdvisorPriorityId[],
+): RankedProvider[] {
   const selectedIds = new Set(selected.map(p => p.id))
   const selectedOrbits = new Set(selected.map(p => p.orbit))
 
@@ -253,10 +269,13 @@ function rankBackups(selected: ProviderMeta[], lat: number): RankedProvider[] {
     .filter(p => p.id !== "none" && !selectedIds.has(p.id))
     .map(p => {
       let rank = effectiveConfidence(p, lat)
-      if (p.orbit === "GEO" && lat > 70) rank -= 20 // latitude_penalty ×2 feel
+      if (p.orbit === "GEO" && lat > 70) rank -= 20
       if (selectedOrbits.has(p.orbit) && !(p.orbit === "LEO" && !selected.some(s => s.class === p.class))) {
-        rank -= 10 // orbital overlap
+        rank -= 10
       }
+      const type = `${p.orbit} ${p.class}`
+      rank += priorityRankBonus(p.name, type, priorities)
+
       const reason =
         p.orbit === "LEO" && p.class === "narrowband"
           ? "Independent LEO, polar-optimized narrowband"
@@ -271,7 +290,7 @@ function rankBackups(selected: ProviderMeta[], lat: number): RankedProvider[] {
         rank,
         option: {
           provider: p.name,
-          type: `${p.orbit} ${p.class}`,
+          type,
           confidence: effectiveConfidence(p, lat),
           note: reason,
           elevation: p.orbit === "GEO" && lat > 70 ? "Low elevation at site latitude" : "Clear sky-view assumed",
@@ -282,7 +301,10 @@ function rankBackups(selected: ProviderMeta[], lat: number): RankedProvider[] {
     })
     .sort((a, b) => b.rank - a.rank)
 
-  return candidates.slice(0, 3).map(c => c.option)
+  return applyPriorityRanking(
+    candidates.slice(0, 3).map(c => c.option),
+    priorities,
+  )
 }
 
 function templateRecommendation(
@@ -290,7 +312,12 @@ function templateRecommendation(
   grade: string,
   topRisk: RiskFactor | undefined,
   topBackup: RankedProvider | undefined,
+  intelligenceHeadline?: string,
 ): string {
+  if (intelligenceHeadline) {
+    const riskBit = topRisk ? ` Primary concern: ${topRisk.detail}` : ""
+    return `${intelligenceHeadline}${riskBit}`.trim()
+  }
   const riskBit = topRisk ? ` Primary concern: ${topRisk.detail}` : ""
   const backupBit = topBackup
     ? ` Consider ${topBackup.provider} (${topBackup.confidence}) — ${topBackup.note}.`
@@ -311,6 +338,7 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
   const providers = parseProviders(raw)
   const autonomy = raw.autonomy
   const criticality = raw.criticality
+  const priorities = normalizePriorities(raw.priorities)
 
   const redPts = redundancyPoints(providers)
   const latPts = latitudePoints(lat, sector, elevation)
@@ -366,7 +394,7 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
     })
   }
 
-  const connectivity_options = rankBackups(providers, lat)
+  const connectivity_options = rankBackups(providers, lat, priorities)
   const redundancy_gaps: { label: string; detail: string }[] = []
   if (providers.length === 0) {
     redundancy_gaps.push({
@@ -385,8 +413,21 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
     })
   }
 
+  const intelligence = buildAdvisorIntelligence({
+    composition: score_composition,
+    options: connectivity_options,
+    risks: risk_factors,
+    sector,
+    lat,
+    providerCount: providers.length,
+    score,
+    grade,
+    priorities,
+  })
+
   const caveats = [
     "Research prototype — illustrative deterministic engine output (Model v0.3).",
+    "Mission priorities re-rank recommendations; they do not change the Signature score.",
     "Not a substitute for an on-site RF / sky-view survey.",
     ...(caps_applied.length
       ? [`Hard cap(s) applied: ${caps_applied.join(", ")}.`]
@@ -398,7 +439,13 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
       ? `${sector} site at ${lat.toFixed(1)}°N with no documented connectivity path — score ${score} · ${grade}.`
       : `${sector} site at ${lat.toFixed(1)}°N with ${providers.map(p => p.name).join(" + ")} — score ${score} · ${grade}.`
 
-  const recommendation = templateRecommendation(score, grade, risk_factors[0], connectivity_options[0])
+  const recommendation = templateRecommendation(
+    score,
+    grade,
+    risk_factors[0],
+    connectivity_options[0],
+    intelligence.recommendation.headline,
+  )
 
   return {
     resilience_signature: { score, grade, summary },
@@ -409,6 +456,7 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
     caveats,
     caps_applied,
     score_composition,
+    intelligence,
   }
 }
 

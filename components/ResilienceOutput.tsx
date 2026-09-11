@@ -3,6 +3,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck, Download } from "lucide-react"
 import { gradeColor, gradeTextColor, type AdvisoryResult, type AssessmentInputs, type ScoreComposition } from "@/lib/resilience-colors"
+import type { AdvisorIntelligence, ComparisonRow, ScoreExplanation } from "@/lib/advisor-intelligence"
+import { PRIORITY_LABELS, type AdvisorPriorityId } from "@/lib/advisor-priorities"
 import { computeComplianceFlags } from "@/lib/compliance"
 import { redundancyTiers } from "@/lib/redundancy-tiers"
 import { MODEL_VERSION } from "@/lib/signature-meta"
@@ -137,6 +139,30 @@ const UI = {
     complianceNote: "Compliance flags are indicative, based on the scoring model's assessment of connectivity resilience posture. They do not constitute legal or regulatory advice. A Signature supports readiness documentation — it is not certification.",
     recommendation: "RECOMMENDATION",
     recommendationNote: "Model commentary: interpretive explanation from the deterministic assessment (optional prose polish). Not a measurement of live network performance or a provider SLA.",
+    intelligenceLabel: "ADVISOR RECOMMENDATION",
+    intelligenceSub: "Structured decision support — top fit, confidence, trade-offs, and alternatives for this mission.",
+    primaryReason: "Primary reason",
+    secondaryReasons: "Also consider",
+    tradeOffs: "Key trade-offs",
+    bestIf: "Best if…",
+    considerIf: "Consider {provider} if",
+    confidenceLevel: "Confidence",
+    topProviders: "Top providers",
+    comparisonLabel: "PROVIDER COMPARISON",
+    comparisonSub: "Concise model bands for the top ranked options — not live RF measurements.",
+    colCoverage: "Coverage",
+    colLatency: "Latency",
+    colResilience: "Resilience",
+    colHardware: "Hardware",
+    colBestFor: "Best for",
+    bandHigh: "High",
+    bandMedium: "Medium",
+    bandLow: "Low",
+    hardwareNote: "Hardware band: High = more complex / demanding; Low = simpler kit.",
+    prioritiesApplied: "Mission priorities",
+    scoreExplainLabel: "SCORE EXPLAINED",
+    scoreExplainSub: "Each major component, with transparent model commentary.",
+    overallResilience: "Resilience",
     scoreComposition: "HOW THIS SCORE WAS COMPUTED",
     scoreCompositionSub: "Model v0.3 component breakdown before hard caps. Full formula on the methodology page.",
     scoreRawSum: "Raw sum",
@@ -228,6 +254,30 @@ const UI = {
     complianceNote: "Valmiusliput ovat suuntaa-antavia ja perustuvat pisteytysmallin arvioon yhteyden resilienssiasemasta. Ne eivät ole oikeudellista tai sääntelyneuvontaa. Signature tukee valmiusdokumentaatiota — se ei ole sertifiointi.",
     recommendation: "SUOSITUS",
     recommendationNote: "Mallikommentti: tulkinnallinen selitys deterministisestä arviosta (valinnainen proosan viimeistely). Ei live-verkon mittaus eikä toimittajan SLA.",
+    intelligenceLabel: "ADVISOR-SUOSITUS",
+    intelligenceSub: "Rakenteinen päätöstuki — paras sopivuus, luottamus, kompromissit ja vaihtoehdot tälle tehtävälle.",
+    primaryReason: "Pääsyy",
+    secondaryReasons: "Huomioi myös",
+    tradeOffs: "Keskeiset kompromissit",
+    bestIf: "Paras jos…",
+    considerIf: "Harkitse {provider} jos",
+    confidenceLevel: "Luottamus",
+    topProviders: "Parhaat toimittajat",
+    comparisonLabel: "TOIMITTAJAVERTAILU",
+    comparisonSub: "Tiiviit mallikaistat kärkivaihtoehdoille — ei live-RF-mittauksia.",
+    colCoverage: "Kattavuus",
+    colLatency: "Latenssi",
+    colResilience: "Resilienssi",
+    colHardware: "Laitteisto",
+    colBestFor: "Paras kun",
+    bandHigh: "Korkea",
+    bandMedium: "Keskitaso",
+    bandLow: "Matala",
+    hardwareNote: "Laitteistokaista: Korkea = monimutkaisempi / vaativampi; Matala = yksinkertaisempi kit.",
+    prioritiesApplied: "Tehtävän prioriteetit",
+    scoreExplainLabel: "PISTEET SELITYKSINEEN",
+    scoreExplainSub: "Kukin pääkomponentti läpinäkyvällä mallikommentilla.",
+    overallResilience: "Resilienssi",
     scoreComposition: "MITEN TÄMÄ PISTE LASKETTIIN",
     scoreCompositionSub: "Mallin v0.3 komponenttijako ennen kovia kattoja. Täysi kaava menetelmäsivulla.",
     scoreRawSum: "Raakasumma",
@@ -293,9 +343,12 @@ const UI = {
 
 type UiCopy = (typeof UI)[UiLang]
 
-function AssessmentInputsPanel({ input, t }: { input: AssessmentInputs; t: UiCopy }) {
+function AssessmentInputsPanel({ input, t, lang }: { input: AssessmentInputs; t: UiCopy; lang: UiLang }) {
   const strictAutonomy = input.autonomy_level === "autonomous" || input.autonomy_level === "mixed"
   const strictCriticality = input.operation_criticality === "safety-critical" || input.operation_criticality === "high"
+  const priorityLabels = (input.priorities ?? [])
+    .map(id => PRIORITY_LABELS[id as AdvisorPriorityId]?.[lang] ?? id)
+    .join(" · ")
 
   const rows: { label: string; value: string; note?: string }[] = [
     ...(input.lat != null && input.lng != null
@@ -305,6 +358,9 @@ function AssessmentInputsPanel({ input, t }: { input: AssessmentInputs; t: UiCop
     { label: t.autonomy, value: input.autonomy_level, note: strictAutonomy ? t.stricter : undefined },
     { label: t.criticality, value: input.operation_criticality, note: strictCriticality ? t.stricter : undefined },
     { label: t.currentSetup, value: input.current_setup?.trim() ? input.current_setup : t.notSpecified },
+    ...(priorityLabels
+      ? [{ label: t.prioritiesApplied, value: priorityLabels }]
+      : []),
   ]
 
   return (
@@ -338,27 +394,61 @@ function componentLabel(id: string, t: UiCopy): string {
   return id
 }
 
-function ScoreCompositionPanel({ composition, t }: { composition: ScoreComposition; t: UiCopy }) {
+function bandLabel(band: string, t: UiCopy): string {
+  if (band === "High") return t.bandHigh
+  if (band === "Medium") return t.bandMedium
+  if (band === "Low") return t.bandLow
+  return band
+}
+
+function ScoreCompositionPanel({
+  composition,
+  explanations,
+  overall,
+  t,
+}: {
+  composition: ScoreComposition
+  explanations?: ScoreExplanation[]
+  overall?: string
+  t: UiCopy
+}) {
+  const byId = new Map((explanations ?? []).map(e => [e.id, e]))
   return (
     <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 4 }}>{t.scoreComposition}</p>
-      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14, lineHeight: 1.5 }}>
-        {t.scoreCompositionSub}
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 4 }}>
+        {explanations?.length ? t.scoreExplainLabel : t.scoreComposition}
       </p>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14, lineHeight: 1.5 }}>
+        {explanations?.length ? t.scoreExplainSub : t.scoreCompositionSub}
+      </p>
+      {overall && (
+        <p style={{
+          fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text)", lineHeight: 1.6,
+          marginBottom: 14, padding: "10px 12px",
+          backgroundColor: "var(--surface2)", borderRadius: 6, border: "1px solid var(--border)",
+        }}>
+          {overall}
+        </p>
+      )}
       <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 14 }}>
         {composition.components.map(c => {
           const pct = c.max > 0 ? Math.max(0, Math.min(100, (c.points / c.max) * 100)) : 0
+          const expl = byId.get(c.id)
           return (
             <div key={c.id}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 4 }}>
-                <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text)", fontWeight: 600 }}>{componentLabel(c.id, t)}</span>
-                <span style={{ fontFamily: "var(--font-data)", fontSize: 12, color: "var(--text)", fontWeight: 700 }}>
-                  {c.points}/{c.max}
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text)", fontWeight: 600 }}>
+                  {componentLabel(c.id, t)} — {c.points}/{c.max}
                 </span>
               </div>
               <div style={{ height: 4, backgroundColor: "var(--surface2)", borderRadius: 2, overflow: "hidden" }}>
                 <div style={{ width: `${pct}%`, height: "100%", backgroundColor: "var(--accent-cyan)", borderRadius: 2 }} />
               </div>
+              {expl?.explanation && (
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.55, marginTop: 6 }}>
+                  {expl.explanation}
+                </p>
+              )}
             </div>
           )
         })}
@@ -370,17 +460,143 @@ function ScoreCompositionPanel({ composition, t }: { composition: ScoreCompositi
         </div>
         <div>
           <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 2 }}>{t.scoreFinal}</p>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 14, fontWeight: 700, color: "var(--accent-cyan)" }}>{composition.final_score}</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{composition.final_score}</p>
         </div>
       </div>
-      <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: composition.caps_applied.length ? "var(--accent-amber)" : "var(--text-muted)", lineHeight: 1.5, marginBottom: 12 }}>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5 }}>
         {composition.caps_applied.length
           ? `${t.scoreCaps}: ${composition.caps_applied.join(", ")}`
           : t.scoreNoCaps}
       </p>
-      <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--accent-blue)", textDecoration: "none" }}>
+      <Link href="/methodology" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)", marginTop: 10, display: "inline-block" }}>
         {t.methodologyLink}
       </Link>
+    </div>
+  )
+}
+
+function IntelligencePanel({ intelligence, t }: { intelligence: AdvisorIntelligence; t: UiCopy }) {
+  const rec = intelligence.recommendation
+  const band = bandLabel(rec.confidenceBand, t)
+  return (
+    <div style={{
+      backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
+      borderRadius: 8, padding: "16px 20px",
+    }}>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 4 }}>{t.intelligenceLabel}</p>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 12, lineHeight: 1.5 }}>{t.intelligenceSub}</p>
+
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 16, fontWeight: 700, color: "var(--text)", lineHeight: 1.45, marginBottom: 8 }}>
+        {rec.headline}
+      </p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 14 }}>
+        <span style={{
+          fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)",
+          border: "1px solid rgba(79,168,255,0.35)", borderRadius: 4, padding: "3px 8px",
+        }}>
+          {t.confidenceLevel}: {band} ({rec.confidence}%)
+        </span>
+        {rec.priorities_applied.length > 0 && (
+          <span style={{
+            fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)",
+            border: "1px solid var(--border)", borderRadius: 4, padding: "3px 8px",
+          }}>
+            {t.prioritiesApplied}: {rec.priorities_applied.map(p => p.replace(/_/g, " ")).join(", ")}
+          </span>
+        )}
+      </div>
+
+      <div style={{ marginBottom: 12 }}>
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 4 }}>{t.primaryReason}</p>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text)", lineHeight: 1.6 }}>{rec.primary_reason}</p>
+      </div>
+
+      {rec.secondary_reasons.length > 0 && (
+        <div style={{ marginBottom: 12 }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.secondaryReasons}</p>
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            {rec.secondary_reasons.map((s, i) => (
+              <li key={i} style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.55, marginBottom: 4 }}>{s}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {rec.trade_offs.length > 0 && (
+        <div style={{ marginBottom: 12 }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.tradeOffs}</p>
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            {rec.trade_offs.map((s, i) => (
+              <li key={i} style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.55, marginBottom: 4 }}>{s}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {rec.best_if.length > 0 && (
+        <div style={{
+          marginTop: 4, paddingTop: 12, borderTop: "1px solid rgba(79,168,255,0.2)",
+          display: "flex", flexDirection: "column", gap: 8,
+        }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em" }}>{t.bestIf}</p>
+          {rec.best_if.map((alt, i) => (
+            <p key={i} style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text)", lineHeight: 1.55 }}>
+              <span style={{ fontWeight: 700, color: "var(--accent-blue)" }}>
+                {t.considerIf.replace("{provider}", alt.provider)}:
+              </span>{" "}
+              {alt.condition}.
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ComparisonTable({ rows, t }: { rows: ComparisonRow[]; t: UiCopy }) {
+  if (!rows.length) return null
+  return (
+    <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px", overflowX: "auto" }}>
+      <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 4 }}>{t.comparisonLabel}</p>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginBottom: 14, lineHeight: 1.5 }}>{t.comparisonSub}</p>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 480 }}>
+        <thead>
+          <tr>
+            <th style={{ textAlign: "left", fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", padding: "6px 8px", borderBottom: "1px solid var(--border)" }} />
+            {rows.map(r => (
+              <th key={r.provider} style={{ textAlign: "left", fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700, color: "var(--text)", padding: "6px 8px", borderBottom: "1px solid var(--border)" }}>
+                {r.provider}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {([
+            ["coverage", t.colCoverage],
+            ["latency", t.colLatency],
+            ["resilience", t.colResilience],
+            ["hardware", t.colHardware],
+          ] as const).map(([key, label]) => (
+            <tr key={key}>
+              <td style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", padding: "8px", borderBottom: "1px solid var(--border)" }}>{label}</td>
+              {rows.map(r => (
+                <td key={r.provider + key} style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text)", padding: "8px", borderBottom: "1px solid var(--border)" }}>
+                  {bandLabel(r[key], t)}
+                </td>
+              ))}
+            </tr>
+          ))}
+          <tr>
+            <td style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", padding: "8px" }}>{t.colBestFor}</td>
+            {rows.map(r => (
+              <td key={r.provider + "best"} style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", padding: "8px", lineHeight: 1.4 }}>
+                {r.best_for}
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", marginTop: 10, lineHeight: 1.5 }}>{t.hardwareNote}</p>
     </div>
   )
 }
@@ -483,7 +699,7 @@ export function ResilienceOutput({
   lang?: UiLang
 }) {
   const t = UI[lang]
-  const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats, score_composition } = result
+  const { resilience_signature: sig, risk_factors, redundancy_gaps, connectivity_options, recommendation, caveats, score_composition, intelligence } = result
   const gc = gradeColor(sig.grade)
   const gtc = gradeTextColor(sig.grade)
   const flags = computeComplianceFlags(result, input)
@@ -563,22 +779,50 @@ export function ResilienceOutput({
         {t.modelGenerated}
       </p>
 
-      {input && <AssessmentInputsPanel input={input} t={t} />}
+      {input && <AssessmentInputsPanel input={input} t={t} lang={lang} />}
 
-      {score_composition && <ScoreCompositionPanel composition={score_composition} t={t} />}
+      {intelligence && <IntelligencePanel intelligence={intelligence} t={t} />}
+
+      {score_composition && (
+        <ScoreCompositionPanel
+          composition={score_composition}
+          explanations={intelligence?.score_explanations}
+          overall={intelligence?.overall_score_explanation}
+          t={t}
+        />
+      )}
+
+      {intelligence && intelligence.comparison.length > 0 && (
+        <ComparisonTable rows={intelligence.comparison} t={t} />
+      )}
 
       {realData && <RealDataEvidencePanel data={realData} t={t} lang={lang} />}
 
-      <div style={{
-        backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
-        borderRadius: 8, padding: "16px 20px",
-      }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.recommendation}</p>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.55, marginTop: 10 }}>
-          {t.recommendationNote}
-        </p>
-      </div>
+      {!intelligence && (
+        <div style={{
+          backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
+          borderRadius: 8, padding: "16px 20px",
+        }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.recommendation}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.55, marginTop: 10 }}>
+            {t.recommendationNote}
+          </p>
+        </div>
+      )}
+
+      {intelligence && (
+        <div style={{
+          backgroundColor: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: 8, padding: "16px 20px",
+        }}>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.recommendation}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.55, marginTop: 10 }}>
+            {t.recommendationNote}
+          </p>
+        </div>
+      )}
 
       <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 12 }}>{t.complianceLabel}</p>
