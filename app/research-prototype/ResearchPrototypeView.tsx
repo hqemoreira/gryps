@@ -2,22 +2,27 @@
 import type { CSSProperties } from "react"
 import Link from "next/link"
 import { DocShell, type DocLang } from "@/components/DocShell"
-import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav"
-import { METHODOLOGY_LABEL } from "@/lib/model-constants"
+import { ResearchDocsNav } from "@/components/ResearchDocsNav"
+import { METHODOLOGY_VERSION } from "@/lib/model-constants"
+import {
+  PROTOTYPE_RESULTS_DISCLAIMER_EN,
+  PROTOTYPE_RESULTS_DISCLAIMER_FI,
+} from "@/lib/research-docs"
 import { DEVELOPMENT_CAPABILITIES, RESEARCH_AREAS } from "@/lib/research-prototype"
 
 const COPY = {
   en: {
-    eyebrow: `GRYPS · RESEARCH & PROTOTYPE · ${METHODOLOGY_LABEL}`,
+    eyebrow: `GRYPS · RESEARCH & PROTOTYPE · Methodology ${METHODOLOGY_VERSION}`,
     h1: "Research & Prototype",
     intro:
-      "GRYPS is an experimental research prototype exploring how geographic, operational and connectivity data can be combined into a structured decision-support framework for remote connectivity scenarios.",
+      "GRYPS is an experimental research prototype exploring how geographic, operational, and connectivity data can be combined into a structured decision-support framework for remote connectivity scenarios.",
     phase:
       "The project is currently developed for research and prototyping purposes. Commercialization and monetization are outside the current scope.",
+    results: PROTOTYPE_RESULTS_DISCLAIMER_EN,
     areasH2: "Current research areas",
     roadmapH2: "Development roadmap",
     roadmapIntro:
-      "Capability milestones delivered in the research prototype — indicative Connectivity Intelligence surfaces, not a commercial product roadmap.",
+      "Research and prototype milestones developed through the current GRYPS capability surface — not a commercial product roadmap.",
     linksH2: "Related",
     methodology: "Methodology & evidence →",
     limitations: "Limitations →",
@@ -26,16 +31,17 @@ const COPY = {
     advisor: "Generate Resilience Signature →",
   },
   fi: {
-    eyebrow: `GRYPS · TUTKIMUS JA PROTOTYYPPI · ${METHODOLOGY_LABEL}`,
+    eyebrow: `GRYPS · TUTKIMUS JA PROTOTYYPPI · Menetelmä ${METHODOLOGY_VERSION}`,
     h1: "Tutkimus ja prototyyppi",
     intro:
       "GRYPS on kokeellinen tutkimusprototyyppi, joka tutkii, miten maantieteellinen, toiminnallinen ja yhteysdata voidaan yhdistää rakenteiseksi päätöstukikehykseksi etäisten yhteyksien skenaarioihin.",
     phase:
       "Hanketta kehitetään tällä hetkellä tutkimusta ja prototypointia varten. Kaupallistaminen ja monetisaatio eivät kuulu nykyiseen laajuuteen.",
+    results: PROTOTYPE_RESULTS_DISCLAIMER_FI,
     areasH2: "Nykyiset tutkimusalueet",
     roadmapH2: "Kehitysroadmap",
     roadmapIntro:
-      "Tutkimusprototyypissä toimitetut kyvykkyysvaiheet — suuntaa-antavia Connectivity Intelligence -pintoja, ei kaupallista tuote-roadmapia.",
+      "Tutkimus- ja prototyyppivaiheet, jotka on kehitetty nykyisen GRYPS-kyvykkyyspinnan kautta — ei kaupallinen tuote-roadmap.",
     linksH2: "Aiheeseen liittyvää",
     methodology: "Menetelmä ja näyttö →",
     limitations: "Rajoitteet →",
@@ -54,7 +60,7 @@ function Article({ lang }: { lang: DocLang }) {
       <h1 style={h1}>{t.h1}</h1>
       <p style={lead}>{t.intro}</p>
       <p style={p}>{t.phase}</p>
-      <PrototypeDisclaimerBanner lang={lang} />
+      <p style={{ ...p, marginBottom: 28 }}>{t.results}</p>
 
       <h2 style={h2}>{t.areasH2}</h2>
       <ul style={ul}>

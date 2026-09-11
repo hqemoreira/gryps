@@ -15,10 +15,17 @@ export { METHODOLOGY_VERSION, METHODOLOGY_LABEL }
 export const METHODOLOGY_RELEASED = "2026-09-11"
 
 export const PROTOTYPE_DISCLAIMER_EN =
-  "GRYPS is an experimental research prototype. Results are indicative and should not be interpreted as commercial procurement, coverage certification or engineering advice."
+  "GRYPS is an experimental research prototype. Results are indicative and should not be interpreted as commercial procurement advice, coverage certification, or engineering advice."
 
 export const PROTOTYPE_DISCLAIMER_FI =
-  "GRYPS on kokeellinen tutkimusprototyyppi. Tulokset ovat suuntaa-antavia, eikä niitä tule tulkita kaupallisena hankintana, kattavuussertifiointina tai teknisena neuvontana."
+  "GRYPS on kokeellinen tutkimusprototyyppi. Tulokset ovat suuntaa-antavia, eikä niitä tule tulkita kaupallisena hankintaneuvontana, kattavuussertifiointina tai teknisena neuvontana."
+
+/** Results line only — use when the page already states GRYPS is an experimental research prototype. */
+export const PROTOTYPE_RESULTS_DISCLAIMER_EN =
+  "Results are indicative and should not be interpreted as commercial procurement advice, coverage certification, or engineering advice."
+
+export const PROTOTYPE_RESULTS_DISCLAIMER_FI =
+  "Tulokset ovat suuntaa-antavia, eikä niitä tule tulkita kaupallisena hankintaneuvontana, kattavuussertifiointina tai teknisena neuvontana."
 
 export type ResearchDocId =
   | "research-prototype"

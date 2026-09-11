@@ -34,7 +34,7 @@ const jsonLd = {
       name: "What is GRYPS not?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "GRYPS is an experimental research prototype. Results are indicative and should not be interpreted as commercial procurement, coverage certification or engineering advice.",
+        text: "GRYPS is an experimental research prototype. Results are indicative and should not be interpreted as commercial procurement advice, coverage certification, or engineering advice.",
       },
     },
   ],
