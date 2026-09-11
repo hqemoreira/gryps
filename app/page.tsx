@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
 import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle, LocateFixed, Download } from "lucide-react"
 import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
 import { HelpImproveGryps, InitialAssessment, UnlockFullAssessment } from "@/components/AdvisorFunnel"
+import { SaveToWorkspace } from "@/components/SaveToWorkspace"
 import { isAbbreviatedAssessment, type AbbreviatedAssessment } from "@/lib/abbreviate-result"
 import { GrypsMark, GrypsPrintBrand } from "@/components/GrypsMark"
 import { Header } from "@/components/Header"
@@ -361,7 +362,8 @@ function SignatureReveal({
           <ResilienceOutput result={full} input={assessmentInputs} realData={realData} lang={lang} />
         ) : abbreviated ? (
           <>
-            <div className="gryps-no-print" style={{ display: "flex", justifyContent: "flex-end" }}>
+            <div className="gryps-no-print" style={{ display: "flex", justifyContent: "flex-end", gap: 10, flexWrap: "wrap", alignItems: "flex-start" }}>
+              <SaveToWorkspace inputs={assessmentInputs} abbreviated={abbreviated} lang={lang} />
               <button
                 type="button"
                 onClick={() => window.print()}
@@ -1393,6 +1395,7 @@ export default function HomePage() {
             { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
             { href: "/research", label: "Research Library" },
             { href: "/scenarios", label: lang === "en" ? "Scenarios" : "Skenaariot" },
+            { href: "/workspace", label: lang === "en" ? "Workspace" : "Workspace" },
             { href: "/map", label: lang === "en" ? "Explore" : "Tutki" },
             { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
             { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },

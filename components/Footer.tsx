@@ -14,6 +14,7 @@ const COPY = {
     map: "Explore",
     research: "Research Library",
     scenarios: "Scenarios",
+    workspace: "Workspace",
     providers: "Providers",
     about: "About",
     methodology: "Methodology",
@@ -31,6 +32,7 @@ const COPY = {
     map: "Tutki",
     research: "Research Library",
     scenarios: "Skenaariot",
+    workspace: "Workspace",
     providers: "Toimittajat",
     about: "Tietoa",
     methodology: "Menetelmä",
@@ -79,6 +81,7 @@ export function Footer({
               <Link href="/map">{t.map}</Link>
               <Link href="/research">{t.research}</Link>
               <Link href="/scenarios">{t.scenarios}</Link>
+              <Link href="/workspace">{t.workspace}</Link>
               <Link href="/providers">{t.providers}</Link>
               {showExtra && secondaryLink && (
                 <Link href={secondaryLink.href}>{secondaryLink.label}</Link>

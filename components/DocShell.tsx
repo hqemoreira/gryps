@@ -30,6 +30,7 @@ export function DocShell({
           { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
           { href: "/research", label: "Research Library" },
           { href: "/scenarios", label: lang === "en" ? "Scenarios" : "Skenaariot" },
+          { href: "/workspace", label: "Workspace" },
           { href: "/map", label: lang === "en" ? "Explore" : "Tutki" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
           { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },

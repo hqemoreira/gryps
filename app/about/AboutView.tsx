@@ -21,6 +21,7 @@ const COPY = {
     linksH2: "Learn more",
     methodology: "Scoring methodology",
     scenarios: "Mission scenarios",
+    workspace: "Research Workspace",
     providers: "Provider index (no commercial relationships)",
     privacy: "Privacy",
     terms: "Terms & contact",
@@ -44,6 +45,7 @@ const COPY = {
     linksH2: "Lue lisää",
     methodology: "Pisteytysmenetelmä",
     scenarios: "Tehtäväskenaariot",
+    workspace: "Research Workspace",
     providers: "Toimittajahakemisto (ei kaupallisia suhteita)",
     privacy: "Tietosuoja",
     terms: "Ehdot ja yhteydenotto",
@@ -75,6 +77,7 @@ function AboutArticle({ lang }: { lang: DocLang }) {
       <ul style={{ ...ul, listStyle: "none", paddingLeft: 0 }}>
         <li style={{ marginBottom: 8 }}><Link href="/methodology" style={{ color: "var(--accent-blue)" }}>{t.methodology}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>{t.scenarios}</Link></li>
+        <li style={{ marginBottom: 8 }}><Link href="/workspace" style={{ color: "var(--accent-blue)" }}>{t.workspace}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/providers" style={{ color: "var(--accent-blue)" }}>{t.providers}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/privacy" style={{ color: "var(--accent-blue)" }}>{t.privacy}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/terms" style={{ color: "var(--accent-blue)" }}>{t.terms}</Link></li>

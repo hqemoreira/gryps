@@ -53,6 +53,7 @@ export function ScenarioLibraryView() {
         ctaLabel={t.navCta}
         extraLinks={[
           { href: "/research", label: "Research Library" },
+          { href: "/workspace", label: "Workspace" },
           { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
           { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
         ]}

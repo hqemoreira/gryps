@@ -9,6 +9,7 @@ import { PRIORITY_LABELS, type AdvisorPriorityId } from "@/lib/advisor-prioritie
 import { computeComplianceFlags } from "@/lib/compliance"
 import { redundancyTiers } from "@/lib/redundancy-tiers"
 import { MODEL_VERSION } from "@/lib/signature-meta"
+import { SaveToWorkspace } from "@/components/SaveToWorkspace"
 
 // Re-exported as TYPES only (types are erased at compile time, no client-boundary
 // issue). Do NOT re-export gradeColor/gradeTextColor themselves here — a Server
@@ -214,6 +215,7 @@ const UI = {
     terrainExplain: "Terrain score is independent of the Resilience Score: higher variance in a ~5 km EU-DEM sample reduces this evidence score. It is not blended into the 0–100 Signature.",
     shareLink: "Copy shareable link",
     shareCopied: "Link copied",
+    saveWorkspace: "Save to Research Workspace",
     redundancyTiers: "REDUNDANCY OPTIONS (COST-TIERED)",
     tierEssential: "Essential",
     tierStandard: "Standard",
@@ -340,6 +342,7 @@ const UI = {
     terrainExplain: "Maastopiste on riippumaton Resilience-pisteestä: suurempi vaihtelu ~5 km EU-DEM-otoksessa laskee tätä näyttöpistettä. Sitä ei sekoiteta 0–100 Signatureen.",
     shareLink: "Kopioi jaettava linkki",
     shareCopied: "Linkki kopioitu",
+    saveWorkspace: "Tallenna Research Workspaceen",
     redundancyTiers: "REDUNDANSSIVAIHTOEHDOT (KUSTANNUSTASOT)",
     tierEssential: "Välttämätön",
     tierStandard: "Standardi",
@@ -897,7 +900,8 @@ export function ResilienceOutput({
 
   return (
     <div className="gryps-report-body" style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 8 }}>
-      <div className="gryps-no-print" style={{ display: "flex", justifyContent: "flex-end", gap: 8, flexWrap: "wrap" }}>
+      <div className="gryps-no-print" style={{ display: "flex", justifyContent: "flex-end", gap: 8, flexWrap: "wrap", alignItems: "flex-start" }}>
+        {input && <SaveToWorkspace inputs={input} result={result} lang={lang} />}
         <button
           type="button"
           onClick={copyShare}
