@@ -229,6 +229,10 @@ export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
         en: "Demonstration framing for AI / digital solutions / automation / business-analyst roles — not monetization.",
         fi: "Demonstraatiokehys AI- / digiratkaisu- / automaatio- / business analyst -rooleihin — ei kaupallistamista.",
       },
+      {
+        en: "Public roadmap: completed sprints 1–9, deferred commercial features, preferred research language.",
+        fi: "Julkinen roadmap: valmiit sprintit 1–9, siirretty kaupallinen toiminnallisuus, suositeltu tutkimuskieli.",
+      },
     ],
   },
   {

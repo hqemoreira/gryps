@@ -99,6 +99,7 @@ const COPY = {
     ],
     limitsLink: "Full limitations →",
     aboutLink: "About the maintainer →",
+    roadmapLink: "Research roadmap →",
     geometryCaption:
       "Modeled polar geometry — research visualisation for high-latitude connectivity context, not live RF.",
   },
@@ -135,6 +136,7 @@ const COPY = {
     ],
     limitsLink: "Kaikki rajoitteet →",
     aboutLink: "Ylläpitäjästä →",
+    roadmapLink: "Tutkimusroadmap →",
     geometryCaption:
       "Mallinnettu polaarigeometria — tutkimuskuvitus korkeiden leveysasteiden yhteyksille, ei live-RF.",
   },
@@ -227,6 +229,8 @@ function CaseStudyArticle({ lang }: { lang: DocLang }) {
         </ul>
         <p style={p}>
           <Link href="/limitations" style={{ color: "var(--accent-blue)" }}>{t.limitsLink}</Link>
+          {" · "}
+          <Link href="/roadmap" style={{ color: "var(--accent-blue)" }}>{t.roadmapLink}</Link>
           {" · "}
           <Link href="/about" style={{ color: "var(--accent-blue)" }}>{t.aboutLink}</Link>
         </p>

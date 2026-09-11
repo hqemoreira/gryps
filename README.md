@@ -9,12 +9,17 @@ Non-commercial R&D — assessment-first **Resilience Signature** scoring for sat
 | Path | Purpose |
 |------|---------|
 | `/` | Ops-console landing + Signature |
-| `/methodology` | Scoring methodology (EN/FI) |
+| `/case-study` | Portfolio case study |
+| `/roadmap` | Research roadmap · deferred commercial list |
+| `/methodology` | Research methodology (EN/FI) |
+| `/data-sources` · `/assumptions` · `/limitations` · `/changelog` | Research quality docs |
+| `/research` | Research Library |
+| `/scenarios` | Mission scenarios |
+| `/workspace` | Local Research Workspace |
 | `/providers` | Provider catalog |
-| `/signatures` | Versioned Signature portfolio |
-| `/map` | Capacity Map (MapLibre) |
+| `/map` | Connectivity Intelligence map |
 | `/about` | About |
-| `/legal/privacy`, `/legal/terms` | Non-commercial R&D notices |
+| `/terms` · `/privacy` | Non-commercial R&D notices |
 
 ## Stack
 

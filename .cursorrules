@@ -3,6 +3,14 @@
 - NEVER output live secret keys, passwords, or tokens in chat responses.
 - If an environment variable needs to be updated or added, instruct the user to use the Vercel CLI via 'vercel env add' or the Vercel Web Dashboard.
 
+# Research / prototype phase (not a business)
+- GRYPS is a non-commercial R&D / portfolio prototype. Do not add monetization or commercial go-to-market in this phase.
+- Explicitly deferred: payments, subscriptions, customer billing, sales CRM, commercial lead capture, customer contracts, paid reports, customer onboarding, team collaboration, commercial API, marketplace, advertising.
+- Prefer language: Research · Prototype · Experimental · Assessment · Methodology · Evidence · Scenario · Intelligence.
+- Avoid language: “Buy” · “Get a quote” · “For customers” · “Our solution” · “Book a consultation” · “Enterprise plans” (and similar sales/customer phrasing).
+- Canonical CTA remains Generate Resilience Signature — never freemium, trial, or pricing-ladder CTAs.
+- Roadmap of completed sprints + deferred list: `lib/research-roadmap.ts`, public page `/roadmap`.
+
 # Typography — dashes (EN + FI user-facing copy)
 - Hyphen `-` (U+002D): compounds, prefixes, IDs (`non-commercial`, `safety-critical`, `deterministic-v0.3`). Finnish open-compound attachments keep a space before the hyphen (`Signature -pisteet`).
 - En dash `–` (U+2013): ranges and spans (`0–100`, `55–85°`, `75–89`, `LEO–MEO–GEO`, `~20–50ms`). Never ASCII hyphen for ranges.

@@ -20,6 +20,7 @@ const COPY = {
     ],
     linksH2: "Learn more",
     caseStudy: "Portfolio case study",
+    roadmap: "Research roadmap",
     methodology: "Scoring methodology",
     scenarios: "Mission scenarios",
     workspace: "Research Workspace",
@@ -48,6 +49,7 @@ const COPY = {
     ],
     linksH2: "Lue lisää",
     caseStudy: "Portfoliocase study",
+    roadmap: "Tutkimusroadmap",
     methodology: "Pisteytysmenetelmä",
     scenarios: "Tehtäväskenaariot",
     workspace: "Research Workspace",
@@ -84,6 +86,7 @@ function AboutArticle({ lang }: { lang: DocLang }) {
       <h2 style={h2}>{t.linksH2}</h2>
       <ul style={{ ...ul, listStyle: "none", paddingLeft: 0 }}>
         <li style={{ marginBottom: 8 }}><Link href="/case-study" style={{ color: "var(--accent-blue)" }}>{t.caseStudy}</Link></li>
+        <li style={{ marginBottom: 8 }}><Link href="/roadmap" style={{ color: "var(--accent-blue)" }}>{t.roadmap}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/methodology" style={{ color: "var(--accent-blue)" }}>{t.methodology}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/data-sources" style={{ color: "var(--accent-blue)" }}>{t.dataSources}</Link></li>
         <li style={{ marginBottom: 8 }}><Link href="/limitations" style={{ color: "var(--accent-blue)" }}>{t.limitations}</Link></li>
