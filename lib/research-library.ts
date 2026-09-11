@@ -302,10 +302,35 @@ export function researchSlugForExampleId(exampleId: string): string | undefined 
 }
 
 export function publicSignatureHref(siteSlug: string): string {
-  const research = getResearchByLegacySignatureSlug(siteSlug) ??
-    RESEARCH_LIBRARY.find(e => e.source === "seed" && e.sourceId === siteSlug)
+  const research = researchEntryForSignatureSlug(siteSlug)
   if (research) return researchHref(research.slug)
   return `/signatures/${siteSlug}`
+}
+
+/** Resolve research catalog entry from a signature_sites slug. */
+export function researchEntryForSignatureSlug(siteSlug: string): ResearchEntry | undefined {
+  return getResearchByLegacySignatureSlug(siteSlug) ??
+    RESEARCH_LIBRARY.find(e => e.source === "seed" && e.sourceId === siteSlug)
+}
+
+export function mapRegionForSite(opts: {
+  slug: string
+  country: string | null
+  lat: number
+  lng: number
+}): ResearchRegion {
+  const research = researchEntryForSignatureSlug(opts.slug)
+  if (research) return research.region
+  if (opts.country === "IS" || (opts.lat >= 63 && opts.lat <= 67 && opts.lng < -10)) return "iceland"
+  if (opts.lat >= 66.5) return "arctic"
+  return "nordics"
+}
+
+export function mapVerticalForSite(sector: string, slug: string): ResearchVertical | string {
+  const research = researchEntryForSignatureSlug(slug)
+  if (research) return research.vertical
+  if (sector === "forestry" || sector === "mining" || sector === "maritime" || sector === "arctic") return sector
+  return sector || "other"
 }
 
 export type ResolvedResearchAssessment = {

@@ -1,5 +1,5 @@
 "use client"
-import { useMemo, useState, type CSSProperties, type ReactNode } from "react"
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { Header } from "@/components/Header"
@@ -13,14 +13,24 @@ import {
   type CapacityStatus,
 } from "@/lib/capacity-status"
 import { MODEL_VERSION } from "@/lib/signature-meta"
-import { publicSignatureHref } from "@/lib/research-library"
+import {
+  RESEARCH_REGIONS,
+  RESEARCH_VERTICALS,
+  researchHref,
+  type ResearchRegion,
+  type ResearchVertical,
+} from "@/lib/research-library"
 
 export type CapacitySiteView = {
   slug: string
   name: string
+  displayName: string
+  displayNameFi: string
   lat: number
   lng: number
   sector: string
+  vertical: string
+  region: ResearchRegion
   autonomy_level: string
   operation_criticality: string
   status: CapacityStatus
@@ -36,8 +46,11 @@ export type CapacitySiteView = {
   top_provider: string | null
   top_confidence: number | null
   top_orbit: string | null
+  orbit_architectures: string[]
   latency_estimate: string | null
   recommendation: string | null
+  researchSlug: string | null
+  inResearchLibrary: boolean
   source: "signature_sites"
 }
 
@@ -56,84 +69,87 @@ const CapacityMap = dynamic(
   },
 )
 
+type Priority = "all" | "standard" | "high" | "safety-critical"
+type LibraryFilter = "all" | "library"
+
 const COPY = {
   en: {
     tagline: "EXPLORE CONNECTIVITY INTELLIGENCE",
     title: "Explore Connectivity Intelligence",
     lead:
-      "Modeled satellite connectivity resilience across remote Nordic and Arctic operating environments. Select a site for Signature score, assessment confidence, and orbital-class signals — then generate a Resilience Signature.",
+      "Select a region and operating vertical to understand the modeled connectivity environment — then Generate a Resilience Signature for that site.",
     disclosure:
-      "GRYPS uses deterministic Signature Model scoring to estimate connectivity resilience. Results are model-based — not a live RF measurement or live constellation feed. Research prototype · Non-commercial · Model-based analysis.",
+      "Model-based Connectivity Intelligence — not live RF, constellation telemetry, or a coverage SLA. Research prototype · Non-commercial · Model-based analysis.",
     modelMeta: `${MODEL_VERSION} · Deterministic intelligence model`,
     hint: "Pan · zoom · select a site",
     all: "All",
-    status: "Status",
-    sector: "Sector",
-    orbit: "Orbit",
-    source: "Source",
-    lastUpdated: "Last scored",
-    score: "Resilience",
+    region: "Region",
+    vertical: "Vertical",
+    priority: "Priority",
+    library: "Scope",
+    libraryAll: "All modeled sites",
+    libraryOnly: "Research Library",
+    score: "Modeled resilience",
     confidence: "Assessment confidence",
     confidenceNote: "Confidence reflects the assessment/data basis — not guaranteed service availability.",
-    latency: "Failover switching (model)",
-    provider: "Recommended provider",
-    orbitClass: "Orbital class",
-    realData: "Reference data",
-    terrain: "Terrain",
-    gap: "Real-world gap",
-    none: "Select a site on the map to inspect modeled Connectivity Intelligence.",
-    viewSig: "Full Signature →",
+    architectures: "Relevant connectivity architectures",
+    provider: "Top-ranked option (model)",
+    none: "Select a site on the map to inspect the connectivity environment, then Generate a Resilience Signature.",
+    viewResearch: "View research assessment →",
     runAdvisor: "Generate Resilience Signature →",
     empty: "No sites in this filter.",
     navCta: "Generate Resilience Signature",
     methodology: "Methodology",
+    researchBadge: "Research Library",
+    priorityStandard: "Standard",
+    priorityHigh: "High",
+    prioritySafety: "Safety-critical",
+    flow: "Explore → region / vertical → Generate Resilience Signature",
   },
   fi: {
     tagline: "TUTKI CONNECTIVITY INTELLIGENCEA",
     title: "Tutki Connectivity Intelligencea",
     lead:
-      "Mallinnettu satelliittiyhteyden resilienssi pohjoismaisissa ja arktisissa toimintaympäristöissä. Valitse kohde Signature-pisteille, arviointiluottamukselle ja rataluokkasignaaleille — ja luo sitten Resilience Signature.",
+      "Valitse alue ja toimiala ymmärtääksesi mallinnetun yhteysympäristön — ja luo sitten Resilience Signature kyseiselle kohteelle.",
     disclosure:
-      "GRYPS arvioi yhteyden resilienssiä deterministisellä Signature-mallilla. Tulokset ovat mallipohjaisia — eivät reaaliaikaista RF-mittausta tai konstellaatiotelemetriaa. Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi.",
+      "Mallipohjainen Connectivity Intelligence — ei live-RF:ää, konstellaatiotelemetriaa eikä kattavuus-SLA:ta. Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi.",
     modelMeta: `${MODEL_VERSION} · Deterministinen älymalli`,
     hint: "Vieritä · zoom · valitse kohde",
     all: "Kaikki",
-    status: "Tila",
-    sector: "Toimiala",
-    orbit: "Rata",
-    source: "Lähde",
-    lastUpdated: "Viimeksi pisteytetty",
-    score: "Resilienssi",
+    region: "Alue",
+    vertical: "Toimiala",
+    priority: "Prioriteetti",
+    library: "Laajuus",
+    libraryAll: "Kaikki mallinnetut",
+    libraryOnly: "Research Library",
+    score: "Mallinnettu resilienssi",
     confidence: "Arviointiluottamus",
     confidenceNote: "Luottamus kuvaa arvioinnin/dataperustan varmuutta — ei palvelun saatavuustakuuta.",
-    latency: "Failover-vaihto (malli)",
-    provider: "Suositeltu toimittaja",
-    orbitClass: "Rataluokka",
-    realData: "Viitedata",
-    terrain: "Maasto",
-    gap: "Todellinen kuilu",
-    none: "Valitse karttapiste nähdäksesi mallinnetun Connectivity Intelligencen.",
-    viewSig: "Koko Signature →",
+    architectures: "Relevantit yhteysarkkitehtuurit",
+    provider: "Ykkösvaihtoehto (malli)",
+    none: "Valitse karttapiste nähdäksesi yhteysympäristön — ja luo sitten Resilience Signature.",
+    viewResearch: "Katso tutkimusarvio →",
     runAdvisor: "Luo Resilience Signature →",
     empty: "Ei kohteita tällä suodattimella.",
     navCta: "Luo Resilience Signature",
     methodology: "Menetelmä",
+    researchBadge: "Research Library",
+    priorityStandard: "Tavanomainen",
+    priorityHigh: "Korkea",
+    prioritySafety: "Turvallisuuskriittinen",
+    flow: "Tutki → alue / toimiala → Luo Resilience Signature",
   },
 }
 
-const STATUSES: CapacityStatus[] = ["ok", "degraded", "down", "unknown"]
-const ORBITS = ["LEO", "MEO", "GEO", "Polar"] as const
-
-function formatWhen(iso: string | null, lang: "en" | "fi"): string {
-  if (!iso) return "—"
-  try {
-    return new Date(iso).toLocaleString(lang === "fi" ? "fi-FI" : "en-GB", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    })
-  } catch {
-    return iso
-  }
+function resilienceBand(score: number | null, grade: string | null, lang: "en" | "fi"): string {
+  if (score == null && !grade) return "—"
+  const band = score == null ? null
+    : score >= 75 ? (lang === "fi" ? "Korkea" : "High")
+    : score >= 50 ? (lang === "fi" ? "Keskitaso" : "Medium")
+    : (lang === "fi" ? "Matala" : "Low")
+  if (band && grade && score != null) return `${band} · ${grade} (${score})`
+  if (band && score != null) return `${band} (${score})`
+  return grade ?? "—"
 }
 
 function confidenceBand(n: number | null, lang: "en" | "fi"): string {
@@ -158,35 +174,39 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
   const [lang, setLang] = useLang()
   const { dark } = useTheme()
   const t = COPY[lang]
-  const [statusFilter, setStatusFilter] = useState<CapacityStatus | "all">("all")
-  const [sectorFilter, setSectorFilter] = useState<string>("all")
-  const [orbitFilter, setOrbitFilter] = useState<string>("all")
+  const [regionFilter, setRegionFilter] = useState<ResearchRegion | "all">("all")
+  const [verticalFilter, setVerticalFilter] = useState<ResearchVertical | "all">("all")
+  const [priorityFilter, setPriorityFilter] = useState<Priority>("all")
+  const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>("all")
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
-
-  const sectors = useMemo(() => {
-    const set = new Set(sites.map(s => s.sector).filter(Boolean))
-    return Array.from(set).sort()
-  }, [sites])
 
   const filtered = useMemo(() => {
     return sites.filter(s => {
-      if (statusFilter !== "all" && s.status !== statusFilter) return false
-      if (sectorFilter !== "all" && s.sector !== sectorFilter) return false
-      if (orbitFilter !== "all" && s.top_orbit !== orbitFilter) return false
+      if (libraryFilter === "library" && !s.inResearchLibrary) return false
+      if (regionFilter !== "all" && s.region !== regionFilter) return false
+      if (verticalFilter !== "all" && s.vertical !== verticalFilter) return false
+      if (priorityFilter !== "all" && s.operation_criticality !== priorityFilter) return false
       return true
     })
-  }, [sites, statusFilter, sectorFilter, orbitFilter])
+  }, [sites, regionFilter, verticalFilter, priorityFilter, libraryFilter])
 
   const selected = useMemo(
     () => sites.find(s => s.slug === selectedSlug) ?? null,
     [sites, selectedSlug],
   )
 
-  const counts = useMemo(() => {
-    const c: Record<CapacityStatus, number> = { ok: 0, degraded: 0, down: 0, unknown: 0 }
-    for (const s of sites) c[s.status]++
-    return c
-  }, [sites])
+  useEffect(() => {
+    if (selectedSlug && !filtered.some(s => s.slug === selectedSlug)) {
+      setSelectedSlug(null)
+    }
+  }, [filtered, selectedSlug])
+
+  const priorities: { id: Priority; label: string }[] = [
+    { id: "all", label: t.all },
+    { id: "standard", label: t.priorityStandard },
+    { id: "high", label: t.priorityHigh },
+    { id: "safety-critical", label: t.prioritySafety },
+  ]
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)", display: "flex", flexDirection: "column" }}>
@@ -217,8 +237,11 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
           }}>
             {t.title}
           </h1>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.55, marginBottom: 8 }}>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.55, marginBottom: 6 }}>
             {t.lead}
+          </p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)", letterSpacing: "0.04em", marginBottom: 8 }}>
+            {t.flow}
           </p>
           <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.04em", marginBottom: 8 }}>
             {t.modelMeta} · {t.hint}
@@ -231,65 +254,56 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
           </p>
         </div>
 
-        {/* Filters */}
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <FilterRow label={t.status}>
-            <button type="button" onClick={() => setStatusFilter("all")} style={chipStyle(statusFilter === "all")}>
-              {t.all} · {sites.length}
-            </button>
-            {STATUSES.map(st => (
+          <FilterRow label={t.region}>
+            {RESEARCH_REGIONS.map(r => (
               <button
-                key={st}
+                key={r.id}
                 type="button"
-                onClick={() => setStatusFilter(st)}
-                style={{
-                  ...chipStyle(statusFilter === st),
-                  borderColor: statusFilter === st ? CAPACITY_STATUS_COLOR[st] : "var(--border2)",
-                }}
+                onClick={() => setRegionFilter(r.id)}
+                style={chipStyle(regionFilter === r.id)}
               >
-                <span style={{
-                  width: 8, height: 8, borderRadius: "50%",
-                  backgroundColor: CAPACITY_STATUS_COLOR[st], display: "inline-block",
-                }} />
-                {capacityStatusLabel(st, lang)} · {counts[st]}
+                {lang === "fi" ? r.fi : r.en}
               </button>
             ))}
           </FilterRow>
 
-          <FilterRow label={t.sector}>
-            <button type="button" onClick={() => setSectorFilter("all")} style={chipStyle(sectorFilter === "all")}>
-              {t.all}
-            </button>
-            {sectors.map(sec => (
+          <FilterRow label={t.vertical}>
+            {RESEARCH_VERTICALS.map(v => (
               <button
-                key={sec}
+                key={v.id}
                 type="button"
-                onClick={() => setSectorFilter(sec)}
-                style={chipStyle(sectorFilter === sec)}
+                onClick={() => setVerticalFilter(v.id)}
+                style={chipStyle(verticalFilter === v.id)}
               >
-                {sec}
+                {lang === "fi" ? v.fi : v.en}
               </button>
             ))}
           </FilterRow>
 
-          <FilterRow label={t.orbit}>
-            <button type="button" onClick={() => setOrbitFilter("all")} style={chipStyle(orbitFilter === "all")}>
-              {t.all}
-            </button>
-            {ORBITS.map(orb => (
+          <FilterRow label={t.priority}>
+            {priorities.map(p => (
               <button
-                key={orb}
+                key={p.id}
                 type="button"
-                onClick={() => setOrbitFilter(orb)}
-                style={chipStyle(orbitFilter === orb)}
+                onClick={() => setPriorityFilter(p.id)}
+                style={chipStyle(priorityFilter === p.id)}
               >
-                {orb}
+                {p.label}
               </button>
             ))}
+          </FilterRow>
+
+          <FilterRow label={t.library}>
+            <button type="button" onClick={() => setLibraryFilter("all")} style={chipStyle(libraryFilter === "all")}>
+              {t.libraryAll} · {sites.length}
+            </button>
+            <button type="button" onClick={() => setLibraryFilter("library")} style={chipStyle(libraryFilter === "library")}>
+              {t.libraryOnly} · {sites.filter(s => s.inResearchLibrary).length}
+            </button>
           </FilterRow>
         </div>
 
-        {/* Map dominates the section */}
         <div
           className="gryps-capacity-grid"
           style={{
@@ -314,7 +328,13 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
               </div>
             ) : (
               <CapacityMap
-                sites={filtered}
+                sites={filtered.map(s => ({
+                  slug: s.slug,
+                  name: lang === "fi" ? s.displayNameFi : s.displayName,
+                  lat: s.lat,
+                  lng: s.lng,
+                  status: s.status,
+                }))}
                 dark={dark}
                 selectedSlug={selectedSlug}
                 onSelect={setSelectedSlug}
@@ -333,7 +353,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
               </p>
             ) : (
               <>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                   <span style={{
                     fontFamily: "var(--font-data)", fontSize: 10, fontWeight: 700,
                     letterSpacing: "0.08em", padding: "4px 8px", borderRadius: 4,
@@ -343,43 +363,50 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                     {capacityStatusLabel(selected.status, lang)}
                   </span>
                   <span style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.06em" }}>
-                    {selected.sector.toUpperCase()}
+                    {selected.vertical.toUpperCase()}
                   </span>
+                  {selected.inResearchLibrary && (
+                    <span style={{
+                      fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 700,
+                      letterSpacing: "0.06em", padding: "3px 7px", borderRadius: 4,
+                      color: "var(--accent-blue)", border: "1px solid rgba(79,168,255,0.35)",
+                    }}>
+                      {t.researchBadge}
+                    </span>
+                  )}
                 </div>
 
                 <h2 style={{
                   fontFamily: "var(--font-ui)", fontSize: 17, fontWeight: 700,
                   color: "var(--text)", lineHeight: 1.35, margin: 0,
                 }}>
-                  {selected.name}
+                  {lang === "fi" ? selected.displayNameFi : selected.displayName}
                 </h2>
 
-                {(selected.municipality || selected.country) && (
-                  <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", margin: 0 }}>
-                    {[selected.municipality, selected.country].filter(Boolean).join(" · ")} · {selected.lat.toFixed(2)}°N · {selected.lng.toFixed(2)}°E
-                  </p>
-                )}
+                <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", margin: 0 }}>
+                  {[selected.municipality, selected.country].filter(Boolean).join(" · ") || selected.region}
+                  {" · "}{selected.lat.toFixed(2)}°N · {selected.lng.toFixed(2)}°E
+                </p>
 
                 <div style={{
-                  display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10,
+                  display: "flex", flexDirection: "column", gap: 10,
                   padding: "12px 0", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)",
                 }}>
                   <Metric
                     label={t.score}
-                    value={selected.score != null && selected.grade ? `${selected.score} / 100` : "—"}
-                    sub={selected.grade ? `Grade ${selected.grade}` : undefined}
+                    value={resilienceBand(selected.score, selected.grade, lang)}
                   />
                   <Metric
                     label={t.confidence}
                     value={confidenceBand(selected.top_confidence, lang)}
                   />
                   <Metric
-                    label={t.orbitClass}
-                    value={selected.top_orbit ?? "—"}
-                  />
-                  <Metric
-                    label={t.latency}
-                    value={selected.latency_estimate ?? "—"}
+                    label={t.architectures}
+                    value={
+                      selected.orbit_architectures.length
+                        ? selected.orbit_architectures.join(" / ")
+                        : (selected.top_orbit ?? "—")
+                    }
                   />
                 </div>
                 <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5, margin: 0 }}>
@@ -395,16 +422,6 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                   </p>
                 )}
 
-                <dl style={{ display: "flex", flexDirection: "column", gap: 8, margin: 0 }}>
-                  <Row label={t.lastUpdated} value={formatWhen(selected.last_scored_at, lang)} />
-                  {selected.real_data_score != null && (
-                    <Row label={t.realData} value={String(selected.real_data_score)} />
-                  )}
-                  {selected.terrain_penalty_score != null && (
-                    <Row label={t.terrain} value={String(selected.terrain_penalty_score)} />
-                  )}
-                </dl>
-
                 <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 10, paddingTop: 8 }}>
                   <Link
                     href={advisorHref(selected)}
@@ -419,15 +436,17 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                   >
                     {t.runAdvisor}
                   </Link>
-                  <Link
-                    href={publicSignatureHref(selected.slug)}
-                    style={{
-                      fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
-                      color: "var(--accent-blue)", textDecoration: "none", textAlign: "center",
-                    }}
-                  >
-                    {t.viewSig}
-                  </Link>
+                  {selected.researchSlug && (
+                    <Link
+                      href={researchHref(selected.researchSlug)}
+                      style={{
+                        fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
+                        color: "var(--accent-blue)", textDecoration: "none", textAlign: "center",
+                      }}
+                    >
+                      {t.viewResearch}
+                    </Link>
+                  )}
                 </div>
               </>
             )}
@@ -438,7 +457,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
       <Footer
         lang={lang}
         footerRights={grypsCopyright(lang, lang === "en" ? "Espoo, Finland · Non-commercial R&D prototype" : "Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi")}
-        secondaryLink={{ href: "/", label: lang === "en" ? "Back to GRYPS" : "Takaisin GRYPS:iin" }}
+        secondaryLink={{ href: "/research", label: "Research Library" }}
       />
     </div>
   )
@@ -449,7 +468,7 @@ function FilterRow({ label, children }: { label: string; children: ReactNode }) 
     <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
       <span style={{
         fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)",
-        letterSpacing: "0.1em", minWidth: 56,
+        letterSpacing: "0.1em", minWidth: 72,
       }}>
         {label.toUpperCase()}
       </span>
@@ -458,18 +477,15 @@ function FilterRow({ label, children }: { label: string; children: ReactNode }) 
   )
 }
 
-function Metric({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 4 }}>
         {label.toUpperCase()}
       </p>
-      <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, fontWeight: 700, color: "var(--text)", margin: 0, lineHeight: 1.3 }}>
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, fontWeight: 700, color: "var(--text)", margin: 0, lineHeight: 1.35 }}>
         {value}
       </p>
-      {sub && (
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-muted)", margin: "2px 0 0" }}>{sub}</p>
-      )}
     </div>
   )
 }

@@ -5,6 +5,7 @@ import * as maplibregl from "maplibre-gl"
 import type { Map, Marker } from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
+import { researchSlugForExampleId } from "@/lib/research-library"
 import { addOpsDecorLayers, darkOpsStyle, modelBasemapChip, OPS_MAP_CSS } from "@/lib/ops-map-style"
 
 const HERO_SITE = { lat: 68.2, lng: 27.4, label: "Lapland · hero site" }
@@ -86,6 +87,9 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
 
         const advisorUrl = `/?lat=${lat}&lng=${lng}&sector=${encodeURIComponent(ex.input.sector)}&autonomy=${encodeURIComponent(ex.input.autonomy_level)}&criticality=${encodeURIComponent(ex.input.operation_criticality)}#advisor`
         const assessLabel = lang === "fi" ? "Luo Resilience Signature →" : "Generate Resilience Signature →"
+        const researchSlug = researchSlugForExampleId(ex.id)
+        const researchUrl = researchSlug ? `/research/${researchSlug}` : null
+        const researchLabel = lang === "fi" ? "Katso tutkimusarvio →" : "View research assessment →"
 
         const popup = new maplibregl.Popup({
           offset: 20,
@@ -101,7 +105,8 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
               <span style="font-family: ui-monospace, monospace; font-size: 16px; font-weight: 800; color: ${color};">${grade}</span>
             </div>
             <div style="font-size: 11px; color: #D97706; margin-bottom: 10px;"><strong>Top risk:</strong> ${topRisk}</div>
-            <a href="${advisorUrl}" style="font-size: 12px; font-weight: 700; color: #4FA8FF; text-decoration: none;">${assessLabel}</a>
+            <a href="${advisorUrl}" style="font-size: 12px; font-weight: 700; color: #4FA8FF; text-decoration: none; display:block; margin-bottom:6px;">${assessLabel}</a>
+            ${researchUrl ? `<a href="${researchUrl}" style="font-size: 12px; font-weight: 600; color: #94A3B8; text-decoration: none;">${researchLabel}</a>` : ""}
           </div>
         `)
 

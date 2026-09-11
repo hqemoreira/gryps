@@ -21,6 +21,7 @@
 ### Changelog — 2026-09
 
 - Research Library (`/research`): curated 12 named assessments from existing examples + seeds; thin Site XX noindex + removed from sitemap; `/signatures` redirects to `/research`.
+- Map productization (`/map`): Explore Connectivity Intelligence — Region · Vertical · Priority filters; site panel → Generate Resilience Signature (prefill) + Research Library link; no live tracking.
 - Product language + claim hygiene: canonical CTA **Generate Resilience Signature**; confidence ≠ availability; provenance labels on Signature output.
 - Knowledge notes at `/knowledge` (EN+FI, FAQ JSON-LD) seeded from early GSC + issue #3 backlog; `seo:propose` early-stage fallback; weekly GitHub Action `.github/workflows/seo-weekly.yml` (needs `GSC_SERVICE_ACCOUNT_JSON` secret).
 - SEO ops scaffold: `npm run seo:gsc` / `seo:planner` / `seo:propose` (GSC first; Planner stub until Ads token). Local GSC setup helper: `npm run seo:setup-gsc` → credentials under `~/.config/gryps/` (never repo `.env*`).
@@ -384,12 +385,23 @@ via `grypsCopyright()` in `components/Footer.tsx`.
 
 ---
 
-## Capacity map (`/map`)
+## Connectivity Intelligence map (`/map`)
 
-**Modeled Connectivity Intelligence Map** — dominant MapLibre view of
-`signature_sites`, coloured by connectivity posture status. Filters: status,
-sector, orbit. Site panel shows resilience / confidence / latency / provider
-and deep-links to Advisor (`?lat&lng&sector…#advisor`). Not live RF.
+**Explore Connectivity Intelligence** — dominant MapLibre view of
+`signature_sites`. Product flow: region / vertical / priority → site panel →
+**Generate Resilience Signature** (Advisor prefill) and optional **Research
+Library** assessment. Not live RF / tracking / 3D globe.
+
+| Filter | Values |
+|---|---|
+| Region | All · Nordics · Arctic · Iceland |
+| Vertical | All · Forestry · Mining · Maritime · Arctic · Infrastructure |
+| Priority | All · Standard · High · Safety-critical |
+| Scope | All modeled sites · Research Library only |
+
+Site panel shows modeled resilience band, assessment confidence, orbit
+architectures (LEO / MEO / GEO / Polar), and curated display names when the
+site is in the Research Library.
 
 | Status | Derived from |
 |---|---|
@@ -411,9 +423,9 @@ and deep-links to Advisor (`?lat&lng&sector…#advisor`). Not live RF.
   API key — do not revert to them. Keep Esri attribution badge visible.
   Still no paid map SaaS contract and **no** live link monitoring.
 
-Implementation: `lib/capacity-status.ts`, `components/CapacityMap.tsx`,
-`components/CapacityMapView.tsx`, `components/OpsConsoleMap.tsx`,
-`components/SignaturesMap.tsx`, `app/map/page.tsx` (`force-dynamic`).
+Implementation: `lib/capacity-status.ts`, `lib/research-library.ts`,
+`components/CapacityMap.tsx`, `components/CapacityMapView.tsx`,
+`components/OpsConsoleMap.tsx`, `app/map/page.tsx` (`force-dynamic`).
 
 ---
 
