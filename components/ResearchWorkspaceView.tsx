@@ -188,7 +188,7 @@ export function ResearchWorkspaceView({ initialId }: { initialId?: string | null
     return (
       <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
         <Header lang={lang} onLangChange={setLang} ctaHref="/#advisor" ctaLabel={t.navCta} />
-        <main style={{ maxWidth: 960, margin: "0 auto", padding: "100px 24px" }} />
+        <main className="gryps-page-under-nav" style={{ maxWidth: 960, margin: "0 auto", paddingLeft: 24, paddingRight: 24 }} />
       </div>
     )
   }
@@ -207,7 +207,7 @@ export function ResearchWorkspaceView({ initialId }: { initialId?: string | null
         ]}
       />
 
-      <main style={{ maxWidth: 960, margin: "0 auto", padding: "100px 24px 80px" }}>
+      <main className="gryps-page-under-nav" style={{ maxWidth: 960, margin: "0 auto", paddingLeft: 24, paddingRight: 24, paddingBottom: 80 }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>
           {t.eyebrow}
         </p>

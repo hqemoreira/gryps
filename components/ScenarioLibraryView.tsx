@@ -59,7 +59,7 @@ export function ScenarioLibraryView() {
         ]}
       />
 
-      <main style={{ maxWidth: 960, margin: "0 auto", padding: "100px 24px 80px" }}>
+      <main className="gryps-page-under-nav" style={{ maxWidth: 960, margin: "0 auto", paddingLeft: 24, paddingRight: 24, paddingBottom: 80 }}>
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>
           {t.eyebrow}
         </p>

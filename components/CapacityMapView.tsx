@@ -224,7 +224,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
 
       <div style={{
         flex: 1, maxWidth: 1400, width: "100%", margin: "0 auto",
-        padding: "16px 24px 32px", paddingTop: 84,
+        padding: "16px 24px 32px", paddingTop: "calc(var(--gryps-header-h, 52px) + 16px)",
         display: "flex", flexDirection: "column", gap: 12,
       }}>
         <div style={{ maxWidth: 820 }}>

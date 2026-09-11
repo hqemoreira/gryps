@@ -65,7 +65,7 @@ export default async function SignatureSitePage({ params }: Props) {
         extraLink={{ href: "/research", label: "← Research Library" }}
       />
 
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 32px 80px", paddingTop: 90 }}>
+      <div className="gryps-page-under-nav" style={{ maxWidth: 800, margin: "0 auto", paddingLeft: 32, paddingRight: 32, paddingBottom: 80 }}>
         <div className="gryps-no-print" style={{
           backgroundColor: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)",
           borderRadius: 6, padding: "8px 14px", marginBottom: 24,

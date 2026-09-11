@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link"
+import { useEffect, useRef } from "react"
 import { Sun, Moon } from "lucide-react"
 import { GrypsMark } from "@/components/GrypsMark"
 import { useTheme } from "@/context/ThemeContext"
@@ -30,9 +31,29 @@ export function Header({
 }) {
   const { dark, toggleDark } = useTheme()
   const links = extraLinks ?? (extraLink ? [extraLink] : [])
+  const headerRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (embedded) return
+    const el = headerRef.current
+    if (!el) return
+    const sync = () => {
+      const h = Math.ceil(el.getBoundingClientRect().height)
+      document.documentElement.style.setProperty("--gryps-header-h", `${h}px`)
+    }
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(el)
+    window.addEventListener("resize", sync)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener("resize", sync)
+    }
+  }, [embedded, lang, ctaLabel, links.length])
 
   return (
     <header
+      ref={headerRef}
       className="gryps-nav-inner"
       style={{
         position: embedded ? "relative" : "fixed",

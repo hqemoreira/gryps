@@ -1,5 +1,5 @@
 "use client"
-import { type ReactNode } from "react"
+import { type ReactNode, useEffect } from "react"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { grypsCopyright } from "@/lib/gryps-copyright"
@@ -18,6 +18,12 @@ export function DocShell({
 }) {
   const [lang, setLang] = useLang()
   const content = typeof children === "function" ? children(lang) : children
+
+  useEffect(() => {
+    if (!document.documentElement.style.getPropertyValue("--gryps-header-h")) {
+      document.documentElement.style.setProperty("--gryps-header-h", "52px")
+    }
+  }, [])
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
@@ -39,7 +45,7 @@ export function DocShell({
           { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
         ]}
       />
-      <main style={{ paddingTop: 72, paddingBottom: 48 }}>{content}</main>
+      <main className="gryps-main-under-nav" style={{ paddingBottom: 48 }}>{content}</main>
       <Footer
         lang={lang}
         footerRights={grypsCopyright(lang, lang === "en"

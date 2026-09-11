@@ -181,7 +181,7 @@ function CaseStudyArticle({ lang }: { lang: DocLang }) {
           {APPROACH.map((item, i) => {
             const a = item[lang]
             return (
-              <li key={a.title} style={approachItem}>
+              <li key={a.title} className="gryps-case-approach" style={approachItem}>
                 <span style={approachIndex}>{String(i + 1).padStart(2, "0")}</span>
                 <div>
                   <p style={approachTitle}>{a.title}</p>
@@ -251,7 +251,7 @@ const eyebrow: CSSProperties = {
   fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em",
 }
 const brand: CSSProperties = {
-  fontFamily: "var(--font-ui)", fontSize: 42, fontWeight: 800, color: "var(--text)",
+  fontFamily: "var(--font-ui)", fontSize: "clamp(2rem, 8vw, 42px)", fontWeight: 800, color: "var(--text)",
   letterSpacing: "-0.03em", margin: "14px 0 8px", lineHeight: 1.05,
 }
 const h1: CSSProperties = {

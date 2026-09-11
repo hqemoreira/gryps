@@ -1033,7 +1033,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
             fontSize: "clamp(3.5rem, 7vw, 5rem)",
             fontWeight: 900,
             color: gc,
-            lineHeight: 0.9,
+            lineHeight: 1,
             letterSpacing: "-0.04em",
           }}>{score}</span>
           <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: 16, color: "var(--text-dim)" }}>/100</span>
@@ -1361,6 +1361,10 @@ export default function HomePage() {
     ro.observe(el)
     return () => ro.disconnect()
   }, [lang])
+
+  useEffect(() => {
+    document.documentElement.style.setProperty("--gryps-header-h", `${chromeH}px`)
+  }, [chromeH])
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>

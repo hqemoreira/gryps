@@ -75,7 +75,7 @@ export default async function ResearchAssessmentPage({ params }: Props) {
         ctaLabel="Generate Resilience Signature"
         extraLink={{ href: "/research", label: "← Research Library" }}
       />
-      <div style={{ paddingTop: 72 }}>
+      <div className="gryps-page-under-nav">
         <ResearchAssessmentView data={data} />
       </div>
       <Footer

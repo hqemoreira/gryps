@@ -26,11 +26,13 @@ export function ResearchDocsNav({
         marginBottom: 28,
         paddingBottom: 16,
         borderBottom: "1px solid var(--border)",
+        maxWidth: "100%",
       }}
     >
       <span style={{
         fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)",
         letterSpacing: "0.1em", alignSelf: "center", marginRight: 4,
+        flex: "1 1 100%",
       }}>
         {METHODOLOGY_LABEL}
       </span>

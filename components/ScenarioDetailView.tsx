@@ -98,7 +98,7 @@ export function ScenarioDetailView({ scenario }: { scenario: MissionScenario }) 
         ]}
       />
 
-      <article style={{ maxWidth: 760, margin: "0 auto", padding: "100px 24px 80px" }}>
+      <article className="gryps-page-under-nav" style={{ maxWidth: 760, margin: "0 auto", paddingLeft: 24, paddingRight: 24, paddingBottom: 80 }}>
         <Link href="/scenarios" className="gryps-no-print" style={{
           fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)",
           textDecoration: "none", display: "inline-block", marginBottom: 20,

@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link"
+import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { Sun, Moon } from "lucide-react"
 import { GrypsMark } from "@/components/GrypsMark"
@@ -10,6 +11,7 @@ import { grypsCopyright } from "@/lib/gryps-copyright"
 export default function PrototypeLayout({ children }: { children: React.ReactNode }) {
   const { dark, toggleDark } = useTheme()
   const pathname = usePathname()
+  const headerRef = useRef<HTMLElement>(null)
 
   const navLinks = [
     { href: "/about", label: "About" },
@@ -19,56 +21,65 @@ export default function PrototypeLayout({ children }: { children: React.ReactNod
     { href: "/privacy", label: "Privacy" },
   ]
 
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el) return
+    const sync = () => {
+      const h = Math.ceil(el.getBoundingClientRect().height)
+      document.documentElement.style.setProperty("--gryps-header-h", `${h}px`)
+    }
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(el)
+    window.addEventListener("resize", sync)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener("resize", sync)
+    }
+  }, [pathname])
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
-      <header className="gryps-nav-inner" style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
-        borderBottom: "1px solid var(--border)",
-        backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
-        backdropFilter: "blur(12px)",
-        padding: "0 32px", height: 52,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
+      <header
+        ref={headerRef}
+        className="gryps-nav-inner"
+        style={{
+          position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
+          borderBottom: "1px solid var(--border)",
+          backgroundColor: dark ? "rgba(7,11,18,0.92)" : "rgba(244,246,249,0.92)",
+          backdropFilter: "blur(12px)",
+        }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: 20, minWidth: 0 }}>
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", minWidth: 0 }}>
+          <Link href="/" className="gryps-nav-brand" style={{ maxWidth: "none" }}>
             <GrypsMark size={24} animate />
-            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14, letterSpacing: "0.12em", color: "var(--text)" }}>GRYPS</span>
+            <span className="gryps-nav-wordmark">GRYPS</span>
           </Link>
-          <div style={{ width: 1, height: 16, backgroundColor: "var(--border)", flexShrink: 0 }} />
-          <div style={{ display: "flex", gap: 16, flexShrink: 0 }}>
+          <div className="gryps-prototype-midnav" style={{ display: "flex", gap: 16, flexShrink: 0 }}>
             {navLinks.map(l => (
-              <Link key={l.href} href={l.href} style={{
-                fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600,
+              <Link key={l.href} href={l.href} className="gryps-nav-label gryps-nav-link" style={{
                 color: pathname === l.href ? "var(--text)" : "var(--text-muted)",
-                textDecoration: "none",
                 borderBottom: pathname === l.href ? "1px solid var(--accent-blue)" : "1px solid transparent",
                 paddingBottom: 2,
               }}>{l.label}</Link>
             ))}
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, flexShrink: 0 }}>
-          <Link href="/" className="gryps-nav-label" style={{
-            fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 600,
-            color: "var(--text-muted)", textDecoration: "none",
-            whiteSpace: "nowrap",
-          }}>← Back to GRYPS</Link>
+        <div className="gryps-nav-actions" style={{ flex: "0 0 auto" }}>
+          <Link href="/" className="gryps-nav-label">← Back to GRYPS</Link>
           <button
+            type="button"
+            className="gryps-nav-theme"
             onClick={toggleDark}
             title={dark ? "Switch to light mode" : "Switch to dark mode"}
-            style={{
-              background: "var(--surface2)", border: "1px solid var(--border2)",
-              borderRadius: 6, width: 44, height: 44, cursor: "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "var(--text-muted)",
-            }}
+            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
           >
             {dark ? <Sun size={14} /> : <Moon size={14} />}
           </button>
         </div>
       </header>
 
-      <main style={{ paddingTop: 52 }}>
+      <main className="gryps-main-under-nav">
         {children}
       </main>
 
