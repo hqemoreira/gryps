@@ -84,6 +84,12 @@ function ProvidersArticle({ lang }: { lang: DocLang }) {
         <Link href="/methodology" style={{ color: "var(--accent-blue)" }}>{t.methodologyLink}</Link>
         {" · "}
         <Link href="/#advisor" style={{ color: "var(--accent-blue)" }}>{t.advisorLink}</Link>
+        {" · "}
+        <Link href="/map" style={{ color: "var(--accent-blue)" }}>{lang === "fi" ? "Kartta" : "Map"}</Link>
+        {" · "}
+        <Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>{lang === "fi" ? "Skenaariot" : "Scenarios"}</Link>
+        {" · "}
+        <Link href="/knowledge" style={{ color: "var(--accent-blue)" }}>{lang === "fi" ? "Näyttö" : "Evidence"}</Link>
       </p>
     </article>
   )

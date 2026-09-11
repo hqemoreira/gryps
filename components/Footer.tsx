@@ -1,59 +1,15 @@
 "use client"
 import Link from "next/link"
 import { GrypsMark } from "@/components/GrypsMark"
+import {
+  CTA_FULL,
+  IA_LEGAL,
+  IA_MODES,
+  IA_REFERENCE,
+  labelFor,
+} from "@/lib/ia-nav"
 
 const MODEL_SHORT = "v0.3"
-
-const COPY = {
-  en: {
-    tagDefault: "Built in Finland for high-latitude resilience.",
-    product: "PRODUCT",
-    resources: "RESOURCES",
-    legal: "LEGAL",
-    score: "Generate Resilience Signature",
-    map: "Explore",
-    research: "Research Library",
-    scenarios: "Scenarios",
-    workspace: "Workspace",
-    providers: "Providers",
-    about: "About",
-    caseStudy: "Case study",
-    researchPrototype: "Research & Prototype",
-    methodology: "Methodology",
-    knowledge: "Knowledge",
-    dataSources: "Data sources",
-    assumptions: "Assumptions",
-    limitations: "Limitations",
-    changelog: "Changelog",
-    terms: "Terms",
-    privacy: "Privacy",
-    modelMeta: `MODEL ${MODEL_SHORT} · ESPOO, FINLAND`,
-  },
-  fi: {
-    tagDefault: "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
-    product: "TUOTE",
-    resources: "RESURSSIT",
-    legal: "OIKEUDELLINEN",
-    score: "Luo Resilience Signature",
-    map: "Tutki",
-    research: "Research Library",
-    scenarios: "Skenaariot",
-    workspace: "Workspace",
-    providers: "Toimittajat",
-    about: "Tietoa",
-    caseStudy: "Case study",
-    researchPrototype: "Tutkimus ja prototyyppi",
-    methodology: "Menetelmä",
-    knowledge: "Tieto",
-    dataSources: "Datalähteet",
-    assumptions: "Oletukset",
-    limitations: "Rajoitteet",
-    changelog: "Muutosloki",
-    terms: "Ehdot",
-    privacy: "Tietosuoja",
-    modelMeta: `MALLI ${MODEL_SHORT} · ESPOO, SUOMI`,
-  },
-}
 
 export function Footer({
   lang = "en",
@@ -64,11 +20,13 @@ export function Footer({
   lang?: "en" | "fi"
   footerRights: string
   footerTag?: string
-  /** Optional contextual product link (e.g. Back to GRYPS). Skipped if it duplicates Capacity map. */
   secondaryLink?: { href: string; label: string }
 }) {
-  const t = COPY[lang]
-  const tag = footerTag ?? t.tagDefault
+  const tag =
+    footerTag ??
+    (lang === "en"
+      ? "Built in Finland for high-latitude resilience."
+      : "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.")
   const showExtra =
     secondaryLink &&
     secondaryLink.href !== "/map" &&
@@ -87,34 +45,28 @@ export function Footer({
           </div>
 
           <nav className="gryps-footer-cols" aria-label={lang === "fi" ? "Alatunniste" : "Footer"}>
+            {IA_MODES.map(mode => (
+              <div key={mode.id} className="gryps-footer-col">
+                <p className="gryps-footer-col-label">{labelFor(mode, lang).toUpperCase()}</p>
+                {mode.items.map(item => (
+                  <Link key={item.href} href={item.href}>{labelFor(item, lang)}</Link>
+                ))}
+                {mode.id === "assess" && (
+                  <Link href="/#advisor">{lang === "fi" ? CTA_FULL.fi : CTA_FULL.en}</Link>
+                )}
+              </div>
+            ))}
             <div className="gryps-footer-col">
-              <p className="gryps-footer-col-label">{t.product}</p>
-              <Link href="/#advisor">{t.score}</Link>
-              <Link href="/map">{t.map}</Link>
-              <Link href="/research">{t.research}</Link>
-              <Link href="/scenarios">{t.scenarios}</Link>
-              <Link href="/workspace">{t.workspace}</Link>
-              <Link href="/providers">{t.providers}</Link>
+              <p className="gryps-footer-col-label">{lang === "fi" ? "VIITE" : "REFERENCE"}</p>
+              {IA_REFERENCE.map(item => (
+                <Link key={item.href} href={item.href}>{labelFor(item, lang)}</Link>
+              ))}
               {showExtra && secondaryLink && (
                 <Link href={secondaryLink.href}>{secondaryLink.label}</Link>
               )}
-            </div>
-            <div className="gryps-footer-col">
-              <p className="gryps-footer-col-label">{t.resources}</p>
-              <Link href="/about">{t.about}</Link>
-              <Link href="/case-study">{t.caseStudy}</Link>
-              <Link href="/research-prototype">{t.researchPrototype}</Link>
-              <Link href="/methodology">{t.methodology}</Link>
-              <Link href="/data-sources">{t.dataSources}</Link>
-              <Link href="/assumptions">{t.assumptions}</Link>
-              <Link href="/limitations">{t.limitations}</Link>
-              <Link href="/changelog">{t.changelog}</Link>
-              <Link href="/knowledge">{t.knowledge}</Link>
-            </div>
-            <div className="gryps-footer-col">
-              <p className="gryps-footer-col-label">{t.legal}</p>
-              <Link href="/terms">{t.terms}</Link>
-              <Link href="/privacy">{t.privacy}</Link>
+              {IA_LEGAL.map(item => (
+                <Link key={item.href} href={item.href}>{labelFor(item, lang)}</Link>
+              ))}
             </div>
           </nav>
         </div>
@@ -123,7 +75,9 @@ export function Footer({
 
         <div className="gryps-footer-bottom">
           <span className="gryps-footer-copy">{footerRights}</span>
-          <span className="gryps-footer-model">{t.modelMeta}</span>
+          <span className="gryps-footer-model">
+            {lang === "fi" ? `MALLI ${MODEL_SHORT} · ESPOO, SUOMI` : `MODEL ${MODEL_SHORT} · ESPOO, FINLAND`}
+          </span>
         </div>
       </div>
     </footer>

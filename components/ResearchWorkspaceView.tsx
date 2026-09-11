@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowRight, Download, Trash2, GitCompare, FileText } from "lucide-react"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
+import { Breadcrumbs } from "@/components/Breadcrumbs"
 import { GrypsPrintBrand } from "@/components/GrypsMark"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useLang } from "@/lib/use-lang"
@@ -25,13 +26,13 @@ import { MODEL_VERSION } from "@/lib/model-constants"
 
 const COPY = {
   en: {
-    eyebrow: "GRYPS · RESEARCH WORKSPACE",
-    title: "Research Workspace",
+    eyebrow: "GRYPS · ASSESSMENTS",
+    title: "Assessments",
     lead:
       "Saved research assessments for analytical modelling — coordinates, scenario, inputs, findings, provider comparison, recommendation, and evidence. Not a customer account or CRM.",
     disclosure:
       "Local browser storage only · Non-commercial · No quotations or sales funnel. Clear site data removes saved assessments.",
-    empty: "No saved assessments yet. Generate a Resilience Signature, then Save to Research Workspace.",
+    empty: "No saved assessments yet. Generate a Resilience Signature, then save to Assessments.",
     emptyCta: "Generate Resilience Signature",
     saved: "Saved assessments",
     compare: "Compare",
@@ -70,13 +71,13 @@ const COPY = {
     abbreviated: "Abbreviated",
   },
   fi: {
-    eyebrow: "GRYPS · RESEARCH WORKSPACE",
-    title: "Research Workspace",
+    eyebrow: "GRYPS · ARVIOT",
+    title: "Arviot",
     lead:
       "Tallennetut tutkimusarviot analyyttiseen mallinnukseen — koordinaatit, skenaario, syötteet, löydökset, toimittajavertailu, suositus ja näyttö. Ei asiakastiliä eikä CRM:ää.",
     disclosure:
       "Vain paikallinen selainmuisti · Ei-kaupallinen · Ei tarjouksia eikä myyntisuppiloa. Sivuston tietojen tyhjennys poistaa tallenteet.",
-    empty: "Ei tallennettuja arvioita. Luo Resilience Signature ja tallenna Research Workspaceen.",
+    empty: "Ei tallennettuja arvioita. Luo Resilience Signature ja tallenna Arvioihin.",
     emptyCta: "Luo Resilience Signature",
     saved: "Tallennetut arviot",
     compare: "Vertaa",
@@ -199,15 +200,14 @@ export function ResearchWorkspaceView({ initialId }: { initialId?: string | null
         lang={lang}
         onLangChange={setLang}
         ctaHref="/#advisor"
-        ctaLabel={t.navCta}
-        extraLinks={[
-          { href: "/scenarios", label: lang === "en" ? "Scenarios" : "Skenaariot" },
-          { href: "/research", label: "Research Library" },
-          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
-        ]}
+        useIaNav
       />
 
       <main className="gryps-page-under-nav" style={{ maxWidth: 960, margin: "0 auto", paddingLeft: 24, paddingRight: 24, paddingBottom: 80 }}>
+        <Breadcrumbs lang={lang} items={[
+          { en: "Assess", fi: "Arvioi" },
+          { en: "Assessments", fi: "Arviot" },
+        ]} />
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>
           {t.eyebrow}
         </p>

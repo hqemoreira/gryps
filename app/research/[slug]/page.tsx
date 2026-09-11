@@ -72,8 +72,7 @@ export default async function ResearchAssessmentPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Header
         ctaHref="/#advisor"
-        ctaLabel="Generate Resilience Signature"
-        extraLink={{ href: "/research", label: "← Research Library" }}
+        useIaNav
       />
       <div className="gryps-page-under-nav">
         <ResearchAssessmentView data={data} />

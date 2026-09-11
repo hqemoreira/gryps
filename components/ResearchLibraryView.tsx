@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav"
+import { Breadcrumbs } from "@/components/Breadcrumbs"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useLang } from "@/lib/use-lang"
 import {
@@ -99,16 +100,14 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
         lang={lang}
         onLangChange={setLang}
         ctaHref="/#advisor"
-        ctaLabel={t.navCta}
-        extraLinks={[
-          { href: "/scenarios", label: lang === "en" ? "Scenarios" : "Skenaariot" },
-          { href: "/workspace", label: "Workspace" },
-          { href: "/research", label: "Research Library" },
-          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
-        ]}
+        useIaNav
       />
 
       <main className="gryps-page-under-nav" style={{ maxWidth: 960, margin: "0 auto", paddingLeft: 24, paddingRight: 24, paddingBottom: 80 }}>
+        <Breadcrumbs lang={lang} items={[
+          { en: "Explore", fi: "Tutki" },
+          { en: "Research Library", fi: "Research Library" },
+        ]} />
         <ResearchDocsNav lang={lang} active="research" />
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>
           {t.eyebrow}

@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { ResilienceOutput } from "@/components/ResilienceOutput"
+import { NextStepsLinks } from "@/components/NextStepsLinks"
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors"
 import type { ResolvedResearchAssessment } from "@/lib/research-library"
 import { useLang } from "@/lib/use-lang"
@@ -210,6 +211,19 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
           <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)", textDecoration: "none" }}>
             {t.viewMethod}
           </Link>
+          <div style={{ marginTop: 20 }}>
+            <NextStepsLinks
+              lang={lang}
+              links={[
+                { href: advisorHref(input), en: "Assess this site", fi: "Arvioi tämä kohde" },
+                { href: "/map", en: "Explore Map", fi: "Tutki karttaa" },
+                { href: "/providers", en: "Providers", fi: "Toimittajat" },
+                { href: "/scenarios", en: "Scenarios", fi: "Skenaariot" },
+                { href: "/knowledge", en: "Evidence", fi: "Näyttö" },
+                { href: "/methodology", en: "Methodology", fi: "Menetelmä" },
+              ]}
+            />
+          </div>
         </>
       ))}
 

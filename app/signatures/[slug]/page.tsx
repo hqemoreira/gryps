@@ -61,8 +61,7 @@ export default async function SignatureSitePage({ params }: Props) {
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
       <Header
         ctaHref="/#advisor"
-        ctaLabel="Generate Resilience Signature"
-        extraLink={{ href: "/research", label: "← Research Library" }}
+        useIaNav
       />
 
       <div className="gryps-page-under-nav" style={{ maxWidth: 800, margin: "0 auto", paddingLeft: 32, paddingRight: 32, paddingBottom: 80 }}>

@@ -10,15 +10,15 @@ type Lang = "en" | "fi"
 
 const COPY = {
   en: {
-    save: "Save to Research Workspace",
+    save: "Save to Assessments",
     saved: "Saved",
-    open: "Open workspace →",
+    open: "Open Assessments →",
     note: "Stored locally in this browser — research modelling, not a customer account.",
   },
   fi: {
-    save: "Tallenna Research Workspaceen",
+    save: "Tallenna Arvioihin",
     saved: "Tallennettu",
-    open: "Avaa workspace →",
+    open: "Avaa Arviot →",
     note: "Tallennetaan paikallisesti tähän selaimeen — tutkimusmallinnusta, ei asiakastiliä.",
   },
 } as const

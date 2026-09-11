@@ -10,6 +10,9 @@ import { computeComplianceFlags } from "@/lib/compliance"
 import { redundancyTiers } from "@/lib/redundancy-tiers"
 import { MODEL_VERSION } from "@/lib/signature-meta"
 import { SaveToWorkspace } from "@/components/SaveToWorkspace"
+import { TypeLabel } from "@/components/TypeLabel"
+import { IntelligenceDrawer } from "@/components/IntelligenceDrawer"
+import { NextStepsLinks } from "@/components/NextStepsLinks"
 
 // Re-exported as TYPES only (types are erased at compile time, no client-boundary
 // issue). Do NOT re-export gradeColor/gradeTextColor themselves here — a Server
@@ -215,7 +218,21 @@ const UI = {
     terrainExplain: "Terrain score is independent of the Resilience Score: higher variance in a ~5 km EU-DEM sample reduces this evidence score. It is not blended into the 0–100 Signature.",
     shareLink: "Copy shareable link",
     shareCopied: "Link copied",
-    saveWorkspace: "Save to Research Workspace",
+    tabOverview: "Overview",
+    tabRisks: "Risks",
+    tabOptions: "Options",
+    tabEvidence: "Evidence",
+    tabMethod: "Method",
+    whyBtn: "Why?",
+    overviewStrongest: "Strongest factor",
+    overviewGap: "Primary gap",
+    overviewRec: "Top recommendation",
+    drawerCalc: "Calculation",
+    drawerData: "Data basis",
+    drawerResearch: "Research & method",
+    evidenceNotesLink: "Evidence notes →",
+    nextStepsLabel: "NEXT STEPS",
+    saveWorkspace: "Save to Assessments",
     redundancyTiers: "REDUNDANCY OPTIONS (COST-TIERED)",
     tierEssential: "Essential",
     tierStandard: "Standard",
@@ -342,7 +359,21 @@ const UI = {
     terrainExplain: "Maastopiste on riippumaton Resilience-pisteestä: suurempi vaihtelu ~5 km EU-DEM-otoksessa laskee tätä näyttöpistettä. Sitä ei sekoiteta 0–100 Signatureen.",
     shareLink: "Kopioi jaettava linkki",
     shareCopied: "Linkki kopioitu",
-    saveWorkspace: "Tallenna Research Workspaceen",
+    tabOverview: "Yhteenveto",
+    tabRisks: "Riskit",
+    tabOptions: "Vaihtoehdot",
+    tabEvidence: "Näyttö",
+    tabMethod: "Menetelmä",
+    whyBtn: "Miksi?",
+    overviewStrongest: "Vahvin tekijä",
+    overviewGap: "Pääaukko",
+    overviewRec: "Pääsuositus",
+    drawerCalc: "Laskenta",
+    drawerData: "Dataperusta",
+    drawerResearch: "Tutkimus ja menetelmä",
+    evidenceNotesLink: "Näyttömuistiinpanot →",
+    nextStepsLabel: "SEURAAVAT ASKELEET",
+    saveWorkspace: "Tallenna Arvioihin",
     redundancyTiers: "REDUNDANSSIVAIHTOEHDOT (KUSTANNUSTASOT)",
     tierEssential: "Välttämätön",
     tierStandard: "Standardi",
@@ -439,8 +470,13 @@ function ScoreCompositionPanel({
   t: UiCopy
 }) {
   const byId = new Map((explanations ?? []).map(e => [e.id, e]))
+  const [openId, setOpenId] = useState<string | null>(null)
+  const openComp = composition.components.find(c => c.id === openId) ?? null
+  const openExpl = openId ? byId.get(openId) : undefined
+
   return (
     <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+      <TypeLabel kind="MODEL" />
       <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 4 }}>
         {explanations?.length ? t.scoreExplainLabel : t.scoreComposition}
       </p>
@@ -453,6 +489,7 @@ function ScoreCompositionPanel({
           marginBottom: 14, padding: "10px 12px",
           backgroundColor: "var(--surface2)", borderRadius: 6, border: "1px solid var(--border)",
         }}>
+          <TypeLabel kind="INTERPRETATION" />
           {overall}
         </p>
       )}
@@ -462,10 +499,13 @@ function ScoreCompositionPanel({
           const expl = byId.get(c.id)
           return (
             <div key={c.id}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 4 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 4, alignItems: "center" }}>
                 <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text)", fontWeight: 600 }}>
                   {componentLabel(c.id, t)} — {c.points}/{c.max}
                 </span>
+                <button type="button" className="gryps-why-btn" onClick={() => setOpenId(c.id)}>
+                  {t.whyBtn}
+                </button>
               </div>
               <div style={{ height: 4, backgroundColor: "var(--surface2)", borderRadius: 2, overflow: "hidden" }}>
                 <div style={{ width: `${pct}%`, height: "100%", backgroundColor: "var(--accent-cyan)", borderRadius: 2 }} />
@@ -497,6 +537,33 @@ function ScoreCompositionPanel({
       <Link href="/methodology" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)", marginTop: 10, display: "inline-block" }}>
         {t.methodologyLink}
       </Link>
+
+      <IntelligenceDrawer
+        open={!!openComp}
+        title={openComp ? `${componentLabel(openComp.id, t)} — ${openComp.points}/${openComp.max}` : ""}
+        onClose={() => setOpenId(null)}
+      >
+        <TypeLabel kind="MODEL" />
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.drawerCalc}</p>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text)", lineHeight: 1.6, marginBottom: 14 }}>
+          {openExpl?.explanation ?? `${openComp?.points ?? 0} / ${openComp?.max ?? 0}`}
+        </p>
+        <TypeLabel kind="DATA" />
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.drawerData}</p>
+        <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 14 }}>
+          {openComp ? `${openComp.points}/${openComp.max} · ${composition.final_score} final` : "—"}
+        </p>
+        <TypeLabel kind="RESEARCH" />
+        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.drawerResearch}</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)", textDecoration: "none" }}>
+            {t.methodologyLink}
+          </Link>
+          <Link href="/knowledge" style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)", textDecoration: "none" }}>
+            {t.evidenceNotesLink}
+          </Link>
+        </div>
+      </IntelligenceDrawer>
     </div>
   )
 }
@@ -869,6 +936,8 @@ function RealDataEvidencePanel({ data, t, lang = "en" }: { data: RealDataEvidenc
   )
 }
 
+type SigTab = "overview" | "risks" | "options" | "evidence" | "method"
+
 export function ResilienceOutput({
   result,
   input,
@@ -889,6 +958,16 @@ export function ResilienceOutput({
   const issued = result.issuedAt ? new Date(result.issuedAt) : new Date()
   const dateLabel = issued.toLocaleDateString(lang === "fi" ? "fi-FI" : "en-GB", { day: "numeric", month: "long", year: "numeric" })
   const [copied, setCopied] = useState(false)
+  const [tab, setTab] = useState<SigTab>("overview")
+  const [riskWhyOpen, setRiskWhyOpen] = useState(false)
+
+  const strongest = score_composition?.components.reduce<(typeof score_composition.components)[number] | null>((best, c) => {
+    const ratio = c.max > 0 ? c.points / c.max : 0
+    const bestRatio = best && best.max > 0 ? best.points / best.max : -1
+    return ratio > bestRatio ? c : best
+  }, null) ?? null
+  const primaryGap = redundancy_gaps[0] ?? null
+  const topRec = intelligence?.recommendation.headline ?? recommendation
 
   function copyShare() {
     const url = typeof window !== "undefined" ? window.location.href : ""
@@ -897,6 +976,14 @@ export function ResilienceOutput({
       setTimeout(() => setCopied(false), 2000)
     })
   }
+
+  const tabs: { id: SigTab; label: string }[] = [
+    { id: "overview", label: t.tabOverview },
+    { id: "risks", label: t.tabRisks },
+    { id: "options", label: t.tabOptions },
+    { id: "evidence", label: t.tabEvidence },
+    { id: "method", label: t.tabMethod },
+  ]
 
   return (
     <div className="gryps-report-body" style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 8 }}>
@@ -915,16 +1002,17 @@ export function ResilienceOutput({
           {copied ? t.shareCopied : t.shareLink}
         </button>
         <button
-        className="gryps-no-print"
-        onClick={() => window.print()}
-        style={{
-          alignSelf: "flex-end", display: "inline-flex", alignItems: "center", gap: 6,
-          backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
-          borderRadius: 6, padding: "8px 14px", cursor: "pointer",
-          fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
-        }}
-      >
-        <Download size={13} /> {t.downloadPdf}
+          type="button"
+          className="gryps-no-print"
+          onClick={() => window.print()}
+          style={{
+            alignSelf: "flex-end", display: "inline-flex", alignItems: "center", gap: 6,
+            backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
+            borderRadius: 6, padding: "8px 14px", cursor: "pointer",
+            fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
+          }}
+        >
+          <Download size={13} /> {t.downloadPdf}
         </button>
       </div>
 
@@ -962,239 +1050,351 @@ export function ResilienceOutput({
         {t.modelGenerated}
       </p>
 
-      {input && <AssessmentInputsPanel input={input} t={t} lang={lang} />}
+      <div className="gryps-sig-tabs" role="tablist" aria-label="Signature sections">
+        {tabs.map(item => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            aria-selected={tab === item.id}
+            className={`gryps-sig-tab${tab === item.id ? " is-active" : ""}`}
+            onClick={() => setTab(item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
 
-      {intelligence && <IntelligencePanel intelligence={intelligence} t={t} />}
+      <div
+        role="tabpanel"
+        className={`gryps-sig-tab-panel${tab === "overview" ? " is-active" : ""}`}
+        hidden={tab !== "overview"}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {input && <AssessmentInputsPanel input={input} t={t} lang={lang} />}
 
-      {score_composition && (
-        <ScoreCompositionPanel
-          composition={score_composition}
-          explanations={intelligence?.score_explanations}
-          overall={intelligence?.overall_score_explanation}
-          t={t}
-        />
-      )}
-
-      {intelligence && intelligence.comparison.length > 0 && (
-        <ComparisonTable rows={intelligence.comparison} t={t} />
-      )}
-
-      {evidence && <EvidencePanel evidence={evidence} t={t} />}
-
-      {realData && <RealDataEvidencePanel data={realData} t={t} lang={lang} />}
-
-      {!intelligence && (
-        <div style={{
-          backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
-          borderRadius: 8, padding: "16px 20px",
-        }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.recommendation}</p>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.55, marginTop: 10 }}>
-            {t.recommendationNote}
-          </p>
-        </div>
-      )}
-
-      {intelligence && (
-        <div style={{
-          backgroundColor: "var(--surface)", border: "1px solid var(--border)",
-          borderRadius: 8, padding: "16px 20px",
-        }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.recommendation}</p>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.55, marginTop: 10 }}>
-            {t.recommendationNote}
-          </p>
-        </div>
-      )}
-
-      <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 12 }}>{t.complianceLabel}</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {flags.map(flag => (
-            <div key={flag.id}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)" }}>{flag.id === "nis2-art21" ? t.complianceNis2 : t.complianceCer}</span>
-                <span style={{
-                  fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 700,
-                  color: flag.pass ? "var(--accent-green)" : "var(--accent-red)",
-                  border: `1px solid ${flag.pass ? "rgba(46,212,122,0.3)" : "rgba(239,68,68,0.3)"}`,
-                  borderRadius: 4, padding: "2px 8px",
-                }}>{flag.pass ? t.compliancePass : t.complianceFail}</span>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+            {strongest && (
+              <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "14px 16px" }}>
+                <TypeLabel kind="MODEL" />
+                <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.overviewStrongest}</p>
+                <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>
+                  {componentLabel(strongest.id, t)} — {strongest.points}/{strongest.max}
+                </p>
               </div>
-              <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5, marginTop: 4 }}>{flag.reason}</p>
+            )}
+            {primaryGap && (
+              <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "14px 16px" }}>
+                <TypeLabel kind="MODEL" />
+                <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.overviewGap}</p>
+                <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)", marginBottom: 4 }}>{primaryGap.label}</p>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.55 }}>{primaryGap.detail}</p>
+              </div>
+            )}
+            <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "14px 16px" }}>
+              <TypeLabel kind="INTERPRETATION" />
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.overviewRec}</p>
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text)", lineHeight: 1.55 }}>{topRec}</p>
             </div>
-          ))}
+          </div>
+
+          {intelligence ? (
+            <IntelligencePanel intelligence={intelligence} t={t} />
+          ) : (
+            <div style={{
+              backgroundColor: "rgba(79,168,255,0.06)", border: "1px solid rgba(79,168,255,0.2)",
+              borderRadius: 8, padding: "16px 20px",
+            }}>
+              <TypeLabel kind="INTERPRETATION" />
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-blue)", letterSpacing: "0.12em", marginBottom: 8 }}>{t.recommendation}</p>
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{recommendation}</p>
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.55, marginTop: 10 }}>
+                {t.recommendationNote}
+              </p>
+            </div>
+          )}
         </div>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 9, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
-          {t.complianceNote}
-        </p>
       </div>
 
-      <div className="gryps-output-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.riskFactors}</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {risk_factors.map((r, i) => {
-              const vivid = SEV_COLOR_VIVID[r.severity] ?? "#64748B"
-              const textColor = SEV_COLOR[r.severity] ?? "var(--text-muted)"
-              const Icon = SEV_ICON[r.severity] ?? AlertCircle
-              return (
-                <div key={i} style={{
-                  display: "flex", gap: 10,
-                  backgroundColor: `${vivid}14`,
-                  border: `1px solid ${vivid}40`,
-                  borderLeft: `3px solid ${vivid}`,
-                  borderRadius: 6, padding: "10px 12px",
-                }}>
-                  <Icon size={16} color={textColor} style={{ flexShrink: 0, marginTop: 1 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{r.label}</span>
-                      <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: textColor, marginLeft: "auto", flexShrink: 0 }}>{r.severity.toUpperCase()}</span>
-                    </div>
-                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{r.detail}</p>
-                  </div>
-                </div>
-              )
-            })}
+      <div
+        role="tabpanel"
+        className={`gryps-sig-tab-panel${tab === "risks" ? " is-active" : ""}`}
+        hidden={tab !== "risks"}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+            <button type="button" className="gryps-why-btn" onClick={() => setRiskWhyOpen(true)}>
+              {t.whyBtn}
+            </button>
           </div>
-        </div>
-        <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.redundancyGaps}</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {redundancy_gaps.map((g, i) => (
-              <div key={i}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{g.label}</span>
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-red)", marginLeft: "auto" }}>{t.scoreImpact}</span>
-                </div>
-                <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{g.detail}</p>
+          <div className="gryps-output-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+              <TypeLabel kind="MODEL" />
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.riskFactors}</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {risk_factors.map((r, i) => {
+                  const vivid = SEV_COLOR_VIVID[r.severity] ?? "#64748B"
+                  const textColor = SEV_COLOR[r.severity] ?? "var(--text-muted)"
+                  const Icon = SEV_ICON[r.severity] ?? AlertCircle
+                  return (
+                    <div key={i} style={{
+                      display: "flex", gap: 10,
+                      backgroundColor: `${vivid}14`,
+                      border: `1px solid ${vivid}40`,
+                      borderLeft: `3px solid ${vivid}`,
+                      borderRadius: 6, padding: "10px 12px",
+                    }}>
+                      <Icon size={16} color={textColor} style={{ flexShrink: 0, marginTop: 1 }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                          <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{r.label}</span>
+                          <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: textColor, marginLeft: "auto", flexShrink: 0 }}>{r.severity.toUpperCase()}</span>
+                        </div>
+                        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{r.detail}</p>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-            ))}
+            </div>
+            <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+              <TypeLabel kind="MODEL" />
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.redundancyGaps}</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {redundancy_gaps.map((g, i) => (
+                  <div key={i}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text)" }}>{g.label}</span>
+                      <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-red)", marginLeft: "auto" }}>{t.scoreImpact}</span>
+                    </div>
+                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{g.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
+        <IntelligenceDrawer
+          open={riskWhyOpen}
+          title={t.riskFactors}
+          onClose={() => setRiskWhyOpen(false)}
+        >
+          <TypeLabel kind="MODEL" />
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.drawerCalc}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text)", lineHeight: 1.6, marginBottom: 14 }}>
+            {risk_factors.map(r => r.label).join(" · ") || "—"}
+          </p>
+          <TypeLabel kind="DATA" />
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.drawerData}</p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 14 }}>
+            {primaryGap ? `${primaryGap.label} — ${primaryGap.detail}` : "—"}
+          </p>
+          <TypeLabel kind="RESEARCH" />
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 6 }}>{t.drawerResearch}</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <Link href="/knowledge" style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)", textDecoration: "none" }}>
+              {t.evidenceNotesLink}
+            </Link>
+            <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)", textDecoration: "none" }}>
+              {t.methodologyLink}
+            </Link>
+            <Link href="/providers" style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)", textDecoration: "none" }}>
+              {lang === "fi" ? "Toimittajat →" : "Providers →"}
+            </Link>
+          </div>
+        </IntelligenceDrawer>
       </div>
 
-      <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.connectivityOptions}</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {connectivity_options.map((o, i) => {
-            const tech = getOrbitalCharacteristics(o.type, o.provider)
-            return (
-              <div key={i} style={{
-                backgroundColor: "var(--surface2)", border: `1px solid ${i === 0 ? "rgba(79,168,255,0.2)" : "var(--border)"}`,
-                borderRadius: 6, padding: "10px 14px",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
-                      <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{o.provider}</span>
-                      <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--border)", padding: "1px 6px", borderRadius: 3 }}>{o.type}</span>
+      <div
+        role="tabpanel"
+        className={`gryps-sig-tab-panel${tab === "options" ? " is-active" : ""}`}
+        hidden={tab !== "options"}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {intelligence && intelligence.comparison.length > 0 && (
+            <ComparisonTable rows={intelligence.comparison} t={t} />
+          )}
+
+          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+            <TypeLabel kind="MODEL" />
+            <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.connectivityOptions}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {connectivity_options.map((o, i) => {
+                const tech = getOrbitalCharacteristics(o.type, o.provider)
+                return (
+                  <div key={i} style={{
+                    backgroundColor: "var(--surface2)", border: `1px solid ${i === 0 ? "rgba(79,168,255,0.2)" : "var(--border)"}`,
+                    borderRadius: 6, padding: "10px 14px",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
+                          <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{o.provider}</span>
+                          <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--border)", padding: "1px 6px", borderRadius: 3 }}>{o.type}</span>
+                        </div>
+                        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{o.note}</p>
+                        {(o.elevation || o.coverage || o.failover_latency) && (
+                          <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 3 }}>
+                            <p style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>{t.whyConfidence}</p>
+                            {o.elevation && <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.5 }}><span style={{ fontWeight: 700 }}>{t.elevationField}</span>{o.elevation}</p>}
+                            {o.coverage && <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.5 }}><span style={{ fontWeight: 700 }}>{t.coverageField}</span>{o.coverage}</p>}
+                            {o.failover_latency && <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.5 }}><span style={{ fontWeight: 700 }}>{t.failoverField}</span>{o.failover_latency}</p>}
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: i === 0 ? "var(--accent-blue)" : "var(--text)", lineHeight: 1 }}>
+                          {o.confidence}<span style={{ fontSize: 10, color: "var(--text-muted)" }}>%</span>
+                        </div>
+                        <div style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>{t.confidence}</div>
+                      </div>
                     </div>
-                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{o.note}</p>
-                    {(o.elevation || o.coverage || o.failover_latency) && (
-                      <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 3 }}>
-                        <p style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>{t.whyConfidence}</p>
-                        {o.elevation && <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.5 }}><span style={{ fontWeight: 700 }}>{t.elevationField}</span>{o.elevation}</p>}
-                        {o.coverage && <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.5 }}><span style={{ fontWeight: 700 }}>{t.coverageField}</span>{o.coverage}</p>}
-                        {o.failover_latency && <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.5 }}><span style={{ fontWeight: 700 }}>{t.failoverField}</span>{o.failover_latency}</p>}
+                    {tech && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+                        <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
+                          <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>{t.latency}</span>{tech.latency}
+                        </p>
+                        <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
+                          <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>{t.reliability}</span>{tech.reliability}
+                        </p>
+                        <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
+                          <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>{t.hardware}</span>{tech.hardware}
+                        </p>
                       </div>
                     )}
                   </div>
-                  <div style={{ textAlign: "right", flexShrink: 0 }}>
-                    <div style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 700, color: i === 0 ? "var(--accent-blue)" : "var(--text)", lineHeight: 1 }}>
-                      {o.confidence}<span style={{ fontSize: 10, color: "var(--text-muted)" }}>%</span>
-                    </div>
-                    <div style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)", letterSpacing: "0.1em" }}>{t.confidence}</div>
+                )
+              })}
+            </div>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5, marginTop: 12 }}>
+              {t.confidenceClarify}
+            </p>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 8, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+              {t.orbitalDisclaimer}
+            </p>
+          </div>
+
+          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+            <TypeLabel kind="INTERPRETATION" />
+            <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.redundancyTiers}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {tiers.map(tier => (
+                <div key={tier.id} style={{ borderLeft: "2px solid var(--accent-blue)", paddingLeft: 12 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{tier.label}</span>
+                    <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)" }}>
+                      {tier.tier === "essential" ? t.tierEssential : tier.tier === "standard" ? t.tierStandard : t.tierDefense}
+                    </span>
                   </div>
+                  <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)", marginTop: 4 }}>{tier.estimate}</p>
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6, marginTop: 4 }}>{tier.detail}</p>
                 </div>
-                {tech && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
-                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
-                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>{t.latency}</span>{tech.latency}
-                    </p>
-                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
-                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>{t.reliability}</span>{tech.reliability}
-                    </p>
-                    <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6 }}>
-                      <span style={{ fontFamily: "var(--font-data)", fontWeight: 700 }}>{t.hardware}</span>{tech.hardware}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5, marginTop: 12 }}>
-          {t.confidenceClarify}
-        </p>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 8, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
-          {t.orbitalDisclaimer}
-        </p>
-      </div>
-
-      <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 14 }}>{t.redundancyTiers}</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {tiers.map(tier => (
-            <div key={tier.id} style={{ borderLeft: "2px solid var(--accent-blue)", paddingLeft: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
-                <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{tier.label}</span>
-                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)" }}>
-                  {tier.tier === "essential" ? t.tierEssential : tier.tier === "standard" ? t.tierStandard : t.tierDefense}
-                </span>
-              </div>
-              <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)", marginTop: 4 }}>{tier.estimate}</p>
-              <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6, marginTop: 4 }}>{tier.detail}</p>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
-      <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 12 }}>{t.provenanceLabel}</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceScoringModel}</span>
-            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceScoringModelValue}</span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceCommentary}</span>
-            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceCommentaryValue}</span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceConfidence}</span>
-            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceConfidenceValue}</span>
-          </div>
-          <div>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em" }}>{t.provenanceRealDataSources}</span>
-            <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
-              <li style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{t.provenanceBittimittari}</li>
-              <li style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{t.provenanceEuDem}</li>
-            </ul>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceDate}</span>
-            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{dateLabel}</span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceModelVersion}</span>
-            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{result.modelVersion ?? MODEL_VERSION}</span>
-          </div>
-          {result.inputHash && (
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-              <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceInputHash}</span>
-              <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)" }}>{result.inputHash}</span>
-            </div>
+      <div
+        role="tabpanel"
+        className={`gryps-sig-tab-panel${tab === "evidence" ? " is-active" : ""}`}
+        hidden={tab !== "evidence"}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {evidence && <EvidencePanel evidence={evidence} t={t} />}
+          {realData && <RealDataEvidencePanel data={realData} t={t} lang={lang} />}
+          <Link href="/knowledge" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-blue)", display: "inline-block" }}>
+            {t.evidenceNotesLink}
+          </Link>
+        </div>
+      </div>
+
+      <div
+        role="tabpanel"
+        className={`gryps-sig-tab-panel${tab === "method" ? " is-active" : ""}`}
+        hidden={tab !== "method"}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {score_composition && (
+            <ScoreCompositionPanel
+              composition={score_composition}
+              explanations={intelligence?.score_explanations}
+              overall={intelligence?.overall_score_explanation}
+              t={t}
+            />
           )}
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-amber)", letterSpacing: "0.06em" }}>{t.provenanceNotLive}</p>
+
+          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+            <TypeLabel kind="MODEL" />
+            <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 12 }}>{t.complianceLabel}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {flags.map(flag => (
+                <div key={flag.id}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                    <span style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)" }}>{flag.id === "nis2-art21" ? t.complianceNis2 : t.complianceCer}</span>
+                    <span style={{
+                      fontFamily: "var(--font-data)", fontSize: 9, fontWeight: 700,
+                      color: flag.pass ? "var(--accent-green)" : "var(--accent-red)",
+                      border: `1px solid ${flag.pass ? "rgba(46,212,122,0.3)" : "rgba(239,68,68,0.3)"}`,
+                      borderRadius: 4, padding: "2px 8px",
+                    }}>{flag.pass ? t.compliancePass : t.complianceFail}</span>
+                  </div>
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-dim)", lineHeight: 1.5, marginTop: 4 }}>{flag.reason}</p>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 9, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
+              {t.complianceNote}
+            </p>
+          </div>
+
+          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, padding: "16px 20px" }}>
+            <TypeLabel kind="DATA" />
+            <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 12 }}>{t.provenanceLabel}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceScoringModel}</span>
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceScoringModelValue}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceCommentary}</span>
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceCommentaryValue}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceConfidence}</span>
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", textAlign: "right" }}>{t.provenanceConfidenceValue}</span>
+              </div>
+              <div>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em" }}>{t.provenanceRealDataSources}</span>
+                <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+                  <li style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{t.provenanceBittimittari}</li>
+                  <li style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.6 }}>{t.provenanceEuDem}</li>
+                </ul>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceDate}</span>
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{dateLabel}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceModelVersion}</span>
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{result.modelVersion ?? MODEL_VERSION}</span>
+              </div>
+              {result.inputHash && (
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.08em", flexShrink: 0 }}>{t.provenanceInputHash}</span>
+                  <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)" }}>{result.inputHash}</span>
+                </div>
+              )}
+              <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-amber)", letterSpacing: "0.06em" }}>{t.provenanceNotLive}</p>
+            </div>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 9, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
+              {t.provenanceNote}
+            </p>
+          </div>
         </div>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 9, color: "var(--text-dim)", lineHeight: 1.6, marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
-          {t.provenanceNote}
-        </p>
       </div>
+
+      <NextStepsLinks lang={lang} label={t.nextStepsLabel} />
 
       <div style={{ borderTop: "1px solid var(--border)", paddingTop: 12, display: "flex", alignItems: "flex-start", gap: 10 }}>
         <span

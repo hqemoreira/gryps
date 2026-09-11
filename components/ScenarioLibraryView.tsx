@@ -3,6 +3,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
+import { Breadcrumbs } from "@/components/Breadcrumbs"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useLang } from "@/lib/use-lang"
 import { MISSION_SCENARIOS } from "@/lib/mission-scenarios"
@@ -50,16 +51,14 @@ export function ScenarioLibraryView() {
         lang={lang}
         onLangChange={setLang}
         ctaHref="/#advisor"
-        ctaLabel={t.navCta}
-        extraLinks={[
-          { href: "/research", label: "Research Library" },
-          { href: "/workspace", label: "Workspace" },
-          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
-          { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
-        ]}
+        useIaNav
       />
 
       <main className="gryps-page-under-nav" style={{ maxWidth: 960, margin: "0 auto", paddingLeft: 24, paddingRight: 24, paddingBottom: 80 }}>
+        <Breadcrumbs lang={lang} items={[
+          { en: "Explore", fi: "Tutki" },
+          { en: "Scenarios", fi: "Skenaariot" },
+        ]} />
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>
           {t.eyebrow}
         </p>

@@ -4,16 +4,17 @@ import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useLang, type Lang } from "@/lib/use-lang"
+import { CTA_SHORT } from "@/lib/ia-nav"
 
 export type DocLang = Lang
 
 export function DocShell({
   children,
   ctaHref = "/#advisor",
-  ctaLabel = "Generate Resilience Signature",
 }: {
   children: ReactNode | ((lang: DocLang) => ReactNode)
   ctaHref?: string
+  /** @deprecated Chrome CTA comes from IA short label */
   ctaLabel?: string
 }) {
   const [lang, setLang] = useLang()
@@ -31,19 +32,8 @@ export function DocShell({
         lang={lang}
         onLangChange={setLang}
         ctaHref={ctaHref}
-        ctaLabel={lang === "fi" ? "Luo Resilience Signature" : ctaLabel}
-        extraLinks={[
-          { href: "/case-study", label: lang === "en" ? "Case study" : "Case study" },
-          { href: "/research-prototype", label: lang === "en" ? "Research & Prototype" : "Tutkimus ja prototyyppi" },
-          { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
-          { href: "/research", label: "Research Library" },
-          { href: "/scenarios", label: lang === "en" ? "Scenarios" : "Skenaariot" },
-          { href: "/workspace", label: "Workspace" },
-          { href: "/map", label: lang === "en" ? "Explore" : "Tutki" },
-          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
-          { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
-          { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
-        ]}
+        ctaLabel={lang === "fi" ? CTA_SHORT.fi : CTA_SHORT.en}
+        useIaNav
       />
       <main className="gryps-main-under-nav" style={{ paddingBottom: 48 }}>{content}</main>
       <Footer

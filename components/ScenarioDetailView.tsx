@@ -4,12 +4,14 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
+import { Breadcrumbs } from "@/components/Breadcrumbs"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useLang } from "@/lib/use-lang"
 import {
   advisorHrefForScenario,
   type MissionScenario,
 } from "@/lib/mission-scenarios"
+import { NextStepsLinks } from "@/components/NextStepsLinks"
 
 const UI = {
   en: {
@@ -24,7 +26,7 @@ const UI = {
     providers: "Provider considerations",
     architecture: "Architecture framing",
     relatedResearch: "Related Research Library",
-    relatedKnowledge: "Related knowledge",
+    relatedKnowledge: "Related Evidence",
     methodology: "Research methodology →",
     ctaTitle: "Score a site in this scenario",
     ctaBody:
@@ -44,7 +46,7 @@ const UI = {
     providers: "Toimittajanäkökohdat",
     architecture: "Arkkitehtuurikehys",
     relatedResearch: "Liittyvä Research Library",
-    relatedKnowledge: "Liittyvä tieto",
+    relatedKnowledge: "Liittyvä näyttö",
     methodology: "Tutkimusmenetelmä →",
     ctaTitle: "Pisteytä kohde tässä skenaariossa",
     ctaBody:
@@ -90,15 +92,15 @@ export function ScenarioDetailView({ scenario }: { scenario: MissionScenario }) 
         lang={lang}
         onLangChange={setLang}
         ctaHref={advisorHrefForScenario(scenario)}
-        ctaLabel={t.ctaBtn}
-        extraLinks={[
-          { href: "/scenarios", label: lang === "en" ? "Scenarios" : "Skenaariot" },
-          { href: "/research", label: "Research Library" },
-          { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
-        ]}
+        useIaNav
       />
 
       <article className="gryps-page-under-nav" style={{ maxWidth: 760, margin: "0 auto", paddingLeft: 24, paddingRight: 24, paddingBottom: 80 }}>
+        <Breadcrumbs lang={lang} items={[
+          { en: "Explore", fi: "Tutki", href: "/scenarios" },
+          { en: "Scenarios", fi: "Skenaariot", href: "/scenarios" },
+          { en: scenario.title, fi: scenario.titleFi },
+        ]} />
         <Link href="/scenarios" className="gryps-no-print" style={{
           fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)",
           textDecoration: "none", display: "inline-block", marginBottom: 20,
@@ -211,14 +213,25 @@ export function ScenarioDetailView({ scenario }: { scenario: MissionScenario }) 
           </section>
         )}
 
-        <p style={{ marginBottom: 40 }}>
+        <p style={{ marginBottom: 24 }}>
           <Link href="/methodology" style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)", textDecoration: "none" }}>
             {t.methodology}
           </Link>
         </p>
 
+        <NextStepsLinks
+          lang={lang}
+          links={[
+            { href: advisorHrefForScenario(scenario), en: "Assess this scenario", fi: "Arvioi tämä skenaario" },
+            { href: "/map", en: "Explore Map", fi: "Tutki karttaa" },
+            { href: "/providers", en: "Providers", fi: "Toimittajat" },
+            { href: "/knowledge", en: "Evidence", fi: "Näyttö" },
+            { href: "/methodology", en: "Methodology", fi: "Menetelmä" },
+          ]}
+        />
+
         <div className="gryps-no-print" style={{
-          borderTop: "1px solid var(--border)", paddingTop: 40, textAlign: "center",
+          borderTop: "1px solid var(--border)", paddingTop: 40, marginTop: 32, textAlign: "center",
         }}>
           <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 10 }}>
             {t.ctaTitle}

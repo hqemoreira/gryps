@@ -21,8 +21,52 @@
 - **i18n:** EN + FI only; language preference persisted; natural Finnish (not calques).
 - **GitHub front door:** public `README.md` (posture + stack + how to run); architecture stays in this codebook. Proprietary `LICENSE` harmonized with sibling portfolio repos.
 
+## UX architecture — Explore · Assess · Research
+
+GRYPS does **not** need a visual redesign. It needs information architecture and progressive disclosure so visitors always know the next step.
+
+### Primary modes (header)
+
+| Mode | Purpose | Children |
+|------|---------|----------|
+| **Explore** | Connectivity landscape | `/map`, `/providers`, `/research`, `/scenarios` |
+| **Assess** | Run the intelligence engine | `/#advisor`, `/workspace` (UI: Assessments) |
+| **Research** | Understand the model | `/methodology`, `/knowledge` (UI: Evidence), `/data-sources`, `/assumptions`, `/limitations`, `/changelog` |
+
+Source of truth: `lib/ia-nav.ts` (Header, Footer, DocShell).
+
+### Secondary / reference (footer, not peer nav)
+
+`/about`, `/research-prototype`, `/case-study` · Legal: `/terms`, `/privacy`
+
+### Thin / noindex
+
+`/signatures/[slug]` Site XX — map/dev only; not primary nav.
+
+### Homepage role
+
+Orientation + routing — not a catalogue. Hero + Signature sample → mental model → three modes → research dataset strip → example Signatures → Research & Prototype link. Heavy map/ops/drift/methodology prose moves to child routes.
+
+### Signature UX
+
+Progressive disclosure on output: Overview · Risks · Options · Evidence · Method (+ drawers for “Why?”). Type labels: MODEL · DATA · RESEARCH · INTERPRETATION.
+
+### Terminology
+
+| Prefer | Avoid as peer destinations |
+|--------|----------------------------|
+| Explore · Assess · Research | Flat list of 8+ equal links |
+| Evidence (was Knowledge) | Vague “Knowledge” as top-level |
+| Assessments (was Workspace) | “Workspace” as SaaS collab cue |
+| Generate Signature (chrome) | Competing secondary CTAs in header |
+
+### Homepage content moves
+
+See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
+
 ### Changelog — 2026-09
 
+- UX architecture: Explore · Assess · Research modes; shared `lib/ia-nav.ts`; homepage as orientation layer; Signature progressive disclosure.
 - Research & Prototype (`/research-prototype`): public product posture only; `/roadmap` redirects away. Career objectives and personal benefit notes stay out of the product UI.
 - Portfolio case study (`/case-study`); Methodology v0.5 demonstration layer.
 - Research quality docs: `/data-sources`, `/assumptions`, `/limitations`, `/changelog` (Methodology v0.4).

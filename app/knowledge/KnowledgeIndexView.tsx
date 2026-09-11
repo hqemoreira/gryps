@@ -5,20 +5,20 @@ import { KNOWLEDGE_ARTICLES, getKnowledgeLocale } from "@/lib/knowledge-articles
 
 const UI = {
   en: {
-    eyebrow: "GRYPS · KNOWLEDGE",
+    eyebrow: "GRYPS · EVIDENCE",
     h1: "Connectivity intelligence notes",
     intro:
       "Short, citeable explainers for remote Nordic and Arctic satellite connectivity — written for humans and answer engines. Modeled intelligence · not live RF. Each note deep-links to methodology, Explore Connectivity Intelligence, and Generate Resilience Signature.",
-    phase2: "Knowledge",
+    phase2: "Evidence",
     phase3: "Discovery",
     updated: "Updated",
   },
   fi: {
-    eyebrow: "GRYPS · TIETOSISÄLTÖ",
+    eyebrow: "GRYPS · NÄYTTÖ",
     h1: "Yhteysälyn muistiinpanot",
     intro:
       "Lyhyitä, siteerattavia selityksiä pohjoismaisista ja arktisista satelliittiyhteyksistä — ihmisille ja vastausmoottoreille. Mallinnettua älyä · ei reaaliaikaista RF:ää. Jokainen muistiinpano linkittää menetelmään, Connectivity Intelligence -karttaan ja Resilience Signature -luontiin.",
-    phase2: "Tieto",
+    phase2: "Näyttö",
     phase3: "Löydettävyys",
     updated: "Päivitetty",
   },

@@ -31,6 +31,7 @@ export type ResearchDocId =
   | "research-prototype"
   | "methodology"
   | "research"
+  | "knowledge"
   | "data-sources"
   | "assumptions"
   | "limitations"
@@ -45,6 +46,7 @@ export const RESEARCH_DOC_NAV: {
   { id: "research-prototype", href: "/research-prototype", en: "Research & Prototype", fi: "Tutkimus ja prototyyppi" },
   { id: "methodology", href: "/methodology", en: "Methodology", fi: "Menetelmä" },
   { id: "research", href: "/research", en: "Research Library", fi: "Research Library" },
+  { id: "knowledge", href: "/knowledge", en: "Evidence", fi: "Näyttö" },
   { id: "data-sources", href: "/data-sources", en: "Data sources", fi: "Datalähteet" },
   { id: "assumptions", href: "/assumptions", en: "Assumptions", fi: "Oletukset" },
   { id: "limitations", href: "/limitations", en: "Limitations", fi: "Rajoitteet" },

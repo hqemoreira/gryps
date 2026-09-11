@@ -59,7 +59,7 @@ const PROTOTYPE_LINKS = [
   { href: "/map", en: "Connectivity Intelligence map", fi: "Connectivity Intelligence -kartta" },
   { href: "/research", en: "Research Library", fi: "Research Library" },
   { href: "/scenarios", en: "Mission scenarios", fi: "Tehtäväskenaariot" },
-  { href: "/workspace", en: "Research Workspace", fi: "Research Workspace" },
+  { href: "/workspace", en: "Assessments", fi: "Arviot" },
   { href: "/methodology", en: "Methodology & scoring", fi: "Menetelmä ja pisteytys" },
   { href: "/data-sources", en: "Data provenance", fi: "Datan alkuperä" },
   { href: "/limitations", en: "Limitations", fi: "Rajoitteet" },

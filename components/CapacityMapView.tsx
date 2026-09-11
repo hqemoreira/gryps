@@ -4,6 +4,8 @@ import dynamic from "next/dynamic"
 import Link from "next/link"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
+import { Breadcrumbs } from "@/components/Breadcrumbs"
+import { NextStepsLinks } from "@/components/NextStepsLinks"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useTheme } from "@/context/ThemeContext"
 import { useLang } from "@/lib/use-lang"
@@ -97,6 +99,9 @@ const COPY = {
     none: "Select a site on the map to inspect the connectivity environment, then Generate a Resilience Signature.",
     viewResearch: "View research assessment →",
     runAdvisor: "Generate Resilience Signature →",
+    linkScenarios: "Related scenarios",
+    linkProviders: "Providers",
+    assessRegion: "Assess this region",
     empty: "No sites in this filter.",
     navCta: "Generate Resilience Signature",
     methodology: "Methodology",
@@ -130,6 +135,9 @@ const COPY = {
     none: "Valitse karttapiste nähdäksesi yhteysympäristön — ja luo sitten Resilience Signature.",
     viewResearch: "Katso tutkimusarvio →",
     runAdvisor: "Luo Resilience Signature →",
+    linkScenarios: "Liittyvät skenaariot",
+    linkProviders: "Toimittajat",
+    assessRegion: "Arvioi tämä alue",
     empty: "Ei kohteita tällä suodattimella.",
     navCta: "Luo Resilience Signature",
     methodology: "Menetelmä",
@@ -214,12 +222,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
         lang={lang}
         onLangChange={setLang}
         ctaHref="/#advisor"
-        ctaLabel={t.navCta}
-        extraLinks={[
-          { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
-          { href: "/research", label: "Research Library" },
-          { href: "/methodology", label: t.methodology },
-        ]}
+        useIaNav
       />
 
       <div style={{
@@ -227,6 +230,10 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
         padding: "16px 24px 32px", paddingTop: "calc(var(--gryps-header-h, 52px) + 16px)",
         display: "flex", flexDirection: "column", gap: 12,
       }}>
+        <Breadcrumbs lang={lang} items={[
+          { en: "Explore", fi: "Tutki" },
+          { en: "Map", fi: "Kartta" },
+        ]} />
         <div style={{ maxWidth: 820 }}>
           <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em", marginBottom: 6 }}>
             {t.tagline}
@@ -447,6 +454,16 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                       {t.viewResearch}
                     </Link>
                   )}
+                  <NextStepsLinks
+                    lang={lang}
+                    label={lang === "fi" ? "SEURAAVAT ASKELEET" : "NEXT STEPS"}
+                    links={[
+                      { href: advisorHref(selected), en: t.assessRegion, fi: t.assessRegion },
+                      { href: "/scenarios", en: t.linkScenarios, fi: t.linkScenarios },
+                      { href: "/providers", en: t.linkProviders, fi: t.linkProviders },
+                      { href: "/methodology", en: t.methodology, fi: t.methodology },
+                    ]}
+                  />
                 </div>
               </>
             )}

@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
-import { ArrowRight, MapPin, Radio, Shield, Zap, ChevronRight, Globe2, AlertTriangle, LocateFixed, Download } from "lucide-react"
+import { ArrowRight, LocateFixed, Download } from "lucide-react"
 import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
 import { HelpImproveGryps, InitialAssessment, UnlockFullAssessment } from "@/components/AdvisorFunnel"
 import { SaveToWorkspace } from "@/components/SaveToWorkspace"
@@ -11,31 +11,12 @@ import { Footer } from "@/components/Footer"
 import { TopChrome } from "@/components/TopChrome"
 import { grypsCopyright } from "@/lib/gryps-copyright"
 import { useLang } from "@/lib/use-lang"
-import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
-import { researchSlugForExampleId } from "@/lib/research-library"
-import { PROVIDER_INDEX_COUNT } from "@/lib/providers"
-import { DriftMock } from "@/components/DriftMock"
 import { PolarAtmosphere } from "@/components/PolarAtmosphere"
+import { HomeOrientation } from "@/components/HomeOrientation"
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors"
 import { ADVISOR_PROVIDERS, providersToSetupString, scoreDeterministic } from "@/lib/deterministic-score"
 import { ADVISOR_PRIORITIES, PRIORITY_LABELS, type AdvisorPriorityId } from "@/lib/advisor-priorities"
 import { MODEL_VERSION } from "@/lib/signature-meta"
-import dynamic from "next/dynamic"
-
-const OpsConsoleMap = dynamic(
-  () => import("@/components/OpsConsoleMap").then(m => m.OpsConsoleMap),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="gryps-ops-map-shell" style={{
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.1em",
-      }}>
-        LOADING OPS MAP…
-      </div>
-    ),
-  },
-)
 
 function gradeBadgeBg(grade: string): string {
   const c = gradeColor(grade)
@@ -66,40 +47,6 @@ function FadeUp({ children, className = "" }: { children: ReactNode; className?:
   return (
     <div ref={ref} className={`gryps-fade-up ${className}`.trim()}>
       {children}
-    </div>
-  )
-}
-
-function LazyOpsMap({ lang }: { lang: "en" | "fi" }) {
-  const hostRef = useRef<HTMLDivElement>(null)
-  const [ready, setReady] = useState(false)
-  useEffect(() => {
-    const el = hostRef.current
-    if (!el) return
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setReady(true)
-          io.disconnect()
-        }
-      },
-      { rootMargin: "200px 0px" },
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
-  return (
-    <div ref={hostRef}>
-      {ready ? (
-        <OpsConsoleMap lang={lang} />
-      ) : (
-        <div className="gryps-ops-map-shell" style={{
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", letterSpacing: "0.1em",
-        }}>
-          OPS MAP · SCROLL TO LOAD
-        </div>
-      )}
     </div>
   )
 }
@@ -1140,9 +1087,10 @@ const COPY = {
     tag:        "CONNECTIVITY INTELLIGENCE · NORDIC, ARCTIC & ICELAND",
     navCta:     "Generate Resilience Signature",
     h1:         "Know your score before the Arctic finds it for you.",
-    sub:        "A Resilience Signature — score, grade, and ranked options for Nordic, Arctic, and Icelandic sites — in ~60 seconds.",
+    clarify:    "Assess connectivity resilience for remote Nordic, Arctic and high-latitude operations.",
+    sub:        "A Resilience Signature — score, grade and ranked connectivity options for Nordic, Arctic and Icelandic sites.",
     scoreLabel: "Score: {score}/100 · Grade {grade}",
-    heroSecondary: "See a sample Signature",
+    heroSecondary: "Explore the Map",
     modelChip:  "Research prototype · Non-commercial · Model-based analysis",
     sampleCta:  "See a sample Signature",
     nis2line:   "Supports NIS2/CER readiness documentation · Espoo, Finland · R&D prototype",
@@ -1210,9 +1158,10 @@ const COPY = {
     tag:        "CONNECTIVITY INTELLIGENCE · POHJOISMAAT · ARKTIS · ISLANTI",
     navCta:     "Luo Resilience Signature",
     h1:         "Tiedä pisteesi ennen kuin arktiset olosuhteet tekevät sen puolestasi.",
-    sub:        "Resilience Signature — pisteet, arvosana ja suositukset pohjoismaisille, arktisille ja islantilaisille kohteille — noin minuutissa.",
+    clarify:    "Arvioi yhteyden resilienssiä etäisissä pohjoismaisissa, arktisissa ja korkeiden leveysasteiden toiminnoissa.",
+    sub:        "Resilience Signature — pisteet, arvosana ja sijoitetut yhteysvaihtoehdot pohjoismaisille, arktisille ja islantilaisille kohteille.",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
-    heroSecondary: "Katso esimerkki-Signature",
+    heroSecondary: "Tutki karttaa",
     modelChip:  "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi",
     sampleCta:  "Katso esimerkki-Signature",
     nis2line:   "Tukee NIS2/CER-valmiusdokumentaatiota · Espoo, Suomi · T&K-prototyyppi",
@@ -1279,64 +1228,6 @@ const COPY = {
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
-function exampleHref(ex: (typeof EXAMPLE_SIGNATURES)[number]): string {
-  const researchSlug = researchSlugForExampleId(ex.id)
-  if (researchSlug) return `/research/${researchSlug}`
-  const p = new URLSearchParams()
-  if (ex.input.lat != null) p.set("lat", String(ex.input.lat))
-  if (ex.input.lng != null) p.set("lng", String(ex.input.lng))
-  if (ex.input.sector) p.set("sector", ex.input.sector)
-  if (ex.input.autonomy_level) p.set("autonomy", ex.input.autonomy_level)
-  if (ex.input.operation_criticality) p.set("criticality", ex.input.operation_criticality)
-  return `/?${p.toString()}#advisor`
-}
-
-function ExampleCard({
-  ex, lang, viewSample,
-}: {
-  ex: (typeof EXAMPLE_SIGNATURES)[number]
-  lang: "en" | "fi"
-  viewSample: string
-}) {
-  const grade = ex.result.resilience_signature.grade
-  const gc = gradeTextColor(grade)
-  const border = gradeColor(grade)
-  return (
-    <a
-      href={exampleHref(ex)}
-      className="gryps-example-card"
-      style={{ borderLeftColor: border }}
-    >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
-        <span
-          className="gryps-grade-badge"
-          style={{ color: gc, backgroundColor: gradeBadgeBg(grade), border: `1px solid ${border}44` }}
-        >
-          {ex.result.resilience_signature.score} · {grade}
-        </span>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", letterSpacing: "0.06em" }}>
-          {ex.input.sector?.toUpperCase()}
-        </span>
-      </div>
-      <p className="text-title" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 8, fontSize: "var(--text-title)" }}>
-        {lang === "fi" ? ex.titleFi : ex.title}
-      </p>
-      <p className="text-small" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", marginBottom: 12 }}>
-        {ex.result.resilience_signature.summary}
-      </p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "4px 8px", borderRadius: 6 }}>
-          {ex.input.autonomy_level}
-        </span>
-        <span style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--text-dim)", backgroundColor: "var(--surface2)", padding: "4px 8px", borderRadius: 6 }}>
-          {ex.input.operation_criticality}
-        </span>
-      </div>
-      <div className="gryps-example-reveal">{viewSample}</div>
-    </a>
-  )
-}
-
 export default function HomePage() {
   const [lang, setLang] = useLang()
   const [siteCount, setSiteCount] = useState<number | null>(null)
@@ -1394,17 +1285,7 @@ export default function HomePage() {
           lang={lang}
           onLangChange={setLang}
           ctaHref="#advisor"
-          ctaLabel={t.navCta}
-          extraLinks={[
-            { href: "/about", label: lang === "en" ? "About" : "Tietoa" },
-            { href: "/research", label: "Research Library" },
-            { href: "/scenarios", label: lang === "en" ? "Scenarios" : "Skenaariot" },
-            { href: "/workspace", label: lang === "en" ? "Workspace" : "Workspace" },
-            { href: "/map", label: lang === "en" ? "Explore" : "Tutki" },
-            { href: "/methodology", label: lang === "en" ? "Methodology" : "Menetelmä" },
-            { href: "/knowledge", label: lang === "en" ? "Knowledge" : "Tieto" },
-            { href: "/providers", label: lang === "en" ? "Providers" : "Toimittajat" },
-          ]}
+          useIaNav
         />
       </TopChrome>
 
@@ -1439,11 +1320,15 @@ export default function HomePage() {
                 lineHeight: 1.08,
                 letterSpacing: "-0.02em",
                 color: "var(--text)",
-                marginBottom: 20,
+                marginBottom: 12,
                 maxWidth: lang === "fi" ? "min(100%, 24ch)" : "13ch",
               }}>
                 {t.h1}
               </h1>
+
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 15, fontWeight: 500, color: "var(--text)", maxWidth: "42ch", marginBottom: 12, lineHeight: 1.55 }}>
+                {t.clarify}
+              </p>
 
               <p className="gryps-hero-sub text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", maxWidth: "42ch", marginBottom: 28, lineHeight: 1.65 }}>
                 {t.sub}
@@ -1453,7 +1338,7 @@ export default function HomePage() {
                 <a href="#advisor" className="gryps-cta-btn">
                   {t.advisorCta} <ArrowRight size={14} />
                 </a>
-                <a href="#examples" className="gryps-secondary-btn">
+                <a href="/map" className="gryps-secondary-btn">
                   {t.heroSecondary}
                 </a>
               </div>
@@ -1462,25 +1347,10 @@ export default function HomePage() {
                 display: "inline-block", fontFamily: "var(--font-data)", fontSize: "var(--text-label)",
                 color: "var(--accent-amber)", letterSpacing: "0.06em",
                 backgroundColor: "rgba(245,184,74,0.08)", border: "1px solid rgba(245,184,74,0.25)",
-                borderRadius: 6, padding: "4px 10px", marginBottom: 24,
+                borderRadius: 6, padding: "4px 10px", marginBottom: 8,
               }}>
                 {modelChip}
               </span>
-
-              {siteCount !== null && (
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-                  <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--accent-green)", boxShadow: "0 0 8px var(--accent-green)" }} />
-                  <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--accent-green)", letterSpacing: "0.04em" }}>
-                    {siteCount} {t.liveCounter}
-                  </span>
-                </div>
-              )}
-
-              <div className="gryps-stats-row gryps-stats-row-hero" style={{ display: "flex", gap: 40, paddingTop: 8, borderTop: "1px solid var(--border)" }}>
-                <Stat value={`${PROVIDER_INDEX_COUNT}`} label={t.statsL1} href="/providers" />
-                <Stat value="LEO–MEO–GEO" label={t.statsL2} />
-                <Stat value="70°N+" label={t.statsL3} />
-              </div>
             </div>
 
             <div className="gryps-hero-signature-col" style={{
@@ -1504,24 +1374,8 @@ export default function HomePage() {
       <LatitudeRuler />
       <TrustStrip lang={lang} />
 
-      {/* Problem strip */}
       <FadeUp>
-        <section className="gryps-section gryps-section-pad gryps-no-print" style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--surface)" }}>
-          <div className="gryps-content">
-            <p className="label" style={{ textAlign: "center", marginBottom: 36 }}>{t.problemL}</p>
-            <div className="gryps-problem-grid-responsive">
-              {t.problems.map((item, i) => (
-                <div key={i} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    {[<Shield key="s" size={16} color="var(--accent-blue)" />, <AlertTriangle key="a" size={16} color="var(--accent-amber)" />, <Globe2 key="g" size={16} color="var(--accent-cyan)" />][i]}
-                    <span className="text-title" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", fontSize: "var(--text-title)" }}>{item.title}</span>
-                  </div>
-                  <p className="text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", fontSize: "var(--text-small)" }}>{item.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <HomeOrientation lang={lang} siteCount={siteCount} />
       </FadeUp>
 
       {/* Live Advisor */}
@@ -1540,105 +1394,6 @@ export default function HomePage() {
         </section>
       </FadeUp>
 
-      {/* How it works */}
-      <FadeUp>
-        <section className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)" }}>
-          <div className="gryps-content">
-            <p className="label" style={{ marginBottom: 32 }}>{t.howL}</p>
-            <div className="gryps-steps-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-              {t.steps.map((step, i) => {
-                const icons = [<MapPin key="mp" size={16} color="var(--accent-blue)" />, <Radio key="r" size={16} color="var(--accent-blue)" />, <Zap key="z" size={16} color="var(--accent-blue)" />, <ChevronRight key="cr" size={16} color="var(--accent-blue)" />]
-                return (
-                  <div key={step.n} className="surface-card" style={{ padding: 22 }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                      {icons[i]}
-                      <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)" }}>{step.n}</span>
-                    </div>
-                    <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "var(--text-title)", color: "var(--text)", marginBottom: 8 }}>{step.title}</p>
-                    <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--text-small)", color: "var(--text-muted)", lineHeight: 1.6 }}>{step.body}</p>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-      </FadeUp>
-
-      {/* Example signatures */}
-      <FadeUp>
-        <section id="examples" className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)" }}>
-          <div className="gryps-content">
-            <p className="gryps-proof-band-label">{t.proofBand}</p>
-            <p className="label" style={{ marginBottom: 10 }}>{t.examplesLabel}</p>
-            <p className="text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", marginBottom: 28, maxWidth: 560, fontSize: "var(--text-small)" }}>{t.examplesSub}</p>
-
-            <div className="gryps-examples-grid">
-              {EXAMPLE_SIGNATURES.map(ex => (
-                <ExampleCard key={ex.id} ex={ex} lang={lang} viewSample={t.viewSample} />
-              ))}
-            </div>
-            <div className="gryps-examples-snap">
-              {EXAMPLE_SIGNATURES.map(ex => (
-                <ExampleCard key={`snap-${ex.id}`} ex={ex} lang={lang} viewSample={t.viewSample} />
-              ))}
-            </div>
-            <p style={{ marginTop: 24, display: "flex", flexWrap: "wrap", gap: 16 }}>
-              <a href="/research" style={{
-                fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
-                color: "var(--accent-blue)", textDecoration: "none",
-              }}>
-                {lang === "en" ? "Browse Research Library →" : "Selaa Research Librarya →"}
-              </a>
-              <a href="/scenarios" style={{
-                fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600,
-                color: "var(--accent-blue)", textDecoration: "none",
-              }}>
-                {t.scenariosLink}
-              </a>
-            </p>
-          </div>
-        </section>
-      </FadeUp>
-
-      {/* Full-bleed ops map */}
-      <FadeUp>
-        <section className="gryps-ops-band gryps-no-print">
-          <div className="gryps-content gryps-section-pad">
-            <div className="gryps-polar-instrument">
-              <div className="gryps-polar-instrument-figure">
-                <PolarAtmosphere variant="full" animate interactive className="gryps-polar-figure" />
-              </div>
-              <div className="gryps-polar-instrument-copy">
-                <p className="gryps-proof-band-label">{t.proofBand}</p>
-                <p className="label" style={{ marginBottom: 8 }}>
-                  {lang === "en" ? "OPS CONSOLE · EXAMPLE SITES" : "OPS-KONSOLI · ESIMERKKIKOHTEET"}
-                </p>
-                <h3 className="gryps-polar-instrument-title">
-                  {t.polarInstrumentTitle}
-                </h3>
-                <p className="gryps-polar-instrument-body">
-                  {t.polarInstrumentBody}
-                </p>
-                <ul className="gryps-polar-instrument-facts">
-                  <li>{t.polarFact1}</li>
-                  <li>{t.polarFact2}</li>
-                </ul>
-                <a href="/methodology" className="gryps-polar-instrument-link">{t.polarMethodLink}</a>
-                <a href="/map" className="gryps-polar-instrument-link" style={{ display: "block", marginTop: 8 }}>{t.capacityMapLink}</a>
-                <p className="gryps-polar-instrument-meta">
-                  {t.polarMapLabel}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <LazyOpsMap lang={lang} />
-          <div className="gryps-content gryps-section-pad" style={{ paddingTop: 24, paddingBottom: "var(--section-y)" }}>
-            <DriftMock lang={lang} />
-          </div>
-        </section>
-      </FadeUp>
-
       {/* CTA */}
       <FadeUp>
         <section className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", textAlign: "center" }}>
@@ -1649,9 +1404,14 @@ export default function HomePage() {
           <p className="text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", margin: "0 auto 32px", maxWidth: 480, fontSize: "var(--text-small)" }}>
             {t.ctaSub}
           </p>
-          <a href="#advisor" className="gryps-cta-btn">
-            {t.ctaBtn} <ArrowRight size={14} />
+          <a href="#advisor" className="gryps-cta-btn" style={{ display: "inline-flex" }}>
+            {t.advisorCta} <ArrowRight size={14} />
           </a>
+          <p style={{ marginTop: 20 }}>
+            <a href="/research-prototype" style={{ fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600, color: "var(--accent-blue)", textDecoration: "none" }}>
+              {lang === "en" ? "Research & Prototype →" : "Tutkimus ja prototyyppi →"}
+            </a>
+          </p>
         </section>
       </FadeUp>
 

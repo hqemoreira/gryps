@@ -9,23 +9,25 @@ import {
 
 const UI = {
   en: {
-    eyebrow: "GRYPS · KNOWLEDGE",
+    eyebrow: "GRYPS · EVIDENCE",
     related: "Related notes",
-    index: "All knowledge notes",
+    index: "All Evidence notes",
     methodology: "Scoring methodology",
-    map: "Explore",
+    map: "Explore Map",
     advisor: "Generate Resilience Signature",
-    providers: "Provider index",
+    providers: "Providers",
+    scenarios: "Scenarios",
     updated: "Updated",
   },
   fi: {
-    eyebrow: "GRYPS · TIETOSISÄLTÖ",
+    eyebrow: "GRYPS · NÄYTTÖ",
     related: "Aiheeseen liittyvät",
-    index: "Kaikki tietomuistiinpanot",
+    index: "Kaikki näyttömuistiinpanot",
     methodology: "Pisteytysmenetelmä",
-    map: "Tutki",
+    map: "Tutki karttaa",
     advisor: "Luo Resilience Signature",
-    providers: "Toimittajahakemisto",
+    providers: "Toimittajat",
+    scenarios: "Skenaariot",
     updated: "Päivitetty",
   },
 } as const
@@ -80,6 +82,8 @@ function KnowledgeArticleBody({ article, lang }: { article: KnowledgeArticle; la
         <Link href="/map" style={{ color: "var(--accent-blue)" }}>{ui.map}</Link>
         {" · "}
         <Link href="/#advisor" style={{ color: "var(--accent-blue)" }}>{ui.advisor}</Link>
+        {" · "}
+        <Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>{ui.scenarios}</Link>
         {" · "}
         <Link href="/methodology" style={{ color: "var(--accent-blue)" }}>{ui.methodology}</Link>
         {" · "}
