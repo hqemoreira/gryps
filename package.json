@@ -18,18 +18,18 @@
     "seo:weekly-comment": "npx --yes tsx scripts/seo/format-weekly-comment.ts"
   },
   "dependencies": {
-    "@mistralai/mistralai": "^2.4.1",
+    "@mistralai/mistralai": "^2.7.0",
     "@neondatabase/serverless": "^1.1.0",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/semantic-conventions": "^1.43.0",
     "@vercel/analytics": "^2.0.1",
     "adm-zip": "^0.6.0",
     "leaflet": "^1.9.4",
-    "lucide-react": "^1.22.0",
-    "maplibre-gl": "^6.7.0",
+    "lucide-react": "^1.45.0",
+    "maplibre-gl": "^6.9.0",
     "next": "^16.3.5",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
     "react-leaflet": "^5.0.0",
     "resend": "^6.27.0"
   },
