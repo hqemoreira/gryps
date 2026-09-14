@@ -1,23 +1,23 @@
-import { Mistral } from "@mistralai/mistralai"
-import { normalizePriorities } from "@/lib/advisor-priorities"
-import { scoreDeterministic, type ScoreInput } from "@/lib/deterministic-score"
-import { applyHardRules, versionSignature } from "@/lib/signature-meta"
-import type { AdvisoryResult } from "@/lib/resilience-colors"
+import { Mistral } from "@mistralai/mistralai";
+import { normalizePriorities } from "@/lib/advisor-priorities";
+import { scoreDeterministic, type ScoreInput } from "@/lib/deterministic-score";
+import { applyHardRules, versionSignature } from "@/lib/signature-meta";
+import type { AdvisoryResult } from "@/lib/resilience-colors";
 
-export type ResilienceOutput = AdvisoryResult
+export type ResilienceOutput = AdvisoryResult;
 
 type AdviseBody = {
-  site_coordinates?: { lat?: number; lng?: number }
-  vertical?: string
-  sector?: string
-  current_setup?: string
-  providers?: string[]
-  autonomy_level?: string
-  operation_criticality?: string
-  elevation_m?: number
-  priorities?: string[]
-  email?: string
-}
+  site_coordinates?: { lat?: number; lng?: number };
+  vertical?: string;
+  sector?: string;
+  current_setup?: string;
+  providers?: string[];
+  autonomy_level?: string;
+  operation_criticality?: string;
+  elevation_m?: number;
+  priorities?: string[];
+  email?: string;
+};
 
 function toScoreInput(body: AdviseBody): ScoreInput {
   return {
@@ -30,14 +30,14 @@ function toScoreInput(body: AdviseBody): ScoreInput {
     current_setup: body.current_setup,
     elevation_m: body.elevation_m,
     priorities: normalizePriorities(body.priorities),
-  }
+  };
 }
 
 /** Optional prose enrichment — never overrides numeric score / structured fields. */
 async function enrichRecommendation(base: AdvisoryResult, body: AdviseBody): Promise<string> {
-  if (!process.env.MISTRAL_API_KEY) return base.recommendation
+  if (!process.env.MISTRAL_API_KEY) return base.recommendation;
   try {
-    const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY })
+    const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
     const response = await client.chat.complete({
       model: "mistral-small-latest",
       messages: [
@@ -62,13 +62,13 @@ async function enrichRecommendation(base: AdvisoryResult, body: AdviseBody): Pro
         },
       ],
       temperature: 0.3,
-    })
-    const text = response.choices?.[0]?.message?.content
-    if (typeof text === "string" && text.trim().length > 20) return text.trim()
+    });
+    const text = response.choices?.[0]?.message?.content;
+    if (typeof text === "string" && text.trim().length > 20) return text.trim();
   } catch (err) {
-    console.error("Mistral prose enrichment skipped:", err)
+    console.error("Mistral prose enrichment skipped:", err);
   }
-  return base.recommendation
+  return base.recommendation;
 }
 
 /**
@@ -76,8 +76,8 @@ async function enrichRecommendation(base: AdvisoryResult, body: AdviseBody): Pro
  * Used by /api/advise and site seeding.
  */
 export async function scoreSite(body: object): Promise<ResilienceOutput> {
-  const input = body as AdviseBody
-  const det = scoreDeterministic(toScoreInput(input))
+  const input = body as AdviseBody;
+  const det = scoreDeterministic(toScoreInput(input));
   const structured: AdvisoryResult = {
     resilience_signature: det.resilience_signature,
     risk_factors: det.risk_factors,
@@ -89,12 +89,12 @@ export async function scoreSite(body: object): Promise<ResilienceOutput> {
     score_composition: det.score_composition,
     intelligence: det.intelligence,
     evidence: det.evidence,
-  }
+  };
 
   const withProse: AdvisoryResult = {
     ...structured,
     recommendation: await enrichRecommendation(structured, input),
-  }
+  };
 
   return versionSignature(
     applyHardRules(withProse, {
@@ -103,14 +103,14 @@ export async function scoreSite(body: object): Promise<ResilienceOutput> {
       current_setup: input.current_setup,
       providers: input.providers,
     }),
-    body,
-  ) as ResilienceOutput
+    body
+  ) as ResilienceOutput;
 }
 
 /** Sync path for tests / seeding without awaiting prose */
 export function scoreSiteSync(body: object): ResilienceOutput {
-  const input = body as AdviseBody
-  const det = scoreDeterministic(toScoreInput(input))
+  const input = body as AdviseBody;
+  const det = scoreDeterministic(toScoreInput(input));
   const structured: AdvisoryResult = {
     resilience_signature: det.resilience_signature,
     risk_factors: det.risk_factors,
@@ -122,7 +122,7 @@ export function scoreSiteSync(body: object): ResilienceOutput {
     score_composition: det.score_composition,
     intelligence: det.intelligence,
     evidence: det.evidence,
-  }
+  };
   return versionSignature(
     applyHardRules(structured, {
       autonomy_level: input.autonomy_level,
@@ -130,6 +130,6 @@ export function scoreSiteSync(body: object): ResilienceOutput {
       current_setup: input.current_setup,
       providers: input.providers,
     }),
-    body,
-  ) as ResilienceOutput
+    body
+  ) as ResilienceOutput;
 }

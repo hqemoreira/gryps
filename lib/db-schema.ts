@@ -1,6 +1,6 @@
-import { neon, type NeonQueryFunction } from "@neondatabase/serverless"
+import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 
-type Sql = NeonQueryFunction<false, false>
+type Sql = NeonQueryFunction<false, false>;
 
 export async function ensureAdvisorSchema(sql: Sql): Promise<void> {
   await sql`
@@ -15,10 +15,10 @@ export async function ensureAdvisorSchema(sql: Sql): Promise<void> {
       lat                 DOUBLE PRECISION,
       lng                 DOUBLE PRECISION
     )
-  `
-  await sql`ALTER TABLE advisor_submissions ADD COLUMN IF NOT EXISTS ip TEXT`
-  await sql`ALTER TABLE advisor_submissions ADD COLUMN IF NOT EXISTS use_case TEXT`
-  await sql`ALTER TABLE advisor_submissions ADD COLUMN IF NOT EXISTS unlocked_at TIMESTAMPTZ`
+  `;
+  await sql`ALTER TABLE advisor_submissions ADD COLUMN IF NOT EXISTS ip TEXT`;
+  await sql`ALTER TABLE advisor_submissions ADD COLUMN IF NOT EXISTS use_case TEXT`;
+  await sql`ALTER TABLE advisor_submissions ADD COLUMN IF NOT EXISTS unlocked_at TIMESTAMPTZ`;
 }
 
 export async function ensureNotifySchema(sql: Sql): Promise<void> {
@@ -34,9 +34,9 @@ export async function ensureNotifySchema(sql: Sql): Promise<void> {
       locale          TEXT,
       intent          TEXT DEFAULT 'unlock'
     )
-  `
+  `;
 }
 
 export function getSql() {
-  return neon(process.env.NEON_DATABASE_URL!)
+  return neon(process.env.NEON_DATABASE_URL!);
 }

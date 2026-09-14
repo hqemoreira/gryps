@@ -1,28 +1,28 @@
-import type { Lang } from "@/lib/use-lang"
+import type { Lang } from "@/lib/use-lang";
 
-export type KnowledgePhase = "2-knowledge" | "3-discovery"
+export type KnowledgePhase = "2-knowledge" | "3-discovery";
 
 export type KnowledgeLocale = {
-  title: string
-  description: string
-  h1: string
-  question: string
-  shortAnswer: string
-  sections: { h2: string; body: string }[]
-  limitationsH2: string
-  limitations: string[]
-  ctaH2: string
-  ctaBody: string
-}
+  title: string;
+  description: string;
+  h1: string;
+  question: string;
+  shortAnswer: string;
+  sections: { h2: string; body: string }[];
+  limitationsH2: string;
+  limitations: string[];
+  ctaH2: string;
+  ctaBody: string;
+};
 
 export type KnowledgeArticle = {
-  slug: string
-  primaryKeyword: string
-  phase: KnowledgePhase
-  updated: string
-  en: KnowledgeLocale
-  fi: KnowledgeLocale
-}
+  slug: string;
+  primaryKeyword: string;
+  phase: KnowledgePhase;
+  updated: string;
+  en: KnowledgeLocale;
+  fi: KnowledgeLocale;
+};
 
 export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
   {
@@ -35,7 +35,8 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       description:
         "How Arctic latitude, orbital geometry, and single-provider setups affect satellite connectivity resilience. Modeled intelligence from GRYPS — not live RF coverage.",
       h1: "Satellite connectivity in the Arctic",
-      question: "What should remote Arctic operations verify before relying on satellite connectivity?",
+      question:
+        "What should remote Arctic operations verify before relying on satellite connectivity?",
       shortAnswer:
         "Verify orbital mix (LEO / MEO / GEO), latitude impact on elevation and redundancy, and whether a single provider creates an unacceptable single point of failure. GRYPS scores those factors deterministically as a Resilience Signature — an assessment at a timestamp, not live monitoring.",
       sections: [
@@ -59,14 +60,16 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         "Not insurance, certification, or legal advice.",
       ],
       ctaH2: "Next step",
-      ctaBody: "Explore modeled regions via Connectivity Intelligence, then Generate Resilience Signature in the Advisor.",
+      ctaBody:
+        "Explore modeled regions via Connectivity Intelligence, then Generate Resilience Signature in the Advisor.",
     },
     fi: {
       title: "Satelliittiyhteydet Arktiksella — mitä etätoimintojen tulee tarkistaa",
       description:
         "Miten arktinen leveysaste, rataluokat ja yhden toimittajan asetelma vaikuttavat satelliittiyhteyksien resilienssiin. GRYPS:n mallinnettua älyä — ei reaaliaikaista RF-kattavuutta.",
       h1: "Satelliittiyhteydet Arktiksella",
-      question: "Mitä arktisten etätoimintojen tulisi tarkistaa ennen kuin satelliittiyhteyteen nojataan?",
+      question:
+        "Mitä arktisten etätoimintojen tulisi tarkistaa ennen kuin satelliittiyhteyteen nojataan?",
       shortAnswer:
         "Tarkista rataluokkien yhdistelmä (LEO / MEO / GEO), leveysasteen vaikutus elevaatioon ja redundanssiin sekä se, muodostaako yksi toimittaja liian suuren yksittäisen vikaantumispisteen. GRYPS pisteyttää nämä deterministisesti Resilience Signature -arviona — arvio ajanhetkellä, ei reaaliaikaista seurantaa.",
       sections: [
@@ -90,7 +93,8 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         "Ei vakuutusta, sertifiointia eikä oikeudellista neuvontaa.",
       ],
       ctaH2: "Seuraava askel",
-      ctaBody: "Tutki mallinnettuja alueita Capacity-kartalla ja aja sitten kohdearvio Advisorissa.",
+      ctaBody:
+        "Tutki mallinnettuja alueita Capacity-kartalla ja aja sitten kohdearvio Advisorissa.",
     },
   },
   {
@@ -203,7 +207,8 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         "Not a substitute for forestry OEM or integrator engineering.",
       ],
       ctaH2: "Next step",
-      ctaBody: "Open Explore Connectivity Intelligence for Nordic context, then Generate Resilience Signature for a forestry site.",
+      ctaBody:
+        "Open Explore Connectivity Intelligence for Nordic context, then Generate Resilience Signature for a forestry site.",
     },
     fi: {
       title: "Metsätalouden satelliittiyhteydet Suomessa",
@@ -234,7 +239,8 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         "Ei korvaa metsäkone-OEM:n tai integraattorin suunnittelua.",
       ],
       ctaH2: "Seuraava askel",
-      ctaBody: "Avaa Capacity-kartta pohjoismaiseen kontekstiin ja pisteytä metsäkohde Advisorissa.",
+      ctaBody:
+        "Avaa Capacity-kartta pohjoismaiseen kontekstiin ja pisteytä metsäkohde Advisorissa.",
     },
   },
   {
@@ -339,7 +345,8 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         "Early SEO demand signal — treat as editorial knowledge, not proof of search volume.",
       ],
       ctaH2: "Next step",
-      ctaBody: "Score a forestry logistics site, then read Finland-focused forestry connectivity guidance.",
+      ctaBody:
+        "Score a forestry logistics site, then read Finland-focused forestry connectivity guidance.",
     },
     fi: {
       title: "Metsälogistiikan yhteydet — resilienssi ennen tienvarren katkoa",
@@ -370,19 +377,20 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         "Varhainen SEO-signaali — editorial-tietosisältö, ei todiste hakumäärästä.",
       ],
       ctaH2: "Seuraava askel",
-      ctaBody: "Luo Resilience Signature metsälogistiikkakohteelle ja lue sitten Suomen metsäyhteysopas.",
+      ctaBody:
+        "Luo Resilience Signature metsälogistiikkakohteelle ja lue sitten Suomen metsäyhteysopas.",
     },
   },
-]
+];
 
 export function getKnowledgeArticle(slug: string): KnowledgeArticle | undefined {
-  return KNOWLEDGE_ARTICLES.find((a) => a.slug === slug)
+  return KNOWLEDGE_ARTICLES.find((a) => a.slug === slug);
 }
 
 export function getKnowledgeLocale(article: KnowledgeArticle, lang: Lang): KnowledgeLocale {
-  return lang === "fi" ? article.fi : article.en
+  return lang === "fi" ? article.fi : article.en;
 }
 
 export function knowledgeSlugs(): string[] {
-  return KNOWLEDGE_ARTICLES.map((a) => a.slug)
+  return KNOWLEDGE_ARTICLES.map((a) => a.slug);
 }

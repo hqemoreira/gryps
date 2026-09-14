@@ -4,22 +4,22 @@
  * See CODEBOOK.md “UX architecture”.
  */
 
-export type IaModeId = "explore" | "assess" | "research"
+export type IaModeId = "explore" | "assess" | "research";
 
 export type IaNavItem = {
-  href: string
-  en: string
-  fi: string
-  descEn: string
-  descFi: string
-}
+  href: string;
+  en: string;
+  fi: string;
+  descEn: string;
+  descFi: string;
+};
 
 export type IaMode = {
-  id: IaModeId
-  en: string
-  fi: string
-  items: IaNavItem[]
-}
+  id: IaModeId;
+  en: string;
+  fi: string;
+  items: IaNavItem[];
+};
 
 /** Primary modes in the header. */
 export const IA_MODES: IaMode[] = [
@@ -128,7 +128,7 @@ export const IA_MODES: IaMode[] = [
       },
     ],
   },
-]
+];
 
 /** Footer / secondary — not peer to Explore · Assess · Research. */
 export const IA_REFERENCE: IaNavItem[] = [
@@ -153,26 +153,26 @@ export const IA_REFERENCE: IaNavItem[] = [
     descEn: "Portfolio demonstration",
     descFi: "Portfoliodemonstraatio",
   },
-]
+];
 
 export const IA_LEGAL: { href: string; en: string; fi: string }[] = [
   { href: "/terms", en: "Terms", fi: "Ehdot" },
   { href: "/privacy", en: "Privacy", fi: "Tietosuoja" },
-]
+];
 
 /** Short chrome CTA; hero/forms keep the full phrase. */
-export const CTA_SHORT = { en: "Generate Signature", fi: "Luo Signature" } as const
+export const CTA_SHORT = { en: "Generate Signature", fi: "Luo Signature" } as const;
 export const CTA_FULL = {
   en: "Generate Resilience Signature",
   fi: "Luo Resilience Signature",
-} as const
+} as const;
 
 export function labelFor(item: { en: string; fi: string }, lang: "en" | "fi") {
-  return lang === "fi" ? item.fi : item.en
+  return lang === "fi" ? item.fi : item.en;
 }
 
 export function descFor(item: IaNavItem, lang: "en" | "fi") {
-  return lang === "fi" ? item.descFi : item.descEn
+  return lang === "fi" ? item.descFi : item.descEn;
 }
 
 /** Homepage content that should leave the landing page (link-only). */
@@ -181,4 +181,4 @@ export const HOMEPAGE_CONTENT_MOVES = [
   "Long “why sites fail” education → Research (methodology / evidence)",
   "Signature drift demo → Assessments (/workspace) or Research",
   "Dense methodology prose → /methodology",
-] as const
+] as const;

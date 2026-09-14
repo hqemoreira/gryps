@@ -1,6 +1,6 @@
-import type { Metadata } from "next"
-import { CaseStudyView } from "./CaseStudyView"
-import { METHODOLOGY_LABEL } from "@/lib/model-constants"
+import type { Metadata } from "next";
+import { CaseStudyView } from "./CaseStudyView";
+import { METHODOLOGY_LABEL } from "@/lib/model-constants";
 
 export const metadata: Metadata = {
   title: "Case Study — GRYPS Connectivity Intelligence Research Prototype",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     description:
       "A portfolio case study of research, data modelling, scoring logic, and interactive decision-support for high-latitude satellite connectivity.",
   },
-}
+};
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -28,13 +28,16 @@ const jsonLd = {
   about: "Satellite connectivity resilience decision support",
   url: "https://gryps.vercel.app/case-study",
   version: METHODOLOGY_LABEL,
-}
+};
 
 export default function CaseStudyPage() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <CaseStudyView />
     </>
-  )
+  );
 }

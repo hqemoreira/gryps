@@ -1,31 +1,36 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
-import * as maplibregl from "maplibre-gl"
-import type { Map, Marker } from "maplibre-gl"
-import "maplibre-gl/dist/maplibre-gl.css"
-import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures"
-import { researchSlugForExampleId } from "@/lib/research-library"
-import { addOpsDecorLayers, darkOpsStyle, modelBasemapChip, OPS_MAP_CSS } from "@/lib/ops-map-style"
+import { useEffect, useRef } from "react";
+import * as maplibregl from "maplibre-gl";
+import type { Map, Marker } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures";
+import { researchSlugForExampleId } from "@/lib/research-library";
+import {
+  addOpsDecorLayers,
+  darkOpsStyle,
+  modelBasemapChip,
+  OPS_MAP_CSS,
+} from "@/lib/ops-map-style";
 
-const HERO_SITE = { lat: 68.2, lng: 27.4, label: "Lapland · hero site" }
+const HERO_SITE = { lat: 68.2, lng: 27.4, label: "Lapland · hero site" };
 
 function gradePinColor(grade: string): string {
-  if (grade === "A" || grade === "B") return "#2ED47A"
-  if (grade === "C") return "#D97706"
-  return "#EF4444"
+  if (grade === "A" || grade === "B") return "#2ED47A";
+  if (grade === "C") return "#D97706";
+  return "#EF4444";
 }
 
 export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const mapRef = useRef<Map | null>(null)
-  const markersRef = useRef<Marker[]>([])
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<Map | null>(null);
+  const markersRef = useRef<Marker[]>([]);
 
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return
+    if (!containerRef.current || mapRef.current) return;
 
-    let cancelled = false
-    let dashTimer: number | undefined
+    let cancelled = false;
+    let dashTimer: number | undefined;
 
     const map = new maplibregl.Map({
       container: containerRef.current,
@@ -36,60 +41,66 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
       attributionControl: { compact: true },
       dragRotate: false,
       touchPitch: false,
-    })
-    mapRef.current = map
-    map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right")
+    });
+    mapRef.current = map;
+    map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), "top-right");
 
     const kickResize = () => {
-      try { map.resize() } catch { /* removed */ }
-    }
-    map.once("load", kickResize)
-    const resizeTimers = [50, 200, 500].map(ms => window.setTimeout(kickResize, ms))
-    const onWinResize = () => kickResize()
-    window.addEventListener("resize", onWinResize)
+      try {
+        map.resize();
+      } catch {
+        /* removed */
+      }
+    };
+    map.once("load", kickResize);
+    const resizeTimers = [50, 200, 500].map((ms) => window.setTimeout(kickResize, ms));
+    const onWinResize = () => kickResize();
+    window.addEventListener("resize", onWinResize);
 
-    map.on("error", e => {
-      console.error("OpsConsoleMap error:", e.error)
-    })
+    map.on("error", (e) => {
+      console.error("OpsConsoleMap error:", e.error);
+    });
 
     map.on("load", () => {
-      if (cancelled) return
-      kickResize()
-      dashTimer = addOpsDecorLayers(map)
+      if (cancelled) return;
+      kickResize();
+      dashTimer = addOpsDecorLayers(map);
 
       for (const ex of EXAMPLE_SIGNATURES) {
-        const lat = ex.input.lat
-        const lng = ex.input.lng
-        if (lat == null || lng == null) continue
-        const grade = ex.result.resilience_signature.grade
-        const score = ex.result.resilience_signature.score
-        const color = gradePinColor(grade)
-        const topRisk = ex.result.risk_factors[0]?.label ?? "—"
-        const title = lang === "fi" ? ex.titleFi : ex.title
+        const lat = ex.input.lat;
+        const lng = ex.input.lng;
+        if (lat == null || lng == null) continue;
+        const grade = ex.result.resilience_signature.grade;
+        const score = ex.result.resilience_signature.score;
+        const color = gradePinColor(grade);
+        const topRisk = ex.result.risk_factors[0]?.label ?? "—";
+        const title = lang === "fi" ? ex.titleFi : ex.title;
 
-        const el = document.createElement("button")
-        el.type = "button"
-        el.setAttribute("aria-label", `${title}: score ${score}, grade ${grade}`)
+        const el = document.createElement("button");
+        el.type = "button";
+        el.setAttribute("aria-label", `${title}: score ${score}, grade ${grade}`);
         el.style.cssText = `
           width: 40px; height: 40px; border-radius: 50%;
           background: transparent; border: none;
           cursor: pointer; padding: 0;
           display: flex; align-items: center; justify-content: center;
-        `
-        const core = document.createElement("span")
+        `;
+        const core = document.createElement("span");
         core.style.cssText = `
           width: 14px; height: 14px; border-radius: 50%;
           background: ${color}; border: 2px solid #070B12;
           box-shadow: 0 0 0 2px ${color}88, 0 0 12px ${color}66;
           pointer-events: none;
-        `
-        el.appendChild(core)
+        `;
+        el.appendChild(core);
 
-        const advisorUrl = `/?lat=${lat}&lng=${lng}&sector=${encodeURIComponent(ex.input.sector)}&autonomy=${encodeURIComponent(ex.input.autonomy_level)}&criticality=${encodeURIComponent(ex.input.operation_criticality)}#advisor`
-        const assessLabel = lang === "fi" ? "Luo Resilience Signature →" : "Generate Resilience Signature →"
-        const researchSlug = researchSlugForExampleId(ex.id)
-        const researchUrl = researchSlug ? `/research/${researchSlug}` : null
-        const researchLabel = lang === "fi" ? "Katso tutkimusarvio →" : "View research assessment →"
+        const advisorUrl = `/?lat=${lat}&lng=${lng}&sector=${encodeURIComponent(ex.input.sector)}&autonomy=${encodeURIComponent(ex.input.autonomy_level)}&criticality=${encodeURIComponent(ex.input.operation_criticality)}#advisor`;
+        const assessLabel =
+          lang === "fi" ? "Luo Resilience Signature →" : "Generate Resilience Signature →";
+        const researchSlug = researchSlugForExampleId(ex.id);
+        const researchUrl = researchSlug ? `/research/${researchSlug}` : null;
+        const researchLabel =
+          lang === "fi" ? "Katso tutkimusarvio →" : "View research assessment →";
 
         const popup = new maplibregl.Popup({
           offset: 20,
@@ -108,31 +119,32 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
             <a href="${advisorUrl}" style="font-size: 12px; font-weight: 700; color: #4FA8FF; text-decoration: none; display:block; margin-bottom:6px;">${assessLabel}</a>
             ${researchUrl ? `<a href="${researchUrl}" style="font-size: 12px; font-weight: 600; color: #94A3B8; text-decoration: none;">${researchLabel}</a>` : ""}
           </div>
-        `)
+        `);
 
-        el.addEventListener("click", e => {
-          e.stopPropagation()
-          popup.setLngLat([lng, lat]).addTo(map)
-        })
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          popup.setLngLat([lng, lat]).addTo(map);
+        });
 
         markersRef.current.push(
-          new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map),
-        )
+          new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map)
+        );
       }
 
-      const pulse = document.createElement("button")
-      pulse.type = "button"
-      pulse.setAttribute("aria-label", HERO_SITE.label)
+      const pulse = document.createElement("button");
+      pulse.type = "button";
+      pulse.setAttribute("aria-label", HERO_SITE.label);
       pulse.innerHTML = `
         <span class="gryps-ops-pulse-ring"></span>
         <span class="gryps-ops-pulse-core"></span>
-      `
+      `;
       pulse.style.cssText = `
         width: 44px; height: 44px; position: relative;
         display: flex; align-items: center; justify-content: center;
         background: transparent; border: none; cursor: pointer; padding: 0;
-      `
-      const heroPopup = new maplibregl.Popup({ offset: 18, closeButton: true, maxWidth: "260px" }).setHTML(`
+      `;
+      const heroPopup = new maplibregl.Popup({ offset: 18, closeButton: true, maxWidth: "260px" })
+        .setHTML(`
         <div style="font-family: ui-sans-serif, system-ui, sans-serif; padding: 4px 2px;">
           <div style="font-size: 10px; letter-spacing: 0.08em; color: #64748B; margin-bottom: 4px;">HERO SITE</div>
           <div style="font-size: 13px; font-weight: 700; color: #F7FAFC; margin-bottom: 6px;">68.2°N · 27.4°E · Lapland</div>
@@ -140,74 +152,100 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
           <div style="font-size: 11px; color: #D97706; margin-top: 6px; margin-bottom: 10px;">Top risk: No backup path</div>
           <a href="/?lat=68.2&lng=27.4&sector=forestry&autonomy=autonomous&criticality=high#advisor" style="font-size: 12px; font-weight: 700; color: #4FA8FF; text-decoration: none;">${lang === "fi" ? "Luo Resilience Signature →" : "Generate Resilience Signature →"}</a>
         </div>
-      `)
+      `);
       pulse.addEventListener("click", () => {
-        heroPopup.setLngLat([HERO_SITE.lng, HERO_SITE.lat]).addTo(map)
-      })
+        heroPopup.setLngLat([HERO_SITE.lng, HERO_SITE.lat]).addTo(map);
+      });
       markersRef.current.push(
-        new maplibregl.Marker({ element: pulse }).setLngLat([HERO_SITE.lng, HERO_SITE.lat]).addTo(map),
-      )
+        new maplibregl.Marker({ element: pulse })
+          .setLngLat([HERO_SITE.lng, HERO_SITE.lat])
+          .addTo(map)
+      );
 
       const orbitLabels: { lng: number; lat: number; label: string; color: string }[] = [
         { lng: 5, lat: 78, label: "LEO", color: "#4FA8FF" },
         { lng: 12, lat: 74, label: "MEO", color: "#6EE7F9" },
         { lng: 20, lat: 57, label: "GEO", color: "#D97706" },
-      ]
+      ];
       for (const o of orbitLabels) {
-        const lab = document.createElement("div")
-        lab.textContent = o.label
+        const lab = document.createElement("div");
+        lab.textContent = o.label;
         lab.style.cssText = `
           font-family: ui-monospace, monospace; font-size: 10px; font-weight: 700;
           letter-spacing: 0.08em; color: ${o.color};
           text-shadow: 0 0 6px #070B12, 0 1px 2px #070B12;
           pointer-events: none; user-select: none;
-        `
+        `;
         markersRef.current.push(
-          new maplibregl.Marker({ element: lab, anchor: "center" }).setLngLat([o.lng, o.lat]).addTo(map),
-        )
+          new maplibregl.Marker({ element: lab, anchor: "center" })
+            .setLngLat([o.lng, o.lat])
+            .addTo(map)
+        );
       }
-    })
+    });
 
     return () => {
-      cancelled = true
-      window.removeEventListener("resize", onWinResize)
-      resizeTimers.forEach(id => window.clearTimeout(id))
-      if (dashTimer) window.clearInterval(dashTimer)
-      markersRef.current.forEach(m => m.remove())
-      markersRef.current = []
-      map.remove()
-      mapRef.current = null
-    }
-  }, [lang])
+      cancelled = true;
+      window.removeEventListener("resize", onWinResize);
+      resizeTimers.forEach((id) => window.clearTimeout(id));
+      if (dashTimer) window.clearInterval(dashTimer);
+      markersRef.current.forEach((m) => m.remove());
+      markersRef.current = [];
+      map.remove();
+      mapRef.current = null;
+    };
+  }, [lang]);
 
   return (
     <div className="gryps-ops-map-shell">
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
-      <div style={{
-        position: "absolute", top: 12, left: 12, zIndex: 2,
-        fontFamily: "var(--font-data)", fontSize: 10, letterSpacing: "0.08em",
-        color: "var(--accent-amber)",
-        backgroundColor: "rgba(7,11,18,0.82)",
-        border: "1px solid rgba(245,184,74,0.28)",
-        borderRadius: "var(--radius)", padding: "6px 12px",
-        backdropFilter: "blur(8px)",
-        pointerEvents: "none",
-      }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 12,
+          left: 12,
+          zIndex: 2,
+          fontFamily: "var(--font-data)",
+          fontSize: 10,
+          letterSpacing: "0.08em",
+          color: "var(--accent-amber)",
+          backgroundColor: "rgba(7,11,18,0.82)",
+          border: "1px solid rgba(245,184,74,0.28)",
+          borderRadius: "var(--radius)",
+          padding: "6px 12px",
+          backdropFilter: "blur(8px)",
+          pointerEvents: "none",
+        }}
+      >
         {modelBasemapChip()}
       </div>
 
-      <div style={{
-        position: "absolute", bottom: 28, left: 12, zIndex: 2,
-        display: "flex", gap: 10, flexWrap: "wrap",
-        fontFamily: "var(--font-data)", fontSize: 9, letterSpacing: "0.06em",
-        color: "var(--text-muted)",
-        backgroundColor: "rgba(7,11,18,0.75)",
-        borderRadius: "var(--radius)", padding: "6px 10px",
-        pointerEvents: "none",
-      }}>
-        <span><span style={{ color: "#2ED47A" }}>●</span> Grade A/B</span>
-        <span><span style={{ color: "#EF4444" }}>●</span> Grade D/F</span>
+      <div
+        style={{
+          position: "absolute",
+          bottom: 28,
+          left: 12,
+          zIndex: 2,
+          display: "flex",
+          gap: 10,
+          flexWrap: "wrap",
+          fontFamily: "var(--font-data)",
+          fontSize: 9,
+          letterSpacing: "0.06em",
+          color: "var(--text-muted)",
+          backgroundColor: "rgba(7,11,18,0.75)",
+          borderRadius: "var(--radius)",
+          padding: "6px 10px",
+          pointerEvents: "none",
+        }}
+      >
+        <span>
+          <span style={{ color: "#2ED47A" }}>●</span> Grade A/B
+        </span>
+        <span>
+          <span style={{ color: "#EF4444" }}>●</span> Grade D/F
+        </span>
         <span style={{ color: "#4FA8FF" }}>◎ Hero 68.2°N</span>
       </div>
 
@@ -232,5 +270,5 @@ export function OpsConsoleMap({ lang = "en" }: { lang?: "en" | "fi" }) {
         }
       `}</style>
     </div>
-  )
+  );
 }

@@ -27,11 +27,11 @@ GRYPS does **not** need a visual redesign. It needs information architecture and
 
 ### Primary modes (header)
 
-| Mode | Purpose | Children |
-|------|---------|----------|
-| **Explore** | Connectivity landscape | `/map`, `/providers`, `/research`, `/scenarios` |
-| **Assess** | Run the intelligence engine | `/#advisor`, `/workspace` (UI: Assessments) |
-| **Research** | Understand the model | `/methodology`, `/knowledge` (UI: Evidence), `/data-sources`, `/assumptions`, `/limitations`, `/changelog` |
+| Mode         | Purpose                     | Children                                                                                                   |
+| ------------ | --------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Explore**  | Connectivity landscape      | `/map`, `/providers`, `/research`, `/scenarios`                                                            |
+| **Assess**   | Run the intelligence engine | `/#advisor`, `/workspace` (UI: Assessments)                                                                |
+| **Research** | Understand the model        | `/methodology`, `/knowledge` (UI: Evidence), `/data-sources`, `/assumptions`, `/limitations`, `/changelog` |
 
 Source of truth: `lib/ia-nav.ts` (Header, Footer, DocShell).
 
@@ -53,11 +53,11 @@ Progressive disclosure on output: Overview · Risks · Options · Evidence · Me
 
 ### Terminology
 
-| Prefer | Avoid as peer destinations |
-|--------|----------------------------|
-| Explore · Assess · Research | Flat list of 8+ equal links |
-| Evidence (was Knowledge) | Vague “Knowledge” as top-level |
-| Assessments (was Workspace) | “Workspace” as SaaS collab cue |
+| Prefer                      | Avoid as peer destinations         |
+| --------------------------- | ---------------------------------- |
+| Explore · Assess · Research | Flat list of 8+ equal links        |
+| Evidence (was Knowledge)    | Vague “Knowledge” as top-level     |
+| Assessments (was Workspace) | “Workspace” as SaaS collab cue     |
 | Generate Signature (chrome) | Competing secondary CTAs in header |
 
 ### Homepage content moves
@@ -85,16 +85,16 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 
 ## Stack decisions
 
-| Concern | Choice | Why |
-|---|---|---|
-| Framework | Next.js 16 App Router | Server components + API routes in one repo |
-| Styling | CSS custom properties (no Tailwind) | Theme switching via `document.documentElement.style.setProperty` — zero runtime overhead |
-| Fonts | `next/font/google` — Space Grotesk + JetBrains Mono | Eliminates render-blocking Google Fonts import |
-| Maps | MapLibre GL + key-free Esri raster tiles | Ops console maps without a Carto/tile API key (`lib/basemap.ts`) |
-| Scoring | Deterministic Signature engine v0.3 (`lib/deterministic-score.ts`) | Reproducible score / grade / risks / ranked providers |
-| Database | Neon serverless PostgreSQL (EU Frankfurt) | EU data residency for Nordic operators |
-| Analytics | Vercel Analytics | Cookieless, GDPR-compliant by default |
-| Deployment | Vercel | ~30s deploys from git push |
+| Concern    | Choice                                                             | Why                                                                                      |
+| ---------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Framework  | Next.js 16 App Router                                              | Server components + API routes in one repo                                               |
+| Styling    | CSS custom properties (no Tailwind)                                | Theme switching via `document.documentElement.style.setProperty` — zero runtime overhead |
+| Fonts      | `next/font/google` — Space Grotesk + JetBrains Mono                | Eliminates render-blocking Google Fonts import                                           |
+| Maps       | MapLibre GL + key-free Esri raster tiles                           | Ops console maps without a Carto/tile API key (`lib/basemap.ts`)                         |
+| Scoring    | Deterministic Signature engine v0.3 (`lib/deterministic-score.ts`) | Reproducible score / grade / risks / ranked providers                                    |
+| Database   | Neon serverless PostgreSQL (EU Frankfurt)                          | EU data residency for Nordic operators                                                   |
+| Analytics  | Vercel Analytics                                                   | Cookieless, GDPR-compliant by default                                                    |
+| Deployment | Vercel                                                             | ~30s deploys from git push                                                               |
 
 ---
 
@@ -104,23 +104,31 @@ Two static maps applied directly to `documentElement` CSS variables. No CSS-in-J
 
 ```ts
 const DARK: Record<string, string> = {
-  "--bg": "#070B12", "--surface": "#0B1220", "--surface2": "#111827",
-  "--border": "#1E293B", "--border2": "#253347",
-  "--text": "#F7FAFC", "--text-muted": "#64748B", "--text-dim": "#334155",
-}
+  "--bg": "#070B12",
+  "--surface": "#0B1220",
+  "--surface2": "#111827",
+  "--border": "#1E293B",
+  "--border2": "#253347",
+  "--text": "#F7FAFC",
+  "--text-muted": "#64748B",
+  "--text-dim": "#334155",
+};
 const LIGHT: Record<string, string> = {
-  "--bg": "#F4F6F9", "--surface": "#FFFFFF", "--surface2": "#EEF1F6",
-  "--border": "#DDE2EC", "--border2": "#C8D0DE",
-  "--text": "#0B1220", "--text-muted": "#5A6A84", "--text-dim": "#9AAABF",
-}
+  "--bg": "#F4F6F9",
+  "--surface": "#FFFFFF",
+  "--surface2": "#EEF1F6",
+  "--border": "#DDE2EC",
+  "--border2": "#C8D0DE",
+  "--text": "#0B1220",
+  "--text-muted": "#5A6A84",
+  "--text-dim": "#9AAABF",
+};
 
 // Applied in useEffect whenever dark state changes:
 useEffect(() => {
-  const vars = dark ? DARK : LIGHT
-  Object.entries(vars).forEach(([k, v]) =>
-    document.documentElement.style.setProperty(k, v)
-  )
-}, [dark])
+  const vars = dark ? DARK : LIGHT;
+  Object.entries(vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+}, [dark]);
 ```
 
 ---
@@ -166,32 +174,36 @@ Key insight: store elapsed seconds in `tick` state. All satellite positions are 
 
 ```tsx
 function PolarMap({ t }: { t: typeof COPY.en }) {
-  const cx = 200, cy = 195, maxR = 160
-  const [tick, setTick] = useState(0)
+  const cx = 200,
+    cy = 195,
+    maxR = 160;
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    let raf: number
-    const start = performance.now()
+    let raf: number;
+    const start = performance.now();
     function loop(now: number) {
-      setTick((now - start) / 1000)
-      raf = requestAnimationFrame(loop)
+      setTick((now - start) / 1000);
+      raf = requestAnimationFrame(loop);
     }
-    raf = requestAnimationFrame(loop)
-    return () => cancelAnimationFrame(raf)
-  }, [])
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   // Satellite position: r = orbital radius, speed = rad/sec, offset = phase
   function satPos(r: number, speed: number, offset: number) {
-    const a = tick * speed + offset
-    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) }
+    const a = tick * speed + offset;
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
   }
 
   // Convert geographic latitude to SVG radius
-  function latToR(lat: number) { return ((90 - lat) / 50) * maxR }
+  function latToR(lat: number) {
+    return ((90 - lat) / 50) * maxR;
+  }
 
-  const starlink = satPos(latToR(67), 1.5, 0)   // LEO fast
-  const oneweb   = satPos(latToR(71), 1.1, 2.4) // LEO medium
-  const iridium  = satPos(latToR(74), 0.8, 4.7) // Polar
+  const starlink = satPos(latToR(67), 1.5, 0); // LEO fast
+  const oneweb = satPos(latToR(71), 1.1, 2.4); // LEO medium
+  const iridium = satPos(latToR(74), 0.8, 4.7); // Polar
 }
 ```
 
@@ -205,8 +217,8 @@ SceneViz components hold internal animation state (typing timers, counting inter
 
 ```tsx
 function DemoReel({ t }: { t: typeof COPY.en }) {
-  const [scene, setScene] = useState(0)
-  const VIZS = [<SceneViz0 />, <SceneViz1 />, <SceneViz2 />, <SceneViz3 />, <SceneViz4 />]
+  const [scene, setScene] = useState(0);
+  const VIZS = [<SceneViz0 />, <SceneViz1 />, <SceneViz2 />, <SceneViz3 />, <SceneViz4 />];
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
@@ -217,7 +229,7 @@ function DemoReel({ t }: { t: typeof COPY.en }) {
         <p>{t.demoScenes[scene].body}</p>
       </div>
     </div>
-  )
+  );
 }
 ```
 
@@ -226,21 +238,21 @@ function DemoReel({ t }: { t: typeof COPY.en }) {
 ```tsx
 // SceneViz1 — coordinate typing at 75ms/char
 useEffect(() => {
-  let i = 0
+  let i = 0;
   const id = setInterval(() => {
-    setTyped(COORD.slice(0, ++i))
-    if (i >= COORD.length) clearInterval(id)
-  }, 75)
-  return () => clearInterval(id)
-}, [])
+    setTyped(COORD.slice(0, ++i));
+    if (i >= COORD.length) clearInterval(id);
+  }, 75);
+  return () => clearInterval(id);
+}, []);
 
 // SceneViz3 — score bars counting from 0 to target
 useEffect(() => {
   const id = setInterval(() => {
-    setScores(s => s.map((v, i) => Math.min(v + 2, TARGETS[i])))
-  }, 25)
-  return () => clearInterval(id)
-}, [])
+    setScores((s) => s.map((v, i) => Math.min(v + 2, TARGETS[i])));
+  }, 25);
+  return () => clearInterval(id);
+}, []);
 ```
 
 ---
@@ -287,11 +299,18 @@ Terms §04 and Privacy §05 — see Legal coupling above.
 <span
   title="EU AI Act Art. 50 — AI-generated analytical summary (Mistral). Limited-risk system. …"
   style={{
-    fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)",
-    border: "1px solid var(--border)", borderRadius: 3, padding: "2px 5px",
-    letterSpacing: "0.06em", cursor: "help",
+    fontFamily: "var(--font-data)",
+    fontSize: 8,
+    color: "var(--text-dim)",
+    border: "1px solid var(--border)",
+    borderRadius: 3,
+    padding: "2px 5px",
+    letterSpacing: "0.06em",
+    cursor: "help",
   }}
->AI</span>
+>
+  AI
+</span>
 ```
 
 ---
@@ -302,21 +321,21 @@ Runs a `requestAnimationFrame` loop on an offscreen `<canvas>`. On each frame, d
 
 ```tsx
 useEffect(() => {
-  const canvas = document.createElement("canvas")
-  canvas.width = canvas.height = 64
-  const ctx = canvas.getContext("2d")!
-  let raf: number
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 64;
+  const ctx = canvas.getContext("2d")!;
+  let raf: number;
 
   function draw(t: number) {
-    ctx.clearRect(0, 0, 64, 64)
+    ctx.clearRect(0, 0, 64, 64);
     // ... draw arcs, scanning dot, glow
-    const link = document.querySelector("link[rel='icon']") as HTMLLinkElement
-    if (link) link.href = canvas.toDataURL()
-    raf = requestAnimationFrame(draw)
+    const link = document.querySelector("link[rel='icon']") as HTMLLinkElement;
+    if (link) link.href = canvas.toDataURL();
+    raf = requestAnimationFrame(draw);
   }
-  raf = requestAnimationFrame(draw)
-  return () => cancelAnimationFrame(raf)
-}, [])
+  raf = requestAnimationFrame(draw);
+  return () => cancelAnimationFrame(raf);
+}, []);
 ```
 
 ---
@@ -379,13 +398,13 @@ something addressed here.
 
 ## Environment variables
 
-| Key | Used in | Purpose |
-|---|---|---|
-| `NEON_DATABASE_URL` | `api/advise/*`, `lib/signatures-db.ts`, `api/notify/verify` | Neon PostgreSQL connection string |
-| `MISTRAL_API_KEY` | `lib/scoring.ts` | Optional Mistral recommendation prose |
-| `RESEND_API_KEY` | `lib/mail.ts` | Send unlock confirmation emails (magic link) |
-| `RESEND_FROM` | `lib/mail.ts` | From address on a **verified** Resend domain, e.g. `GRYPS <hello@gryps.eu>`. Until the domain is verified, Resend only delivers to the account owner (`hqe.moreira@gmail.com`) and rejects addresses like `henrique+test@…`. |
-| `NEXT_PUBLIC_APP_URL` | `lib/mail.ts` | Canonical site origin for magic-link URLs (prefer over Vercel preview host) |
+| Key                   | Used in                                                     | Purpose                                                                                                                                                                                                                      |
+| --------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEON_DATABASE_URL`   | `api/advise/*`, `lib/signatures-db.ts`, `api/notify/verify` | Neon PostgreSQL connection string                                                                                                                                                                                            |
+| `MISTRAL_API_KEY`     | `lib/scoring.ts`                                            | Optional Mistral recommendation prose                                                                                                                                                                                        |
+| `RESEND_API_KEY`      | `lib/mail.ts`                                               | Send unlock confirmation emails (magic link)                                                                                                                                                                                 |
+| `RESEND_FROM`         | `lib/mail.ts`                                               | From address on a **verified** Resend domain, e.g. `GRYPS <hello@gryps.eu>`. Until the domain is verified, Resend only delivers to the account owner (`hqe.moreira@gmail.com`) and rejects addresses like `henrique+test@…`. |
+| `NEXT_PUBLIC_APP_URL` | `lib/mail.ts`                                               | Canonical site origin for magic-link URLs (prefer over Vercel preview host)                                                                                                                                                  |
 
 Set in: Vercel → gryps project → Settings → Environment Variables  
 (or `vercel env add` for each key). Do not commit secrets.
@@ -442,25 +461,26 @@ via `grypsCopyright()` in `components/Footer.tsx`.
 **Generate Resilience Signature** (Advisor prefill) and optional **Research
 Library** assessment. Not live RF / tracking / 3D globe.
 
-| Filter | Values |
-|---|---|
-| Region | All · Nordics · Arctic · Iceland |
+| Filter   | Values                                                       |
+| -------- | ------------------------------------------------------------ |
+| Region   | All · Nordics · Arctic · Iceland                             |
 | Vertical | All · Forestry · Mining · Maritime · Arctic · Infrastructure |
-| Priority | All · Standard · High · Safety-critical |
-| Scope | All modeled sites · Research Library only |
+| Priority | All · Standard · High · Safety-critical                      |
+| Scope    | All modeled sites · Research Library only                    |
 
 Site panel shows modeled resilience band, assessment confidence, orbit
 architectures (LEO / MEO / GEO / Polar), and curated display names when the
 site is in the Research Library.
 
-| Status | Derived from |
-|---|---|
-| `ok` | Resilience Signature grade A or B (or score ≥ 70) |
-| `degraded` | grade C or D (or score 30–69) |
-| `down` | grade F (or score &lt; 30) |
-| `unknown` | missing grade and score |
+| Status     | Derived from                                      |
+| ---------- | ------------------------------------------------- |
+| `ok`       | Resilience Signature grade A or B (or score ≥ 70) |
+| `degraded` | grade C or D (or score 30–69)                     |
+| `down`     | grade F (or score &lt; 30)                        |
+| `unknown`  | missing grade and score                           |
 
 **Data limits (honest):**
+
 - Source table is `signature_sites` only. `advisor_submissions` are anonymous
   one-off analyses without stable site identity — not plotted.
 - There is **no** live link-monitoring, SNMP, or capacity-telemetry table in
@@ -483,11 +503,11 @@ Implementation: `lib/capacity-status.ts`, `lib/research-library.ts`,
 
 **Banner required: No.** No HTTP cookies. Theme preference in localStorage (`gryps-theme`) + cookieless Vercel Analytics. Privacy §09 states no consent banner for Vercel Analytics; theme storage disclosed (no false sessionStorage claim).
 
-| Key | Type | Class |
-|---|---|---|
-| `gryps-theme` | localStorage | Functional UI preference |
-| `gryps-lang` | localStorage | Language preference (EN/FI) |
-| `gryps-anon-runs` | localStorage | Soft count of Advisor runs (analytics; not a hard gate) |
-| Vercel Analytics (`@vercel/analytics`) | — | Cookieless |
+| Key                                    | Type         | Class                                                   |
+| -------------------------------------- | ------------ | ------------------------------------------------------- |
+| `gryps-theme`                          | localStorage | Functional UI preference                                |
+| `gryps-lang`                           | localStorage | Language preference (EN/FI)                             |
+| `gryps-anon-runs`                      | localStorage | Soft count of Advisor runs (analytics; not a hard gate) |
+| Vercel Analytics (`@vercel/analytics`) | —            | Cookieless                                              |
 
 No advertising trackers.

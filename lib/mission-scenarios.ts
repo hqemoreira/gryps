@@ -9,35 +9,35 @@ export type MissionScenarioId =
   | "maritime"
   | "remote-industrial"
   | "emergency-response"
-  | "remote-infrastructure"
+  | "remote-infrastructure";
 
 export type ScenarioSection = {
-  environment: string
-  requirements: string[]
-  challenges: string[]
-  technology: string[]
-  providers: string[]
-  architecture: string
-}
+  environment: string;
+  requirements: string[];
+  challenges: string[];
+  technology: string[];
+  providers: string[];
+  architecture: string;
+};
 
 export type MissionScenario = {
-  slug: MissionScenarioId
-  title: string
-  titleFi: string
-  subtitle: string
-  subtitleFi: string
+  slug: MissionScenarioId;
+  title: string;
+  titleFi: string;
+  subtitle: string;
+  subtitleFi: string;
   /** Short card blurb */
-  blurb: string
-  blurbFi: string
+  blurb: string;
+  blurbFi: string;
   /** Advisor sector prefill when generating a Signature */
-  advisorSector: string
+  advisorSector: string;
   /** Optional mission priorities for Advisor prefill */
-  suggestedPriorities: string[]
-  relatedResearchSlugs: string[]
-  relatedKnowledgeSlugs: string[]
-  en: ScenarioSection
-  fi: ScenarioSection
-}
+  suggestedPriorities: string[];
+  relatedResearchSlugs: string[];
+  relatedKnowledgeSlugs: string[];
+  en: ScenarioSection;
+  fi: ScenarioSection;
+};
 
 export const MISSION_SCENARIOS: MissionScenario[] = [
   {
@@ -52,10 +52,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
       "Miten yhteysarkkitehtuuri voisi tukea etähakkuukonekalustoja ja puulogistiikkaa, kun latvus ja leveysaste rajoittavat GEO:ta.",
     advisorSector: "forestry",
     suggestedPriorities: ["mobility", "coverage", "deployment_simplicity"],
-    relatedResearchSlugs: [
-      "finnish-arctic-forestry-lapland",
-      "finnish-arctic-forestry-inari",
-    ],
+    relatedResearchSlugs: ["finnish-arctic-forestry-lapland", "finnish-arctic-forestry-inari"],
     relatedKnowledgeSlugs: [
       "forestry-satellite-connectivity-finland",
       "satellite-connectivity-arctic",
@@ -133,10 +130,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
       "Yhteysarkkitehtuurit arktisille ja pohjoismaisille kaivoskalustoille, joissa autonomia ja turvallisuuskriittisyys muovaavat redundanssitarvetta.",
     advisorSector: "mining",
     suggestedPriorities: ["uptime", "redundancy", "latency"],
-    relatedResearchSlugs: [
-      "arctic-mining-northern-sweden",
-      "finnish-arctic-mining-kittila",
-    ],
+    relatedResearchSlugs: ["arctic-mining-northern-sweden", "finnish-arctic-mining-kittila"],
     relatedKnowledgeSlugs: [
       "satellite-connectivity-arctic",
       "satellite-connectivity-resilience-scoring",
@@ -219,10 +213,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
       "norwegian-maritime-lofoten",
       "norwegian-maritime-energy-hammerfest",
     ],
-    relatedKnowledgeSlugs: [
-      "leo-vs-meo-vs-geo-remote-operations",
-      "satellite-connectivity-arctic",
-    ],
+    relatedKnowledgeSlugs: ["leo-vs-meo-vs-geo-remote-operations", "satellite-connectivity-arctic"],
     en: {
       environment:
         "Fjords, offshore aquaculture, fishing fleets, and LNG/terminal monitoring along the Norwegian and Barents coasts — vessels and platforms that historically relied on GEO VSAT and are evaluating LEO overlays.",
@@ -378,10 +369,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
     advisorSector: "other",
     suggestedPriorities: ["deployment_simplicity", "mobility", "coverage"],
     relatedResearchSlugs: [],
-    relatedKnowledgeSlugs: [
-      "satellite-connectivity-arctic",
-      "leo-vs-meo-vs-geo-remote-operations",
-    ],
+    relatedKnowledgeSlugs: ["satellite-connectivity-arctic", "leo-vs-meo-vs-geo-remote-operations"],
     en: {
       environment:
         "Wildfire edges, search-and-rescue staging, flood response, and Arctic incident posts — temporary sites with unknown RF conditions and minutes-to-hours deployment windows.",
@@ -455,10 +443,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
       "Yhteysarkkitehtuuri harvoin miehitetyille infrastruktuurikohteille, joissa käytettävyys ja tehobudjetti hallitsevat videokaistaa.",
     advisorSector: "energy",
     suggestedPriorities: ["uptime", "coverage", "redundancy"],
-    relatedResearchSlugs: [
-      "extreme-arctic-svalbard",
-      "northern-infrastructure-jokkmokk",
-    ],
+    relatedResearchSlugs: ["extreme-arctic-svalbard", "northern-infrastructure-jokkmokk"],
     relatedKnowledgeSlugs: [
       "satellite-connectivity-resilience-scoring",
       "satellite-connectivity-arctic",
@@ -524,21 +509,21 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "Etäisen infrastruktuurin tutkimus kääntää usein kuluttaja-LEO-oletuksen: aloita tehosta ja käytettävyydestä, valitse kapeakaista ensin -arkkitehtuurit, sitten Signature siitä onko toinen polku olemassa ennen mitään hankintakeskustelua.",
     },
   },
-]
+];
 
 export function getAllMissionScenarios(): MissionScenario[] {
-  return MISSION_SCENARIOS
+  return MISSION_SCENARIOS;
 }
 
 export function getMissionScenario(slug: string): MissionScenario | undefined {
-  return MISSION_SCENARIOS.find(s => s.slug === slug)
+  return MISSION_SCENARIOS.find((s) => s.slug === slug);
 }
 
 export function advisorHrefForScenario(s: MissionScenario): string {
-  const p = new URLSearchParams()
-  p.set("sector", s.advisorSector)
+  const p = new URLSearchParams();
+  p.set("sector", s.advisorSector);
   if (s.suggestedPriorities.length) {
-    p.set("priorities", s.suggestedPriorities.join(","))
+    p.set("priorities", s.suggestedPriorities.join(","));
   }
-  return `/?${p.toString()}#advisor`
+  return `/?${p.toString()}#advisor`;
 }

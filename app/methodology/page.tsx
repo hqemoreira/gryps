@@ -1,13 +1,12 @@
-import type { Metadata } from "next"
-import { MethodologyView } from "./MethodologyView"
-import { METHODOLOGY_LABEL } from "@/lib/model-constants"
+import type { Metadata } from "next";
+import { MethodologyView } from "./MethodologyView";
+import { METHODOLOGY_LABEL } from "@/lib/model-constants";
 
 export const metadata: Metadata = {
   title: `Methodology — ${METHODOLOGY_LABEL}`,
-  description:
-    `${METHODOLOGY_LABEL}: experimental Connectivity Intelligence — evidence chain, Model v0.3 scoring, data provenance, assumptions, and limitations. Indicative research — not procurement advice.`,
+  description: `${METHODOLOGY_LABEL}: experimental Connectivity Intelligence — evidence chain, Model v0.3 scoring, data provenance, assumptions, and limitations. Indicative research — not procurement advice.`,
   alternates: { canonical: "https://gryps.vercel.app/methodology" },
-}
+};
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -38,13 +37,16 @@ const jsonLd = {
       },
     },
   ],
-}
+};
 
 export default function MethodologyPage() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <MethodologyView />
     </>
-  )
+  );
 }

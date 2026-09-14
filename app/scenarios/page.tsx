@@ -1,5 +1,5 @@
-import type { Metadata } from "next"
-import { ScenarioLibraryView } from "@/components/ScenarioLibraryView"
+import type { Metadata } from "next";
+import { ScenarioLibraryView } from "@/components/ScenarioLibraryView";
 
 export const metadata: Metadata = {
   title: "Mission Scenarios — Scenario & Mission Research | GRYPS",
@@ -11,8 +11,8 @@ export const metadata: Metadata = {
     description:
       "What connectivity architecture might suit this scenario? Research-only decision-support concepts.",
   },
-}
+};
 
 export default function ScenariosPage() {
-  return <ScenarioLibraryView />
+  return <ScenarioLibraryView />;
 }

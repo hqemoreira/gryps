@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -22,7 +20,13 @@
 
 # misc
 .DS_Store
+Thumbs.db
 *.pem
+*.p12
+*.key
+id_rsa*
+credentials.json
+service-account*.json
 
 # debug
 npm-debug.log*
@@ -30,8 +34,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env / secrets — NEVER commit real values
+.env
+.env.*
+!.env.example
+!.env*.example
 
 # vercel
 .vercel
@@ -40,10 +47,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
-.env*
-
 # SEO API dumps (ops tooling — keep examples + .gitkeep)
 /seo/*
 !/seo/.gitkeep
 !/seo/gsc-example.json
+
+# OS / IDE
+.idea/
+*.swp

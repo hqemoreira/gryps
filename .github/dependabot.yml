@@ -5,7 +5,43 @@ updates:
     schedule:
       interval: weekly
       day: monday
-    open-pull-requests-limit: 10
+      time: "06:00"
+      timezone: Europe/Helsinki
+    open-pull-requests-limit: 5
     labels:
       - dependencies
       - security
+    # Prefer one PR for related production deps; keep majors reviewable
+    groups:
+      production-patch-minor:
+        dependency-type: production
+        update-types:
+          - patch
+          - minor
+      development-patch-minor:
+        dependency-type: development
+        update-types:
+          - patch
+          - minor
+    ignore:
+      # Major bumps need a dedicated human PR (breaking risk)
+      - dependency-name: next
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react-dom
+        update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: "chore(ci)"

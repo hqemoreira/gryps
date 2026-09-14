@@ -15,31 +15,31 @@
  * do not import scoring or Neon from this module (breaks client bundles).
  */
 
-import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors"
+import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors";
 
-export type ResearchVertical = "forestry" | "mining" | "maritime" | "arctic" | "infrastructure"
-export type ResearchRegion = "nordics" | "arctic" | "iceland"
+export type ResearchVertical = "forestry" | "mining" | "maritime" | "arctic" | "infrastructure";
+export type ResearchRegion = "nordics" | "arctic" | "iceland";
 
 export type ResearchEntry = {
   /** Public URL slug under /research/[slug] */
-  slug: string
-  title: string
-  titleFi: string
+  slug: string;
+  title: string;
+  titleFi: string;
   /** One-line subtitle for cards / SEO */
-  subtitle: string
-  subtitleFi: string
-  vertical: ResearchVertical
-  region: ResearchRegion
-  locationLabel: string
-  locationLabelFi: string
+  subtitle: string;
+  subtitleFi: string;
+  vertical: ResearchVertical;
+  region: ResearchRegion;
+  locationLabel: string;
+  locationLabelFi: string;
   /** Narrative: what is being assessed */
-  context: string
-  contextFi: string
-  source: "example" | "seed"
-  sourceId: string
+  context: string;
+  contextFi: string;
+  source: "example" | "seed";
+  sourceId: string;
   /** Seed slug when this research page supersedes a /signatures/[slug] URL */
-  legacySignatureSlug?: string
-}
+  legacySignatureSlug?: string;
+};
 
 /** Public research set — aim 8–12 excellent assessments. */
 export const RESEARCH_LIBRARY: ResearchEntry[] = [
@@ -257,84 +257,90 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     sourceId: "site-32-akureyri-fishing-fleet",
     legacySignatureSlug: "site-32-akureyri-fishing-fleet",
   },
-]
+];
 
-const BY_SLUG = new Map(RESEARCH_LIBRARY.map(e => [e.slug, e]))
+const BY_SLUG = new Map(RESEARCH_LIBRARY.map((e) => [e.slug, e]));
 const BY_LEGACY = new Map(
-  RESEARCH_LIBRARY.filter(e => e.legacySignatureSlug).map(e => [e.legacySignatureSlug!, e]),
-)
+  RESEARCH_LIBRARY.filter((e) => e.legacySignatureSlug).map((e) => [e.legacySignatureSlug!, e])
+);
 
 export function getResearchEntry(slug: string): ResearchEntry | undefined {
-  return BY_SLUG.get(slug)
+  return BY_SLUG.get(slug);
 }
 
 export function getAllResearchEntries(): ResearchEntry[] {
-  return RESEARCH_LIBRARY
+  return RESEARCH_LIBRARY;
 }
 
 /** Seed/example signature slugs that have a public research counterpart. */
 export function getResearchByLegacySignatureSlug(slug: string): ResearchEntry | undefined {
-  return BY_LEGACY.get(slug)
+  return BY_LEGACY.get(slug);
 }
 
 export function isCuratedLegacySignatureSlug(slug: string): boolean {
-  return BY_LEGACY.has(slug) || RESEARCH_LIBRARY.some(e => e.source === "seed" && e.sourceId === slug)
+  return (
+    BY_LEGACY.has(slug) || RESEARCH_LIBRARY.some((e) => e.source === "seed" && e.sourceId === slug)
+  );
 }
 
 /** Thin Site XX pages — keep for map/dev, do not index. */
 export function isThinSignatureSlug(slug: string): boolean {
-  if (!slug.startsWith("site-")) return false
-  return !isCuratedLegacySignatureSlug(slug)
+  if (!slug.startsWith("site-")) return false;
+  return !isCuratedLegacySignatureSlug(slug);
 }
 
 export function researchHref(slug: string): string {
-  return `/research/${slug}`
+  return `/research/${slug}`;
 }
 
 /** Homepage example id → public research assessment slug. */
 export function researchSlugForExampleId(exampleId: string): string | undefined {
-  return RESEARCH_LIBRARY.find(e => e.source === "example" && e.sourceId === exampleId)?.slug
+  return RESEARCH_LIBRARY.find((e) => e.source === "example" && e.sourceId === exampleId)?.slug;
 }
 
 export function publicSignatureHref(siteSlug: string): string {
-  const research = researchEntryForSignatureSlug(siteSlug)
-  if (research) return researchHref(research.slug)
-  return `/signatures/${siteSlug}`
+  const research = researchEntryForSignatureSlug(siteSlug);
+  if (research) return researchHref(research.slug);
+  return `/signatures/${siteSlug}`;
 }
 
 /** Resolve research catalog entry from a signature_sites slug. */
 export function researchEntryForSignatureSlug(siteSlug: string): ResearchEntry | undefined {
-  return getResearchByLegacySignatureSlug(siteSlug) ??
-    RESEARCH_LIBRARY.find(e => e.source === "seed" && e.sourceId === siteSlug)
+  return (
+    getResearchByLegacySignatureSlug(siteSlug) ??
+    RESEARCH_LIBRARY.find((e) => e.source === "seed" && e.sourceId === siteSlug)
+  );
 }
 
 export function mapRegionForSite(opts: {
-  slug: string
-  country: string | null
-  lat: number
-  lng: number
+  slug: string;
+  country: string | null;
+  lat: number;
+  lng: number;
 }): ResearchRegion {
-  const research = researchEntryForSignatureSlug(opts.slug)
-  if (research) return research.region
-  if (opts.country === "IS" || (opts.lat >= 63 && opts.lat <= 67 && opts.lng < -10)) return "iceland"
-  if (opts.lat >= 66.5) return "arctic"
-  return "nordics"
+  const research = researchEntryForSignatureSlug(opts.slug);
+  if (research) return research.region;
+  if (opts.country === "IS" || (opts.lat >= 63 && opts.lat <= 67 && opts.lng < -10))
+    return "iceland";
+  if (opts.lat >= 66.5) return "arctic";
+  return "nordics";
 }
 
 export function mapVerticalForSite(sector: string, slug: string): ResearchVertical | string {
-  const research = researchEntryForSignatureSlug(slug)
-  if (research) return research.vertical
-  if (sector === "forestry" || sector === "mining" || sector === "maritime" || sector === "arctic") return sector
-  return sector || "other"
+  const research = researchEntryForSignatureSlug(slug);
+  if (research) return research.vertical;
+  if (sector === "forestry" || sector === "mining" || sector === "maritime" || sector === "arctic")
+    return sector;
+  return sector || "other";
 }
 
 export type ResolvedResearchAssessment = {
-  entry: ResearchEntry
-  input: AssessmentInputs
-  result: AdvisoryResult
-  modelVersion: string
-  fromDatabase: boolean
-}
+  entry: ResearchEntry;
+  input: AssessmentInputs;
+  result: AdvisoryResult;
+  modelVersion: string;
+  fromDatabase: boolean;
+};
 
 export const RESEARCH_VERTICALS: { id: ResearchVertical | "all"; en: string; fi: string }[] = [
   { id: "all", en: "All", fi: "Kaikki" },
@@ -343,11 +349,11 @@ export const RESEARCH_VERTICALS: { id: ResearchVertical | "all"; en: string; fi:
   { id: "maritime", en: "Maritime", fi: "Merenkulku" },
   { id: "arctic", en: "Arctic", fi: "Arktinen" },
   { id: "infrastructure", en: "Infrastructure", fi: "Infrastruktuuri" },
-]
+];
 
 export const RESEARCH_REGIONS: { id: ResearchRegion | "all"; en: string; fi: string }[] = [
   { id: "all", en: "All", fi: "Kaikki" },
   { id: "nordics", en: "Nordics", fi: "Pohjoismaat" },
   { id: "arctic", en: "Arctic", fi: "Arktinen" },
   { id: "iceland", en: "Iceland", fi: "Islanti" },
-]
+];

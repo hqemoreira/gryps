@@ -1,17 +1,17 @@
-import type { AssessmentInputs } from "@/lib/resilience-colors"
-import { isSingleProviderSetup } from "@/lib/signature-meta"
+import type { AssessmentInputs } from "@/lib/resilience-colors";
+import { isSingleProviderSetup } from "@/lib/signature-meta";
 
 export type RedundancyTier = {
-  id: string
-  tier: "essential" | "standard" | "defense"
-  label: string
-  estimate: string
-  detail: string
-}
+  id: string;
+  tier: "essential" | "standard" | "defense";
+  label: string;
+  estimate: string;
+  detail: string;
+};
 
 export function redundancyTiers(input?: AssessmentInputs): RedundancyTier[] {
-  const single = isSingleProviderSetup(input?.current_setup)
-  const arctic = (input?.lat ?? 0) >= 70
+  const single = isSingleProviderSetup(input?.current_setup);
+  const arctic = (input?.lat ?? 0) >= 70;
   return [
     {
       id: "certus-backup",
@@ -36,7 +36,8 @@ export function redundancyTiers(input?: AssessmentInputs): RedundancyTier[] {
       tier: "defense",
       label: "Automatic failover + local mesh",
       estimate: "Ops / integration cost more than terminals",
-      detail: "Failover automation and on-site mesh close the gap that dual terminals do not: human switchover delay during an incident.",
+      detail:
+        "Failover automation and on-site mesh close the gap that dual terminals do not: human switchover delay during an incident.",
     },
-  ]
+  ];
 }

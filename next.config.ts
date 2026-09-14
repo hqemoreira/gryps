@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
       { source: "/legal/privacy", destination: "/privacy", permanent: true },
       { source: "/legal", destination: "/terms", permanent: true },
       { source: "/roadmap", destination: "/research-prototype", permanent: true },
-    ]
+    ];
   },
 };
 

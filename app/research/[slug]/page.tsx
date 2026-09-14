@@ -1,33 +1,31 @@
-import type { Metadata } from "next"
-import { notFound } from "next/navigation"
-import { Header } from "@/components/Header"
-import { Footer } from "@/components/Footer"
-import { ResearchAssessmentView } from "@/components/ResearchAssessmentView"
-import { grypsCopyright } from "@/lib/gryps-copyright"
-import {
-  getAllResearchEntries,
-  getResearchEntry,
-} from "@/lib/research-library"
-import { resolveResearchAssessment } from "@/lib/research-resolve"
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { ResearchAssessmentView } from "@/components/ResearchAssessmentView";
+import { grypsCopyright } from "@/lib/gryps-copyright";
+import { getAllResearchEntries, getResearchEntry } from "@/lib/research-library";
+import { resolveResearchAssessment } from "@/lib/research-resolve";
 
-type Props = { params: Promise<{ slug: string }> }
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return getAllResearchEntries().map(e => ({ slug: e.slug }))
+  return getAllResearchEntries().map((e) => ({ slug: e.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
-  const entry = getResearchEntry(slug)
-  if (!entry) return { title: "Assessment not found | GRYPS" }
+  const { slug } = await params;
+  const entry = getResearchEntry(slug);
+  if (!entry) return { title: "Assessment not found | GRYPS" };
 
-  const resolved = await resolveResearchAssessment(slug)
-  const score = resolved?.result.resilience_signature.score
-  const grade = resolved?.result.resilience_signature.grade
-  const title = score != null && grade
-    ? `${entry.title} — Resilience Signature ${score}/${grade} | GRYPS`
-    : `${entry.title} | GRYPS Research Library`
-  const description = `${entry.subtitle}. ${entry.context.slice(0, 140)}…`
+  const resolved = await resolveResearchAssessment(slug);
+  const score = resolved?.result.resilience_signature.score;
+  const grade = resolved?.result.resilience_signature.grade;
+  const title =
+    score != null && grade
+      ? `${entry.title} — Resilience Signature ${score}/${grade} | GRYPS`
+      : `${entry.title} | GRYPS Research Library`;
+  const description = `${entry.subtitle}. ${entry.context.slice(0, 140)}…`;
 
   return {
     title,
@@ -35,13 +33,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: { canonical: `https://gryps.vercel.app/research/${slug}` },
     openGraph: { title, description, type: "article" },
     twitter: { card: "summary", title, description },
-  }
+  };
 }
 
 export default async function ResearchAssessmentPage({ params }: Props) {
-  const { slug } = await params
-  const data = await resolveResearchAssessment(slug)
-  if (!data) notFound()
+  const { slug } = await params;
+  const data = await resolveResearchAssessment(slug);
+  if (!data) notFound();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -65,15 +63,15 @@ export default async function ResearchAssessmentPage({ params }: Props) {
     variableMeasured: "Connectivity Resilience Score",
     isAccessibleForFree: true,
     creativeWorkStatus: "Research prototype",
-  }
+  };
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <Header
-        ctaHref="/#advisor"
-        useIaNav
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <Header ctaHref="/#advisor" useIaNav />
       <div className="gryps-page-under-nav">
         <ResearchAssessmentView data={data} />
       </div>
@@ -82,5 +80,5 @@ export default async function ResearchAssessmentPage({ params }: Props) {
         secondaryLink={{ href: "/research", label: "Research Library" }}
       />
     </div>
-  )
+  );
 }

@@ -4,59 +4,55 @@
  * Deterministic, attribution-first; not live RF or procurement advice.
  */
 
-import type { AdvisorPriorityId } from "@/lib/advisor-priorities"
-import type { ProviderMeta, SectorId } from "@/lib/deterministic-score"
-import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/model-constants"
+import type { AdvisorPriorityId } from "@/lib/advisor-priorities";
+import type { ProviderMeta, SectorId } from "@/lib/deterministic-score";
+import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/model-constants";
 
-export type EvidenceSourceType = "model" | "catalog" | "dataset" | "research" | "reference"
+export type EvidenceSourceType = "model" | "catalog" | "dataset" | "research" | "reference";
 
 export type EvidenceSource = {
-  id: string
-  title: string
-  type: EvidenceSourceType
-  attribution: string
-  url?: string
-  freshness: string
-  notes?: string
-}
+  id: string;
+  title: string;
+  type: EvidenceSourceType;
+  attribution: string;
+  url?: string;
+  freshness: string;
+  notes?: string;
+};
 
 export type EvidenceChainStepId =
-  | "environment"
-  | "research"
-  | "characteristics"
-  | "scoring"
-  | "recommendation"
+  "environment" | "research" | "characteristics" | "scoring" | "recommendation";
 
 export type EvidenceChainStep = {
-  id: EvidenceChainStepId
-  label: string
-  summary: string
-  sourceIds: string[]
-}
+  id: EvidenceChainStepId;
+  label: string;
+  summary: string;
+  sourceIds: string[];
+};
 
 export type EvidenceConfidence = {
-  band: "High" | "Medium" | "Low"
+  band: "High" | "Medium" | "Low";
   /** Assessment/data-basis confidence 0–100 — not availability % */
-  score: number
-  rationale: string
-}
+  score: number;
+  rationale: string;
+};
 
 export type EvidencePackage = {
-  environment_theme: string
-  chain: EvidenceChainStep[]
-  sources: EvidenceSource[]
-  assumptions: string[]
-  limitations: string[]
-  methodology_summary: string
-  confidence: EvidenceConfidence
+  environment_theme: string;
+  chain: EvidenceChainStep[];
+  sources: EvidenceSource[];
+  assumptions: string[];
+  limitations: string[];
+  methodology_summary: string;
+  confidence: EvidenceConfidence;
   data_freshness: {
-    model: string
-    catalog: string
-    reference_datasets: string
-    knowledge: string
-  }
-  research_links: { label: string; href: string }[]
-}
+    model: string;
+    catalog: string;
+    reference_datasets: string;
+    knowledge: string;
+  };
+  research_links: { label: string; href: string }[];
+};
 
 const BASE_SOURCES: EvidenceSource[] = [
   {
@@ -135,90 +131,94 @@ const BASE_SOURCES: EvidenceSource[] = [
     url: "/research",
     freshness: "Curated set · Model v0.3 Signatures",
   },
-]
+];
 
 function environmentTheme(lat: number, sector: SectorId): string {
-  if (lat > 72) return "High Arctic / polar operations"
+  if (lat > 72) return "High Arctic / polar operations";
   if (lat > 66.5) {
-    if (sector === "maritime") return "Arctic maritime / offshore"
-    if (sector === "forestry") return "Arctic / sub-Arctic forestry"
-    if (sector === "mining") return "Arctic mining & extraction"
-    return "Arctic / high-latitude remote ops"
+    if (sector === "maritime") return "Arctic maritime / offshore";
+    if (sector === "forestry") return "Arctic / sub-Arctic forestry";
+    if (sector === "mining") return "Arctic mining & extraction";
+    return "Arctic / high-latitude remote ops";
   }
   if (lat > 60) {
-    if (sector === "maritime") return "Nordic maritime"
-    if (sector === "forestry") return "Nordic forestry & timber logistics"
-    return "Nordic remote industrial operations"
+    if (sector === "maritime") return "Nordic maritime";
+    if (sector === "forestry") return "Nordic forestry & timber logistics";
+    return "Nordic remote industrial operations";
   }
-  return "Nordic mid-latitude remote operations"
+  return "Nordic mid-latitude remote operations";
 }
 
-function connectivityCharacteristics(
-  lat: number,
-  providers: ProviderMeta[],
-): string {
-  const orbits = [...new Set(providers.map(p => p.orbit))]
-  const hasLeo = orbits.includes("LEO")
-  const hasGeo = orbits.includes("GEO")
-  const bits: string[] = []
+function connectivityCharacteristics(lat: number, providers: ProviderMeta[]): string {
+  const orbits = [...new Set(providers.map((p) => p.orbit))];
+  const hasLeo = orbits.includes("LEO");
+  const hasGeo = orbits.includes("GEO");
+  const bits: string[] = [];
   if (lat > 70) {
-    bits.push("GEO elevation is constrained; polar-capable LEO and narrowband matter more in the model")
+    bits.push(
+      "GEO elevation is constrained; polar-capable LEO and narrowband matter more in the model"
+    );
   } else if (lat > 65) {
-    bits.push("Sub-Arctic latitude — LEO paths remain favourable; GEO is usable but elevation-sensitive")
+    bits.push(
+      "Sub-Arctic latitude — LEO paths remain favourable; GEO is usable but elevation-sensitive"
+    );
   } else {
-    bits.push("Mid-high latitude — mixed LEO/GEO geometries are comparatively favourable in the model")
+    bits.push(
+      "Mid-high latitude — mixed LEO/GEO geometries are comparatively favourable in the model"
+    );
   }
   if (providers.length === 0) {
-    bits.push("No documented satellite path — characteristics assume zero primary connectivity")
+    bits.push("No documented satellite path — characteristics assume zero primary connectivity");
   } else if (providers.length === 1) {
-    bits.push(`Single documented path (${providers[0].name}) — correlated outage exposure`)
+    bits.push(`Single documented path (${providers[0].name}) — correlated outage exposure`);
   } else if (hasLeo && hasGeo) {
-    bits.push("Documented LEO + GEO mix — orbital-class diversity present")
+    bits.push("Documented LEO + GEO mix — orbital-class diversity present");
   } else if (hasLeo) {
-    bits.push("LEO-only documented path(s) — throughput diversity possible; polar backup still relevant")
+    bits.push(
+      "LEO-only documented path(s) — throughput diversity possible; polar backup still relevant"
+    );
   } else {
-    bits.push("GEO-centric documented path(s) — high-latitude primary risk if used alone")
+    bits.push("GEO-centric documented path(s) — high-latitude primary risk if used alone");
   }
-  return bits.join(". ") + "."
+  return bits.join(". ") + ".";
 }
 
 function scoringFactorsSummary(opts: {
-  lat: number
-  sector: SectorId
-  providerCount: number
-  priorities: AdvisorPriorityId[]
+  lat: number;
+  sector: SectorId;
+  providerCount: number;
+  priorities: AdvisorPriorityId[];
 }): string {
   const priorityBit = opts.priorities.length
     ? ` Mission priorities (${opts.priorities.join(", ").replace(/_/g, " ")}) re-rank recommendations only.`
-    : ""
+    : "";
   return (
     `Model v0.3 weights redundancy (0–30), latitude (0–20), operational profile (0–15), and provider confidence (0–30), then applies hard caps.` +
     ` This ${opts.sector.replace(/-/g, " ")} profile at ~${opts.lat.toFixed(1)}°N with ${opts.providerCount} documented provider(s) drives the Signature components.` +
     priorityBit
-  )
+  );
 }
 
 function assessmentConfidence(opts: {
-  lat: number
-  providerCount: number
-  avgCatalogConfidence: number
-  hasOrbitMix: boolean
+  lat: number;
+  providerCount: number;
+  avgCatalogConfidence: number;
+  hasOrbitMix: boolean;
 }): EvidenceConfidence {
-  let score = Math.round(opts.avgCatalogConfidence * 0.55 + (opts.providerCount > 0 ? 25 : 5))
-  if (opts.providerCount >= 2 && opts.hasOrbitMix) score += 8
-  if (opts.lat > 72) score -= 12
-  else if (opts.lat > 70) score -= 6
-  if (opts.providerCount === 0) score = Math.min(score, 35)
-  score = Math.max(20, Math.min(92, score))
-  const band: EvidenceConfidence["band"] =
-    score >= 75 ? "High" : score >= 55 ? "Medium" : "Low"
+  let score = Math.round(opts.avgCatalogConfidence * 0.55 + (opts.providerCount > 0 ? 25 : 5));
+  if (opts.providerCount >= 2 && opts.hasOrbitMix) score += 8;
+  if (opts.lat > 72) score -= 12;
+  else if (opts.lat > 70) score -= 6;
+  if (opts.providerCount === 0) score = Math.min(score, 35);
+  score = Math.max(20, Math.min(92, score));
+  const band: EvidenceConfidence["band"] = score >= 75 ? "High" : score >= 55 ? "Medium" : "Low";
   const rationale =
     band === "High"
       ? "Documented multi-path or strong catalog basis at this latitude supports a higher assessment confidence."
       : band === "Medium"
         ? "Usable catalog and profile inputs, with residual uncertainty from latitude, single-path setups, or incomplete site survey."
-        : "Sparse setup documentation, extreme latitude, or weak catalog fit — treat the Signature as exploratory."
-  return { band, score, rationale }
+        : "Sparse setup documentation, extreme latitude, or weak catalog fit — treat the Signature as exploratory.";
+  return { band, score, rationale };
 }
 
 function pickSources(sector: SectorId, lat: number): EvidenceSource[] {
@@ -230,10 +230,10 @@ function pickSources(sector: SectorId, lat: number): EvidenceSource[] {
     "resilience-scoring",
     "research-library",
     "eu-dem",
-  ])
-  if (sector === "forestry") ids.add("forestry-fi")
-  if (lat >= 55 && lat <= 72) ids.add("bittimittari") // may apply for FI seeds
-  return BASE_SOURCES.filter(s => ids.has(s.id))
+  ]);
+  if (sector === "forestry") ids.add("forestry-fi");
+  if (lat >= 55 && lat <= 72) ids.add("bittimittari"); // may apply for FI seeds
+  return BASE_SOURCES.filter((s) => ids.has(s.id));
 }
 
 function researchLinks(sector: SectorId, lat: number): { label: string; href: string }[] {
@@ -243,61 +243,64 @@ function researchLinks(sector: SectorId, lat: number): { label: string; href: st
     { label: "Research Library", href: "/research" },
     { label: "Arctic connectivity notes", href: "/knowledge/satellite-connectivity-arctic" },
     { label: "LEO · MEO · GEO reference", href: "/knowledge/leo-vs-meo-vs-geo-remote-operations" },
-    { label: "Resilience scoring explainer", href: "/knowledge/satellite-connectivity-resilience-scoring" },
-  ]
+    {
+      label: "Resilience scoring explainer",
+      href: "/knowledge/satellite-connectivity-resilience-scoring",
+    },
+  ];
   if (sector === "forestry") {
     links.push({
       label: "Forestry connectivity (Finland)",
       href: "/knowledge/forestry-satellite-connectivity-finland",
-    })
+    });
   }
   if (lat > 66) {
-    links.push({ label: "Explore Connectivity Intelligence map", href: "/map" })
+    links.push({ label: "Explore Connectivity Intelligence map", href: "/map" });
   }
-  return links
+  return links;
 }
 
 function hasOrbitMix(providers: ProviderMeta[]): boolean {
-  const orbits = new Set(providers.map(p => p.orbit))
-  if (orbits.size >= 2) return true
-  const classes = new Set(providers.filter(p => p.orbit === "LEO").map(p => p.class))
-  return classes.size >= 2
+  const orbits = new Set(providers.map((p) => p.orbit));
+  if (orbits.size >= 2) return true;
+  const classes = new Set(providers.filter((p) => p.orbit === "LEO").map((p) => p.class));
+  return classes.size >= 2;
 }
 
 export function buildEvidencePackage(opts: {
-  lat: number
-  sector: SectorId
-  providers: ProviderMeta[]
-  priorities: AdvisorPriorityId[]
-  recommendedProvider?: string
-  score: number
-  grade: string
+  lat: number;
+  sector: SectorId;
+  providers: ProviderMeta[];
+  priorities: AdvisorPriorityId[];
+  recommendedProvider?: string;
+  score: number;
+  grade: string;
 }): EvidencePackage {
-  const theme = environmentTheme(opts.lat, opts.sector)
-  const sources = pickSources(opts.sector, opts.lat)
+  const theme = environmentTheme(opts.lat, opts.sector);
+  const sources = pickSources(opts.sector, opts.lat);
   const avgConf =
     opts.providers.length === 0
       ? 40
-      : opts.providers.reduce((s, p) => s + p.confidence, 0) / opts.providers.length
+      : opts.providers.reduce((s, p) => s + p.confidence, 0) / opts.providers.length;
   const confidence = assessmentConfidence({
     lat: opts.lat,
     providerCount: opts.providers.length,
     avgCatalogConfidence: avgConf,
     hasOrbitMix: hasOrbitMix(opts.providers),
-  })
+  });
 
-  const chars = connectivityCharacteristics(opts.lat, opts.providers)
+  const chars = connectivityCharacteristics(opts.lat, opts.providers);
   const scoring = scoringFactorsSummary({
     lat: opts.lat,
     sector: opts.sector,
     providerCount: opts.providers.length,
     priorities: opts.priorities,
-  })
-  const recLabel = opts.recommendedProvider ?? "ranked backup options"
+  });
+  const recLabel = opts.recommendedProvider ?? "ranked backup options";
   const researchFocus =
     opts.lat > 66
       ? "Arctic / high-latitude research emphasises GEO elevation loss, polar LEO reach, and multi-orbit redundancy."
-      : "Nordic remote-ops research emphasises redundancy, operational dependency, and orbital-class trade-offs."
+      : "Nordic remote-ops research emphasises redundancy, operational dependency, and orbital-class trade-offs.";
 
   const chain: EvidenceChainStep[] = [
     {
@@ -310,7 +313,12 @@ export function buildEvidencePackage(opts: {
       id: "research",
       label: "Relevant research",
       summary: researchFocus,
-      sourceIds: ["arctic-connectivity", "resilience-scoring", "research-library", ...(opts.sector === "forestry" ? ["forestry-fi"] : [])],
+      sourceIds: [
+        "arctic-connectivity",
+        "resilience-scoring",
+        "research-library",
+        ...(opts.sector === "forestry" ? ["forestry-fi"] : []),
+      ],
     },
     {
       id: "characteristics",
@@ -330,7 +338,7 @@ export function buildEvidencePackage(opts: {
       summary: `Signature ${opts.score}/100 · ${opts.grade}. Model recommends ${recLabel} as the leading fit for this evidence chain — indicative research output, not procurement advice.`,
       sourceIds: ["model-v03", "provider-catalog"],
     },
-  ]
+  ];
 
   return {
     environment_theme: theme,
@@ -360,5 +368,5 @@ export function buildEvidencePackage(opts: {
       knowledge: "GRYPS Knowledge + Research Library · editorial 2026",
     },
     research_links: researchLinks(opts.sector, opts.lat),
-  }
+  };
 }

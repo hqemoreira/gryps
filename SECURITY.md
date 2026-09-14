@@ -11,6 +11,7 @@ If you discover a security issue, please **do not** open a public GitHub issue.
 Email: ghostcat.0to1@ik.me
 
 Include:
+
 - A short description of the issue
 - Steps to reproduce (if possible)
 - Impact assessment (what an attacker could do)

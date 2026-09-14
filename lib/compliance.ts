@@ -1,24 +1,24 @@
-import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors"
-import { isSingleProviderSetup } from "@/lib/signature-meta"
+import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors";
+import { isSingleProviderSetup } from "@/lib/signature-meta";
 
 export type ComplianceFlag = {
-  id: "nis2-art21" | "cer"
-  label: string
-  pass: boolean
-  reason: string
-}
+  id: "nis2-art21" | "cer";
+  label: string;
+  pass: boolean;
+  reason: string;
+};
 
 export function computeComplianceFlags(
   result: AdvisoryResult,
-  input?: AssessmentInputs,
+  input?: AssessmentInputs
 ): ComplianceFlag[] {
-  const score = result.resilience_signature.score
-  const gaps = result.redundancy_gaps ?? []
-  const risks = result.risk_factors ?? []
-  const single = isSingleProviderSetup(input?.current_setup)
+  const score = result.resilience_signature.score;
+  const gaps = result.redundancy_gaps ?? [];
+  const risks = result.risk_factors ?? [];
+  const single = isSingleProviderSetup(input?.current_setup);
 
-  const nis2Pass = score >= 50 && gaps.length <= 1 && !single
-  const cerPass = score >= 40 && !risks.some(r => r.severity === "critical")
+  const nis2Pass = score >= 50 && gaps.length <= 1 && !single;
+  const cerPass = score >= 40 && !risks.some((r) => r.severity === "critical");
 
   return [
     {
@@ -39,5 +39,5 @@ export function computeComplianceFlags(
         ? "No critical connectivity risks flagged at this score band."
         : "Critical risk factors remain on the Signature — CER-style evidence would require mitigation before relying on this as an assessment checkpoint.",
     },
-  ]
+  ];
 }

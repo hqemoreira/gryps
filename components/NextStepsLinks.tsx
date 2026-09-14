@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import type { Lang } from "@/lib/use-lang"
+import Link from "next/link";
+import type { Lang } from "@/lib/use-lang";
 
 export type NextStepLink = {
-  href: string
-  en: string
-  fi: string
-}
+  href: string;
+  en: string;
+  fi: string;
+};
 
 const DEFAULT_STEPS: NextStepLink[] = [
   { href: "/map", en: "Explore Map", fi: "Tutki karttaa" },
@@ -16,20 +16,18 @@ const DEFAULT_STEPS: NextStepLink[] = [
   { href: "/knowledge", en: "Evidence", fi: "Näyttö" },
   { href: "/methodology", en: "Methodology", fi: "Menetelmä" },
   { href: "/#advisor", en: "Generate Signature", fi: "Luo Signature" },
-]
+];
 
 export function NextStepsLinks({
   lang,
   label,
   links = DEFAULT_STEPS,
 }: {
-  lang: Lang
-  label?: string
-  links?: NextStepLink[]
+  lang: Lang;
+  label?: string;
+  links?: NextStepLink[];
 }) {
-  const heading =
-    label ??
-    (lang === "fi" ? "SEURAAVAT ASKELEET" : "NEXT STEPS")
+  const heading = label ?? (lang === "fi" ? "SEURAAVAT ASKELEET" : "NEXT STEPS");
 
   return (
     <nav
@@ -53,7 +51,7 @@ export function NextStepsLinks({
         {heading}
       </p>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-        {links.map(link => (
+        {links.map((link) => (
           <Link
             key={link.href + link.en}
             href={link.href}
@@ -73,5 +71,5 @@ export function NextStepsLinks({
         ))}
       </div>
     </nav>
-  )
+  );
 }

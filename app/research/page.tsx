@@ -1,36 +1,35 @@
-import type { Metadata } from "next"
-import { ResearchLibraryView } from "@/components/ResearchLibraryView"
-import { getAllResearchEntries } from "@/lib/research-library"
-import { resolveResearchAssessment } from "@/lib/research-resolve"
+import type { Metadata } from "next";
+import { ResearchLibraryView } from "@/components/ResearchLibraryView";
+import { getAllResearchEntries } from "@/lib/research-library";
+import { resolveResearchAssessment } from "@/lib/research-resolve";
 
-import { METHODOLOGY_LABEL } from "@/lib/model-constants"
+import { METHODOLOGY_LABEL } from "@/lib/model-constants";
 
 export const metadata: Metadata = {
   title: "Research Library — Connectivity Resilience Assessments | GRYPS",
-  description:
-    `Curated GRYPS research assessments of modeled satellite connectivity resilience across Nordic, Arctic, and Icelandic operating environments. ${METHODOLOGY_LABEL} · experimental research prototype — indicative, not procurement or certification.`,
+  description: `Curated GRYPS research assessments of modeled satellite connectivity resilience across Nordic, Arctic, and Icelandic operating environments. ${METHODOLOGY_LABEL} · experimental research prototype — indicative, not procurement or certification.`,
   alternates: { canonical: "https://gryps.vercel.app/research" },
   openGraph: {
     title: "GRYPS Research Library",
     description:
       "Explore modeled satellite connectivity resilience across remote and autonomous operating environments.",
   },
-}
+};
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export default async function ResearchLibraryPage() {
-  const entries = getAllResearchEntries()
+  const entries = getAllResearchEntries();
   const cards = await Promise.all(
-    entries.map(async e => {
-      const resolved = await resolveResearchAssessment(e.slug)
+    entries.map(async (e) => {
+      const resolved = await resolveResearchAssessment(e.slug);
       return {
         slug: e.slug,
         grade: resolved?.result.resilience_signature.grade ?? "—",
         score: resolved?.result.resilience_signature.score ?? 0,
-      }
-    }),
-  )
+      };
+    })
+  );
 
-  return <ResearchLibraryView cards={cards} />
+  return <ResearchLibraryView cards={cards} />;
 }

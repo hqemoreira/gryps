@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server"
-import { getAllSites } from "@/lib/signatures-db"
+import { NextResponse } from "next/server";
+import { getAllSites } from "@/lib/signatures-db";
 
 export async function GET() {
   try {
-    const sites = await getAllSites()
-    const summary = sites.map(s => ({
+    const sites = await getAllSites();
+    const summary = sites.map((s) => ({
       slug: s.slug,
       name: s.name,
       lat: s.lat,
@@ -15,10 +15,10 @@ export async function GET() {
       score: s.output.resilience_signature.score,
       grade: s.output.resilience_signature.grade,
       summary: s.output.resilience_signature.summary,
-    }))
-    return NextResponse.json({ sites: summary })
+    }));
+    return NextResponse.json({ sites: summary });
   } catch (err) {
-    console.error("Failed to fetch signature sites:", err)
-    return NextResponse.json({ sites: [] }, { status: 500 })
+    console.error("Failed to fetch signature sites:", err);
+    return NextResponse.json({ sites: [] }, { status: 500 });
   }
 }

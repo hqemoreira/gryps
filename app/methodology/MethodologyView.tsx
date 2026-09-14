@@ -1,10 +1,10 @@
-"use client"
-import type { CSSProperties } from "react"
-import Link from "next/link"
-import { DocShell, type DocLang } from "@/components/DocShell"
-import { PolarAtmosphere } from "@/components/PolarAtmosphere"
-import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav"
-import { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL } from "@/lib/signature-meta"
+"use client";
+import type { CSSProperties } from "react";
+import Link from "next/link";
+import { DocShell, type DocLang } from "@/components/DocShell";
+import { PolarAtmosphere } from "@/components/PolarAtmosphere";
+import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav";
+import { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL } from "@/lib/signature-meta";
 
 const COPY = {
   en: {
@@ -74,20 +74,34 @@ const COPY = {
       "The Resilience Score is deterministic and reproducible for the same inputs. Optional language-model text may polish the recommendation paragraph only — it never changes score, grade, risks, or ranked providers.",
     formulaP2: "Score = sum of four components (then hard caps, clamped 0–100):",
     components: [
-      { title: "Redundancy (0–30)", body: "0 providers → 0; 1 → 8; 2 → 22 (+6 if independent orbital types / LEO broadband+narrowband); ≥3 → 28." },
-      { title: "Latitude (0–20)", body: "≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8. Forestry sites below 300 m elevation: −4 (canopy/terrain)." },
-      { title: "Operational profile (0–15)", body: "manual 15 · remote-operated 11 · mixed 8 · autonomous 5." },
-      { title: "Provider confidence (0–30)", body: "average catalog confidence × 0.30. GEO providers above 70°N use a degraded confidence. Confidence reflects assessment/data basis — not guaranteed service availability." },
+      {
+        title: "Redundancy (0–30)",
+        body: "0 providers → 0; 1 → 8; 2 → 22 (+6 if independent orbital types / LEO broadband+narrowband); ≥3 → 28.",
+      },
+      {
+        title: "Latitude (0–20)",
+        body: "≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8. Forestry sites below 300 m elevation: −4 (canopy/terrain).",
+      },
+      {
+        title: "Operational profile (0–15)",
+        body: "manual 15 · remote-operated 11 · mixed 8 · autonomous 5.",
+      },
+      {
+        title: "Provider confidence (0–30)",
+        body: "average catalog confidence × 0.30. GEO providers above 70°N use a degraded confidence. Confidence reflects assessment/data basis — not guaranteed service availability.",
+      },
     ],
     gradesH2: "Grades",
-    gradesP: "A = ≥90 · B = 75–89 · C = 60–74 · D = 40–59 · F = <40 (spec band E maps to F in the UI).",
+    gradesP:
+      "A = ≥90 · B = 75–89 · C = 60–74 · D = 40–59 · F = <40 (spec band E maps to F in the UI).",
     capsH2: "Hard caps",
     capsItems: [
       "Safety-critical + autonomous + <2 providers → score capped at 50.",
       "Safety-critical + exactly 1 provider → capped at 60.",
       "Latitude >72°N with GEO-only providers → capped at 45.",
     ],
-    capsNote: "Caps are enforced in the deterministic engine (and re-checked in code) so edge-case demos cannot bypass homepage claims.",
+    capsNote:
+      "Caps are enforced in the deterministic engine (and re-checked in code) so edge-case demos cannot bypass homepage claims.",
     risksH2: "Risk factors and ranked providers",
     risksP:
       "Up to four risk factors are derived from redundancy, latitude/GEO, sector, autonomy, and score vs safety threshold. Backup providers not in the current setup are ranked by confidence minus latitude and orbital-overlap penalties, then optional mission-priority bonuses. GRYPS has no commercial relationship with any provider listed.",
@@ -143,7 +157,8 @@ const COPY = {
     ],
     geometryCaption:
       "Mallinnettu polaarigeometria — leveyspiirit sekä LEO-, MEO- ja GEO-radat. Interaktiivinen korostus · animoidut ohitukset. Pisteytys perustuu deterministiseen malliin v0.3, ei reaaliaikaiseen RF-mittaukseen.",
-    geometryHint: "Korosta rataluokkaa nähdäksesi, miten geometria vaikuttaa Signature-painotuksiin.",
+    geometryHint:
+      "Korosta rataluokkaa nähdäksesi, miten geometria vaikuttaa Signature-painotuksiin.",
     attributionH2: "Lähdeattribuutio ja datan tuoreus",
     attributionItems: [
       "Malli — GRYPS-deterministinen moottori (malli v0.3 / deterministic-v0.3); piste/arvosana/riskit/sijoitukset toistettavissa samoilla syötteillä.",
@@ -174,20 +189,34 @@ const COPY = {
       "Resilience-piste on deterministinen ja toistettavissa samoilla syötteillä. Valinnainen kielimalliteksti voi hioa vain suosituskappaleen — se ei koskaan muuta pistettä, arvosanaa, riskejä tai toimittajasuosituksia.",
     formulaP2: "Piste = neljän komponentin summa (sen jälkeen kovat katot, rajattu 0–100):",
     components: [
-      { title: "Redundanssi (0–30)", body: "0 toimittajaa → 0; 1 → 8; 2 → 22 (+6 jos itsenäiset radat / LEO broadband+narrowband); ≥3 → 28." },
-      { title: "Leveysaste (0–20)", body: "≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8. Metsäkohteet alle 300 m korkeudessa: −4 (latvus/maasto)." },
-      { title: "Toimintaprofiili (0–15)", body: "manuaalinen 15 · etäohjattu 11 · yhdistelmä 8 · autonominen 5." },
-      { title: "Toimittajaluottamus (0–30)", body: "hakemiston keskimääräinen luottamus × 0.30. GEO-toimittajat yli 70°N käyttävät heikennettyä luottamusta. Luottamus kuvaa arvioinnin/dataperustan varmuutta — ei palvelun saatavuustakuuta." },
+      {
+        title: "Redundanssi (0–30)",
+        body: "0 toimittajaa → 0; 1 → 8; 2 → 22 (+6 jos itsenäiset radat / LEO broadband+narrowband); ≥3 → 28.",
+      },
+      {
+        title: "Leveysaste (0–20)",
+        body: "≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8. Metsäkohteet alle 300 m korkeudessa: −4 (latvus/maasto).",
+      },
+      {
+        title: "Toimintaprofiili (0–15)",
+        body: "manuaalinen 15 · etäohjattu 11 · yhdistelmä 8 · autonominen 5.",
+      },
+      {
+        title: "Toimittajaluottamus (0–30)",
+        body: "hakemiston keskimääräinen luottamus × 0.30. GEO-toimittajat yli 70°N käyttävät heikennettyä luottamusta. Luottamus kuvaa arvioinnin/dataperustan varmuutta — ei palvelun saatavuustakuuta.",
+      },
     ],
     gradesH2: "Arvosanat",
-    gradesP: "A = ≥90 · B = 75–89 · C = 60–74 · D = 40–59 · F = <40 (spesifikaation E näkyy käyttöliittymässä F:nä).",
+    gradesP:
+      "A = ≥90 · B = 75–89 · C = 60–74 · D = 40–59 · F = <40 (spesifikaation E näkyy käyttöliittymässä F:nä).",
     capsH2: "Kovat katot",
     capsItems: [
       "Turvallisuuskriittinen + autonominen + alle 2 toimittajaa → piste katkaistaan 50:een.",
       "Turvallisuuskriittinen + tasan 1 toimittaja → katkaistaan 60:een.",
       "Leveysaste yli 72°N ja vain GEO-toimittajat → katkaistaan 45:een.",
     ],
-    capsNote: "Katot on pakotettu deterministiseen moottoriin (ja tarkistetaan uudelleen koodissa), jotta reunademot eivät voi kiertää etusivun väitteitä.",
+    capsNote:
+      "Katot on pakotettu deterministiseen moottoriin (ja tarkistetaan uudelleen koodissa), jotta reunademot eivät voi kiertää etusivun väitteitä.",
     risksH2: "Riskitekijät ja toimittajasuositukset",
     risksP:
       "Enintään neljä riskitekijää johdetaan redundanssista, leveysasteesta ja GEO:sta, toimialasta, autonomiasta sekä pisteestä suhteessa turvallisuuskynnykseen. Nykyiseen kokoonpanoon kuulumattomat varatoimittajat järjestetään luottamuksen mukaan, josta vähennetään leveysaste- ja ratapeittorangaistukset, sekä valinnaiset tehtäväprioriteettibonukset. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
@@ -207,21 +236,58 @@ const COPY = {
     providersLink: "Toimittajahakemisto",
     advisorLink: "Luo Resilience Signature",
   },
-} as const
+} as const;
 
 function MethodologyArticle({ lang }: { lang: DocLang }) {
-  const t = COPY[lang]
+  const t = COPY[lang];
   return (
     <article style={{ maxWidth: 920, margin: "0 auto", padding: "32px 24px 0" }}>
       <ResearchDocsNav lang={lang} active="methodology" />
-      <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>{t.eyebrow}</p>
-      <h1 style={{ fontFamily: "var(--font-ui)", fontSize: 36, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em", margin: "16px 0 20px", maxWidth: 720 }}>
+      <p
+        style={{
+          fontFamily: "var(--font-data)",
+          fontSize: 10,
+          color: "var(--text-dim)",
+          letterSpacing: "0.12em",
+        }}
+      >
+        {t.eyebrow}
+      </p>
+      <h1
+        style={{
+          fontFamily: "var(--font-ui)",
+          fontSize: 36,
+          fontWeight: 700,
+          color: "var(--text)",
+          letterSpacing: "-0.02em",
+          margin: "16px 0 20px",
+          maxWidth: 720,
+        }}
+      >
         {t.h1}
       </h1>
-      <p className="gryps-hero-sub" style={{ fontFamily: "var(--font-ui)", fontSize: 16, color: "var(--text-muted)", lineHeight: 1.75, marginBottom: 12, maxWidth: 720 }}>
+      <p
+        className="gryps-hero-sub"
+        style={{
+          fontFamily: "var(--font-ui)",
+          fontSize: 16,
+          color: "var(--text-muted)",
+          lineHeight: 1.75,
+          marginBottom: 12,
+          maxWidth: 720,
+        }}
+      >
         {t.intro}
       </p>
-      <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-dim)", marginBottom: 16, lineHeight: 1.55 }}>
+      <p
+        style={{
+          fontFamily: "var(--font-data)",
+          fontSize: 11,
+          color: "var(--text-dim)",
+          marginBottom: 16,
+          lineHeight: 1.55,
+        }}
+      >
         {t.versionNote}
       </p>
       <PrototypeDisclaimerBanner lang={lang} />
@@ -248,7 +314,7 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
         <h2 style={h2}>{t.chainH2}</h2>
         <p style={p}>{t.chainIntro}</p>
         <ol style={{ ...ul, listStyle: "none", paddingLeft: 0 }}>
-          {t.chain.map(step => (
+          {t.chain.map((step) => (
             <li key={step.title} style={{ marginBottom: 16, paddingLeft: 0 }}>
               <strong style={{ color: "var(--text)" }}>{step.title}</strong>
               <p style={{ ...p, marginTop: 6, marginBottom: 0 }}>{step.body}</p>
@@ -258,17 +324,23 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
 
         <h2 style={h2}>{t.attributionH2}</h2>
         <ul style={ul}>
-          {t.attributionItems.map(item => <li key={item.slice(0, 40)}>{item}</li>)}
+          {t.attributionItems.map((item) => (
+            <li key={item.slice(0, 40)}>{item}</li>
+          ))}
         </ul>
 
         <h2 style={h2}>{t.assumptionsH2}</h2>
         <ul style={ul}>
-          {t.assumptions.map(item => <li key={item}>{item}</li>)}
+          {t.assumptions.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
         </ul>
 
         <h2 style={h2}>{t.limitationsH2}</h2>
         <ul style={ul}>
-          {t.limitations.map(item => <li key={item}>{item}</li>)}
+          {t.limitations.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
         </ul>
 
         <h2 style={h2}>{t.confidenceH2}</h2>
@@ -278,7 +350,7 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
         <p style={p}>{t.formulaP1}</p>
         <p style={p}>{t.formulaP2}</p>
         <ul style={ul}>
-          {t.components.map(c => (
+          {t.components.map((c) => (
             <li key={c.title}>
               <strong>{c.title}</strong> — {c.body}
             </li>
@@ -290,7 +362,9 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
 
         <h2 style={h2}>{t.capsH2}</h2>
         <ul style={ul}>
-          {t.capsItems.map(item => <li key={item}>{item}</li>)}
+          {t.capsItems.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
         </ul>
         <p style={p}>{t.capsNote}</p>
 
@@ -304,45 +378,74 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
         <p style={p}>{t.versionP}</p>
 
         <p style={{ ...p, marginTop: 40 }}>
-          <Link href="/research" style={{ color: "var(--accent-blue)" }}>{t.researchLink}</Link>
+          <Link href="/research" style={{ color: "var(--accent-blue)" }}>
+            {t.researchLink}
+          </Link>
           {" · "}
-          <Link href="/data-sources" style={{ color: "var(--accent-blue)" }}>{t.dataSourcesLink}</Link>
+          <Link href="/data-sources" style={{ color: "var(--accent-blue)" }}>
+            {t.dataSourcesLink}
+          </Link>
           {" · "}
-          <Link href="/assumptions" style={{ color: "var(--accent-blue)" }}>{t.assumptionsLink}</Link>
+          <Link href="/assumptions" style={{ color: "var(--accent-blue)" }}>
+            {t.assumptionsLink}
+          </Link>
           {" · "}
-          <Link href="/limitations" style={{ color: "var(--accent-blue)" }}>{t.limitationsLink}</Link>
+          <Link href="/limitations" style={{ color: "var(--accent-blue)" }}>
+            {t.limitationsLink}
+          </Link>
           {" · "}
-          <Link href="/changelog" style={{ color: "var(--accent-blue)" }}>{t.changelogLink}</Link>
+          <Link href="/changelog" style={{ color: "var(--accent-blue)" }}>
+            {t.changelogLink}
+          </Link>
           {" · "}
-          <Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>{t.scenariosLink}</Link>
+          <Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>
+            {t.scenariosLink}
+          </Link>
           {" · "}
-          <Link href="/workspace" style={{ color: "var(--accent-blue)" }}>{t.workspaceLink}</Link>
+          <Link href="/workspace" style={{ color: "var(--accent-blue)" }}>
+            {t.workspaceLink}
+          </Link>
           {" · "}
-          <Link href="/knowledge" style={{ color: "var(--accent-blue)" }}>{t.knowledgeLink}</Link>
+          <Link href="/knowledge" style={{ color: "var(--accent-blue)" }}>
+            {t.knowledgeLink}
+          </Link>
           {" · "}
-          <Link href="/providers" style={{ color: "var(--accent-blue)" }}>{t.providersLink}</Link>
+          <Link href="/providers" style={{ color: "var(--accent-blue)" }}>
+            {t.providersLink}
+          </Link>
           {" · "}
-          <Link href="/#advisor" style={{ color: "var(--accent-blue)" }}>{t.advisorLink}</Link>
+          <Link href="/#advisor" style={{ color: "var(--accent-blue)" }}>
+            {t.advisorLink}
+          </Link>
         </p>
       </div>
     </article>
-  )
+  );
 }
 
 export function MethodologyView() {
-  return (
-    <DocShell>
-      {(lang) => <MethodologyArticle lang={lang} />}
-    </DocShell>
-  )
+  return <DocShell>{(lang) => <MethodologyArticle lang={lang} />}</DocShell>;
 }
 
 const h2: CSSProperties = {
-  fontFamily: "var(--font-ui)", fontSize: 18, fontWeight: 700, color: "var(--text)", margin: "28px 0 10px",
-}
+  fontFamily: "var(--font-ui)",
+  fontSize: 18,
+  fontWeight: 700,
+  color: "var(--text)",
+  margin: "28px 0 10px",
+};
 const p: CSSProperties = {
-  fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.75, marginBottom: 12,
-}
+  fontFamily: "var(--font-ui)",
+  fontSize: 15,
+  color: "var(--text-muted)",
+  lineHeight: 1.75,
+  marginBottom: 12,
+};
 const ul: CSSProperties = {
-  fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.75, paddingLeft: 20, marginBottom: 12,
-}
+  fontFamily: "var(--font-ui)",
+  fontSize: 15,
+  color: "var(--text-muted)",
+  lineHeight: 1.75,
+  paddingLeft: 20,
+  marginBottom: 12,
+};

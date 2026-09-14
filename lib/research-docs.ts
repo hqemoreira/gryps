@@ -8,24 +8,24 @@ import {
   SCORING_ENGINE,
   METHODOLOGY_VERSION,
   METHODOLOGY_LABEL,
-} from "@/lib/model-constants"
+} from "@/lib/model-constants";
 
-export { METHODOLOGY_VERSION, METHODOLOGY_LABEL }
+export { METHODOLOGY_VERSION, METHODOLOGY_LABEL };
 
-export const METHODOLOGY_RELEASED = "2026-09-11"
+export const METHODOLOGY_RELEASED = "2026-09-11";
 
 export const PROTOTYPE_DISCLAIMER_EN =
-  "GRYPS is an experimental research prototype. Results are indicative and should not be interpreted as commercial procurement advice, coverage certification, or engineering advice."
+  "GRYPS is an experimental research prototype. Results are indicative and should not be interpreted as commercial procurement advice, coverage certification, or engineering advice.";
 
 export const PROTOTYPE_DISCLAIMER_FI =
-  "GRYPS on kokeellinen tutkimusprototyyppi. Tulokset ovat suuntaa-antavia, eikä niitä tule tulkita kaupallisena hankintaneuvontana, kattavuussertifiointina tai teknisena neuvontana."
+  "GRYPS on kokeellinen tutkimusprototyyppi. Tulokset ovat suuntaa-antavia, eikä niitä tule tulkita kaupallisena hankintaneuvontana, kattavuussertifiointina tai teknisena neuvontana.";
 
 /** Results line only — use when the page already states GRYPS is an experimental research prototype. */
 export const PROTOTYPE_RESULTS_DISCLAIMER_EN =
-  "Results are indicative and should not be interpreted as commercial procurement advice, coverage certification, or engineering advice."
+  "Results are indicative and should not be interpreted as commercial procurement advice, coverage certification, or engineering advice.";
 
 export const PROTOTYPE_RESULTS_DISCLAIMER_FI =
-  "Tulokset ovat suuntaa-antavia, eikä niitä tule tulkita kaupallisena hankintaneuvontana, kattavuussertifiointina tai teknisena neuvontana."
+  "Tulokset ovat suuntaa-antavia, eikä niitä tule tulkita kaupallisena hankintaneuvontana, kattavuussertifiointina tai teknisena neuvontana.";
 
 export type ResearchDocId =
   | "research-prototype"
@@ -35,15 +35,20 @@ export type ResearchDocId =
   | "data-sources"
   | "assumptions"
   | "limitations"
-  | "changelog"
+  | "changelog";
 
 export const RESEARCH_DOC_NAV: {
-  id: ResearchDocId
-  href: string
-  en: string
-  fi: string
+  id: ResearchDocId;
+  href: string;
+  en: string;
+  fi: string;
 }[] = [
-  { id: "research-prototype", href: "/research-prototype", en: "Research & Prototype", fi: "Tutkimus ja prototyyppi" },
+  {
+    id: "research-prototype",
+    href: "/research-prototype",
+    en: "Research & Prototype",
+    fi: "Tutkimus ja prototyyppi",
+  },
   { id: "methodology", href: "/methodology", en: "Methodology", fi: "Menetelmä" },
   { id: "research", href: "/research", en: "Research Library", fi: "Research Library" },
   { id: "knowledge", href: "/knowledge", en: "Evidence", fi: "Näyttö" },
@@ -51,22 +56,22 @@ export const RESEARCH_DOC_NAV: {
   { id: "assumptions", href: "/assumptions", en: "Assumptions", fi: "Oletukset" },
   { id: "limitations", href: "/limitations", en: "Limitations", fi: "Rajoitteet" },
   { id: "changelog", href: "/changelog", en: "Changelog", fi: "Muutosloki" },
-]
+];
 
 export type DataProvenanceRecord = {
-  id: string
-  name: string
-  nameFi: string
-  source: string
-  sourceFi: string
-  dateAccessed: string
-  dataType: string
-  dataTypeFi: string
-  howUsed: string
-  howUsedFi: string
-  url?: string
-  license?: string
-}
+  id: string;
+  name: string;
+  nameFi: string;
+  source: string;
+  sourceFi: string;
+  dateAccessed: string;
+  dataType: string;
+  dataTypeFi: string;
+  howUsed: string;
+  howUsedFi: string;
+  url?: string;
+  license?: string;
+};
 
 /** Important datasets and references with provenance fields. */
 export const DATA_PROVENANCE: DataProvenanceRecord[] = [
@@ -74,26 +79,34 @@ export const DATA_PROVENANCE: DataProvenanceRecord[] = [
     id: "model-v03",
     name: "Deterministic Signature engine",
     nameFi: "Deterministinen Signature-moottori",
-    source: "GRYPS R&D — Model v0.3 scoring rules (redundancy, latitude, operational profile, provider confidence, hard caps)",
-    sourceFi: "GRYPS T&K — mallin v0.3 pisteytyssäännöt (redundanssi, leveysaste, toimintaprofiili, toimittajaluottamus, kovat katot)",
+    source:
+      "GRYPS R&D — Model v0.3 scoring rules (redundancy, latitude, operational profile, provider confidence, hard caps)",
+    sourceFi:
+      "GRYPS T&K — mallin v0.3 pisteytyssäännöt (redundanssi, leveysaste, toimintaprofiili, toimittajaluottamus, kovat katot)",
     dateAccessed: "2026-09-11",
     dataType: "Internal research model / reproducible algorithm",
     dataTypeFi: "Sisäinen tutkimusmalli / toistettava algoritmi",
-    howUsed: "Produces the 0–100 Resilience Signature, grade, risks, and ranked options. Optional Mistral prose never changes these numbers.",
-    howUsedFi: "Tuottaa 0–100 Resilience Signaturen, arvosanan, riskit ja sijoitetut vaihtoehdot. Valinnainen Mistral-proosa ei koskaan muuta näitä lukuja.",
+    howUsed:
+      "Produces the 0–100 Resilience Signature, grade, risks, and ranked options. Optional Mistral prose never changes these numbers.",
+    howUsedFi:
+      "Tuottaa 0–100 Resilience Signaturen, arvosanan, riskit ja sijoitetut vaihtoehdot. Valinnainen Mistral-proosa ei koskaan muuta näitä lukuja.",
     url: "/methodology",
   },
   {
     id: "provider-catalog",
     name: "Provider index (catalog confidence)",
     nameFi: "Toimittajahakemisto (hakemistoluottamus)",
-    source: "GRYPS curated public-knowledge index — no commercial relationships with listed operators",
-    sourceFi: "GRYPS:n kuratoima julkisen tiedon hakemisto — ei kaupallisia suhteita listattuihin operaattoreihin",
+    source:
+      "GRYPS curated public-knowledge index — no commercial relationships with listed operators",
+    sourceFi:
+      "GRYPS:n kuratoima julkisen tiedon hakemisto — ei kaupallisia suhteita listattuihin operaattoreihin",
     dateAccessed: "2026-09-11",
     dataType: "Editorial catalog / research heuristic",
     dataTypeFi: "Toimituksellinen hakemisto / tutkimusheuristiikka",
-    howUsed: "Supplies orbital class and catalog confidence for provider confidence scoring and recommendation ranking. Confidence = assessment/data basis, not availability %.",
-    howUsedFi: "Antaa rataluokan ja hakemistoluottamuksen toimittajaluottamuksen pisteytykseen ja suositusjärjestykseen. Luottamus = arvioinnin/dataperusta, ei saatavuus-%.",
+    howUsed:
+      "Supplies orbital class and catalog confidence for provider confidence scoring and recommendation ranking. Confidence = assessment/data basis, not availability %.",
+    howUsedFi:
+      "Antaa rataluokan ja hakemistoluottamuksen toimittajaluottamuksen pisteytykseen ja suositusjärjestykseen. Luottamus = arvioinnin/dataperusta, ei saatavuus-%.",
     url: "/providers",
   },
   {
@@ -105,8 +118,10 @@ export const DATA_PROVENANCE: DataProvenanceRecord[] = [
     dateAccessed: "2026-09 (on-demand per assessment)",
     dataType: "Digital elevation model (~25 m)",
     dataTypeFi: "Digitaalinen korkeusmalli (~25 m)",
-    howUsed: "Shown as separate terrain evidence (elevation / variance). Not blended into the 0–100 Signature score.",
-    howUsedFi: "Näytetään erillisenä maastonäyttönä (korkeus / vaihtelu). Ei sekoiteta 0–100 Signature-pisteeseen.",
+    howUsed:
+      "Shown as separate terrain evidence (elevation / variance). Not blended into the 0–100 Signature score.",
+    howUsedFi:
+      "Näytetään erillisenä maastonäyttönä (korkeus / vaihtelu). Ei sekoiteta 0–100 Signature-pisteeseen.",
     license: "Copernicus / EEA terms",
   },
   {
@@ -118,8 +133,10 @@ export const DATA_PROVENANCE: DataProvenanceRecord[] = [
     dateAccessed: "2026 — seeded Finnish municipality sites",
     dataType: "Public measurement aggregates (download / latency)",
     dataTypeFi: "Julkiset mittausaggregaatit (lataus / latenssi)",
-    howUsed: "Reference evidence for Finnish seeded sites only. Not applied to ad-hoc Nordic coordinates; not blended into the Signature score.",
-    howUsedFi: "Viitenäyttö vain Suomen siemenkohteille. Ei sovelleta vapaisiin pohjoismaisiin koordinaatteihin; ei sekoiteta Signature-pisteeseen.",
+    howUsed:
+      "Reference evidence for Finnish seeded sites only. Not applied to ad-hoc Nordic coordinates; not blended into the Signature score.",
+    howUsedFi:
+      "Viitenäyttö vain Suomen siemenkohteille. Ei sovelleta vapaisiin pohjoismaisiin koordinaatteihin; ei sekoiteta Signature-pisteeseen.",
     license: "CC BY 4.0",
   },
   {
@@ -127,12 +144,15 @@ export const DATA_PROVENANCE: DataProvenanceRecord[] = [
     name: "Orbital-class latency & geometry",
     nameFi: "Rataluokan latenssi ja geometria",
     source: "Public industry / orbital-mechanics conventions (LEO / MEO / GEO design-class bands)",
-    sourceFi: "Julkiset toimiala- / kiertoratamekaniikan käytännöt (LEO / MEO / GEO -suunnitteluluokan kaistat)",
+    sourceFi:
+      "Julkiset toimiala- / kiertoratamekaniikan käytännöt (LEO / MEO / GEO -suunnitteluluokan kaistat)",
     dateAccessed: "2026-09-11",
     dataType: "Static reference commentary",
     dataTypeFi: "Staattinen viitekommentti",
-    howUsed: "Labels typical latency and elevation characteristics on options. Not site measurements or provider SLAs.",
-    howUsedFi: "Merkitsee tyypilliset latenssi- ja elevaatio-ominaisuudet vaihtoehdoille. Ei kohdemittauksia eikä toimittajan SLA:ita.",
+    howUsed:
+      "Labels typical latency and elevation characteristics on options. Not site measurements or provider SLAs.",
+    howUsedFi:
+      "Merkitsee tyypilliset latenssi- ja elevaatio-ominaisuudet vaihtoehdoille. Ei kohdemittauksia eikä toimittajan SLA:ita.",
     url: "/knowledge/leo-vs-meo-vs-geo-remote-operations",
   },
   {
@@ -144,13 +164,15 @@ export const DATA_PROVENANCE: DataProvenanceRecord[] = [
     dateAccessed: "2026-09-11",
     dataType: "Illustrative research scenarios with real coordinates",
     dataTypeFi: "Havainnollistavia tutkimusskenaarioita todellisilla koordinaateilla",
-    howUsed: "Public research portfolio. Same Model v0.3 engine as the Advisor — not customer cases or live RF monitoring.",
-    howUsedFi: "Julkinen tutkimusportfolio. Sama malli v0.3 kuin Advisorissa — ei asiakastarinoita eikä live-RF-seurantaa.",
+    howUsed:
+      "Public research portfolio. Same Model v0.3 engine as the Advisor — not customer cases or live RF monitoring.",
+    howUsedFi:
+      "Julkinen tutkimusportfolio. Sama malli v0.3 kuin Advisorissa — ei asiakastarinoita eikä live-RF-seurantaa.",
     url: "/research",
   },
-]
+];
 
-export type AssumptionItem = { en: string; fi: string }
+export type AssumptionItem = { en: string; fi: string };
 
 export const RESEARCH_ASSUMPTIONS: AssumptionItem[] = [
   {
@@ -181,7 +203,7 @@ export const RESEARCH_ASSUMPTIONS: AssumptionItem[] = [
     en: "Research Library and mission scenarios are illustrative operating profiles, not customer projects or procurement dossiers.",
     fi: "Research Library ja tehtäväskenaariot ovat havainnollistavia toimintaprofiileja, eivät asiakasprojekteja tai hankinta-aineistoja.",
   },
-]
+];
 
 export const RESEARCH_LIMITATIONS: AssumptionItem[] = [
   {
@@ -212,16 +234,16 @@ export const RESEARCH_LIMITATIONS: AssumptionItem[] = [
     en: "Non-commercial R&D: no company, no revenue, not for sale.",
     fi: "Ei-kaupallinen T&K: ei yritystä, ei tuloja, ei myynnissä.",
   },
-]
+];
 
 export type ChangelogEntry = {
-  version: string
-  date: string
-  title: string
-  titleFi: string
-  items: { en: string; fi: string }[]
-  scoringEngine?: string
-}
+  version: string;
+  date: string;
+  title: string;
+  titleFi: string;
+  items: { en: string; fi: string }[];
+  scoringEngine?: string;
+};
 
 /** Methodology / prototype evolution — demonstrates how the research model advances. */
 export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
@@ -324,4 +346,4 @@ export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
       },
     ],
   },
-]
+];

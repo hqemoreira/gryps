@@ -1,6 +1,6 @@
-"use client"
-import Link from "next/link"
-import { DocShell, type DocLang } from "@/components/DocShell"
+"use client";
+import Link from "next/link";
+import { DocShell, type DocLang } from "@/components/DocShell";
 
 const COPY = {
   en: {
@@ -61,17 +61,43 @@ const COPY = {
     terms: "Ehdot ja yhteydenotto",
     advisor: "Luo Resilience Signature",
   },
-} as const
+} as const;
 
 function AboutArticle({ lang }: { lang: DocLang }) {
-  const t = COPY[lang]
+  const t = COPY[lang];
   return (
     <article style={{ maxWidth: 720, margin: "0 auto", padding: "32px 32px 0" }}>
-      <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.12em" }}>{t.eyebrow}</p>
-      <h1 style={{ fontFamily: "var(--font-ui)", fontSize: 36, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em", margin: "16px 0 20px" }}>
+      <p
+        style={{
+          fontFamily: "var(--font-data)",
+          fontSize: 10,
+          color: "var(--text-dim)",
+          letterSpacing: "0.12em",
+        }}
+      >
+        {t.eyebrow}
+      </p>
+      <h1
+        style={{
+          fontFamily: "var(--font-ui)",
+          fontSize: 36,
+          fontWeight: 700,
+          color: "var(--text)",
+          letterSpacing: "-0.02em",
+          margin: "16px 0 20px",
+        }}
+      >
         {t.h1}
       </h1>
-      <p style={{ fontFamily: "var(--font-ui)", fontSize: 16, color: "var(--text-muted)", lineHeight: 1.75, marginBottom: 28 }}>
+      <p
+        style={{
+          fontFamily: "var(--font-ui)",
+          fontSize: 16,
+          color: "var(--text-muted)",
+          lineHeight: 1.75,
+          marginBottom: 28,
+        }}
+      >
         {t.intro}
       </p>
 
@@ -80,42 +106,101 @@ function AboutArticle({ lang }: { lang: DocLang }) {
 
       <h2 style={h2}>{t.identityH2}</h2>
       <ul style={ul}>
-        {t.identityItems.map(item => <li key={item}>{item}</li>)}
+        {t.identityItems.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
 
       <h2 style={h2}>{t.linksH2}</h2>
       <ul style={{ ...ul, listStyle: "none", paddingLeft: 0 }}>
-        <li style={{ marginBottom: 8 }}><Link href="/case-study" style={{ color: "var(--accent-blue)" }}>{t.caseStudy}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/research-prototype" style={{ color: "var(--accent-blue)" }}>{t.researchPrototype}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/methodology" style={{ color: "var(--accent-blue)" }}>{t.methodology}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/data-sources" style={{ color: "var(--accent-blue)" }}>{t.dataSources}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/limitations" style={{ color: "var(--accent-blue)" }}>{t.limitations}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/changelog" style={{ color: "var(--accent-blue)" }}>{t.changelog}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>{t.scenarios}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/workspace" style={{ color: "var(--accent-blue)" }}>{t.workspace}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/providers" style={{ color: "var(--accent-blue)" }}>{t.providers}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/privacy" style={{ color: "var(--accent-blue)" }}>{t.privacy}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/terms" style={{ color: "var(--accent-blue)" }}>{t.terms}</Link></li>
-        <li style={{ marginBottom: 8 }}><Link href="/#advisor" style={{ color: "var(--accent-blue)" }}>{t.advisor}</Link></li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/case-study" style={{ color: "var(--accent-blue)" }}>
+            {t.caseStudy}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/research-prototype" style={{ color: "var(--accent-blue)" }}>
+            {t.researchPrototype}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/methodology" style={{ color: "var(--accent-blue)" }}>
+            {t.methodology}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/data-sources" style={{ color: "var(--accent-blue)" }}>
+            {t.dataSources}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/limitations" style={{ color: "var(--accent-blue)" }}>
+            {t.limitations}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/changelog" style={{ color: "var(--accent-blue)" }}>
+            {t.changelog}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>
+            {t.scenarios}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/workspace" style={{ color: "var(--accent-blue)" }}>
+            {t.workspace}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/providers" style={{ color: "var(--accent-blue)" }}>
+            {t.providers}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/privacy" style={{ color: "var(--accent-blue)" }}>
+            {t.privacy}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/terms" style={{ color: "var(--accent-blue)" }}>
+            {t.terms}
+          </Link>
+        </li>
+        <li style={{ marginBottom: 8 }}>
+          <Link href="/#advisor" style={{ color: "var(--accent-blue)" }}>
+            {t.advisor}
+          </Link>
+        </li>
       </ul>
     </article>
-  )
+  );
 }
 
 export function AboutView() {
-  return (
-    <DocShell>
-      {(lang) => <AboutArticle lang={lang} />}
-    </DocShell>
-  )
+  return <DocShell>{(lang) => <AboutArticle lang={lang} />}</DocShell>;
 }
 
 const h2 = {
-  fontFamily: "var(--font-ui)", fontSize: 18, fontWeight: 700, color: "var(--text)", margin: "28px 0 10px",
-} as const
+  fontFamily: "var(--font-ui)",
+  fontSize: 18,
+  fontWeight: 700,
+  color: "var(--text)",
+  margin: "28px 0 10px",
+} as const;
 const p = {
-  fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.75, marginBottom: 12,
-} as const
+  fontFamily: "var(--font-ui)",
+  fontSize: 15,
+  color: "var(--text-muted)",
+  lineHeight: 1.75,
+  marginBottom: 12,
+} as const;
 const ul = {
-  fontFamily: "var(--font-ui)", fontSize: 15, color: "var(--text-muted)", lineHeight: 1.75, paddingLeft: 20, marginBottom: 12,
-} as const
+  fontFamily: "var(--font-ui)",
+  fontSize: 15,
+  color: "var(--text-muted)",
+  lineHeight: 1.75,
+  paddingLeft: 20,
+  marginBottom: 12,
+} as const;

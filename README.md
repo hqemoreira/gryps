@@ -6,20 +6,20 @@ Non-commercial R&D — assessment-first **Resilience Signature** scoring for sat
 
 ## Surfaces
 
-| Path | Purpose |
-|------|---------|
-| `/` | Ops-console landing + Signature |
-| `/case-study` | Portfolio case study |
-| `/research-prototype` | Research & Prototype posture |
-| `/methodology` | Research methodology (EN/FI) |
-| `/data-sources` · `/assumptions` · `/limitations` · `/changelog` | Research quality docs |
-| `/research` | Research Library |
-| `/scenarios` | Mission scenarios |
-| `/workspace` | Local Research Workspace |
-| `/providers` | Provider catalog |
-| `/map` | Connectivity Intelligence map |
-| `/about` | About |
-| `/terms` · `/privacy` | Non-commercial R&D notices |
+| Path                                                             | Purpose                         |
+| ---------------------------------------------------------------- | ------------------------------- |
+| `/`                                                              | Ops-console landing + Signature |
+| `/case-study`                                                    | Portfolio case study            |
+| `/research-prototype`                                            | Research & Prototype posture    |
+| `/methodology`                                                   | Research methodology (EN/FI)    |
+| `/data-sources` · `/assumptions` · `/limitations` · `/changelog` | Research quality docs           |
+| `/research`                                                      | Research Library                |
+| `/scenarios`                                                     | Mission scenarios               |
+| `/workspace`                                                     | Local Research Workspace        |
+| `/providers`                                                     | Provider catalog                |
+| `/map`                                                           | Connectivity Intelligence map   |
+| `/about`                                                         | About                           |
+| `/terms` · `/privacy`                                            | Non-commercial R&D notices      |
 
 ## Stack
 
@@ -39,10 +39,10 @@ npm run dev
 
 Set via Vercel CLI / dashboard — never commit secrets.
 
-| Variable | Purpose |
-|----------|---------|
-| `NEON_DATABASE_URL` | Postgres (signatures / submissions) |
-| `MISTRAL_API_KEY` | Advisor / scoring paths that call Mistral |
+| Variable            | Purpose                                   |
+| ------------------- | ----------------------------------------- |
+| `NEON_DATABASE_URL` | Postgres (signatures / submissions)       |
+| `MISTRAL_API_KEY`   | Advisor / scoring paths that call Mistral |
 
 ## Docs
 

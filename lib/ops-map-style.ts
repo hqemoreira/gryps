@@ -1,12 +1,12 @@
-import type { StyleSpecification } from "maplibre-gl"
-import type { Map as MapLibreMap } from "maplibre-gl"
-import { MODEL_VERSION } from "@/lib/signature-meta"
+import type { StyleSpecification } from "maplibre-gl";
+import type { Map as MapLibreMap } from "maplibre-gl";
+import { MODEL_VERSION } from "@/lib/signature-meta";
 
 /** Corner badge — includes "Esri" so a deploy is visually obvious vs Carto watermark builds. */
 export function modelBasemapChip(): string {
-  const m = MODEL_VERSION.match(/v[\d.]+/)
-  const ver = m ? m[0] : "v0.3"
-  return `Esri · Model ${ver} · illustrative`
+  const m = MODEL_VERSION.match(/v[\d.]+/);
+  const ver = m ? m[0] : "v0.3";
+  return `Esri · Model ${ver} · illustrative`;
 }
 
 /**
@@ -29,8 +29,7 @@ export function darkOpsStyle(): StyleSpecification {
           "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         ],
         tileSize: 256,
-        attribution:
-          'Tiles &copy; <a href="https://www.esri.com/">Esri</a>',
+        attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a>',
         maxzoom: 19,
       },
     },
@@ -53,29 +52,29 @@ export function darkOpsStyle(): StyleSpecification {
         },
       },
     ],
-  }
+  };
 }
 
 function parallelLine(lat: number, fromLng: number, toLng: number, step = 2): GeoJSON.Feature {
-  const coords: [number, number][] = []
-  for (let lng = fromLng; lng <= toLng; lng += step) coords.push([lng, lat])
+  const coords: [number, number][] = [];
+  for (let lng = fromLng; lng <= toLng; lng += step) coords.push([lng, lat]);
   return {
     type: "Feature",
     properties: { lat },
     geometry: { type: "LineString", coordinates: coords },
-  }
+  };
 }
 
 function arcticGlowPolygon(): GeoJSON.Feature {
-  const coords: [number, number][] = []
-  for (let lng = -30; lng <= 40; lng += 2) coords.push([lng, 66.5])
-  for (let lng = 40; lng >= -30; lng -= 2) coords.push([lng, 82])
-  coords.push([-30, 66.5])
+  const coords: [number, number][] = [];
+  for (let lng = -30; lng <= 40; lng += 2) coords.push([lng, 66.5]);
+  for (let lng = 40; lng >= -30; lng -= 2) coords.push([lng, 82]);
+  coords.push([-30, 66.5]);
   return {
     type: "Feature",
     properties: {},
     geometry: { type: "Polygon", coordinates: [coords] },
-  }
+  };
 }
 
 function orbitalArcs(): GeoJSON.FeatureCollection {
@@ -87,7 +86,13 @@ function orbitalArcs(): GeoJSON.FeatureCollection {
         properties: { class: "LEO", color: "#4FA8FF" },
         geometry: {
           type: "LineString",
-          coordinates: [[-25, 62], [-10, 72], [5, 78], [20, 76], [35, 70]],
+          coordinates: [
+            [-25, 62],
+            [-10, 72],
+            [5, 78],
+            [20, 76],
+            [35, 70],
+          ],
         },
       },
       {
@@ -95,7 +100,12 @@ function orbitalArcs(): GeoJSON.FeatureCollection {
         properties: { class: "MEO", color: "#6EE7F9" },
         geometry: {
           type: "LineString",
-          coordinates: [[-28, 58], [-5, 68], [12, 74], [30, 72]],
+          coordinates: [
+            [-28, 58],
+            [-5, 68],
+            [12, 74],
+            [30, 72],
+          ],
         },
       },
       {
@@ -103,11 +113,16 @@ function orbitalArcs(): GeoJSON.FeatureCollection {
         properties: { class: "GEO", color: "#D97706" },
         geometry: {
           type: "LineString",
-          coordinates: [[-20, 55], [0, 58], [20, 57], [38, 54]],
+          coordinates: [
+            [-20, 55],
+            [0, 58],
+            [20, 57],
+            [38, 54],
+          ],
         },
       },
     ],
-  }
+  };
 }
 
 /** Arctic glow, 60/70°N graticule, animated LEO/MEO/GEO arcs. Returns interval id for cleanup. */
@@ -116,13 +131,13 @@ export function addOpsDecorLayers(map: MapLibreMap): number {
     map.addSource("arctic-glow", {
       type: "geojson",
       data: { type: "FeatureCollection", features: [arcticGlowPolygon()] },
-    })
+    });
     map.addLayer({
       id: "arctic-glow-fill",
       type: "fill",
       source: "arctic-glow",
       paint: { "fill-color": "#6EE7F9", "fill-opacity": 0.06 },
-    })
+    });
   }
 
   if (!map.getSource("graticule")) {
@@ -136,7 +151,7 @@ export function addOpsDecorLayers(map: MapLibreMap): number {
           parallelLine(66.5, -30, 40),
         ],
       },
-    })
+    });
     map.addLayer({
       id: "graticule-lines",
       type: "line",
@@ -147,11 +162,11 @@ export function addOpsDecorLayers(map: MapLibreMap): number {
         "line-width": 1,
         "line-dasharray": [2, 2],
       },
-    })
+    });
   }
 
   if (!map.getSource("orbits")) {
-    map.addSource("orbits", { type: "geojson", data: orbitalArcs() })
+    map.addSource("orbits", { type: "geojson", data: orbitalArcs() });
     map.addLayer({
       id: "orbit-arcs",
       type: "line",
@@ -162,7 +177,7 @@ export function addOpsDecorLayers(map: MapLibreMap): number {
         "line-opacity": 0.75,
         "line-dasharray": [0, 4, 3],
       },
-    })
+    });
   }
 
   const dashSeq = [
@@ -174,14 +189,14 @@ export function addOpsDecorLayers(map: MapLibreMap): number {
     [0, 2, 3, 3],
     [0, 3, 3, 2],
     [0, 4, 3, 1],
-  ]
-  let step = 0
+  ];
+  let step = 0;
   return window.setInterval(() => {
-    step = (step + 1) % dashSeq.length
+    step = (step + 1) % dashSeq.length;
     if (map.getLayer("orbit-arcs")) {
-      map.setPaintProperty("orbit-arcs", "line-dasharray", dashSeq[step])
+      map.setPaintProperty("orbit-arcs", "line-dasharray", dashSeq[step]);
     }
-  }, 80)
+  }, 80);
 }
 
 export const OPS_MAP_CSS = `
@@ -200,4 +215,4 @@ export const OPS_MAP_CSS = `
   .maplibregl-ctrl-attrib {
     font-size: 9px; background: rgba(7,11,18,0.7) !important; color: #64748B !important;
   }
-`
+`;
