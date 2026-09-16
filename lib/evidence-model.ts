@@ -6,7 +6,7 @@
 
 import type { AdvisorPriorityId } from "@/lib/advisor-priorities";
 import type { ProviderMeta, SectorId } from "@/lib/deterministic-score";
-import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/model-constants";
+import { MODEL_VERSION, SCORING_ENGINE_DISPLAY } from "@/lib/model-constants";
 
 export type EvidenceSourceType = "model" | "catalog" | "dataset" | "research" | "reference";
 
@@ -61,7 +61,7 @@ const BASE_SOURCES: EvidenceSource[] = [
     type: "model",
     attribution: "GRYPS R&D · Model v0.3",
     url: "/methodology",
-    freshness: `${MODEL_VERSION} · ${SCORING_ENGINE}`,
+    freshness: `${MODEL_VERSION} · ${SCORING_ENGINE_DISPLAY}`,
     notes: "Score, grade, risks, and ranks are reproducible for identical inputs.",
   },
   {
@@ -360,7 +360,7 @@ export function buildEvidencePackage(opts: {
       "GRYPS is an experimental Connectivity Intelligence framework. Research context and public datasets inform deterministic Model v0.3 scoring; ranked providers follow from that score composition and optional mission priorities. Outputs support human judgement — they are not procurement advice.",
     confidence,
     data_freshness: {
-      model: `${MODEL_VERSION} (${SCORING_ENGINE})`,
+      model: `${MODEL_VERSION} (${SCORING_ENGINE_DISPLAY})`,
       catalog: "Provider index · Model v0.3 catalog confidence",
       reference_datasets: "EU-DEM on demand · Bittimittari for FI municipality seeds",
       knowledge: "GRYPS Knowledge + Research Library · editorial 2026",

@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { DocShell, type DocLang } from "@/components/DocShell";
 import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav";
 import { METHODOLOGY_CHANGELOG, METHODOLOGY_LABEL, METHODOLOGY_VERSION } from "@/lib/research-docs";
-import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/model-constants";
+import { MODEL_VERSION, SCORING_ENGINE_DISPLAY } from "@/lib/model-constants";
 
 const COPY = {
   en: {
@@ -98,7 +98,7 @@ function Article({ lang }: { lang: DocLang }) {
               marginTop: 4,
             }}
           >
-            {SCORING_ENGINE}
+            {SCORING_ENGINE_DISPLAY}
           </p>
           <p
             style={{

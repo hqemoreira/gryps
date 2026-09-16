@@ -22,7 +22,7 @@ import { MODEL_VERSION } from "@/lib/signature-meta";
 import {
   GRADE_BANDS_SUMMARY,
   RECOMMENDATION_AI_LABEL,
-  SCORING_ENGINE,
+  SCORING_ENGINE_DISPLAY,
   SCORING_MODEL_LABEL,
 } from "@/lib/model-constants";
 import { SaveToWorkspace } from "@/components/SaveToWorkspace";
@@ -249,7 +249,7 @@ const UI = {
       "Orbital-class notes are reference / model commentary based on publicly available industry information — not official provider specifications, measured site performance, SLAs, or an endorsement. GRYPS has no commercial relationship with the providers listed.",
     provenanceLabel: "PROVENANCE",
     provenanceScoringModel: "Resilience Score",
-    provenanceScoringModelValue: `${SCORING_MODEL_LABEL} (${SCORING_ENGINE}) — reproducible score, grade, risks, and ranks`,
+    provenanceScoringModelValue: `${SCORING_MODEL_LABEL} (${SCORING_ENGINE_DISPLAY}) — reproducible score, grade, risks, and ranks`,
     provenanceCommentary: "Recommendation text",
     provenanceCommentaryValue: `${RECOMMENDATION_AI_LABEL} — optional prose polish; never changes numbers. Not live telemetry or a provider commitment`,
     provenanceRealDataSources: "Reference data",
@@ -408,7 +408,7 @@ const UI = {
     provenanceLabel: "ALKUPERÄ",
     provenanceScoringModel: "Resilience-pisteet",
     provenanceScoringModelValue:
-      "Deterministinen malli v0.3 (deterministic-v0.3) — toistettava piste, arvosana, riskit ja sijoitukset",
+      `Deterministinen malli v0.3 (${SCORING_ENGINE_DISPLAY}) — toistettava piste, arvosana, riskit ja sijoitukset`,
     provenanceCommentary: "Suositusteksti",
     provenanceCommentaryValue:
       "Tekoälyavusteinen tulkinta — valinnainen proosan viimeistely; ei muuta lukuja. Ei live-telemetriaa eikä toimittajan sitoumusta",

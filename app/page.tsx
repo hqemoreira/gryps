@@ -1471,18 +1471,9 @@ function TrustStrip({ lang }: { lang: "en" | "fi" }) {
   return (
     <div className="gryps-trust-strip gryps-no-print">
       <div className="gryps-trust-inner">
-        <div className="gryps-trust-items">
-          {items.map((item, i) => (
-            <span key={item} style={{ display: "inline-flex", alignItems: "center" }}>
-              {i > 0 && (
-                <span data-sep aria-hidden="true">
-                  ·
-                </span>
-              )}
-              {item}
-            </span>
-          ))}
-        </div>
+        <p className="gryps-trust-items">
+          {items.join(" · ")}
+        </p>
         <div className="gryps-trust-links">
           {links.map((l) => (
             <a key={l.href} href={l.href}>

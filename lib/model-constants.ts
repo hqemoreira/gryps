@@ -4,6 +4,8 @@
 export const MODEL_VERSION = "gryps-signature-v0.3";
 /** Numeric score authority — Mistral is optional prose only */
 export const SCORING_ENGINE = "deterministic-v0.3";
+/** User-facing engine tag (spaced middle dots; matches page chrome). */
+export const SCORING_ENGINE_DISPLAY = "deterministic · v0.3";
 /** Human-facing label for the deterministic score engine (UI chrome). */
 export const SCORING_MODEL_LABEL = "Deterministic Model v0.3";
 /** Human-facing label for optional recommendation prose (never changes numbers). */

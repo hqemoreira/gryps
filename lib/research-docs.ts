@@ -6,6 +6,7 @@
 import {
   MODEL_VERSION,
   SCORING_ENGINE,
+  SCORING_ENGINE_DISPLAY,
   METHODOLOGY_VERSION,
   METHODOLOGY_LABEL,
 } from "@/lib/model-constants";
@@ -301,8 +302,8 @@ export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
     scoringEngine: SCORING_ENGINE,
     items: [
       {
-        en: `Scoring engine ${SCORING_ENGINE} / ${MODEL_VERSION}: redundancy, latitude, operational profile, provider confidence, hard caps.`,
-        fi: `Pisteytysmoottori ${SCORING_ENGINE} / ${MODEL_VERSION}: redundanssi, leveysaste, toimintaprofiili, toimittajaluottamus, kovat katot.`,
+        en: `Scoring engine ${SCORING_ENGINE_DISPLAY} / ${MODEL_VERSION}: redundancy, latitude, operational profile, provider confidence, hard caps.`,
+        fi: `Pisteytysmoottori ${SCORING_ENGINE_DISPLAY} / ${MODEL_VERSION}: redundanssi, leveysaste, toimintaprofiili, toimittajaluottamus, kovat katot.`,
       },
       {
         en: "Advisor Intelligence: recommendation package, score explanations, mission priorities, provider comparison.",

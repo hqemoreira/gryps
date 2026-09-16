@@ -5,7 +5,7 @@ import { DocShell, type DocLang } from "@/components/DocShell";
 import { PolarAtmosphere } from "@/components/PolarAtmosphere";
 import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav";
 import { EvidenceKindLegend } from "@/components/TypeLabel";
-import { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL } from "@/lib/signature-meta";
+import { MODEL_VERSION, SCORING_ENGINE_DISPLAY, METHODOLOGY_LABEL } from "@/lib/signature-meta";
 import { GRADE_BANDS_SUMMARY, SCORING_MODEL_LABEL } from "@/lib/model-constants";
 
 const COPY = {
@@ -14,7 +14,7 @@ const COPY = {
     h1: "GRYPS Research Methodology",
     intro:
       "GRYPS is an experimental Connectivity Intelligence framework for Nordic, Arctic, and Icelandic remote operations. It connects research context, reference data, and a deterministic scoring model to produce indicative Resilience Signatures — not procurement advice, not a site survey, and not live network monitoring.",
-    versionNote: `Documentation framework ${METHODOLOGY_LABEL}. Scoring engine ${SCORING_ENGINE} remains reproducible for identical inputs.`,
+    versionNote: `Documentation framework ${METHODOLOGY_LABEL}. Scoring engine ${SCORING_ENGINE_DISPLAY} remains reproducible for identical inputs.`,
     postureH2: "Research posture",
     postureP:
       "GRYPS is non-commercial R&D. Recommendations are indicative outputs of a research prototype. They support human judgement for readiness documentation; they do not certify compliance, sell terminals, or replace professional connectivity engineering.",
@@ -51,7 +51,7 @@ const COPY = {
     geometryHint: "Highlight an orbit class to see how geometry informs Signature weighting.",
     attributionH2: "Source attribution & data freshness",
     attributionItems: [
-      "Model — GRYPS deterministic engine (Model v0.3 / deterministic-v0.3); score/grade/risks/ranks are reproducible for identical inputs.",
+      `Model — GRYPS deterministic engine (Model v0.3 / ${SCORING_ENGINE_DISPLAY}); score/grade/risks/ranks are reproducible for identical inputs.`,
       "Catalog — curated provider index; confidence = assessment/data basis, not availability %. No commercial relationships.",
       "Datasets — EU-DEM (Copernicus/EEA via OpenTopoData) for terrain evidence; Bittimittari (Traficom, CC BY 4.0) for Finnish municipality seeds only. Neither is blended into the 0–100 Signature.",
       "Research — GRYPS Knowledge articles and Research Library assessments; editorial freshness noted on each Signature evidence panel.",
@@ -74,7 +74,7 @@ const COPY = {
     confidenceH2: "Confidence",
     confidenceP:
       "Assessment confidence on the evidence panel reflects confidence in the assessment/data basis (catalog fit, documented paths, latitude constraints). It is not a probability of service availability and not an SLA.",
-    formulaH2: `${SCORING_MODEL_LABEL} formula (${SCORING_ENGINE})`,
+    formulaH2: `${SCORING_MODEL_LABEL} formula (${SCORING_ENGINE_DISPLAY})`,
     formulaP1:
       `The Resilience Score is deterministic and reproducible for the same inputs (${SCORING_MODEL_LABEL}). Optional language-model text may polish the recommendation paragraph only — it never changes score, grade, risks, or ranked providers.`,
     formulaP2: "Score = sum of four components (then hard caps, clamped 0–100):",
@@ -131,7 +131,7 @@ const COPY = {
     h1: "GRYPS-tutkimusmenetelmä",
     intro:
       "GRYPS on kokeellinen Connectivity Intelligence -kehys pohjoismaisille, arktisille ja islantilaisille etäkohteille. Se yhdistää tutkimuskokonaisuuden, viitedatan ja deterministisen pisteytysmallin suuntaa-antaviksi Resilience Signatureiksi — ei hankintaneuvontaa, ei paikkamitasta eikä live-verkon seurantaa.",
-    versionNote: `Dokumentaatiokehys ${METHODOLOGY_LABEL}. Pisteytysmoottori ${SCORING_ENGINE} pysyy toistettavana samoilla syötteillä.`,
+    versionNote: `Dokumentaatiokehys ${METHODOLOGY_LABEL}. Pisteytysmoottori ${SCORING_ENGINE_DISPLAY} pysyy toistettavana samoilla syötteillä.`,
     postureH2: "Tutkimusasema",
     postureP:
       "GRYPS on ei-kaupallinen T&K. Suositukset ovat tutkimusprototyypin suuntaa-antavia tulosteita. Ne tukevat ihmisen harkintaa valmiusdokumentaatiossa; ne eivät sertifioi vaatimustenmukaisuutta, myy terminaaleja eivätkä korvaa ammattimaista yhteyssuunnittelua.",
@@ -169,7 +169,7 @@ const COPY = {
       "Korosta rataluokkaa nähdäksesi, miten geometria vaikuttaa Signature-painotuksiin.",
     attributionH2: "Lähdeattribuutio ja datan tuoreus",
     attributionItems: [
-      "Malli — GRYPS-deterministinen moottori (malli v0.3 / deterministic-v0.3); piste/arvosana/riskit/sijoitukset toistettavissa samoilla syötteillä.",
+      `Malli — GRYPS-deterministinen moottori (malli v0.3 / ${SCORING_ENGINE_DISPLAY}); piste/arvosana/riskit/sijoitukset toistettavissa samoilla syötteillä.`,
       "Hakemisto — kuratoitu toimittajahakemisto; luottamus = arvioinnin/dataperustan varmuus, ei saatavuus-%. Ei kaupallisia suhteita.",
       "Aineistot — EU-DEM (Copernicus/EEA OpenTopoDatan kautta) maastonäyttöön; Bittimittari (Traficom, CC BY 4.0) vain Suomen kuntasiemenille. Kumpaakaan ei sekoiteta 0–100 Signatureen.",
       "Tutkimus — GRYPS Knowledge -artikkelit ja Research Library -arviot; toimituksellinen tuoreus merkitty kunkin Signaturen näyttöpaneeliin.",
@@ -192,7 +192,7 @@ const COPY = {
     confidenceH2: "Luottamus",
     confidenceP:
       "Näyttöpaneelin arviointiluottamus kuvaa luottamusta arvioinnin/dataperustaan (hakemistosopivuus, dokumentoidut polut, leveysasterajoitteet). Se ei ole palvelun saatavuuden todennäköisyys eikä SLA.",
-    formulaH2: `Deterministinen malli v0.3 (${SCORING_ENGINE})`,
+    formulaH2: `Deterministinen malli v0.3 (${SCORING_ENGINE_DISPLAY})`,
     formulaP1:
       "Resilience-piste on deterministinen ja toistettavissa samoilla syötteillä (deterministinen malli v0.3). Valinnainen kielimalliteksti voi hioa vain suosituskappaleen — se ei koskaan muuta pistettä, arvosanaa, riskejä tai toimittajasuosituksia.",
     formulaP2: "Piste = neljän komponentin summa (sen jälkeen kovat katot, rajattu 0–100):",
