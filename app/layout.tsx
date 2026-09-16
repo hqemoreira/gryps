@@ -3,6 +3,7 @@ import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { AnimatedFavicon } from "@/components/AnimatedFavicon";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { HERO_DEMO_OG_TITLE } from "@/lib/hero-demo";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -65,7 +66,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://gryps.vercel.app"),
   alternates: { canonical: "https://gryps.vercel.app" },
   openGraph: {
-    title: "GRYPS · Score: 40/100 · Grade D",
+    title: HERO_DEMO_OG_TITLE,
     description:
       "Know your score before the Arctic finds it for you. Free Resilience Signature demo for Nordic & Arctic operations.",
     type: "website",
@@ -74,7 +75,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "GRYPS · Score: 40/100 · Grade D",
+    title: HERO_DEMO_OG_TITLE,
     description:
       "Know your score before the Arctic finds it for you. Resilience Signatures for Nordic, Arctic & Icelandic ops.",
   },

@@ -3,7 +3,11 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { IA_MODES, labelFor, descFor } from "@/lib/ia-nav";
 import { PROVIDER_INDEX_COUNT } from "@/lib/providers";
+import { SEED_SITES } from "@/lib/seed-sites";
 import type { Lang } from "@/lib/use-lang";
+
+/** Modeled portfolio sites in the research dataset (client-safe; no Neon). */
+export const ASSESSED_SITES_COUNT = SEED_SITES.length;
 
 const EXAMPLE_CARDS = [
   {
@@ -89,7 +93,13 @@ const COPY = {
   },
 } as const;
 
-export function HomeOrientation({ lang, siteCount }: { lang: Lang; siteCount: number | null }) {
+export function HomeOrientation({
+  lang,
+  siteCount = ASSESSED_SITES_COUNT,
+}: {
+  lang: Lang;
+  siteCount?: number | null;
+}) {
   const t = COPY[lang];
   const modeCtas = [t.exploreCta, t.assessCta, t.researchCta] as const;
   const modeHrefs = ["/map", "/#advisor", "/methodology"] as const;
@@ -264,7 +274,7 @@ export function HomeOrientation({ lang, siteCount }: { lang: Lang; siteCount: nu
             }}
           >
             <span>
-              {siteCount ?? "—"} {t.sites}
+              {siteCount != null && siteCount > 0 ? siteCount : ASSESSED_SITES_COUNT} {t.sites}
             </span>
             <span>
               {PROVIDER_INDEX_COUNT} {t.providers}

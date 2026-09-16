@@ -28,6 +28,7 @@ import {
   providersToSetupString,
   scoreDeterministic,
 } from "@/lib/deterministic-score";
+import { HERO_DEMO } from "@/lib/hero-demo";
 import {
   ADVISOR_PRIORITIES,
   PRIORITY_LABELS,
@@ -1188,16 +1189,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   );
 }
 
-// ── Hero signature card ───────────────────────────────────────────────────────
-const HERO_DEMO = scoreDeterministic({
-  lat: 68.2,
-  lng: 27.4,
-  sector: "forestry",
-  autonomy: "autonomous",
-  criticality: "high",
-  providers: ["starlink"],
-});
-
+// ── Hero signature card (shared with meta / OG via lib/hero-demo.ts) ──────────
 function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
   const labels: Record<string, { en: string; fi: string }> = {
     redundancy: { en: "Redundancy", fi: "Redundanssi" },
@@ -1756,7 +1748,6 @@ const COPY = {
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const [lang, setLang] = useLang();
-  const [siteCount, setSiteCount] = useState<number | null>(null);
   const [chromeH, setChromeH] = useState(82);
   const chromeRef = useRef<HTMLDivElement>(null);
   const t = COPY[lang];
@@ -1764,13 +1755,6 @@ export default function HomePage() {
     () => t.modelChip.replace("v0.3", modelVersionDisplay()),
     [t.modelChip]
   );
-
-  useEffect(() => {
-    fetch("/api/signatures")
-      .then((r) => r.json())
-      .then((d) => setSiteCount(Array.isArray(d.sites) ? d.sites.length : null))
-      .catch(() => setSiteCount(null));
-  }, []);
 
   useEffect(() => {
     const el = chromeRef.current;
@@ -1974,7 +1958,7 @@ export default function HomePage() {
       <TrustStrip lang={lang} />
 
       <FadeUp>
-        <HomeOrientation lang={lang} siteCount={siteCount} />
+        <HomeOrientation lang={lang} />
       </FadeUp>
 
       {/* Live Advisor */}
