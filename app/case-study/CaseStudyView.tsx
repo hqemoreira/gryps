@@ -4,7 +4,7 @@ import Link from "next/link";
 import { DocShell, type DocLang } from "@/components/DocShell";
 import { PolarAtmosphere } from "@/components/PolarAtmosphere";
 import { PrototypeDisclaimerBanner } from "@/components/ResearchDocsNav";
-import { METHODOLOGY_LABEL, SCORING_ENGINE } from "@/lib/model-constants";
+import { METHODOLOGY_LABEL, SCORING_ENGINE_DISPLAY } from "@/lib/model-constants";
 
 const APPROACH = [
   {
@@ -40,11 +40,11 @@ const APPROACH = [
   {
     en: {
       title: "Scoring logic",
-      body: `Deterministic ${SCORING_ENGINE}: redundancy, latitude, operational profile, provider confidence, and hard caps — same inputs, same score.`,
+      body: `Deterministic ${SCORING_ENGINE_DISPLAY}: redundancy, latitude, operational profile, provider confidence, and hard caps — same inputs, same score.`,
     },
     fi: {
       title: "Pisteytyslogiikka",
-      body: `Deterministinen ${SCORING_ENGINE}: redundanssi, leveysaste, toimintaprofiili, toimittajaluottamus ja kovat katot — samat syötteet, sama piste.`,
+      body: `Deterministinen ${SCORING_ENGINE_DISPLAY}: redundanssi, leveysaste, toimintaprofiili, toimittajaluottamus ja kovat katot — samat syötteet, sama piste.`,
     },
   },
   {

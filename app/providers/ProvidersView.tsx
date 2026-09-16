@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { DocShell, type DocLang } from "@/components/DocShell";
+import { TypeLabel } from "@/components/TypeLabel";
 import { INDEXED_PROVIDERS, PROVIDER_INDEX_COUNT } from "@/lib/providers";
 
 const COVERAGE_LABEL: Record<DocLang, Record<string, string>> = {
@@ -68,6 +69,10 @@ function ProvidersArticle({ lang }: { lang: DocLang }) {
       >
         {t.h1}
       </h1>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+        <TypeLabel kind="ILLUSTRATIVE" />
+        <TypeLabel kind="RESEARCH" />
+      </div>
       <p
         className="gryps-hero-sub"
         style={{
@@ -195,6 +200,10 @@ function ProvidersArticle({ lang }: { lang: DocLang }) {
         {" · "}
         <Link href="/map" style={{ color: "var(--accent-blue)" }}>
           {lang === "fi" ? "Kartta" : "Map"}
+        </Link>
+        {" · "}
+        <Link href="/research" style={{ color: "var(--accent-blue)" }}>
+          {lang === "fi" ? "Research Library" : "Research Library"}
         </Link>
         {" · "}
         <Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>

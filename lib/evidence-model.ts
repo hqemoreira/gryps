@@ -6,7 +6,7 @@
 
 import type { AdvisorPriorityId } from "@/lib/advisor-priorities";
 import type { ProviderMeta, SectorId } from "@/lib/deterministic-score";
-import { MODEL_VERSION, SCORING_ENGINE } from "@/lib/model-constants";
+import { MODEL_VERSION, SCORING_ENGINE_DISPLAY } from "@/lib/model-constants";
 
 export type EvidenceSourceType = "model" | "catalog" | "dataset" | "research" | "reference";
 
@@ -61,7 +61,7 @@ const BASE_SOURCES: EvidenceSource[] = [
     type: "model",
     attribution: "GRYPS R&D · Model v0.3",
     url: "/methodology",
-    freshness: `${MODEL_VERSION} · ${SCORING_ENGINE}`,
+    freshness: `${MODEL_VERSION} · ${SCORING_ENGINE_DISPLAY}`,
     notes: "Score, grade, risks, and ranks are reproducible for identical inputs.",
   },
   {
@@ -236,7 +236,7 @@ function pickSources(sector: SectorId, lat: number): EvidenceSource[] {
   return BASE_SOURCES.filter((s) => ids.has(s.id));
 }
 
-function researchLinks(sector: SectorId, lat: number): { label: string; href: string }[] {
+function researchLinks(sector: SectorId): { label: string; href: string }[] {
   const links = [
     { label: "GRYPS Research Methodology", href: "/methodology" },
     { label: "Mission scenarios", href: "/scenarios" },
@@ -254,9 +254,7 @@ function researchLinks(sector: SectorId, lat: number): { label: string; href: st
       href: "/knowledge/forestry-satellite-connectivity-finland",
     });
   }
-  if (lat > 66) {
-    links.push({ label: "Explore Connectivity Intelligence map", href: "/map" });
-  }
+  links.push({ label: "Explore Connectivity Intelligence map", href: "/map" });
   return links;
 }
 
@@ -362,11 +360,11 @@ export function buildEvidencePackage(opts: {
       "GRYPS is an experimental Connectivity Intelligence framework. Research context and public datasets inform deterministic Model v0.3 scoring; ranked providers follow from that score composition and optional mission priorities. Outputs support human judgement — they are not procurement advice.",
     confidence,
     data_freshness: {
-      model: `${MODEL_VERSION} (${SCORING_ENGINE})`,
+      model: `${MODEL_VERSION} (${SCORING_ENGINE_DISPLAY})`,
       catalog: "Provider index · Model v0.3 catalog confidence",
       reference_datasets: "EU-DEM on demand · Bittimittari for FI municipality seeds",
       knowledge: "GRYPS Knowledge + Research Library · editorial 2026",
     },
-    research_links: researchLinks(opts.sector, opts.lat),
+    research_links: researchLinks(opts.sector),
   };
 }

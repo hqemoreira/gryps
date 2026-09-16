@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { NextStepsLinks } from "@/components/NextStepsLinks";
 import { grypsCopyright } from "@/lib/gryps-copyright";
 import { useLang } from "@/lib/use-lang";
 import {
@@ -325,6 +326,26 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
             })}
           </div>
         )}
+
+        <div
+          className="gryps-no-print"
+          style={{
+            marginTop: 48,
+            paddingTop: 28,
+            borderTop: "1px solid var(--border)",
+          }}
+        >
+          <NextStepsLinks
+            lang={lang}
+            links={[
+              { href: "/map", en: "Explore Map", fi: "Tutki karttaa" },
+              { href: "/providers", en: "Providers", fi: "Toimittajat" },
+              { href: "/scenarios", en: "Scenarios", fi: "Skenaariot" },
+              { href: "/methodology", en: "Methodology", fi: "Menetelmä" },
+              { href: "/#advisor", en: "Generate Signature", fi: "Luo Signature" },
+            ]}
+          />
+        </div>
 
         <div
           style={{

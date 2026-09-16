@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { NextStepsLinks } from "@/components/NextStepsLinks";
+import { TypeLabel } from "@/components/TypeLabel";
 import { grypsCopyright } from "@/lib/gryps-copyright";
 import { useTheme } from "@/context/ThemeContext";
 import { useLang } from "@/lib/use-lang";
@@ -473,19 +474,36 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
             }}
           >
             {!selected ? (
-              <p
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontSize: 13,
-                  color: "var(--text-muted)",
-                  lineHeight: 1.6,
-                }}
-              >
-                {t.none}
-              </p>
+              <>
+                <p
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 13,
+                    color: "var(--text-muted)",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {t.none}
+                </p>
+                <NextStepsLinks
+                  lang={lang}
+                  label={lang === "fi" ? "SEURAAVAT ASKELEET" : "NEXT STEPS"}
+                  links={[
+                    {
+                      href: "/research",
+                      en: "Research Library",
+                      fi: "Research Library",
+                    },
+                    { href: "/providers", en: t.linkProviders, fi: t.linkProviders },
+                    { href: "/methodology", en: t.methodology, fi: t.methodology },
+                    { href: "/#advisor", en: t.assessRegion, fi: t.assessRegion },
+                  ]}
+                />
+              </>
             ) : (
               <>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                  <TypeLabel kind="DERIVED" />
                   <span
                     style={{
                       fontFamily: "var(--font-data)",
@@ -510,22 +528,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                   >
                     {selected.vertical.toUpperCase()}
                   </span>
-                  {selected.inResearchLibrary && (
-                    <span
-                      style={{
-                        fontFamily: "var(--font-data)",
-                        fontSize: 9,
-                        fontWeight: 700,
-                        letterSpacing: "0.06em",
-                        padding: "3px 7px",
-                        borderRadius: 4,
-                        color: "var(--accent-blue)",
-                        border: "1px solid rgba(79,168,255,0.35)",
-                      }}
-                    >
-                      {t.researchBadge}
-                    </span>
-                  )}
+                  {selected.inResearchLibrary && <TypeLabel kind="RESEARCH" />}
                 </div>
 
                 <h2
@@ -594,7 +597,9 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                   {t.confidenceNote}
                 </p>
 
-                {selected.top_provider && <Row label={t.provider} value={selected.top_provider} />}
+                {selected.top_provider && (
+                  <Row label={t.provider} value={selected.top_provider} href="/providers" />
+                )}
                 {selected.summary && (
                   <p
                     style={{
@@ -658,6 +663,11 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                     label={lang === "fi" ? "SEURAAVAT ASKELEET" : "NEXT STEPS"}
                     links={[
                       { href: advisorHref(selected), en: t.assessRegion, fi: t.assessRegion },
+                      {
+                        href: "/research",
+                        en: lang === "fi" ? "Research Library" : "Research Library",
+                        fi: "Research Library",
+                      },
                       { href: "/scenarios", en: t.linkScenarios, fi: t.linkScenarios },
                       { href: "/providers", en: t.linkProviders, fi: t.linkProviders },
                       { href: "/methodology", en: t.methodology, fi: t.methodology },
@@ -733,7 +743,15 @@ function Metric({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({
+  label,
+  value,
+  href,
+}: {
+  label: string;
+  value: string;
+  href?: string;
+}) {
   return (
     <div>
       <dt
@@ -748,7 +766,13 @@ function Row({ label, value }: { label: string; value: string }) {
         {label.toUpperCase()}
       </dt>
       <dd style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text)", margin: 0 }}>
-        {value}
+        {href ? (
+          <Link href={href} style={{ color: "var(--accent-blue)", textDecoration: "none" }}>
+            {value}
+          </Link>
+        ) : (
+          value
+        )}
       </dd>
     </div>
   );

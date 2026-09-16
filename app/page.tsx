@@ -28,12 +28,14 @@ import {
   providersToSetupString,
   scoreDeterministic,
 } from "@/lib/deterministic-score";
+import { HERO_DEMO } from "@/lib/hero-demo";
 import {
   ADVISOR_PRIORITIES,
   PRIORITY_LABELS,
   type AdvisorPriorityId,
 } from "@/lib/advisor-priorities";
 import { MODEL_VERSION } from "@/lib/signature-meta";
+import { SCORING_MODEL_LABEL } from "@/lib/model-constants";
 
 function gradeBadgeBg(grade: string): string {
   const c = gradeColor(grade);
@@ -1187,16 +1189,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   );
 }
 
-// ── Hero signature card ───────────────────────────────────────────────────────
-const HERO_DEMO = scoreDeterministic({
-  lat: 68.2,
-  lng: 27.4,
-  sector: "forestry",
-  autonomy: "autonomous",
-  criticality: "high",
-  providers: ["starlink"],
-});
-
+// ── Hero signature card (shared with meta / OG via lib/hero-demo.ts) ──────────
 function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
   const labels: Record<string, { en: string; fi: string }> = {
     redundancy: { en: "Redundancy", fi: "Redundanssi" },
@@ -1373,7 +1366,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
             marginBottom: 18,
           }}
         >
-          deterministic-v0.3
+          {SCORING_MODEL_LABEL}
         </p>
 
         <div
@@ -1437,7 +1430,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
 
       <div>
         <a href="#advisor" className="gryps-cta-btn" style={{ width: "100%" }}>
-          {t.advisorCta} <ArrowRight size={14} />
+          {t.ctaBtn} <ArrowRight size={14} />
         </a>
       </div>
     </div>
@@ -1478,18 +1471,9 @@ function TrustStrip({ lang }: { lang: "en" | "fi" }) {
   return (
     <div className="gryps-trust-strip gryps-no-print">
       <div className="gryps-trust-inner">
-        <div className="gryps-trust-items">
-          {items.map((item, i) => (
-            <span key={item} style={{ display: "inline-flex", alignItems: "center" }}>
-              {i > 0 && (
-                <span data-sep aria-hidden="true">
-                  ·
-                </span>
-              )}
-              {item}
-            </span>
-          ))}
-        </div>
+        <p className="gryps-trust-items">
+          {items.join(" · ")}
+        </p>
         <div className="gryps-trust-links">
           {links.map((l) => (
             <a key={l.href} href={l.href}>
@@ -1642,7 +1626,7 @@ const COPY = {
     ctaH2: "Start with a Resilience Signature.",
     ctaSub:
       "Free Connectivity Intelligence for any Nordic, Arctic, or Icelandic site. No account — unlock the detailed assessment with email when you want deeper detail.",
-    ctaBtn: "Generate Resilience Signature",
+    ctaBtn: "Create your Signature",
     viewSample: "View research assessment →",
     footerTag: "Built in Finland for high-latitude resilience.",
   },
@@ -1746,7 +1730,7 @@ const COPY = {
     ctaH2: "Aloita Resilience Signaturella.",
     ctaSub:
       "Ilmainen Connectivity Intelligence mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — avaa yksityiskohtainen arvio sähköpostilla, kun tarvitset syvemmän näkymän.",
-    ctaBtn: "Luo Resilience Signature",
+    ctaBtn: "Luo oma Signature",
     viewSample: "Katso tutkimusarvio →",
     footerTag: "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
   },
@@ -1755,7 +1739,6 @@ const COPY = {
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const [lang, setLang] = useLang();
-  const [siteCount, setSiteCount] = useState<number | null>(null);
   const [chromeH, setChromeH] = useState(82);
   const chromeRef = useRef<HTMLDivElement>(null);
   const t = COPY[lang];
@@ -1763,13 +1746,6 @@ export default function HomePage() {
     () => t.modelChip.replace("v0.3", modelVersionDisplay()),
     [t.modelChip]
   );
-
-  useEffect(() => {
-    fetch("/api/signatures")
-      .then((r) => r.json())
-      .then((d) => setSiteCount(Array.isArray(d.sites) ? d.sites.length : null))
-      .catch(() => setSiteCount(null));
-  }, []);
 
   useEffect(() => {
     const el = chromeRef.current;
@@ -1973,7 +1949,7 @@ export default function HomePage() {
       <TrustStrip lang={lang} />
 
       <FadeUp>
-        <HomeOrientation lang={lang} siteCount={siteCount} />
+        <HomeOrientation lang={lang} />
       </FadeUp>
 
       {/* Live Advisor */}
@@ -2035,7 +2011,7 @@ export default function HomePage() {
             {t.ctaSub}
           </p>
           <a href="#advisor" className="gryps-cta-btn" style={{ display: "inline-flex" }}>
-            {t.advisorCta} <ArrowRight size={14} />
+            {t.ctaBtn} <ArrowRight size={14} />
           </a>
           <p style={{ marginTop: 20 }}>
             <a
