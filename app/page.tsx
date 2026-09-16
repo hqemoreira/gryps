@@ -1438,7 +1438,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
 
       <div>
         <a href="#advisor" className="gryps-cta-btn" style={{ width: "100%" }}>
-          {t.advisorCta} <ArrowRight size={14} />
+          {t.ctaBtn} <ArrowRight size={14} />
         </a>
       </div>
     </div>
@@ -1643,7 +1643,7 @@ const COPY = {
     ctaH2: "Start with a Resilience Signature.",
     ctaSub:
       "Free Connectivity Intelligence for any Nordic, Arctic, or Icelandic site. No account — unlock the detailed assessment with email when you want deeper detail.",
-    ctaBtn: "Generate Resilience Signature",
+    ctaBtn: "Create your Signature",
     viewSample: "View research assessment →",
     footerTag: "Built in Finland for high-latitude resilience.",
   },
@@ -1747,7 +1747,7 @@ const COPY = {
     ctaH2: "Aloita Resilience Signaturella.",
     ctaSub:
       "Ilmainen Connectivity Intelligence mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — avaa yksityiskohtainen arvio sähköpostilla, kun tarvitset syvemmän näkymän.",
-    ctaBtn: "Luo Resilience Signature",
+    ctaBtn: "Luo oma Signature",
     viewSample: "Katso tutkimusarvio →",
     footerTag: "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
   },
@@ -2036,7 +2036,7 @@ export default function HomePage() {
             {t.ctaSub}
           </p>
           <a href="#advisor" className="gryps-cta-btn" style={{ display: "inline-flex" }}>
-            {t.advisorCta} <ArrowRight size={14} />
+            {t.ctaBtn} <ArrowRight size={14} />
           </a>
           <p style={{ marginTop: 20 }}>
             <a
