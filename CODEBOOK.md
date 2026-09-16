@@ -49,7 +49,7 @@ Orientation + routing — not a catalogue. Hero + Signature sample → mental mo
 
 ### Signature UX
 
-Progressive disclosure on output: Overview · Risks · Options · Evidence · Method · Compliance (+ drawers for “Why?”). Evidence chips (same meaning everywhere): MODELLED · MEASURED · RESEARCH · ILLUSTRATIVE · DERIVED — see `lib/evidence-kinds.ts` / `TypeLabel`.
+Progressive disclosure on output: Overview · Risks · Options · Evidence · Method · Compliance (+ drawers for “Why?”). Evidence chips (same meaning everywhere): MODELLED · MEASURED · RESEARCH · ILLUSTRATIVE · DERIVED — see `lib/evidence-kinds.ts` / `TypeLabel`. Map scope “Library sites on map” counts pins with a Library write-up (may be fewer than `RESEARCH_LIBRARY_COUNT` assessments).
 
 ### Terminology
 

@@ -473,6 +473,9 @@ body {
   vertical-align: middle;
   flex-shrink: 0;
 }
+.gryps-type-label--inline {
+  margin-bottom: 0;
+}
 .gryps-type-label--modelled {
   color: var(--accent-blue);
   border-color: rgba(79, 168, 255, 0.35);
@@ -497,6 +500,39 @@ body {
   color: var(--accent-cyan, #22d3ee);
   border-color: rgba(34, 211, 238, 0.35);
   background: rgba(34, 211, 238, 0.08);
+}
+.gryps-map-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.gryps-map-filter-label {
+  font-family: var(--font-data);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  min-width: 72px;
+}
+.gryps-map-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+.gryps-map-scope-note {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin: 2px 0 0;
+  max-width: 720px;
+}
+.gryps-map-scope-note a {
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: 600;
 }
 .gryps-evidence-legend {
   list-style: none;
@@ -1759,11 +1795,36 @@ body {
     min-height: 0 !important;
   }
   .gryps-capacity-grid > div:first-child {
-    min-height: min(58vh, 520px) !important;
-    height: min(58vh, 520px) !important;
+    min-height: min(52vh, 420px) !important;
+    height: min(52vh, 420px) !important;
   }
   .gryps-capacity-grid > aside {
     max-height: none !important;
+  }
+  .gryps-map-filter-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .gryps-map-filter-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    margin-right: calc(-1 * var(--pad-x));
+    padding-right: var(--pad-x);
+  }
+  .gryps-research-library-title {
+    font-size: clamp(1.5rem, 7vw, 2rem) !important;
+  }
+  .gryps-sig-tabs {
+    scroll-snap-type: x proximity;
+  }
+  .gryps-sig-tab {
+    scroll-snap-align: start;
+  }
+  .gryps-form-row {
+    grid-template-columns: 1fr !important;
   }
   input,
   select,

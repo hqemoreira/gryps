@@ -259,6 +259,9 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
   },
 ];
 
+/** Canonical public assessment count — use everywhere instead of hard-coded 10/12. */
+export const RESEARCH_LIBRARY_COUNT = RESEARCH_LIBRARY.length;
+
 const BY_SLUG = new Map(RESEARCH_LIBRARY.map((e) => [e.slug, e]));
 const BY_LEGACY = new Map(
   RESEARCH_LIBRARY.filter((e) => e.legacySignatureSlug).map((e) => [e.legacySignatureSlug!, e])
