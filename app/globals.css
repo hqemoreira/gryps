@@ -490,8 +490,9 @@ body {
   background: var(--surface2);
   border-color: var(--border2);
 }
-.gryps-sig-tab-panel {
-  display: none;
+/* Progressive disclosure: inactive panels must stay fully collapsed on screen. */
+.gryps-sig-tab-panel:not(.is-active) {
+  display: none !important;
 }
 .gryps-sig-tab-panel.is-active {
   display: block;
@@ -516,7 +517,8 @@ body {
   .gryps-sig-tabs {
     display: none !important;
   }
-  .gryps-sig-tab-panel {
+  .gryps-sig-tab-panel,
+  .gryps-sig-tab-panel:not(.is-active) {
     display: block !important;
   }
   .gryps-drawer-backdrop,
@@ -1491,6 +1493,13 @@ body {
   }
   .gryps-output-grid {
     grid-template-columns: 1fr !important;
+  }
+  .gryps-sig-tabs {
+    gap: 4px;
+  }
+  .gryps-sig-tab {
+    font-size: 11px;
+    padding: 7px 10px;
   }
   .gryps-signature-detail {
     display: none !important;

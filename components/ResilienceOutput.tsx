@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { ShieldAlert, AlertTriangle, AlertCircle, ShieldCheck, Download } from "lucide-react";
 import {
@@ -1857,16 +1857,46 @@ function RealDataEvidencePanel({
 
 type SigTab = "overview" | "risks" | "options" | "evidence" | "method" | "compliance";
 
+function SigTabPanel({
+  id,
+  tab,
+  printExpand,
+  children,
+}: {
+  id: SigTab;
+  tab: SigTab;
+  printExpand: boolean;
+  children: ReactNode;
+}) {
+  const active = tab === id;
+  // Mount only the active tab on screen; expand all panels for Save as PDF / print.
+  if (!active && !printExpand) return null;
+  return (
+    <div
+      role="tabpanel"
+      id={`gryps-sig-panel-${id}`}
+      aria-labelledby={`gryps-sig-tab-${id}`}
+      className={`gryps-sig-tab-panel${active || printExpand ? " is-active" : ""}`}
+      hidden={!active && !printExpand}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function ResilienceOutput({
   result,
   input,
   realData,
   lang = "en",
+  siteLabel,
 }: {
   result: AdvisoryResult;
   input?: AssessmentInputs;
   realData?: RealDataEvidence;
   lang?: UiLang;
+  /** Optional place line for the hero, e.g. "Inari · 68.9°N". */
+  siteLabel?: string;
 }) {
   const t = UI[lang];
   const {
@@ -1893,6 +1923,18 @@ export function ResilienceOutput({
   const [copied, setCopied] = useState(false);
   const [tab, setTab] = useState<SigTab>("overview");
   const [riskWhyOpen, setRiskWhyOpen] = useState(false);
+  const [printExpand, setPrintExpand] = useState(false);
+
+  useEffect(() => {
+    const onBefore = () => setPrintExpand(true);
+    const onAfter = () => setPrintExpand(false);
+    window.addEventListener("beforeprint", onBefore);
+    window.addEventListener("afterprint", onAfter);
+    return () => {
+      window.removeEventListener("beforeprint", onBefore);
+      window.removeEventListener("afterprint", onAfter);
+    };
+  }, []);
 
   const strongest =
     score_composition?.components.reduce<(typeof score_composition.components)[number] | null>(
@@ -1912,11 +1954,27 @@ export function ResilienceOutput({
         : `Address: ${primaryGap.label}`
       : recommendation);
 
+  const placeLine =
+    siteLabel ??
+    (input?.lat != null
+      ? `${input.lat.toFixed(1)}°N${input.lng != null ? ` · ${input.lng.toFixed(1)}°E` : ""}`
+      : null);
+
   function copyShare() {
     const url = typeof window !== "undefined" ? window.location.href : "";
     void navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  function handlePrint() {
+    setPrintExpand(true);
+    // Allow React to paint expanded panels before the print dialog.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.print();
+      });
     });
   }
 
@@ -1968,7 +2026,7 @@ export function ResilienceOutput({
         <button
           type="button"
           className="gryps-no-print"
-          onClick={() => window.print()}
+          onClick={handlePrint}
           style={{
             alignSelf: "flex-end",
             display: "inline-flex",
@@ -2001,10 +2059,10 @@ export function ResilienceOutput({
           gap: 20,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 28, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 28, flexWrap: "wrap" }}>
           <div style={{ textAlign: "center", flexShrink: 0 }}>
             <div
-              aria-label={`Resilience score ${sig.score} out of 100, grade ${sig.grade}`}
+              aria-label={`Resilience score ${sig.score} out of 100, grade ${sig.grade}. Grade scale: ${GRADE_BANDS_SUMMARY}.`}
               style={{
                 fontFamily: "var(--font-data)",
                 fontSize: 64,
@@ -2037,13 +2095,10 @@ export function ResilienceOutput({
             >
               {t.resilienceSignature}
             </div>
-            <span className="sr-only">
-              Grade {sig.grade}. Scale {GRADE_BANDS_SUMMARY}.
-            </span>
           </div>
           <div
             className="gryps-signature-divider"
-            style={{ width: 1, height: 72, backgroundColor: "var(--border)", flexShrink: 0 }}
+            style={{ width: 1, alignSelf: "stretch", minHeight: 72, backgroundColor: "var(--border)", flexShrink: 0 }}
           />
           <div style={{ flex: 1, minWidth: 200 }}>
             <p
@@ -2052,12 +2107,25 @@ export function ResilienceOutput({
                 fontSize: 15,
                 fontWeight: 600,
                 color: "var(--text)",
-                lineHeight: 1.55,
-                marginBottom: 14,
+                lineHeight: 1.45,
+                marginBottom: placeLine ? 6 : 14,
               }}
             >
               {sig.summary}
             </p>
+            {placeLine && (
+              <p
+                style={{
+                  fontFamily: "var(--font-data)",
+                  fontSize: 12,
+                  color: "var(--text-muted)",
+                  marginBottom: 14,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {placeLine}
+              </p>
+            )}
             <div
               style={{
                 display: "grid",
@@ -2149,10 +2217,22 @@ export function ResilienceOutput({
           >
             {t.recommendationAuthority}
           </span>
+          <span style={{ color: "var(--border2)" }}>·</span>
+          <span
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 9,
+              color: "var(--text-dim)",
+              letterSpacing: "0.06em",
+            }}
+          >
+            {GRADE_BANDS_SUMMARY}
+          </span>
         </div>
       </div>
 
       <p
+        className="gryps-no-print"
         style={{
           fontFamily: "var(--font-data)",
           fontSize: 9,
@@ -2164,13 +2244,15 @@ export function ResilienceOutput({
         {t.modelGenerated}
       </p>
 
-      <div className="gryps-sig-tabs" role="tablist" aria-label="Signature sections">
+      <div className="gryps-sig-tabs gryps-no-print" role="tablist" aria-label="Signature sections">
         {tabs.map((item) => (
           <button
             key={item.id}
+            id={`gryps-sig-tab-${item.id}`}
             type="button"
             role="tab"
             aria-selected={tab === item.id}
+            aria-controls={`gryps-sig-panel-${item.id}`}
             className={`gryps-sig-tab${tab === item.id ? " is-active" : ""}`}
             onClick={() => setTab(item.id)}
           >
@@ -2179,14 +2261,8 @@ export function ResilienceOutput({
         ))}
       </div>
 
-      <div
-        role="tabpanel"
-        className={`gryps-sig-tab-panel${tab === "overview" ? " is-active" : ""}`}
-        hidden={tab !== "overview"}
-      >
+      <SigTabPanel id="overview" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {input && <AssessmentInputsPanel input={input} t={t} lang={lang} />}
-
           {strongest && (
             <div
               style={{
@@ -2221,60 +2297,66 @@ export function ResilienceOutput({
             </div>
           )}
 
-          {intelligence ? (
-            <IntelligencePanel intelligence={intelligence} t={t} />
-          ) : (
-            <div
+          <div
+            style={{
+              backgroundColor: "rgba(79,168,255,0.06)",
+              border: "1px solid rgba(79,168,255,0.2)",
+              borderRadius: 8,
+              padding: "16px 20px",
+            }}
+          >
+            <TypeLabel kind="INTERPRETATION" />
+            <p
               style={{
-                backgroundColor: "rgba(79,168,255,0.06)",
-                border: "1px solid rgba(79,168,255,0.2)",
-                borderRadius: 8,
-                padding: "16px 20px",
+                fontFamily: "var(--font-data)",
+                fontSize: 9,
+                color: "var(--accent-blue)",
+                letterSpacing: "0.12em",
+                marginBottom: 8,
               }}
             >
-              <TypeLabel kind="INTERPRETATION" />
-              <p
-                style={{
-                  fontFamily: "var(--font-data)",
-                  fontSize: 9,
-                  color: "var(--accent-blue)",
-                  letterSpacing: "0.12em",
-                  marginBottom: 8,
-                }}
-              >
-                {t.recommendation}
-              </p>
-              <p
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontSize: 14,
-                  color: "var(--text)",
-                  lineHeight: 1.7,
-                }}
-              >
-                {recommendation}
-              </p>
-              <p
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontSize: 11,
-                  color: "var(--text-dim)",
-                  lineHeight: 1.55,
-                  marginTop: 10,
-                }}
-              >
-                {t.recommendationNote}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+              {t.recommendation}
+            </p>
+            <p
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: 14,
+                color: "var(--text)",
+                lineHeight: 1.7,
+              }}
+            >
+              {recommendation}
+            </p>
+            <p
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: 11,
+                color: "var(--text-dim)",
+                lineHeight: 1.55,
+                marginTop: 10,
+              }}
+            >
+              {t.recommendationNote}
+            </p>
+          </div>
 
-      <div
-        role="tabpanel"
-        className={`gryps-sig-tab-panel${tab === "risks" ? " is-active" : ""}`}
-        hidden={tab !== "risks"}
-      >
+          <p
+            className="gryps-no-print"
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 12,
+              color: "var(--text-muted)",
+              lineHeight: 1.55,
+            }}
+          >
+            {lang === "fi"
+              ? "Avaa Riskit, Vaihtoehdot, Näyttö, Menetelmä tai Valmius syvempään analyysiin."
+              : "Open Risks, Options, Evidence, Method, or Compliance for deeper analysis."}
+          </p>
+        </div>
+      </SigTabPanel>
+
+            <SigTabPanel id="risks" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
             <button type="button" className="gryps-why-btn" onClick={() => setRiskWhyOpen(true)}>
@@ -2526,14 +2608,12 @@ export function ResilienceOutput({
             </Link>
           </div>
         </IntelligenceDrawer>
-      </div>
+            </SigTabPanel>
 
-      <div
-        role="tabpanel"
-        className={`gryps-sig-tab-panel${tab === "options" ? " is-active" : ""}`}
-        hidden={tab !== "options"}
-      >
+            <SigTabPanel id="options" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {intelligence && <IntelligencePanel intelligence={intelligence} t={t} />}
+
           {intelligence && intelligence.comparison.length > 0 && (
             <ComparisonTable rows={intelligence.comparison} t={t} />
           )}
@@ -2860,13 +2940,9 @@ export function ResilienceOutput({
             </div>
           </div>
         </div>
-      </div>
+            </SigTabPanel>
 
-      <div
-        role="tabpanel"
-        className={`gryps-sig-tab-panel${tab === "evidence" ? " is-active" : ""}`}
-        hidden={tab !== "evidence"}
-      >
+            <SigTabPanel id="evidence" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {evidence && <EvidencePanel evidence={evidence} t={t} />}
           {realData && <RealDataEvidencePanel data={realData} t={t} lang={lang} />}
@@ -2882,14 +2958,12 @@ export function ResilienceOutput({
             {t.evidenceNotesLink}
           </Link>
         </div>
-      </div>
+            </SigTabPanel>
 
-      <div
-        role="tabpanel"
-        className={`gryps-sig-tab-panel${tab === "method" ? " is-active" : ""}`}
-        hidden={tab !== "method"}
-      >
+            <SigTabPanel id="method" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {input && <AssessmentInputsPanel input={input} t={t} lang={lang} />}
+
           {score_composition && (
             <ScoreCompositionPanel
               composition={score_composition}
@@ -3121,14 +3195,10 @@ export function ResilienceOutput({
             </Link>
           </div>
         </div>
-      </div>
+            </SigTabPanel>
 
 
-      <div
-        role="tabpanel"
-        className={`gryps-sig-tab-panel${tab === "compliance" ? " is-active" : ""}`}
-        hidden={tab !== "compliance"}
-      >
+            <SigTabPanel id="compliance" tab={tab} printExpand={printExpand}>
         <div
           style={{
             backgroundColor: "var(--surface)",
@@ -3211,7 +3281,7 @@ export function ResilienceOutput({
             {t.complianceNote}
           </p>
         </div>
-      </div>
+            </SigTabPanel>
 
       <NextStepsLinks lang={lang} label={t.nextStepsLabel} />
 
