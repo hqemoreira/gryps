@@ -11,11 +11,13 @@ import { grypsCopyright } from "@/lib/gryps-copyright";
 import { useLang } from "@/lib/use-lang";
 import {
   RESEARCH_LIBRARY,
+  RESEARCH_LIBRARY_COUNT,
   RESEARCH_REGIONS,
   RESEARCH_VERTICALS,
   type ResearchRegion,
   type ResearchVertical,
 } from "@/lib/research-library";
+import { TypeLabel } from "@/components/TypeLabel";
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors";
 
 type CardMeta = {
@@ -40,7 +42,7 @@ const COPY = {
     ctaSub: "Free · No account required. Same scoring model as the research assessments above.",
     ctaBtn: "Generate Resilience Signature",
     navCta: "Generate Resilience Signature",
-    count: (n: number) => `${n} research assessments`,
+    count: (n: number) => `${n} of ${RESEARCH_LIBRARY_COUNT} research assessments`,
   },
   fi: {
     eyebrow: "GRYPS · RESEARCH LIBRARY",
@@ -58,7 +60,7 @@ const COPY = {
       "Ilmainen · Ei tiliä tarvita. Sama pisteytysmalli kuin yllä olevissa tutkimusarvioissa.",
     ctaBtn: "Luo Resilience Signature",
     navCta: "Luo Resilience Signature",
-    count: (n: number) => `${n} tutkimusarviota`,
+    count: (n: number) => `${n} / ${RESEARCH_LIBRARY_COUNT} tutkimusarviota`,
   },
 };
 
@@ -90,7 +92,8 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
     backgroundColor: active ? "var(--surface2)" : "transparent",
     border: `1px solid ${active ? "var(--border2)" : "var(--border)"}`,
     borderRadius: 6,
-    padding: "6px 12px",
+    padding: "10px 14px",
+    minHeight: 44,
     cursor: "pointer",
   });
 
@@ -99,12 +102,12 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
       <Header lang={lang} onLangChange={setLang} ctaHref="/#advisor" useIaNav />
 
       <main
-        className="gryps-page-under-nav"
+        className="gryps-page-under-nav gryps-research-library"
         style={{
           maxWidth: 960,
           margin: "0 auto",
-          paddingLeft: 24,
-          paddingRight: 24,
+          paddingLeft: "var(--pad-x)",
+          paddingRight: "var(--pad-x)",
           paddingBottom: 80,
         }}
       >
@@ -116,17 +119,22 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
           ]}
         />
         <ResearchDocsNav lang={lang} active="research" />
-        <p
-          style={{
-            fontFamily: "var(--font-data)",
-            fontSize: 10,
-            color: "var(--text-dim)",
-            letterSpacing: "0.12em",
-          }}
-        >
-          {t.eyebrow}
-        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 6 }}>
+          <TypeLabel kind="RESEARCH" />
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 10,
+              color: "var(--text-dim)",
+              letterSpacing: "0.12em",
+              margin: 0,
+            }}
+          >
+            {t.eyebrow}
+          </p>
+        </div>
         <h1
+          className="gryps-research-library-title"
           style={{
             fontFamily: "var(--font-ui)",
             fontSize: 36,
@@ -234,9 +242,10 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
           </p>
         ) : (
           <div
+            className="gryps-research-library-grid"
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))",
               gap: 16,
             }}
           >

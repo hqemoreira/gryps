@@ -17,6 +17,7 @@ import {
 } from "@/lib/capacity-status";
 import { MODEL_VERSION } from "@/lib/signature-meta";
 import {
+  RESEARCH_LIBRARY_COUNT,
   RESEARCH_REGIONS,
   RESEARCH_VERTICALS,
   researchHref,
@@ -96,7 +97,9 @@ const COPY = {
     priority: "Priority",
     library: "Scope",
     libraryAll: "All modeled sites",
-    libraryOnly: "Research Library",
+    libraryOnly: "Library sites on map",
+    libraryScopeNote: (mapped: number, total: number) =>
+      `${mapped} map pins have a Research Library write-up · ${total} assessments in the Library`,
     score: "Modeled resilience",
     confidence: "Assessment confidence",
     confidenceNote:
@@ -132,7 +135,9 @@ const COPY = {
     priority: "Prioriteetti",
     library: "Laajuus",
     libraryAll: "Kaikki mallinnetut",
-    libraryOnly: "Research Library",
+    libraryOnly: "Kirjastokohteet kartalla",
+    libraryScopeNote: (mapped: number, total: number) =>
+      `${mapped} karttapinneillä on Research Library -kirjoitus · ${total} arviota kirjastossa`,
     score: "Mallinnettu resilienssi",
     confidence: "Arviointiluottamus",
     confidenceNote:
@@ -229,11 +234,24 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
     [sites, selectedSlug]
   );
 
+  const librarySitesOnMap = useMemo(
+    () => sites.filter((s) => s.inResearchLibrary).length,
+    [sites]
+  );
+
   useEffect(() => {
     if (selectedSlug && !filtered.some((s) => s.slug === selectedSlug)) {
       setSelectedSlug(null);
     }
   }, [filtered, selectedSlug]);
+
+  useEffect(() => {
+    if (!selectedSlug) return;
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    const panel = document.getElementById("gryps-map-site-panel");
+    panel?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [selectedSlug]);
 
   const priorities: { id: Priority; label: string }[] = [
     { id: "all", label: t.all },
@@ -254,12 +272,13 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
       <Header lang={lang} onLangChange={setLang} ctaHref="/#advisor" useIaNav />
 
       <div
+        className="gryps-map-shell"
         style={{
           flex: 1,
           maxWidth: 1400,
           width: "100%",
           margin: "0 auto",
-          padding: "16px 24px 32px",
+          padding: "16px var(--pad-x) 32px",
           paddingTop: "calc(var(--gryps-header-h, 52px) + 16px)",
           display: "flex",
           flexDirection: "column",
@@ -349,7 +368,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
           </p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div className="gryps-map-filters" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <FilterRow label={t.region}>
             {RESEARCH_REGIONS.map((r) => (
               <button
@@ -401,10 +420,15 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
               type="button"
               onClick={() => setLibraryFilter("library")}
               style={chipStyle(libraryFilter === "library")}
+              title={t.libraryScopeNote(librarySitesOnMap, RESEARCH_LIBRARY_COUNT)}
             >
-              {t.libraryOnly} · {sites.filter((s) => s.inResearchLibrary).length}
+              {t.libraryOnly} · {librarySitesOnMap}
             </button>
           </FilterRow>
+          <p className="gryps-map-scope-note">
+            {t.libraryScopeNote(librarySitesOnMap, RESEARCH_LIBRARY_COUNT)}{" "}
+            <Link href="/research">{lang === "fi" ? "Avaa kirjasto →" : "Open Library →"}</Link>
+          </p>
         </div>
 
         <div
@@ -460,6 +484,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
           </div>
 
           <aside
+            id="gryps-map-site-panel"
             style={{
               backgroundColor: "var(--surface)",
               border: "1px solid var(--border)",
@@ -503,7 +528,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
             ) : (
               <>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                  <TypeLabel kind="DERIVED" />
+                  <TypeLabel kind="DERIVED" className="gryps-type-label--inline" />
                   <span
                     style={{
                       fontFamily: "var(--font-data)",
@@ -528,7 +553,9 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                   >
                     {selected.vertical.toUpperCase()}
                   </span>
-                  {selected.inResearchLibrary && <TypeLabel kind="RESEARCH" />}
+                  {selected.inResearchLibrary && (
+                    <TypeLabel kind="RESEARCH" className="gryps-type-label--inline" />
+                  )}
                 </div>
 
                 <h2
@@ -568,10 +595,13 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                     borderBottom: "1px solid var(--border)",
                   }}
                 >
-                  <Metric
-                    label={t.score}
-                    value={resilienceBand(selected.score, selected.grade, lang)}
-                  />
+                  <div>
+                    <TypeLabel kind="MODELLED" />
+                    <Metric
+                      label={t.score}
+                      value={resilienceBand(selected.score, selected.grade, lang)}
+                    />
+                  </div>
                   <Metric
                     label={t.confidence}
                     value={confidenceBand(selected.top_confidence, lang)}
@@ -696,19 +726,9 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
 
 function FilterRow({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
-      <span
-        style={{
-          fontFamily: "var(--font-data)",
-          fontSize: 9,
-          color: "var(--text-dim)",
-          letterSpacing: "0.1em",
-          minWidth: 72,
-        }}
-      >
-        {label.toUpperCase()}
-      </span>
-      {children}
+    <div className="gryps-map-filter-row">
+      <span className="gryps-map-filter-label">{label.toUpperCase()}</span>
+      <div className="gryps-map-filter-chips">{children}</div>
     </div>
   );
 }
@@ -786,12 +806,13 @@ function chipStyle(active: boolean): CSSProperties {
     backgroundColor: active ? "var(--border2)" : "var(--surface2)",
     border: "1px solid var(--border2)",
     borderRadius: 6,
-    padding: "8px 12px",
-    minHeight: 40,
+    padding: "10px 12px",
+    minHeight: 44,
     cursor: "pointer",
     fontFamily: "var(--font-data)",
     fontSize: 11,
     fontWeight: 700,
     color: active ? "var(--text)" : "var(--text-muted)",
+    flexShrink: 0,
   };
 }
