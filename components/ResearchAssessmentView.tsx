@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ResilienceOutput } from "@/components/ResilienceOutput";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { TypeLabel } from "@/components/TypeLabel";
 import { gradeColor } from "@/lib/resilience-colors";
 import { SCORING_MODEL_LABEL } from "@/lib/model-constants";
 import type { ResolvedResearchAssessment } from "@/lib/research-library";
@@ -98,6 +99,9 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
       >
         {t.eyebrow}
       </p>
+      <div style={{ marginBottom: 10 }}>
+        <TypeLabel kind="RESEARCH" />
+      </div>
       <h1
         style={{
           fontFamily: "var(--font-ui)",
@@ -148,6 +152,7 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
           marginBottom: 24,
         }}
       >
+        <TypeLabel kind="ILLUSTRATIVE" />
         <p
           style={{
             fontFamily: "var(--font-ui)",

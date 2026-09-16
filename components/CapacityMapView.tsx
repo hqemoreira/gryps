@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { NextStepsLinks } from "@/components/NextStepsLinks";
+import { TypeLabel } from "@/components/TypeLabel";
 import { grypsCopyright } from "@/lib/gryps-copyright";
 import { useTheme } from "@/context/ThemeContext";
 import { useLang } from "@/lib/use-lang";
@@ -502,6 +503,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
             ) : (
               <>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                  <TypeLabel kind="DERIVED" />
                   <span
                     style={{
                       fontFamily: "var(--font-data)",
@@ -526,22 +528,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
                   >
                     {selected.vertical.toUpperCase()}
                   </span>
-                  {selected.inResearchLibrary && (
-                    <span
-                      style={{
-                        fontFamily: "var(--font-data)",
-                        fontSize: 9,
-                        fontWeight: 700,
-                        letterSpacing: "0.06em",
-                        padding: "3px 7px",
-                        borderRadius: 4,
-                        color: "var(--accent-blue)",
-                        border: "1px solid rgba(79,168,255,0.35)",
-                      }}
-                    >
-                      {t.researchBadge}
-                    </span>
-                  )}
+                  {selected.inResearchLibrary && <TypeLabel kind="RESEARCH" />}
                 </div>
 
                 <h2

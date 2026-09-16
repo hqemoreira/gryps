@@ -4,6 +4,7 @@ import Link from "next/link";
 import { DocShell, type DocLang } from "@/components/DocShell";
 import { PolarAtmosphere } from "@/components/PolarAtmosphere";
 import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav";
+import { EvidenceKindLegend } from "@/components/TypeLabel";
 import { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL } from "@/lib/signature-meta";
 import { GRADE_BANDS_SUMMARY, SCORING_MODEL_LABEL } from "@/lib/model-constants";
 
@@ -20,6 +21,9 @@ const COPY = {
     chainH2: "Evidence chain",
     chainIntro:
       "Every Signature follows the same research path. The chain is explicit so operators can see how environment and published knowledge become a scored recommendation.",
+    evidenceKindsH2: "Evidence kinds",
+    evidenceKindsP:
+      "The same chip vocabulary appears on Signatures, Research assessments, the Map, and the Provider index. Same label = same meaning everywhere.",
     chain: [
       {
         title: "1 · Operating environment",
@@ -134,6 +138,9 @@ const COPY = {
     chainH2: "Näyttöketju",
     chainIntro:
       "Jokainen Signature seuraa samaa tutkimuspolkua. Ketju on eksplisiittinen, jotta operaattori näkee, miten ympäristö ja julkaistu tieto muuttuvat pisteytetyksi suositukseksi.",
+    evidenceKindsH2: "Näyttötyypit",
+    evidenceKindsP:
+      "Sama chip-sanasto näkyy Signatureissa, Research-arvioissa, kartalla ja toimittajahakemistossa. Sama etiketti = sama merkitys kaikkialla.",
     chain: [
       {
         title: "1 · Toimintaympäristö",
@@ -322,6 +329,12 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
             </li>
           ))}
         </ol>
+
+        <h2 style={h2}>{t.evidenceKindsH2}</h2>
+        <p style={p}>{t.evidenceKindsP}</p>
+        <div style={{ marginBottom: 28 }}>
+          <EvidenceKindLegend />
+        </div>
 
         <h2 style={h2}>{t.attributionH2}</h2>
         <ul style={ul}>

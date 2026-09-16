@@ -630,7 +630,7 @@ function ScoreCompositionPanel({
         padding: "16px 20px",
       }}
     >
-      <TypeLabel kind="MODEL" />
+      <TypeLabel kind="MODELLED" />
       <p
         style={{
           fontFamily: "var(--font-data)",
@@ -667,7 +667,7 @@ function ScoreCompositionPanel({
             border: "1px solid var(--border)",
           }}
         >
-          <TypeLabel kind="INTERPRETATION" />
+          <TypeLabel kind="ILLUSTRATIVE" />
           {overall}
         </p>
       )}
@@ -823,7 +823,7 @@ function ScoreCompositionPanel({
         }
         onClose={() => setOpenId(null)}
       >
-        <TypeLabel kind="MODEL" />
+        <TypeLabel kind="MODELLED" />
         <p
           style={{
             fontFamily: "var(--font-data)",
@@ -846,7 +846,7 @@ function ScoreCompositionPanel({
         >
           {openExpl?.explanation ?? `${openComp?.points ?? 0} / ${openComp?.max ?? 0}`}
         </p>
-        <TypeLabel kind="DATA" />
+        <TypeLabel kind="DERIVED" />
         <p
           style={{
             fontFamily: "var(--font-data)",
@@ -922,6 +922,7 @@ function IntelligencePanel({ intelligence, t }: { intelligence: AdvisorIntellige
         padding: "16px 20px",
       }}
     >
+      <TypeLabel kind="ILLUSTRATIVE" />
       <p
         style={{
           fontFamily: "var(--font-data)",
@@ -1131,6 +1132,7 @@ function EvidencePanel({ evidence, t }: { evidence: EvidencePackage; t: UiCopy }
         padding: "16px 20px",
       }}
     >
+      <TypeLabel kind="RESEARCH" />
       <p
         style={{
           fontFamily: "var(--font-data)",
@@ -1166,6 +1168,9 @@ function EvidencePanel({ evidence, t }: { evidence: EvidencePackage; t: UiCopy }
         {evidence.methodology_summary}
       </p>
 
+      <div style={{ marginBottom: 8 }}>
+        <TypeLabel kind="DERIVED" />
+      </div>
       <div
         style={{
           display: "flex",
@@ -1694,18 +1699,22 @@ function RealDataEvidencePanel({
           alignItems: "center",
           justifyContent: "space-between",
           marginBottom: 4,
+          gap: 12,
         }}
       >
-        <p
-          style={{
-            fontFamily: "var(--font-data)",
-            fontSize: 9,
-            color: "var(--text-dim)",
-            letterSpacing: "0.12em",
-          }}
-        >
-          {t.realData}
-        </p>
+        <div>
+          <TypeLabel kind="MEASURED" />
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 9,
+              color: "var(--text-dim)",
+              letterSpacing: "0.12em",
+            }}
+          >
+            {t.realData}
+          </p>
+        </div>
         <div style={{ textAlign: "right" }}>
           <span
             style={{
@@ -2272,7 +2281,7 @@ export function ResilienceOutput({
                 padding: "14px 16px",
               }}
             >
-              <TypeLabel kind="MODEL" />
+              <TypeLabel kind="MODELLED" />
               <p
                 style={{
                   fontFamily: "var(--font-data)",
@@ -2305,7 +2314,7 @@ export function ResilienceOutput({
               padding: "16px 20px",
             }}
           >
-            <TypeLabel kind="INTERPRETATION" />
+            <TypeLabel kind="ILLUSTRATIVE" />
             <p
               style={{
                 fontFamily: "var(--font-data)",
@@ -2375,7 +2384,7 @@ export function ResilienceOutput({
                 padding: "16px 20px",
               }}
             >
-              <TypeLabel kind="MODEL" />
+              <TypeLabel kind="MODELLED" />
               <p
                 style={{
                   fontFamily: "var(--font-data)",
@@ -2456,7 +2465,7 @@ export function ResilienceOutput({
                 padding: "16px 20px",
               }}
             >
-              <TypeLabel kind="MODEL" />
+              <TypeLabel kind="MODELLED" />
               <p
                 style={{
                   fontFamily: "var(--font-data)",
@@ -2514,7 +2523,7 @@ export function ResilienceOutput({
           title={t.riskFactors}
           onClose={() => setRiskWhyOpen(false)}
         >
-          <TypeLabel kind="MODEL" />
+          <TypeLabel kind="MODELLED" />
           <p
             style={{
               fontFamily: "var(--font-data)",
@@ -2537,7 +2546,7 @@ export function ResilienceOutput({
           >
             {risk_factors.map((r) => r.label).join(" · ") || "—"}
           </p>
-          <TypeLabel kind="DATA" />
+          <TypeLabel kind="DERIVED" />
           <p
             style={{
               fontFamily: "var(--font-data)",
@@ -2626,7 +2635,7 @@ export function ResilienceOutput({
               padding: "16px 20px",
             }}
           >
-            <TypeLabel kind="MODEL" />
+            <TypeLabel kind="MODELLED" />
             <p
               style={{
                 fontFamily: "var(--font-data)",
@@ -2864,7 +2873,7 @@ export function ResilienceOutput({
               padding: "16px 20px",
             }}
           >
-            <TypeLabel kind="INTERPRETATION" />
+            <TypeLabel kind="ILLUSTRATIVE" />
             <p
               style={{
                 fontFamily: "var(--font-data)",
@@ -2981,7 +2990,7 @@ export function ResilienceOutput({
               padding: "16px 20px",
             }}
           >
-            <TypeLabel kind="DATA" />
+            <TypeLabel kind="DERIVED" />
             <p
               style={{
                 fontFamily: "var(--font-data)",
@@ -3207,7 +3216,7 @@ export function ResilienceOutput({
             padding: "16px 20px",
           }}
         >
-          <TypeLabel kind="MODEL" />
+          <TypeLabel kind="MODELLED" />
           <p
             style={{
               fontFamily: "var(--font-data)",

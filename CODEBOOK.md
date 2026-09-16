@@ -49,7 +49,7 @@ Orientation + routing — not a catalogue. Hero + Signature sample → mental mo
 
 ### Signature UX
 
-Progressive disclosure on output: Overview · Risks · Options · Evidence · Method (+ drawers for “Why?”). Type labels: MODEL · DATA · RESEARCH · INTERPRETATION.
+Progressive disclosure on output: Overview · Risks · Options · Evidence · Method · Compliance (+ drawers for “Why?”). Evidence chips (same meaning everywhere): MODELLED · MEASURED · RESEARCH · ILLUSTRATIVE · DERIVED — see `lib/evidence-kinds.ts` / `TypeLabel`.
 
 ### Terminology
 
