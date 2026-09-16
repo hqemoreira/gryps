@@ -236,7 +236,7 @@ function pickSources(sector: SectorId, lat: number): EvidenceSource[] {
   return BASE_SOURCES.filter((s) => ids.has(s.id));
 }
 
-function researchLinks(sector: SectorId, lat: number): { label: string; href: string }[] {
+function researchLinks(sector: SectorId): { label: string; href: string }[] {
   const links = [
     { label: "GRYPS Research Methodology", href: "/methodology" },
     { label: "Mission scenarios", href: "/scenarios" },
@@ -254,9 +254,7 @@ function researchLinks(sector: SectorId, lat: number): { label: string; href: st
       href: "/knowledge/forestry-satellite-connectivity-finland",
     });
   }
-  if (lat > 66) {
-    links.push({ label: "Explore Connectivity Intelligence map", href: "/map" });
-  }
+  links.push({ label: "Explore Connectivity Intelligence map", href: "/map" });
   return links;
 }
 
@@ -367,6 +365,6 @@ export function buildEvidencePackage(opts: {
       reference_datasets: "EU-DEM on demand · Bittimittari for FI municipality seeds",
       knowledge: "GRYPS Knowledge + Research Library · editorial 2026",
     },
-    research_links: researchLinks(opts.sector, opts.lat),
+    research_links: researchLinks(opts.sector),
   };
 }

@@ -1501,6 +1501,9 @@ body {
     font-size: 11px;
     padding: 7px 10px;
   }
+  .gryps-next-steps > div {
+    gap: 6px;
+  }
   .gryps-signature-detail {
     display: none !important;
   }

@@ -16,6 +16,7 @@ const UI = {
       "Research prototype · Non-commercial · Model-based analysis — not procurement advice or a site survey.",
     viewMethod: "Methodology →",
     viewMap: "Map →",
+    viewProviders: "Providers →",
     viewScenarios: "Scenarios →",
     ctaTitle: "Generate Resilience Signature",
     ctaBody: "Run the same model on your coordinates. Free · No account required.",
@@ -29,6 +30,7 @@ const UI = {
       "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi — ei hankintaneuvontaa eikä paikkamitasta.",
     viewMethod: "Menetelmä →",
     viewMap: "Kartta →",
+    viewProviders: "Toimittajat →",
     viewScenarios: "Skenaariot →",
     ctaTitle: "Luo Resilience Signature",
     ctaBody: "Aja sama malli omille koordinaateillesi. Ilmainen · Ei tiliä tarvita.",
@@ -205,6 +207,12 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
           style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)" }}
         >
           {t.viewMap}
+        </Link>
+        <Link
+          href="/providers"
+          style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-blue)" }}
+        >
+          {t.viewProviders}
         </Link>
         <Link
           href="/scenarios"

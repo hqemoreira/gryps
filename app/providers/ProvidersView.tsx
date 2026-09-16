@@ -197,6 +197,10 @@ function ProvidersArticle({ lang }: { lang: DocLang }) {
           {lang === "fi" ? "Kartta" : "Map"}
         </Link>
         {" · "}
+        <Link href="/research" style={{ color: "var(--accent-blue)" }}>
+          {lang === "fi" ? "Research Library" : "Research Library"}
+        </Link>
+        {" · "}
         <Link href="/scenarios" style={{ color: "var(--accent-blue)" }}>
           {lang === "fi" ? "Skenaariot" : "Scenarios"}
         </Link>
