@@ -1,4 +1,5 @@
 import type { Lang } from "@/lib/use-lang";
+import { GRADE_BANDS_SUMMARY } from "@/lib/model-constants";
 
 export type KnowledgePhase = "2-knowledge" | "3-discovery";
 
@@ -259,7 +260,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       sections: [
         {
           h2: "Score components (Model v0.3)",
-          body: "Redundancy (0–30) + latitude (0–20) + operational profile (0–15) + provider confidence (0–30), then hard caps, clamped 0–100. Grades: A ≥90 · B 75–89 · C 60–74 · D 40–59 · F <40.",
+          body: `Redundancy (0–30) + latitude (0–20) + operational profile (0–15) + provider confidence (0–30), then hard caps, clamped 0–100. Grades: ${GRADE_BANDS_SUMMARY}.`,
         },
         {
           h2: "Two scores, not one blend",
@@ -290,7 +291,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       sections: [
         {
           h2: "Pistekomponentit (malli v0.3)",
-          body: "Redundanssi (0–30) + leveysaste (0–20) + toimintaprofiili (0–15) + toimittajaluottamus (0–30), sitten kovat katot, rajattu 0–100. Arvosanat: A ≥90 · B 75–89 · C 60–74 · D 40–59 · F <40.",
+          body: `Redundanssi (0–30) + leveysaste (0–20) + toimintaprofiili (0–15) + toimittajaluottamus (0–30), sitten kovat katot, rajattu 0–100. Arvosanat: ${GRADE_BANDS_SUMMARY}.`,
         },
         {
           h2: "Kaksi pistettä, ei yhtä sekoitusta",

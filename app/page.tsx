@@ -34,6 +34,7 @@ import {
   type AdvisorPriorityId,
 } from "@/lib/advisor-priorities";
 import { MODEL_VERSION } from "@/lib/signature-meta";
+import { SCORING_MODEL_LABEL } from "@/lib/model-constants";
 
 function gradeBadgeBg(grade: string): string {
   const c = gradeColor(grade);
@@ -1373,7 +1374,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
             marginBottom: 18,
           }}
         >
-          deterministic-v0.3
+          {SCORING_MODEL_LABEL}
         </p>
 
         <div

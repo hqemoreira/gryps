@@ -5,6 +5,7 @@ import { DocShell, type DocLang } from "@/components/DocShell";
 import { PolarAtmosphere } from "@/components/PolarAtmosphere";
 import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav";
 import { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL } from "@/lib/signature-meta";
+import { GRADE_BANDS_SUMMARY, SCORING_MODEL_LABEL } from "@/lib/model-constants";
 
 const COPY = {
   en: {
@@ -69,9 +70,9 @@ const COPY = {
     confidenceH2: "Confidence",
     confidenceP:
       "Assessment confidence on the evidence panel reflects confidence in the assessment/data basis (catalog fit, documented paths, latitude constraints). It is not a probability of service availability and not an SLA.",
-    formulaH2: `Model v0.3 formula (${SCORING_ENGINE})`,
+    formulaH2: `${SCORING_MODEL_LABEL} formula (${SCORING_ENGINE})`,
     formulaP1:
-      "The Resilience Score is deterministic and reproducible for the same inputs. Optional language-model text may polish the recommendation paragraph only — it never changes score, grade, risks, or ranked providers.",
+      `The Resilience Score is deterministic and reproducible for the same inputs (${SCORING_MODEL_LABEL}). Optional language-model text may polish the recommendation paragraph only — it never changes score, grade, risks, or ranked providers.`,
     formulaP2: "Score = sum of four components (then hard caps, clamped 0–100):",
     components: [
       {
@@ -92,8 +93,7 @@ const COPY = {
       },
     ],
     gradesH2: "Grades",
-    gradesP:
-      "A = ≥90 · B = 75–89 · C = 60–74 · D = 40–59 · F = <40 (spec band E maps to F in the UI).",
+    gradesP: `${GRADE_BANDS_SUMMARY} (spec band E maps to F in the UI).`,
     capsH2: "Hard caps",
     capsItems: [
       "Safety-critical + autonomous + <2 providers → score capped at 50.",
@@ -184,9 +184,9 @@ const COPY = {
     confidenceH2: "Luottamus",
     confidenceP:
       "Näyttöpaneelin arviointiluottamus kuvaa luottamusta arvioinnin/dataperustaan (hakemistosopivuus, dokumentoidut polut, leveysasterajoitteet). Se ei ole palvelun saatavuuden todennäköisyys eikä SLA.",
-    formulaH2: `Mallin v0.3 kaava (${SCORING_ENGINE})`,
+    formulaH2: `Deterministinen malli v0.3 (${SCORING_ENGINE})`,
     formulaP1:
-      "Resilience-piste on deterministinen ja toistettavissa samoilla syötteillä. Valinnainen kielimalliteksti voi hioa vain suosituskappaleen — se ei koskaan muuta pistettä, arvosanaa, riskejä tai toimittajasuosituksia.",
+      "Resilience-piste on deterministinen ja toistettavissa samoilla syötteillä (deterministinen malli v0.3). Valinnainen kielimalliteksti voi hioa vain suosituskappaleen — se ei koskaan muuta pistettä, arvosanaa, riskejä tai toimittajasuosituksia.",
     formulaP2: "Piste = neljän komponentin summa (sen jälkeen kovat katot, rajattu 0–100):",
     components: [
       {
@@ -207,8 +207,7 @@ const COPY = {
       },
     ],
     gradesH2: "Arvosanat",
-    gradesP:
-      "A = ≥90 · B = 75–89 · C = 60–74 · D = 40–59 · F = <40 (spesifikaation E näkyy käyttöliittymässä F:nä).",
+    gradesP: `${GRADE_BANDS_SUMMARY} (spesifikaation E näkyy käyttöliittymässä F:nä).`,
     capsH2: "Kovat katot",
     capsItems: [
       "Turvallisuuskriittinen + autonominen + alle 2 toimittajaa → piste katkaistaan 50:een.",

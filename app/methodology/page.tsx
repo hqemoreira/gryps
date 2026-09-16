@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MethodologyView } from "./MethodologyView";
-import { METHODOLOGY_LABEL } from "@/lib/model-constants";
+import { GRADE_BANDS_SUMMARY, METHODOLOGY_LABEL } from "@/lib/model-constants";
 
 export const metadata: Metadata = {
   title: `Methodology — ${METHODOLOGY_LABEL}`,
@@ -25,7 +25,7 @@ const jsonLd = {
       name: "How is the 0–100 Resilience Score computed?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Model v0.3 is deterministic. Score = redundancy (0–30) + latitude (0–20) + operational profile (0–15) + provider confidence (0–30), then hard caps. Grades: A ≥90, B 75–89, C 60–74, D 40–59, F <40. Terrain evidence from EU-DEM is shown separately and is not blended into the Signature score.",
+        text: `Model v0.3 is deterministic. Score = redundancy (0–30) + latitude (0–20) + operational profile (0–15) + provider confidence (0–30), then hard caps. Grades: ${GRADE_BANDS_SUMMARY}. Terrain evidence from EU-DEM is shown separately and is not blended into the Signature score.`,
       },
     },
     {

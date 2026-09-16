@@ -187,7 +187,8 @@ export function parseProviders(input: ScoreInput): ProviderMeta[] {
 }
 
 export function gradeFromDeterministicScore(score: number): "A" | "B" | "C" | "D" | "F" {
-  // Spec E (<40) maps to F to keep existing UI grade colors
+  // Bands: A ≥90 · B 75–89 · C 60–74 · D 40–59 · F <40 (spec E → F).
+  // Keep in sync with GRADE_BANDS in lib/model-constants.ts.
   if (score >= 90) return "A";
   if (score >= 75) return "B";
   if (score >= 60) return "C";

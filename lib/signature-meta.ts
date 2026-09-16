@@ -3,7 +3,13 @@ import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors";
 import { gradeFromDeterministicScore } from "@/lib/deterministic-score";
 import { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL } from "@/lib/model-constants";
 
-export { MODEL_VERSION, SCORING_ENGINE, METHODOLOGY_LABEL };
+export {
+  MODEL_VERSION,
+  SCORING_ENGINE,
+  METHODOLOGY_LABEL,
+  SCORING_MODEL_LABEL,
+  GRADE_BANDS_SUMMARY,
+} from "@/lib/model-constants";
 
 export function gradeFromScore(score: number): "A" | "B" | "C" | "D" | "F" {
   return gradeFromDeterministicScore(score);

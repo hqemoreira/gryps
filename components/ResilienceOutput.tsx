@@ -19,6 +19,12 @@ import { PRIORITY_LABELS, type AdvisorPriorityId } from "@/lib/advisor-prioritie
 import { computeComplianceFlags } from "@/lib/compliance";
 import { redundancyTiers } from "@/lib/redundancy-tiers";
 import { MODEL_VERSION } from "@/lib/signature-meta";
+import {
+  GRADE_BANDS_SUMMARY,
+  RECOMMENDATION_AI_LABEL,
+  SCORING_ENGINE,
+  SCORING_MODEL_LABEL,
+} from "@/lib/model-constants";
 import { SaveToWorkspace } from "@/components/SaveToWorkspace";
 import { TypeLabel } from "@/components/TypeLabel";
 import { IntelligenceDrawer } from "@/components/IntelligenceDrawer";
@@ -149,8 +155,9 @@ const UI = {
     downloadPdf: "Download PDF",
     resilienceScore: "RESILIENCE SCORE",
     resilienceSignature: "RESILIENCE SIGNATURE",
-    modelGenerated:
-      "Deterministic Model v0.3 — illustrative research output, not a coverage guarantee",
+    modelGenerated: `${SCORING_MODEL_LABEL} — illustrative research output, not a coverage guarantee`,
+    scoreAuthority: SCORING_MODEL_LABEL,
+    recommendationAuthority: RECOMMENDATION_AI_LABEL,
     assessmentInputs: "ASSESSMENT INPUTS",
     assessmentSub: "The deterministic parameters provided for this scoring run.",
     coordinates: "COORDINATES",
@@ -178,7 +185,7 @@ const UI = {
       "Compliance flags are indicative, based on the scoring model's assessment of connectivity resilience posture. They do not constitute legal or regulatory advice. A Signature supports readiness documentation — it is not certification.",
     recommendation: "RECOMMENDATION",
     recommendationNote:
-      "Model commentary: interpretive explanation from the deterministic assessment (optional prose polish). Not a measurement of live network performance or a provider SLA.",
+      "AI-assisted interpretation of the deterministic assessment (optional prose polish). Does not change score, grade, risks, or ranked providers. Not live network performance or a provider SLA.",
     intelligenceLabel: "ADVISOR RECOMMENDATION",
     intelligenceSub:
       "Structured decision support — top fit, confidence, trade-offs, and alternatives for this mission.",
@@ -241,12 +248,10 @@ const UI = {
     orbitalDisclaimer:
       "Orbital-class notes are reference / model commentary based on publicly available industry information — not official provider specifications, measured site performance, SLAs, or an endorsement. GRYPS has no commercial relationship with the providers listed.",
     provenanceLabel: "PROVENANCE",
-    provenanceScoringModel: "Model output",
-    provenanceScoringModelValue:
-      "deterministic-v0.3 (reproducible score/grade/risks/ranks; optional Mistral prose never changes numbers)",
-    provenanceCommentary: "Model commentary",
-    provenanceCommentaryValue:
-      "Interpretive explanation generated from the model — not live telemetry or a provider commitment",
+    provenanceScoringModel: "Resilience Score",
+    provenanceScoringModelValue: `${SCORING_MODEL_LABEL} (${SCORING_ENGINE}) — reproducible score, grade, risks, and ranks`,
+    provenanceCommentary: "Recommendation text",
+    provenanceCommentaryValue: `${RECOMMENDATION_AI_LABEL} — optional prose polish; never changes numbers. Not live telemetry or a provider commitment`,
     provenanceRealDataSources: "Reference data",
     provenanceBittimittari:
       "Bittimittari (Traficom, Finland) — municipality-level broadband speed/latency, CC BY 4.0",
@@ -268,9 +273,11 @@ const UI = {
     tabOptions: "Options",
     tabEvidence: "Evidence",
     tabMethod: "Method",
+    tabCompliance: "Compliance",
     whyBtn: "Why?",
     overviewStrongest: "Strongest factor",
     overviewGap: "Primary gap",
+    overviewAction: "Recommended action",
     overviewRec: "Top recommendation",
     drawerCalc: "Calculation",
     drawerData: "Data basis",
@@ -287,9 +294,9 @@ const UI = {
     coverageField: "COVERAGE (MODEL) ",
     failoverField: "FAILOVER SWITCHING (MODEL) ",
     provenanceNote:
-      "Numeric score, grade, risks, and ranked providers are deterministic model output. Optional Mistral text may polish the recommendation paragraph only. Reference data (EU-DEM / Bittimittari) is separate and not blended into the Signature score.",
+      `Resilience Score (${SCORING_MODEL_LABEL}): deterministic score, grade, risks, and ranks. Recommendation text (${RECOMMENDATION_AI_LABEL}): optional prose polish only. Reference data (EU-DEM / Bittimittari) is separate and not blended into the Signature score.`,
     aiBadgeTitle:
-      "EU AI Act Art. 50 — optional AI-generated recommendation prose (Mistral). Limited-risk system. Score itself is deterministic Model v0.3. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.",
+      `EU AI Act Art. 50 — ${RECOMMENDATION_AI_LABEL} (optional Mistral prose). Limited-risk system. Resilience Score is ${SCORING_MODEL_LABEL} — never AI-generated. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.`,
     art50: "Art. 50 EU AI Act",
     generated: "Generated",
     printAttr: "GRYPS · Connectivity Intelligence · gryps.vercel.app",
@@ -307,6 +314,8 @@ const UI = {
     resilienceSignature: "RESILIENCE SIGNATURE",
     modelGenerated:
       "Deterministinen malli v0.3 — havainnollistava tutkimustulos, ei kattavuustakuuta",
+    scoreAuthority: "Deterministinen malli v0.3",
+    recommendationAuthority: "Tekoälyavusteinen tulkinta",
     assessmentInputs: "ARVIOINNIN SYÖTTEET",
     assessmentSub: "Tämän pisteytysajon deterministiset parametrit.",
     coordinates: "KOORDINAATIT",
@@ -334,7 +343,7 @@ const UI = {
       "Valmiusliput ovat suuntaa-antavia ja perustuvat pisteytysmallin arvioon yhteyden resilienssiasemasta. Ne eivät ole oikeudellista tai sääntelyneuvontaa. Signature tukee valmiusdokumentaatiota — se ei ole sertifiointi.",
     recommendation: "SUOSITUS",
     recommendationNote:
-      "Mallikommentti: tulkinnallinen selitys deterministisestä arviosta (valinnainen proosan viimeistely). Ei live-verkon mittaus eikä toimittajan SLA.",
+      "Tekoälyavusteinen tulkinta deterministisestä arviosta (valinnainen proosan viimeistely). Ei muuta pistettä, arvosanaa, riskejä eikä sijoituksia. Ei live-verkon mittaus eikä toimittajan SLA.",
     intelligenceLabel: "ADVISOR-SUOSITUS",
     intelligenceSub:
       "Rakenteinen päätöstuki — paras sopivuus, luottamus, kompromissit ja vaihtoehdot tälle tehtävälle.",
@@ -397,12 +406,12 @@ const UI = {
     orbitalDisclaimer:
       "Rataluokan huomiot ovat viite- / mallikommenttia julkisesta toimialatiedosta — eivät virallisia toimittajamäärityksiä, mitattua kohdesuorituskykyä, SLA:ita tai suosituksia. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
     provenanceLabel: "ALKUPERÄ",
-    provenanceScoringModel: "Mallituloste",
+    provenanceScoringModel: "Resilience-pisteet",
     provenanceScoringModelValue:
-      "deterministic-v0.3 (toistettava piste/arvosana/riskit/sijoitukset; valinnainen Mistral-proosa ei muuta lukuja)",
-    provenanceCommentary: "Mallikommentti",
+      "Deterministinen malli v0.3 (deterministic-v0.3) — toistettava piste, arvosana, riskit ja sijoitukset",
+    provenanceCommentary: "Suositusteksti",
     provenanceCommentaryValue:
-      "Mallista johdettu tulkinnallinen selitys — ei live-telemetriaa eikä toimittajan sitoumusta",
+      "Tekoälyavusteinen tulkinta — valinnainen proosan viimeistely; ei muuta lukuja. Ei live-telemetriaa eikä toimittajan sitoumusta",
     provenanceRealDataSources: "Viitedata",
     provenanceBittimittari:
       "Bittimittari (Traficom, Suomi) — kunta-tason laajakaistan nopeus/latenssi, CC BY 4.0",
@@ -423,9 +432,11 @@ const UI = {
     tabOptions: "Vaihtoehdot",
     tabEvidence: "Näyttö",
     tabMethod: "Menetelmä",
+    tabCompliance: "Valmius",
     whyBtn: "Miksi?",
     overviewStrongest: "Vahvin tekijä",
     overviewGap: "Pääaukko",
+    overviewAction: "Suositeltu toimenpide",
     overviewRec: "Pääsuositus",
     drawerCalc: "Laskenta",
     drawerData: "Dataperusta",
@@ -442,9 +453,9 @@ const UI = {
     coverageField: "KATTAVUUS (MALLI) ",
     failoverField: "FAILOVER-VAIHTO (MALLI) ",
     provenanceNote:
-      "Numeerinen piste, arvosana, riskit ja sijoitetut toimittajat ovat determinististä mallitulostetta. Valinnainen Mistral-teksti voi viimeistellä vain suosituskappaleen. Viitedata (EU-DEM / Bittimittari) on erillinen eikä sekoitu Signature-pisteeseen.",
+      "Resilience-pisteet (deterministinen malli v0.3): toistettava piste, arvosana, riskit ja sijoitukset. Suositusteksti (tekoälyavusteinen tulkinta): vain valinnainen proosan viimeistely. Viitedata (EU-DEM / Bittimittari) on erillinen eikä sekoitu Signature-pisteeseen.",
     aiBadgeTitle:
-      "EU AI Act Art. 50 — valinnainen tekoälyn tuottama suositusproosa (Mistral). Rajoitetun riskin järjestelmä. Piste itsessään on deterministinen malli v0.3. Ei verkon saatavuustakuuta. Tukee ihmisen harkintaa; ei automaattisia oikeudellisia päätöksiä.",
+      "EU AI Act Art. 50 — tekoälyavusteinen tulkinta (valinnainen Mistral-proosa). Rajoitetun riskin järjestelmä. Resilience-pisteet ovat deterministinen malli v0.3 — eivät tekoälyn tuottamia. Ei verkon saatavuustakuuta. Tukee ihmisen harkintaa; ei automaattisia oikeudellisia päätöksiä.",
     art50: "Art. 50 EU AI Act",
     generated: "Luotu",
     printAttr: "GRYPS · Connectivity Intelligence · gryps.vercel.app",
@@ -1844,7 +1855,7 @@ function RealDataEvidencePanel({
   );
 }
 
-type SigTab = "overview" | "risks" | "options" | "evidence" | "method";
+type SigTab = "overview" | "risks" | "options" | "evidence" | "method" | "compliance";
 
 export function ResilienceOutput({
   result,
@@ -1893,7 +1904,13 @@ export function ResilienceOutput({
       null
     ) ?? null;
   const primaryGap = redundancy_gaps[0] ?? null;
-  const topRec = intelligence?.recommendation.headline ?? recommendation;
+  const actionLine =
+    intelligence?.recommendation.headline ??
+    (primaryGap
+      ? lang === "fi"
+        ? `Korjaa: ${primaryGap.label}`
+        : `Address: ${primaryGap.label}`
+      : recommendation);
 
   function copyShare() {
     const url = typeof window !== "undefined" ? window.location.href : "";
@@ -1909,6 +1926,7 @@ export function ResilienceOutput({
     { id: "options", label: t.tabOptions },
     { id: "evidence", label: t.tabEvidence },
     { id: "method", label: t.tabMethod },
+    { id: "compliance", label: t.tabCompliance },
   ];
 
   return (
@@ -1979,80 +1997,158 @@ export function ResilienceOutput({
           borderRadius: 12,
           padding: "28px 32px",
           display: "flex",
-          alignItems: "center",
-          gap: 32,
+          flexDirection: "column",
+          gap: 20,
         }}
       >
-        <div style={{ textAlign: "center", flexShrink: 0 }}>
-          <div
-            aria-label={`Resilience score ${sig.score} out of 100, grade ${sig.grade}`}
-            style={{
-              fontFamily: "var(--font-data)",
-              fontSize: 72,
-              fontWeight: 900,
-              color: gtc,
-              lineHeight: 1,
-              letterSpacing: "-0.04em",
-            }}
-          >
-            {sig.score}
-          </div>
-          <div
-            style={{
-              fontFamily: "var(--font-data)",
-              fontSize: 11,
-              color: "var(--text-dim)",
-              letterSpacing: "0.12em",
-              marginTop: 4,
-            }}
-          >
-            {t.resilienceScore}
-          </div>
-          <span className="sr-only">
-            Grade {sig.grade}. Scale A 85 and above resilient, through F below 30 critical failure.
-          </span>
-        </div>
-        <div
-          className="gryps-signature-divider"
-          style={{ width: 1, height: 64, backgroundColor: "var(--border)", flexShrink: 0 }}
-        />
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-            <span
+        <div style={{ display: "flex", alignItems: "center", gap: 28, flexWrap: "wrap" }}>
+          <div style={{ textAlign: "center", flexShrink: 0 }}>
+            <div
+              aria-label={`Resilience score ${sig.score} out of 100, grade ${sig.grade}`}
               style={{
                 fontFamily: "var(--font-data)",
-                fontSize: 18,
+                fontSize: 64,
                 fontWeight: 900,
                 color: gtc,
-                border: `1px solid ${gc}55`,
-                borderRadius: 6,
-                padding: "2px 12px",
+                lineHeight: 1,
+                letterSpacing: "-0.04em",
               }}
-              aria-hidden="true"
             >
-              {sig.grade}
-            </span>
-            <span
+              {sig.score}
+              <span
+                style={{
+                  fontSize: 22,
+                  fontWeight: 700,
+                  color: "var(--text-dim)",
+                  marginLeft: 6,
+                }}
+              >
+                / {sig.grade}
+              </span>
+            </div>
+            <div
               style={{
                 fontFamily: "var(--font-data)",
                 fontSize: 10,
                 color: "var(--text-dim)",
-                letterSpacing: "0.1em",
+                letterSpacing: "0.12em",
+                marginTop: 8,
               }}
             >
               {t.resilienceSignature}
+            </div>
+            <span className="sr-only">
+              Grade {sig.grade}. Scale {GRADE_BANDS_SUMMARY}.
             </span>
           </div>
-          <p
+          <div
+            className="gryps-signature-divider"
+            style={{ width: 1, height: 72, backgroundColor: "var(--border)", flexShrink: 0 }}
+          />
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <p
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: 15,
+                fontWeight: 600,
+                color: "var(--text)",
+                lineHeight: 1.55,
+                marginBottom: 14,
+              }}
+            >
+              {sig.summary}
+            </p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                gap: 14,
+              }}
+            >
+              {primaryGap && (
+                <div>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-data)",
+                      fontSize: 9,
+                      color: "var(--text-dim)",
+                      letterSpacing: "0.1em",
+                      marginBottom: 4,
+                    }}
+                  >
+                    {t.overviewGap}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-ui)",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      color: "var(--text)",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {primaryGap.label}
+                  </p>
+                </div>
+              )}
+              <div>
+                <p
+                  style={{
+                    fontFamily: "var(--font-data)",
+                    fontSize: 9,
+                    color: "var(--text-dim)",
+                    letterSpacing: "0.1em",
+                    marginBottom: 4,
+                  }}
+                >
+                  {t.overviewAction}
+                </p>
+                <p
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontWeight: 700,
+                    fontSize: 13,
+                    color: "var(--text)",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {actionLine}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 10,
+            alignItems: "center",
+            paddingTop: 4,
+            borderTop: "1px solid var(--border)",
+          }}
+        >
+          <span
             style={{
-              fontFamily: "var(--font-ui)",
-              fontSize: 14,
-              color: "var(--text-muted)",
-              lineHeight: 1.6,
+              fontFamily: "var(--font-data)",
+              fontSize: 9,
+              color: "var(--text-dim)",
+              letterSpacing: "0.08em",
             }}
           >
-            {sig.summary}
-          </p>
+            {t.scoreAuthority}
+          </span>
+          <span style={{ color: "var(--border2)" }}>·</span>
+          <span
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 9,
+              color: "var(--text-dim)",
+              letterSpacing: "0.08em",
+            }}
+          >
+            {t.recommendationAuthority}
+          </span>
         </div>
       </div>
 
@@ -2091,90 +2187,7 @@ export function ResilienceOutput({
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {input && <AssessmentInputsPanel input={input} t={t} lang={lang} />}
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: 12,
-            }}
-          >
-            {strongest && (
-              <div
-                style={{
-                  backgroundColor: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8,
-                  padding: "14px 16px",
-                }}
-              >
-                <TypeLabel kind="MODEL" />
-                <p
-                  style={{
-                    fontFamily: "var(--font-data)",
-                    fontSize: 9,
-                    color: "var(--text-dim)",
-                    letterSpacing: "0.1em",
-                    marginBottom: 6,
-                  }}
-                >
-                  {t.overviewStrongest}
-                </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-ui)",
-                    fontWeight: 700,
-                    fontSize: 13,
-                    color: "var(--text)",
-                  }}
-                >
-                  {componentLabel(strongest.id, t)} — {strongest.points}/{strongest.max}
-                </p>
-              </div>
-            )}
-            {primaryGap && (
-              <div
-                style={{
-                  backgroundColor: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8,
-                  padding: "14px 16px",
-                }}
-              >
-                <TypeLabel kind="MODEL" />
-                <p
-                  style={{
-                    fontFamily: "var(--font-data)",
-                    fontSize: 9,
-                    color: "var(--text-dim)",
-                    letterSpacing: "0.1em",
-                    marginBottom: 6,
-                  }}
-                >
-                  {t.overviewGap}
-                </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-ui)",
-                    fontWeight: 700,
-                    fontSize: 13,
-                    color: "var(--text)",
-                    marginBottom: 4,
-                  }}
-                >
-                  {primaryGap.label}
-                </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-ui)",
-                    fontSize: 11,
-                    color: "var(--text-muted)",
-                    lineHeight: 1.55,
-                  }}
-                >
-                  {primaryGap.detail}
-                </p>
-              </div>
-            )}
+          {strongest && (
             <div
               style={{
                 backgroundColor: "var(--surface)",
@@ -2183,7 +2196,7 @@ export function ResilienceOutput({
                 padding: "14px 16px",
               }}
             >
-              <TypeLabel kind="INTERPRETATION" />
+              <TypeLabel kind="MODEL" />
               <p
                 style={{
                   fontFamily: "var(--font-data)",
@@ -2193,20 +2206,20 @@ export function ResilienceOutput({
                   marginBottom: 6,
                 }}
               >
-                {t.overviewRec}
+                {t.overviewStrongest}
               </p>
               <p
                 style={{
                   fontFamily: "var(--font-ui)",
+                  fontWeight: 700,
                   fontSize: 13,
                   color: "var(--text)",
-                  lineHeight: 1.55,
                 }}
               >
-                {topRec}
+                {componentLabel(strongest.id, t)} — {strongest.points}/{strongest.max}
               </p>
             </div>
-          </div>
+          )}
 
           {intelligence ? (
             <IntelligencePanel intelligence={intelligence} t={t} />
@@ -2894,89 +2907,6 @@ export function ResilienceOutput({
               padding: "16px 20px",
             }}
           >
-            <TypeLabel kind="MODEL" />
-            <p
-              style={{
-                fontFamily: "var(--font-data)",
-                fontSize: 9,
-                color: "var(--text-dim)",
-                letterSpacing: "0.12em",
-                marginBottom: 12,
-              }}
-            >
-              {t.complianceLabel}
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {flags.map((flag) => (
-                <div key={flag.id}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: 12,
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "var(--font-ui)",
-                        fontSize: 12,
-                        color: "var(--text-muted)",
-                      }}
-                    >
-                      {flag.id === "nis2-art21" ? t.complianceNis2 : t.complianceCer}
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-data)",
-                        fontSize: 9,
-                        fontWeight: 700,
-                        color: flag.pass ? "var(--accent-green)" : "var(--accent-red)",
-                        border: `1px solid ${flag.pass ? "rgba(46,212,122,0.3)" : "rgba(239,68,68,0.3)"}`,
-                        borderRadius: 4,
-                        padding: "2px 8px",
-                      }}
-                    >
-                      {flag.pass ? t.compliancePass : t.complianceFail}
-                    </span>
-                  </div>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 11,
-                      color: "var(--text-dim)",
-                      lineHeight: 1.5,
-                      marginTop: 4,
-                    }}
-                  >
-                    {flag.reason}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <p
-              style={{
-                fontFamily: "var(--font-ui)",
-                fontSize: 9,
-                color: "var(--text-dim)",
-                lineHeight: 1.6,
-                marginTop: 10,
-                paddingTop: 8,
-                borderTop: "1px solid var(--border)",
-              }}
-            >
-              {t.complianceNote}
-            </p>
-          </div>
-
-          <div
-            style={{
-              backgroundColor: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 8,
-              padding: "16px 20px",
-            }}
-          >
             <TypeLabel kind="DATA" />
             <p
               style={{
@@ -3177,7 +3107,109 @@ export function ResilienceOutput({
             >
               {t.provenanceNote}
             </p>
+            <Link
+              href="/methodology"
+              style={{
+                fontFamily: "var(--font-data)",
+                fontSize: 10,
+                color: "var(--accent-blue)",
+                display: "inline-block",
+                marginTop: 12,
+              }}
+            >
+              {t.methodologyLink}
+            </Link>
           </div>
+        </div>
+      </div>
+
+
+      <div
+        role="tabpanel"
+        className={`gryps-sig-tab-panel${tab === "compliance" ? " is-active" : ""}`}
+        hidden={tab !== "compliance"}
+      >
+        <div
+          style={{
+            backgroundColor: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            padding: "16px 20px",
+          }}
+        >
+          <TypeLabel kind="MODEL" />
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 9,
+              color: "var(--text-dim)",
+              letterSpacing: "0.12em",
+              marginBottom: 12,
+            }}
+          >
+            {t.complianceLabel}
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {flags.map((flag) => (
+              <div key={flag.id}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 12,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "var(--font-ui)",
+                      fontSize: 12,
+                      color: "var(--text-muted)",
+                    }}
+                  >
+                    {flag.id === "nis2-art21" ? t.complianceNis2 : t.complianceCer}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-data)",
+                      fontSize: 9,
+                      fontWeight: 700,
+                      color: flag.pass ? "var(--accent-green)" : "var(--accent-red)",
+                      border: `1px solid ${flag.pass ? "rgba(46,212,122,0.3)" : "rgba(239,68,68,0.3)"}`,
+                      borderRadius: 4,
+                      padding: "2px 8px",
+                    }}
+                  >
+                    {flag.pass ? t.compliancePass : t.complianceFail}
+                  </span>
+                </div>
+                <p
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 11,
+                    color: "var(--text-dim)",
+                    lineHeight: 1.5,
+                    marginTop: 4,
+                  }}
+                >
+                  {flag.reason}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 9,
+              color: "var(--text-dim)",
+              lineHeight: 1.6,
+              marginTop: 10,
+              paddingTop: 8,
+              borderTop: "1px solid var(--border)",
+            }}
+          >
+            {t.complianceNote}
+          </p>
         </div>
       </div>
 
@@ -3216,7 +3248,7 @@ export function ResilienceOutput({
             lineHeight: 1.6,
           }}
         >
-          {caveats.join(" · ")} ·{" "}
+          {t.scoreAuthority} · {t.recommendationAuthority}. {caveats.join(" · ")} ·{" "}
           <Link href="/terms" style={{ color: "var(--text-dim)", textDecoration: "underline" }}>
             {t.art50}
           </Link>
