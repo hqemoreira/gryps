@@ -1,10 +1,10 @@
 # GRYPS
 
-Non-commercial R&D / research prototype — assessment-first **Resilience Signature** scoring for satellite connectivity resilience in Nordic / Arctic industrial contexts.
+Non-commercial R&D / research prototype — OT connectivity resilience for Nordic–Arctic operations.
 
-Scores and documents site dependency and redundancy gaps. Does **not** live-monitor links, sell airtime, or operate a NOC.
+Assessment-first **Resilience Signature** scoring for satellite dependency and redundancy gaps. Scores and documents; does **not** live-monitor links, sell airtime, or operate a NOC.
 
-**Live:** [gryps.vercel.app](https://gryps.vercel.app)  
+**Live:** [https://gryps.vercel.app](https://gryps.vercel.app)  
 **Posture:** Research · Prototype · Experimental — open via the live URL (not a SaaS storefront).
 
 ## Golden demo
