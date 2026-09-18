@@ -67,6 +67,7 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 
 ### Changelog — 2026-09
 
+- **2026-09-18 (Forge s22):** Confirmed dual-home sync with Forge journals (gryps-s14 still latest product work). Next: verify Resend domain delivery + watch Vercel Analytics funnel events.
 - **2026-09-18 (professional cleanup):** Removed unused Next.js scaffold assets and unmounted drift demo; synced `NEON_DATABASE_URL` across `.env.example` / CI / docs; Dependabot commit-prefix hygiene; README / SECURITY / LICENSE / CODEBOOK aligned to live product (Score 47 · Grade D golden demo); hero card uses `lib/hero-demo.ts` only.
 - **2026-09-18:** Advisor funnel polish — Save vs Unlock vs Get updates clarified; `intent` derived from topics; non-identifying Vercel Analytics events (`advise_run`, `unlock_request`, `unlock_verify`, `use_case_pick`, `save_local`); unlock error banners red; Analyse another clears `sid`. GitHub owner URLs → `hqemoreira`.
 - UX architecture: Explore · Assess · Research modes; shared `lib/ia-nav.ts`; homepage as orientation layer; Signature progressive disclosure.
