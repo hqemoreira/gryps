@@ -29,14 +29,26 @@ export type SignatureSiteRow = {
   real_data_score: number | null;
 };
 
+/** Skip Neon during CI / local builds that only have placeholder connection strings. */
+function neonUrlOrNull(): string | null {
+  const url = process.env.NEON_DATABASE_URL?.trim();
+  if (!url) return null;
+  if (/ci:ci@|127\.0\.0\.1|localhost|USER:PASSWORD@HOST/i.test(url)) return null;
+  return url;
+}
+
 export async function getAllSites(): Promise<SignatureSiteRow[]> {
-  const sql = neon(process.env.NEON_DATABASE_URL!);
+  const url = neonUrlOrNull();
+  if (!url) return [];
+  const sql = neon(url);
   const rows = await sql`SELECT * FROM signature_sites ORDER BY id ASC`;
   return rows as SignatureSiteRow[];
 }
 
 export async function getSiteBySlug(slug: string): Promise<SignatureSiteRow | null> {
-  const sql = neon(process.env.NEON_DATABASE_URL!);
+  const url = neonUrlOrNull();
+  if (!url) return null;
+  const sql = neon(url);
   const rows = await sql`SELECT * FROM signature_sites WHERE slug = ${slug} LIMIT 1`;
   return (rows[0] as SignatureSiteRow) ?? null;
 }

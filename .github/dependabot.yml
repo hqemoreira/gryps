@@ -31,9 +31,9 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: react-dom
         update-types: ["version-update:semver-major"]
+    # Do not set include: scope — it doubles the prefix to chore(deps)(deps)
     commit-message:
       prefix: "chore(deps)"
-      include: scope
 
   - package-ecosystem: github-actions
     directory: "/"

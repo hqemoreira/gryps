@@ -1,0 +1,2 @@
+# Intentionally empty — Next.js App Router serves icons via app/icon.tsx and opengraph-image.tsx.
+# Keep this directory so deploys do not omit public/.

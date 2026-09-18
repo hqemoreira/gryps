@@ -28,7 +28,7 @@ Start-Process "https://console.cloud.google.com/apis/library/searchconsole.googl
 
 Write-Host ""
 Write-Host "Step 2 - Service account JSON key"
-Write-Host "  If you already have forge-seo (or any SA) key, paste its path when asked."
+Write-Host "  If you already have a Google service-account key (any SA), paste its path when asked."
 Write-Host "  Or create one: https://console.cloud.google.com/iam-admin/serviceaccounts"
 Write-Host ""
 Write-Host "Default key path:"

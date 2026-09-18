@@ -1,18 +1,19 @@
 # GRYPS — Codebook
 
 > Non-commercial R&D — assessment-first satellite connectivity resilience scoring for Nordic/Arctic industrial contexts (Resilience Signature).
-> Stack: Next.js 16 App Router · TypeScript · CSS custom properties · MapLibre GL · Neon (PostgreSQL) · Vercel
+> Stack: Next.js 16 App Router · TypeScript · CSS custom properties + Tailwind CSS v4 (PostCSS) · MapLibre GL · Neon (PostgreSQL) · Vercel
 
 ---
 
 ## Public posture
 
-- **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC. Forge is private ops (noindex).
+- **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC. Private ops tooling (if any) stays private — do not discuss or couple product UI to it.
 - **Phase goal (product):** experimental research prototype for Connectivity Intelligence — commercialization and monetization are outside the current scope. Public posture: `/research-prototype`. Portfolio demonstration (career narrative): `/case-study`. Do not mix personal administrative / benefit notes into the product UI.
 - **Object:** Resilience Signature (deterministic engine **v0.3**). Product vocabulary: Connectivity Intelligence → Advisor action **Generate Resilience Signature** → output **Resilience Signature** → map **Explore Connectivity Intelligence**. Supporting surfaces: `/methodology`, `/providers`, `/research` (Research Library), `/map`, `/about`, `/knowledge`, `/case-study`, `/research-prototype`, research docs (`/data-sources`, `/assumptions`, `/limitations`, `/changelog`). Thin `/signatures/[slug]` Site XX pages are **noindex** and excluded from the sitemap (kept for map/dev).
+- **Golden demo:** Homepage sample Signature is **Score 47 · Grade D** (forestry · 68.2°N · Starlink · autonomous · high). Single source: `lib/hero-demo.ts` (also drives OG / social previews). Verify with `npm run test:score`.
 - **Landing:** Arctic ops-console composition — sticky Signature card, polar atmosphere around (not through) the Signature, GrypsMark footer lockup.
-- **Legal chrome:** Terms/Privacy labeled non-commercial R&D — not multi-section commercial “Legal”.
-- **Monitoring:** illustrative T0/T1 drift mock only. No freemium / free-trial CTAs. Prototype line: Research prototype · Non-commercial · Model-based analysis.
+- **Legal chrome:** Terms/Privacy at `/terms` and `/privacy` — labeled non-commercial R&D — not multi-section commercial “Legal”.
+- **Monitoring:** versioning fields support future T0/T1 comparison; live drift alerting is **not** productized. No freemium / free-trial CTAs. Prototype line: Research prototype · Non-commercial · Model-based analysis.
 - **Claims:** Confidence = assessment/data-basis confidence (not availability %). Provider orbital notes = reference / model commentary (not SLA). Optional Mistral prose must not invent availability %, precise latency SLAs, or live telemetry.
 - **Research Library:** Curated 8–12 named assessments at `/research` — not customer cases. Catalog in `lib/research-library.ts`.
 - **Language:** Prefer Research / Prototype / Experimental / Assessment / Methodology / Evidence / Scenario / Intelligence. Avoid Buy / Get a quote / For customers / Our solution / Book a consultation / Enterprise plans.
@@ -45,7 +46,7 @@ Source of truth: `lib/ia-nav.ts` (Header, Footer, DocShell).
 
 ### Homepage role
 
-Orientation + routing — not a catalogue. Hero + Signature sample → mental model → three modes → research dataset strip → example Signatures → Research & Prototype link. Heavy map/ops/drift/methodology prose moves to child routes.
+Orientation + routing — not a catalogue. Hero + Signature sample (Score 47 · Grade D) → mental model → three modes → research dataset strip → example Signatures → Research & Prototype link. Heavy map/ops/methodology prose moves to child routes.
 
 ### Signature UX
 
@@ -66,8 +67,8 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 
 ### Changelog — 2026-09
 
-- **2026-09-18 (Forge s21):** Advisor funnel polish — Save vs Unlock vs Get updates clarified; `intent` derived from topics; non-identifying Vercel Analytics events (`advise_run`, `unlock_request`, `unlock_verify`, `use_case_pick`, `save_local`); unlock error banners red; Analyse another clears `sid`. GitHub owner URLs → `hqemoreira`.
-- **2026-09-18 (Forge s20):** CODEBOOK synced with Forge journals. Advisor funnel baseline treated as shipped (anonymous abbreviated → magic-link unlock); next = polish + lightweight analytics. Forge Documents library expanded; OPS lane remains Portfolio + GRYPS + Forge.
+- **2026-09-18 (professional cleanup):** Removed unused Next.js scaffold assets and unmounted drift demo; synced `NEON_DATABASE_URL` across `.env.example` / CI / docs; Dependabot commit-prefix hygiene; README / SECURITY / LICENSE / CODEBOOK aligned to live product (Score 47 · Grade D golden demo); hero card uses `lib/hero-demo.ts` only.
+- **2026-09-18:** Advisor funnel polish — Save vs Unlock vs Get updates clarified; `intent` derived from topics; non-identifying Vercel Analytics events (`advise_run`, `unlock_request`, `unlock_verify`, `use_case_pick`, `save_local`); unlock error banners red; Analyse another clears `sid`. GitHub owner URLs → `hqemoreira`.
 - UX architecture: Explore · Assess · Research modes; shared `lib/ia-nav.ts`; homepage as orientation layer; Signature progressive disclosure.
 - Research & Prototype (`/research-prototype`): public product posture only; `/roadmap` redirects away. Career objectives and personal benefit notes stay out of the product UI.
 - Portfolio case study (`/case-study`); Methodology v0.5 demonstration layer.
@@ -80,7 +81,6 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 - Advisor funnel: anonymous abbreviated Initial Assessment → email magic-link unlock → full report. No Google Sign-In.
 - Public README shipped as GitHub front door (posture + stack + how to run); architecture stays in this codebook.
 - Proprietary LICENSE harmonized across the portfolio (same wording family as sibling repos).
-- Active/indexed: Portfolio + GRYPS only. Forge is private ops (noindex).
 - Signature engine v0.3; MapLibre + Esri basemap; Arctic ops-console landing; FI mobile polish + language persistence.
 
 ---
@@ -90,7 +90,7 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 | Concern    | Choice                                                             | Why                                                                                      |
 | ---------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
 | Framework  | Next.js 16 App Router                                              | Server components + API routes in one repo                                               |
-| Styling    | CSS custom properties (no Tailwind)                                | Theme switching via `document.documentElement.style.setProperty` — zero runtime overhead |
+| Styling    | CSS custom properties + Tailwind CSS v4 (PostCSS `@import`)        | Theme via CSS variables; Tailwind as build-time utility layer — product UI mostly custom |
 | Fonts      | `next/font/google` — Space Grotesk + JetBrains Mono                | Eliminates render-blocking Google Fonts import                                           |
 | Maps       | MapLibre GL + key-free Esri raster tiles                           | Ops console maps without a Carto/tile API key (`lib/basemap.ts`)                         |
 | Scoring    | Deterministic Signature engine v0.3 (`lib/deterministic-score.ts`) | Reproducible score / grade / risks / ranked providers                                    |
@@ -348,24 +348,25 @@ useEffect(() => {
 gryps/
 ├── app/
 │   ├── layout.tsx              # Root layout — fonts, JSON-LD, AnimatedFavicon
-│   ├── page.tsx                # Landing — ops-console hero + Signature
+│   ├── page.tsx                # Landing — ops-console hero + Signature (Score 47 · D)
 │   ├── about/                  # About
 │   ├── methodology/            # Assessment methodology (EN/FI)
 │   ├── providers/              # Provider catalog
-│   ├── signatures/             # Versioned Signature list + [slug]
-│   ├── map/                    # Capacity Map (MapLibre)
+│   ├── signatures/             # Versioned Signature list + [slug] (noindex)
+│   ├── map/                    # Connectivity Intelligence map (MapLibre)
+│   ├── (prototype)/            # /terms · /privacy
 │   ├── icon.tsx                # Static PNG favicon (32×32) via ImageResponse
-│   ├── legal/                  # Terms + Privacy (EN/FI)
-│   └── api/                    # advise, contact, signatures, submissions
+│   └── api/                    # advise, contact, signatures, submissions, notify
 ├── components/
 │   ├── OpsConsoleMap.tsx       # Shared MapLibre ops map
 │   ├── CapacityMap*.tsx        # Capacity map shell
-│   ├── SignaturesMap.tsx       # Signatures map
+│   ├── SignaturesMap.tsx       # Signatures map (Leaflet)
 │   ├── PolarAtmosphere.tsx     # Landing polar geometry
 │   ├── GrypsMark.tsx           # Mark / lockup
 │   └── Footer.tsx / Header.tsx
 └── lib/
     ├── deterministic-score.ts  # Signature engine v0.3
+    ├── hero-demo.ts            # Golden demo Score 47 · Grade D
     ├── basemap.ts              # Esri raster tile URLs
     ├── ops-map-style.ts        # Shared MapLibre style
     └── scoring.ts / signatures-db.ts / …
@@ -381,28 +382,24 @@ email) should use the shared portfolio-wide address
 
 There is no write-time tagging of test submissions in this repo —
 `advisor_submissions` has no generic "source" column suited to that, and this
-codebase has no `/api/advise`-side concept of test vs. real traffic. Exclusion
-from Forge's `/products` view is handled entirely on Forge's side, via its own
-`TEST_EMAIL_PATTERN` filter (added separately in the forge repo) matching on
-the `+test@` convention above. No code change is needed in this repo for that
-filtering to work — using the address is the only requirement.
-
-**Flagged historical note:** Older Forge code once assumed a `gryps_waitlist` table. Current Forge (`product-users.ts`, forge-s19) reads `advisor_submissions` (+ contact/notify emails) and labels anonymous Advisor runs as Anonymous — not a waitlist. Prefer verified `notify_requests` for identified interest.
+codebase has no `/api/advise`-side concept of test vs. real traffic. Prefer the
+`+test@` address convention so private ops views can filter test rows without
+changes in this product repo.
 
 ---
 
 ## Environment variables
 
-| Key                   | Used in                                                     | Purpose                                                                                                                                                                                                                      |
-| --------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `NEON_DATABASE_URL`   | `api/advise/*`, `lib/signatures-db.ts`, `api/notify/verify` | Neon PostgreSQL connection string                                                                                                                                                                                            |
-| `MISTRAL_API_KEY`     | `lib/scoring.ts`                                            | Optional Mistral recommendation prose                                                                                                                                                                                        |
-| `RESEND_API_KEY`      | `lib/mail.ts`                                               | Send unlock confirmation emails (magic link)                                                                                                                                                                                 |
-| `RESEND_FROM`         | `lib/mail.ts`                                               | From address on a **verified** Resend domain, e.g. `GRYPS <hello@gryps.eu>`. Until the domain is verified, Resend only delivers to the account owner (`hqe.moreira@gmail.com`) and rejects addresses like `henrique+test@…`. |
-| `NEXT_PUBLIC_APP_URL` | `lib/mail.ts`                                               | Canonical site origin for magic-link URLs (prefer over Vercel preview host)                                                                                                                                                  |
+| Key                   | Used in                                                                    | Purpose                                                                                                                                                                                                                      |
+| --------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEON_DATABASE_URL`   | `api/advise/*`, `lib/signatures-db.ts`, `api/notify/verify`, `api/contact` | Neon PostgreSQL connection string                                                                                                                                                                                            |
+| `MISTRAL_API_KEY`     | `lib/scoring.ts`                                                           | Optional Mistral recommendation prose                                                                                                                                                                                        |
+| `RESEND_API_KEY`      | `lib/mail.ts`                                                              | Send unlock confirmation emails (magic link)                                                                                                                                                                                 |
+| `RESEND_FROM`         | `lib/mail.ts`                                                              | From address on a **verified** Resend domain, e.g. `GRYPS <hello@gryps.eu>`. Until the domain is verified, Resend only delivers to the account owner (`hqe.moreira@gmail.com`) and rejects addresses like `henrique+test@…`. |
+| `NEXT_PUBLIC_APP_URL` | `lib/mail.ts`                                                              | Canonical site origin for magic-link URLs (prefer over Vercel preview host)                                                                                                                                                  |
 
 Set in: Vercel → gryps project → Settings → Environment Variables  
-(or `vercel env add` for each key). Do not commit secrets.
+(or `vercel env add` for each key). Do not commit secrets. Placeholders: `.env.example`.
 
 When Resend rejects a send (unverified domain / test-mode recipient), `/api/advise/unlock` still returns `verifyUrl` so the UI can unlock without inbox delivery. After `gryps.eu` (or another domain) is verified at [resend.com/domains](https://resend.com/domains), set `RESEND_FROM` accordingly and test mail will reach `henrique+test@henriquemoreira.eu`.
 
@@ -414,7 +411,7 @@ When Resend rejects a send (unverified domain / test-mode recipient), `/api/advi
 - Soft anonymous budget: client tracks `gryps-anon-runs` for soft UX only; funnel signal uses Vercel Analytics custom events (no email/PII) via `lib/funnel-analytics.ts`.
 - Non-identifying feedback: `POST /api/advise/feedback` → `advisor_submissions.use_case`.
 - Local **Save to Assessments** is browser-only teaser/full workspace storage — not the email unlock path.
-- Forge should prefer **verified** `notify_requests` (+ contact emails) as identified interest; raw anonymous runs stay Anonymous.
+- Prefer **verified** `notify_requests` (+ contact emails) as identified interest; raw anonymous runs stay anonymous.
 
 Manual unlock tests: prefer `hqe.moreira@gmail.com` until the domain is verified; otherwise use the on-page verify link.
 
@@ -433,8 +430,8 @@ Manual unlock tests: prefer `hqe.moreira@gmail.com` until the domain is verified
 
 ## Legal coupling (plain prototype notices)
 
-Privacy (`/legal/privacy`) and Terms (`/legal/terms`) are the required public
-legal pages (footer-linked). Both locales must stay aligned on:
+Privacy (`/privacy`) and Terms (`/terms`) are the required public
+legal pages (footer-linked; route group `app/(prototype)/`). Both locales must stay aligned on:
 
 - Plain, short notices — not multi-section commercial T&Cs
 - Operator: Henrique Moreira · Espoo, Finland · contact `hqe.moreira@gmail.com`
@@ -442,7 +439,7 @@ legal pages (footer-linked). Both locales must stay aligned on:
 - AI processing disclosed: **Mistral** (+ Vercel hosting) for demonstration Resilience Signature
 - No marketing tracking / analytics cookies claimed in Privacy
 - Optional email only when the user requests full-assessment unlock / save / updates; confirmation via magic link (Resend). Deletion via `hello@gryps.eu` or Terms contact form
-- Point-of-exposure UI: `[AI]` badge remains on Advisor outputs; Terms link is `/legal/terms`
+- Point-of-exposure UI: `[AI]` badge remains on Advisor outputs; Terms link is `/terms`
 
 This is product copy/compliance alignment — not legal advice.
 

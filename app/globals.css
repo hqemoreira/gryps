@@ -1113,21 +1113,6 @@ body {
   }
 }
 
-/* Drift scrubber */
-.gryps-drift-scrub {
-  position: relative;
-  height: 44px;
-  display: flex;
-  align-items: center;
-}
-.gryps-drift-scrub input[type="range"] {
-  width: 100%;
-  height: 4px;
-  accent-color: var(--accent-blue);
-  cursor: pointer;
-  margin: 0;
-}
-
 /* Examples snap on phone */
 .gryps-examples-grid {
   display: grid;
@@ -1183,17 +1168,6 @@ body {
   }
   .gryps-problem-grid-responsive > *:last-child:nth-child(odd) {
     grid-column: auto;
-  }
-}
-
-.gryps-drift-panels {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-@media (min-width: 768px) {
-  .gryps-drift-panels {
-    grid-template-columns: 1fr 1fr;
   }
 }
 

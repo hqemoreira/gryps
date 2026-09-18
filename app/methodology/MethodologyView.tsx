@@ -75,8 +75,7 @@ const COPY = {
     confidenceP:
       "Assessment confidence on the evidence panel reflects confidence in the assessment/data basis (catalog fit, documented paths, latitude constraints). It is not a probability of service availability and not an SLA.",
     formulaH2: `${SCORING_MODEL_LABEL} formula (${SCORING_ENGINE_DISPLAY})`,
-    formulaP1:
-      `The Resilience Score is deterministic and reproducible for the same inputs (${SCORING_MODEL_LABEL}). Optional language-model text may polish the recommendation paragraph only — it never changes score, grade, risks, or ranked providers.`,
+    formulaP1: `The Resilience Score is deterministic and reproducible for the same inputs (${SCORING_MODEL_LABEL}). Optional language-model text may polish the recommendation paragraph only — it never changes score, grade, risks, or ranked providers.`,
     formulaP2: "Score = sum of four components (then hard caps, clamped 0–100):",
     components: [
       {
@@ -113,7 +112,7 @@ const COPY = {
     twoScoresP:
       "The Resilience Score is the deterministic Signature above. Terrain penalty from EU-DEM via OpenTopoData is deterministic and displayed separately. Finnish Bittimittari speed/latency applies only to seeded municipality sites — not ad-hoc coordinates.",
     versionH2: "Versioning (monitoring later)",
-    versionP: `Every Signature carries issuedAt, modelVersion (${MODEL_VERSION}), and inputHash. Monitoring is the same engine at T1, T2 — not a second product. Live drift alerting is not built yet; the homepage drift slider is illustrative only.`,
+    versionP: `Every Signature carries issuedAt, modelVersion (${MODEL_VERSION}), and inputHash. Monitoring is the same engine at T1, T2 — not a second product. Live drift alerting is not productized.`,
     researchLink: "Research Library",
     mapLink: "Explore Map",
     scenariosLink: "Mission scenarios",
@@ -231,7 +230,7 @@ const COPY = {
     twoScoresP:
       "Resilience-piste on yllä oleva deterministinen Signature. EU-DEM-maastorangaistus OpenTopoDatan kautta on deterministinen ja näytetään erikseen. Suomen Bittimittari-nopeus ja -viive koskevat vain esitäytettyjä kuntakohteita — eivät vapaasti syötettyjä koordinaatteja.",
     versionH2: "Versiointi (seuranta myöhemmin)",
-    versionP: `Jokainen Signature sisältää issuedAt-, modelVersion- (${MODEL_VERSION}) ja inputHash-kentät. Seuranta on sama moottori hetkillä T1 ja T2 — ei erillinen tuote. Reaaliaikaisia ajautumahälytyksiä ei ole vielä rakennettu; etusivun ajautumaliukusäädin on vain havainnollistus.`,
+    versionP: `Jokainen Signature sisältää issuedAt-, modelVersion- (${MODEL_VERSION}) ja inputHash-kentät. Seuranta on sama moottori hetkillä T1 ja T2 — ei erillinen tuote. Reaaliaikaisia ajautumahälytyksiä ei ole tuotteistettu.`,
     researchLink: "Research Library",
     mapLink: "Tutki karttaa",
     scenariosLink: "Tehtäväskenaariot",

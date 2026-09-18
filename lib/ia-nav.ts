@@ -179,6 +179,6 @@ export function descFor(item: IaNavItem, lang: "en" | "fi") {
 export const HOMEPAGE_CONTENT_MOVES = [
   "Full map / latitude ops console → /map",
   "Long “why sites fail” education → Research (methodology / evidence)",
-  "Signature drift demo → Assessments (/workspace) or Research",
+  "Signature drift documentation → /methodology (versioning) or Research",
   "Dense methodology prose → /methodology",
 ] as const;

@@ -293,10 +293,8 @@ const UI = {
     elevationField: "ELEVATION / SKY VIEW ",
     coverageField: "COVERAGE (MODEL) ",
     failoverField: "FAILOVER SWITCHING (MODEL) ",
-    provenanceNote:
-      `Resilience Score (${SCORING_MODEL_LABEL}): deterministic score, grade, risks, and ranks. Recommendation text (${RECOMMENDATION_AI_LABEL}): optional prose polish only. Reference data (EU-DEM / Bittimittari) is separate and not blended into the Signature score.`,
-    aiBadgeTitle:
-      `EU AI Act Art. 50 — ${RECOMMENDATION_AI_LABEL} (optional Mistral prose). Limited-risk system. Resilience Score is ${SCORING_MODEL_LABEL} — never AI-generated. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.`,
+    provenanceNote: `Resilience Score (${SCORING_MODEL_LABEL}): deterministic score, grade, risks, and ranks. Recommendation text (${RECOMMENDATION_AI_LABEL}): optional prose polish only. Reference data (EU-DEM / Bittimittari) is separate and not blended into the Signature score.`,
+    aiBadgeTitle: `EU AI Act Art. 50 — ${RECOMMENDATION_AI_LABEL} (optional Mistral prose). Limited-risk system. Resilience Score is ${SCORING_MODEL_LABEL} — never AI-generated. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.`,
     art50: "Art. 50 EU AI Act",
     generated: "Generated",
     printAttr: "GRYPS · Connectivity Intelligence · gryps.vercel.app",
@@ -407,8 +405,7 @@ const UI = {
       "Rataluokan huomiot ovat viite- / mallikommenttia julkisesta toimialatiedosta — eivät virallisia toimittajamäärityksiä, mitattua kohdesuorituskykyä, SLA:ita tai suosituksia. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
     provenanceLabel: "ALKUPERÄ",
     provenanceScoringModel: "Resilience-pisteet",
-    provenanceScoringModelValue:
-      `Deterministinen malli v0.3 (${SCORING_ENGINE_DISPLAY}) — toistettava piste, arvosana, riskit ja sijoitukset`,
+    provenanceScoringModelValue: `Deterministinen malli v0.3 (${SCORING_ENGINE_DISPLAY}) — toistettava piste, arvosana, riskit ja sijoitukset`,
     provenanceCommentary: "Suositusteksti",
     provenanceCommentaryValue:
       "Tekoälyavusteinen tulkinta — valinnainen proosan viimeistely; ei muuta lukuja. Ei live-telemetriaa eikä toimittajan sitoumusta",
@@ -2107,7 +2104,13 @@ export function ResilienceOutput({
           </div>
           <div
             className="gryps-signature-divider"
-            style={{ width: 1, alignSelf: "stretch", minHeight: 72, backgroundColor: "var(--border)", flexShrink: 0 }}
+            style={{
+              width: 1,
+              alignSelf: "stretch",
+              minHeight: 72,
+              backgroundColor: "var(--border)",
+              flexShrink: 0,
+            }}
           />
           <div style={{ flex: 1, minWidth: 200 }}>
             <p
@@ -2365,7 +2368,7 @@ export function ResilienceOutput({
         </div>
       </SigTabPanel>
 
-            <SigTabPanel id="risks" tab={tab} printExpand={printExpand}>
+      <SigTabPanel id="risks" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
             <button type="button" className="gryps-why-btn" onClick={() => setRiskWhyOpen(true)}>
@@ -2617,9 +2620,9 @@ export function ResilienceOutput({
             </Link>
           </div>
         </IntelligenceDrawer>
-            </SigTabPanel>
+      </SigTabPanel>
 
-            <SigTabPanel id="options" tab={tab} printExpand={printExpand}>
+      <SigTabPanel id="options" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {intelligence && <IntelligencePanel intelligence={intelligence} t={t} />}
 
@@ -2949,9 +2952,9 @@ export function ResilienceOutput({
             </div>
           </div>
         </div>
-            </SigTabPanel>
+      </SigTabPanel>
 
-            <SigTabPanel id="evidence" tab={tab} printExpand={printExpand}>
+      <SigTabPanel id="evidence" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {evidence && <EvidencePanel evidence={evidence} t={t} />}
           {realData && <RealDataEvidencePanel data={realData} t={t} lang={lang} />}
@@ -2967,9 +2970,9 @@ export function ResilienceOutput({
             {t.evidenceNotesLink}
           </Link>
         </div>
-            </SigTabPanel>
+      </SigTabPanel>
 
-            <SigTabPanel id="method" tab={tab} printExpand={printExpand}>
+      <SigTabPanel id="method" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {input && <AssessmentInputsPanel input={input} t={t} lang={lang} />}
 
@@ -3204,10 +3207,9 @@ export function ResilienceOutput({
             </Link>
           </div>
         </div>
-            </SigTabPanel>
+      </SigTabPanel>
 
-
-            <SigTabPanel id="compliance" tab={tab} printExpand={printExpand}>
+      <SigTabPanel id="compliance" tab={tab} printExpand={printExpand}>
         <div
           style={{
             backgroundColor: "var(--surface)",
@@ -3290,7 +3292,7 @@ export function ResilienceOutput({
             {t.complianceNote}
           </p>
         </div>
-            </SigTabPanel>
+      </SigTabPanel>
 
       <NextStepsLinks lang={lang} label={t.nextStepsLabel} />
 
