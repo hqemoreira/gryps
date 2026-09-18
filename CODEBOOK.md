@@ -66,6 +66,7 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 
 ### Changelog — 2026-09
 
+- **2026-09-18 (Forge s20):** CODEBOOK synced with Forge journals. Advisor funnel baseline treated as shipped (anonymous abbreviated → magic-link unlock); next = polish + lightweight analytics. Forge Documents library expanded; OPS lane remains Portfolio + GRYPS + Forge.
 - UX architecture: Explore · Assess · Research modes; shared `lib/ia-nav.ts`; homepage as orientation layer; Signature progressive disclosure.
 - Research & Prototype (`/research-prototype`): public product posture only; `/roadmap` redirects away. Career objectives and personal benefit notes stay out of the product UI.
 - Portfolio case study (`/case-study`); Methodology v0.5 demonstration layer.
@@ -366,14 +367,7 @@ from Forge's `/products` view is handled entirely on Forge's side, via its own
 the `+test@` convention above. No code change is needed in this repo for that
 filtering to work — using the address is the only requirement.
 
-**Flagged, not fixed in this pass:** Forge's `product-users.ts` queries a
-`gryps_waitlist` table, but no code in this repository creates or writes to a
-table by that name (the only endpoint that ever did, `/api/waitlist`, was
-removed — see git history). Whether `gryps_waitlist` still exists in this
-product's Neon database is unconfirmed from this repo alone; if it does, it
-either predates the current codebase or was created out-of-band. This is a
-pre-existing discrepancy between Forge's assumptions and this repo, not
-something addressed here.
+**Flagged historical note:** Older Forge code once assumed a `gryps_waitlist` table. Current Forge (`product-users.ts`, forge-s19) reads `advisor_submissions` (+ contact/notify emails) and labels anonymous Advisor runs as Anonymous — not a waitlist. Prefer verified `notify_requests` for identified interest.
 
 ---
 
