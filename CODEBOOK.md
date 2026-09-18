@@ -66,6 +66,7 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 
 ### Changelog — 2026-09
 
+- **2026-09-18 (Forge s21):** Advisor funnel polish — Save vs Unlock vs Get updates clarified; `intent` derived from topics; non-identifying Vercel Analytics events (`advise_run`, `unlock_request`, `unlock_verify`, `use_case_pick`, `save_local`); unlock error banners red; Analyse another clears `sid`. GitHub owner URLs → `hqemoreira`.
 - **2026-09-18 (Forge s20):** CODEBOOK synced with Forge journals. Advisor funnel baseline treated as shipped (anonymous abbreviated → magic-link unlock); next = polish + lightweight analytics. Forge Documents library expanded; OPS lane remains Portfolio + GRYPS + Forge.
 - UX architecture: Explore · Assess · Research modes; shared `lib/ia-nav.ts`; homepage as orientation layer; Signature progressive disclosure.
 - Research & Prototype (`/research-prototype`): public product posture only; `/roadmap` redirects away. Career objectives and personal benefit notes stay out of the product UI.
@@ -409,8 +410,10 @@ When Resend rejects a send (unverified domain / test-mode recipient), `/api/advi
 
 - Anonymous `/api/advise` returns **abbreviated** result; full `output` JSON stays in `advisor_submissions`.
 - Unlock: `POST /api/advise/unlock` → `notify_requests` row + Resend magic link → `GET /api/notify/verify?token=…` sets `verified_at` / `unlocked_at`.
-- Soft anonymous budget: client tracks `gryps-anon-runs` for analytics only (no hard CTA block). IP rate limit is generous for prototype testing.
+- Topics drive `intent`: `unlock` · `notify` · `both` (full_assessment vs reports_launch/monitoring).
+- Soft anonymous budget: client tracks `gryps-anon-runs` for soft UX only; funnel signal uses Vercel Analytics custom events (no email/PII) via `lib/funnel-analytics.ts`.
 - Non-identifying feedback: `POST /api/advise/feedback` → `advisor_submissions.use_case`.
+- Local **Save to Assessments** is browser-only teaser/full workspace storage — not the email unlock path.
 - Forge should prefer **verified** `notify_requests` (+ contact emails) as identified interest; raw anonymous runs stay Anonymous.
 
 Manual unlock tests: prefer `hqe.moreira@gmail.com` until the domain is verified; otherwise use the on-page verify link.

@@ -1,6 +1,6 @@
 # SEO ops tooling (not public product UI)
 
-Closed loop for GRYPS discoverability ([issue #3](https://github.com/ghostcat0to1/gryps/issues/3) Phase 2–3 + [issue #4](https://github.com/ghostcat0to1/gryps/issues/4)):
+Closed loop for GRYPS discoverability ([issue #3](https://github.com/hqemoreira/gryps/issues/3) Phase 2–3 + [issue #4](https://github.com/hqemoreira/gryps/issues/4)):
 
 1. **Pull Search Console** → `seo/gsc-latest.json`
 2. **Pull Keyword Planner** (when Ads token approved) → `seo/planner-{topic}.json`
@@ -75,7 +75,7 @@ npm run seo:propose
 Workflow: `.github/workflows/seo-weekly.yml`
 
 - **Schedule:** Mondays 07:00 UTC (`workflow_dispatch` for manual runs)
-- **Does:** `seo:gsc` → `seo:propose` → upload artifacts → comment on [issue #4](https://github.com/ghostcat0to1/gryps/issues/4)
+- **Does:** `seo:gsc` → `seo:propose` → upload artifacts → comment on [issue #4](https://github.com/hqemoreira/gryps/issues/4)
 
 **One-time secrets** (GitHub → Settings → Secrets and variables → Actions):
 
