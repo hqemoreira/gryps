@@ -268,7 +268,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         },
         {
           h2: "Why versioning matters",
-          body: "Each Signature carries issuedAt, modelVersion, and inputHash so later monitoring can compare T0 vs T1 with the same engine. Live drift alerting is not productized yet; homepage drift UI is illustrative.",
+          body: "Each Signature carries issuedAt, modelVersion, and inputHash so later monitoring can compare T0 vs T1 with the same engine. Live drift alerting is not productized.",
         },
       ],
       limitationsH2: "Limitations",
@@ -299,7 +299,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         },
         {
           h2: "Miksi versiointi merkitsee",
-          body: "Jokainen Signature sisältää issuedAt-, modelVersion- ja inputHash-kentät, jotta seuranta voi verrata T0:ta ja T1:tä samalla moottorilla. Reaaliaikaisia ajautumahälytyksiä ei ole vielä tuotteistettu; etusivun ajautuma-UI on havainnollistus.",
+          body: "Jokainen Signature sisältää issuedAt-, modelVersion- ja inputHash-kentät, jotta seuranta voi verrata T0:ta ja T1:tä samalla moottorilla. Reaaliaikaisia ajautumahälytyksiä ei ole tuotteistettu.",
         },
       ],
       limitationsH2: "Rajoitteet",

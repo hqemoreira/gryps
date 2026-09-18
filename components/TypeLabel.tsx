@@ -6,13 +6,7 @@ import { useLang } from "@/lib/use-lang";
 export type EvidenceTypeKind = EvidenceKind;
 
 /** Epistemic chip — what kind of evidence the block is, same meaning everywhere. */
-export function TypeLabel({
-  kind,
-  className,
-}: {
-  kind: EvidenceKind;
-  className?: string;
-}) {
+export function TypeLabel({ kind, className }: { kind: EvidenceKind; className?: string }) {
   const [lang] = useLang();
   const meta = EVIDENCE_KINDS[kind];
   const title = lang === "fi" ? meta.fi : meta.en;

@@ -1,127 +1,149 @@
-"use client"
-import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
-import { ArrowRight, LocateFixed, Download } from "lucide-react"
-import { ResilienceOutput, type AdvisoryResult, type AssessmentInputs, type RealDataEvidence } from "@/components/ResilienceOutput"
-import { HelpImproveGryps, InitialAssessment, UnlockFullAssessment } from "@/components/AdvisorFunnel"
-import { SaveToWorkspace } from "@/components/SaveToWorkspace"
-import { isAbbreviatedAssessment, type AbbreviatedAssessment } from "@/lib/abbreviate-result"
-import { GrypsMark, GrypsPrintBrand } from "@/components/GrypsMark"
-import { Header } from "@/components/Header"
-import { Footer } from "@/components/Footer"
-import { TopChrome } from "@/components/TopChrome"
-import { grypsCopyright } from "@/lib/gryps-copyright"
-import { useLang } from "@/lib/use-lang"
-import { PolarAtmosphere } from "@/components/PolarAtmosphere"
-import { HomeOrientation } from "@/components/HomeOrientation"
-import { gradeColor, gradeTextColor } from "@/lib/resilience-colors"
-import { ADVISOR_PROVIDERS, providersToSetupString, scoreDeterministic } from "@/lib/deterministic-score"
-import { ADVISOR_PRIORITIES, PRIORITY_LABELS, type AdvisorPriorityId } from "@/lib/advisor-priorities"
-import { MODEL_VERSION } from "@/lib/signature-meta"
+"use client";
+import { useState, useEffect, useMemo, useRef, type ReactNode } from "react";
+import { ArrowRight, LocateFixed, Download } from "lucide-react";
+import {
+  ResilienceOutput,
+  type AdvisoryResult,
+  type AssessmentInputs,
+  type RealDataEvidence,
+} from "@/components/ResilienceOutput";
+import {
+  HelpImproveGryps,
+  InitialAssessment,
+  UnlockFullAssessment,
+} from "@/components/AdvisorFunnel";
+import { SaveToWorkspace } from "@/components/SaveToWorkspace";
+import { isAbbreviatedAssessment, type AbbreviatedAssessment } from "@/lib/abbreviate-result";
+import { GrypsMark, GrypsPrintBrand } from "@/components/GrypsMark";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { TopChrome } from "@/components/TopChrome";
+import { grypsCopyright } from "@/lib/gryps-copyright";
+import { useLang } from "@/lib/use-lang";
+import { PolarAtmosphere } from "@/components/PolarAtmosphere";
+import { HomeOrientation } from "@/components/HomeOrientation";
+import { gradeColor, gradeTextColor } from "@/lib/resilience-colors";
+import { ADVISOR_PROVIDERS, providersToSetupString } from "@/lib/deterministic-score";
+import {
+  ADVISOR_PRIORITIES,
+  PRIORITY_LABELS,
+  type AdvisorPriorityId,
+} from "@/lib/advisor-priorities";
+import { MODEL_VERSION } from "@/lib/signature-meta";
+import { HERO_DEMO } from "@/lib/hero-demo";
 
 function gradeBadgeBg(grade: string): string {
-  const c = gradeColor(grade)
-  return `${c}1F`
+  const c = gradeColor(grade);
+  return `${c}1F`;
 }
 
 function FadeUp({ children, className = "" }: { children: ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      el.classList.add("is-inview")
-      return
+    const el = ref.current;
+    if (!el) return;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      el.classList.add("is-inview");
+      return;
     }
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.classList.add("is-inview")
-          io.disconnect()
+          el.classList.add("is-inview");
+          io.disconnect();
         }
       },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
     <div ref={ref} className={`gryps-fade-up ${className}`.trim()}>
       {children}
     </div>
-  )
+  );
 }
 
 function StickyMobileCta({ label }: { label: string }) {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const hero = document.getElementById("gryps-hero")
-    const advisor = document.getElementById("advisor")
+    const hero = document.getElementById("gryps-hero");
+    const advisor = document.getElementById("advisor");
     const footer =
-      document.getElementById("gryps-footer") ??
-      document.querySelector("footer.gryps-footer")
-    if (!hero || !advisor) return
+      document.getElementById("gryps-footer") ?? document.querySelector("footer.gryps-footer");
+    if (!hero || !advisor) return;
 
-    let pastHero = false
-    let nearAdvisor = false
-    let nearFooter = false
+    let pastHero = false;
+    let nearAdvisor = false;
+    let nearFooter = false;
 
     const update = () => {
-      const vh = window.innerHeight
-      const scrollRoot = document.scrollingElement ?? document.documentElement
-      const distBottom = scrollRoot.scrollHeight - (scrollRoot.scrollTop + vh)
+      const vh = window.innerHeight;
+      const scrollRoot = document.scrollingElement ?? document.documentElement;
+      const distBottom = scrollRoot.scrollHeight - (scrollRoot.scrollTop + vh);
       // Sticky bar ≈ 72–96px; hide early so copyright never sits under it.
-      const nearPageEnd = distBottom < 160
+      const nearPageEnd = distBottom < 160;
 
-      let footerInView = nearFooter
+      let footerInView = nearFooter;
       if (footer) {
-        const top = footer.getBoundingClientRect().top
+        const top = footer.getBoundingClientRect().top;
         // Hide as soon as the footer peeks into the viewport (or earlier via IO).
-        footerInView = nearFooter || top < vh
+        footerInView = nearFooter || top < vh;
       }
 
-      setVisible(pastHero && !nearAdvisor && !footerInView && !nearPageEnd)
-    }
+      setVisible(pastHero && !nearAdvisor && !footerInView && !nearPageEnd);
+    };
 
-    const heroIo = new IntersectionObserver(([e]) => {
-      pastHero = !e.isIntersecting && e.boundingClientRect.top < 0
-      update()
-    }, { threshold: 0 })
-    const advisorIo = new IntersectionObserver(([e]) => {
-      nearAdvisor = e.isIntersecting
-      update()
-    }, { rootMargin: "80px 0px", threshold: 0 })
+    const heroIo = new IntersectionObserver(
+      ([e]) => {
+        pastHero = !e.isIntersecting && e.boundingClientRect.top < 0;
+        update();
+      },
+      { threshold: 0 }
+    );
+    const advisorIo = new IntersectionObserver(
+      ([e]) => {
+        nearAdvisor = e.isIntersecting;
+        update();
+      },
+      { rootMargin: "80px 0px", threshold: 0 }
+    );
 
     // Grow the root downward so we hide ~100px before the footer reaches the fold.
     const footerIo = footer
       ? new IntersectionObserver(
           ([e]) => {
-            nearFooter = e.isIntersecting
-            update()
+            nearFooter = e.isIntersecting;
+            update();
           },
-          { rootMargin: "0px 0px 100px 0px", threshold: 0 },
+          { rootMargin: "0px 0px 100px 0px", threshold: 0 }
         )
-      : null
+      : null;
 
-    heroIo.observe(hero)
-    advisorIo.observe(advisor)
-    if (footer && footerIo) footerIo.observe(footer)
+    heroIo.observe(hero);
+    advisorIo.observe(advisor);
+    if (footer && footerIo) footerIo.observe(footer);
 
-    window.addEventListener("scroll", update, { passive: true })
-    window.addEventListener("resize", update)
-    window.visualViewport?.addEventListener("resize", update)
-    window.visualViewport?.addEventListener("scroll", update)
-    update()
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("scroll", update);
+    update();
 
     return () => {
-      heroIo.disconnect()
-      advisorIo.disconnect()
-      footerIo?.disconnect()
-      window.removeEventListener("scroll", update)
-      window.removeEventListener("resize", update)
-      window.visualViewport?.removeEventListener("resize", update)
-      window.visualViewport?.removeEventListener("scroll", update)
-    }
-  }, [])
+      heroIo.disconnect();
+      advisorIo.disconnect();
+      footerIo?.disconnect();
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("scroll", update);
+    };
+  }, []);
 
   return (
     <div
@@ -133,71 +155,80 @@ function StickyMobileCta({ label }: { label: string }) {
         {label} <ArrowRight size={14} />
       </a>
     </div>
-  )
+  );
 }
 
-const NORDIC_LAT_MIN = 55
-const NORDIC_LAT_MAX = 85
-const NORDIC_LNG_MIN = -30
-const NORDIC_LNG_MAX = 40
-const DEFAULT_LAT = "68.2"
-const DEFAULT_LNG = "27.4"
+const NORDIC_LAT_MIN = 55;
+const NORDIC_LAT_MAX = 85;
+const NORDIC_LNG_MIN = -30;
+const NORDIC_LNG_MAX = 40;
+const DEFAULT_LAT = "68.2";
+const DEFAULT_LNG = "27.4";
 
 function modelVersionDisplay(): string {
-  const m = MODEL_VERSION.match(/v[\d.]+/)
-  return m ? m[0] : "v0.3"
+  const m = MODEL_VERSION.match(/v[\d.]+/);
+  return m ? m[0] : "v0.3";
 }
 
 function parseProvidersParam(raw: string | null): string[] {
-  if (!raw) return []
-  return raw.split(",").map(s => s.trim()).filter(Boolean)
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 function inferProvidersFromSetup(setup: string): string[] {
-  const s = setup.toLowerCase()
-  if (!s.trim() || /\bnone\b|\bno connectivity\b/.test(s)) return ["none"]
-  const ids: string[] = []
+  const s = setup.toLowerCase();
+  if (!s.trim() || /\bnone\b|\bno connectivity\b/.test(s)) return ["none"];
+  const ids: string[] = [];
   for (const p of ADVISOR_PROVIDERS) {
-    if (p.aliases.some(a => s.includes(a)) || s.includes(p.name.toLowerCase())) {
-      if (!ids.includes(p.id)) ids.push(p.id)
+    if (p.aliases.some((a) => s.includes(a)) || s.includes(p.name.toLowerCase())) {
+      if (!ids.includes(p.id)) ids.push(p.id);
     }
   }
-  return ids.length ? ids : []
+  return ids.length ? ids : [];
 }
 
 function coordsInNordicBounds(lat: number, lng: number): boolean {
-  return lat >= NORDIC_LAT_MIN && lat <= NORDIC_LAT_MAX && lng >= NORDIC_LNG_MIN && lng <= NORDIC_LNG_MAX
+  return (
+    lat >= NORDIC_LAT_MIN && lat <= NORDIC_LAT_MAX && lng >= NORDIC_LNG_MIN && lng <= NORDIC_LNG_MAX
+  );
 }
 
 // ── Advisor form ──────────────────────────────────────────────────────────────
 function getQueryParams(): URLSearchParams {
-  if (typeof window === "undefined") return new URLSearchParams()
-  return new URLSearchParams(window.location.search)
+  if (typeof window === "undefined") return new URLSearchParams();
+  return new URLSearchParams(window.location.search);
 }
 
-const ANON_RUNS_KEY = "gryps-anon-runs"
+const ANON_RUNS_KEY = "gryps-anon-runs";
 
 function readAnonRuns(): number {
   try {
-    const n = Number(localStorage.getItem(ANON_RUNS_KEY) ?? "0")
-    return Number.isFinite(n) && n > 0 ? n : 0
+    const n = Number(localStorage.getItem(ANON_RUNS_KEY) ?? "0");
+    return Number.isFinite(n) && n > 0 ? n : 0;
   } catch {
-    return 0
+    return 0;
   }
 }
 
 function bumpAnonRuns(): number {
-  const next = readAnonRuns() + 1
+  const next = readAnonRuns() + 1;
   try {
-    localStorage.setItem(ANON_RUNS_KEY, String(next))
-  } catch { /* ignore */ }
-  return next
+    localStorage.setItem(ANON_RUNS_KEY, String(next));
+  } catch {
+    /* ignore */
+  }
+  return next;
 }
 
 function clearAnonRuns(): void {
   try {
-    localStorage.removeItem(ANON_RUNS_KEY)
-  } catch { /* ignore */ }
+    localStorage.removeItem(ANON_RUNS_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 function SignatureReveal({
@@ -212,113 +243,205 @@ function SignatureReveal({
   t,
   onReset,
 }: {
-  depth: "abbreviated" | "full"
-  abbreviated?: AbbreviatedAssessment | null
-  full?: AdvisoryResult | null
-  assessmentInputs: AssessmentInputs
-  realData?: RealDataEvidence
-  submissionId: number | null
-  useCase?: string | null
-  lang: "en" | "fi"
-  t: typeof COPY.en
-  onReset: () => void
+  depth: "abbreviated" | "full";
+  abbreviated?: AbbreviatedAssessment | null;
+  full?: AdvisoryResult | null;
+  assessmentInputs: AssessmentInputs;
+  realData?: RealDataEvidence;
+  submissionId: number | null;
+  useCase?: string | null;
+  lang: "en" | "fi";
+  t: typeof COPY.en;
+  onReset: () => void;
 }) {
   const lines = useMemo(() => {
-    const lat = assessmentInputs.lat ?? 68.2
-    const lng = assessmentInputs.lng ?? 27.4
+    const lat = assessmentInputs.lat ?? 68.2;
+    const lng = assessmentInputs.lng ?? 27.4;
     const rows: { tag: string; color: string; text: string }[] = [
-      { tag: "GRYPS-INIT", color: "var(--accent-blue)", text: `Evaluating site profile for ${lat}°N · ${lng}°E…` },
-    ]
+      {
+        tag: "GRYPS-INIT",
+        color: "var(--accent-blue)",
+        text: `Evaluating site profile for ${lat}°N · ${lng}°E…`,
+      },
+    ];
     if (abbreviated) {
-      const sig = abbreviated.resilience_signature
+      const sig = abbreviated.resilience_signature;
       for (const r of abbreviated.top_risks.slice(0, 2)) {
-        rows.push({ tag: "RISK-FACT", color: "var(--accent-amber)", text: `${r.label} · ${r.severity}` })
+        rows.push({
+          tag: "RISK-FACT",
+          color: "var(--accent-amber)",
+          text: `${r.label} · ${r.severity}`,
+        });
       }
       rows.push({
         tag: "OPTIONS",
         color: "var(--accent-cyan)",
         text: `${abbreviated.recommended.provider} · confidence ${abbreviated.recommended.confidence}`,
-      })
-      rows.push({ tag: "SIGNATURE", color: "var(--accent-green)", text: `Resilience Signature computed: ${sig.score} · ${sig.grade}` })
-      rows.push({ tag: "REPORT", color: "var(--accent-green)", text: "Initial assessment ready — full report gated" })
+      });
+      rows.push({
+        tag: "SIGNATURE",
+        color: "var(--accent-green)",
+        text: `Resilience Signature computed: ${sig.score} · ${sig.grade}`,
+      });
+      rows.push({
+        tag: "REPORT",
+        color: "var(--accent-green)",
+        text: "Initial assessment ready — full report gated",
+      });
     } else if (full) {
-      const sig = full.resilience_signature
+      const sig = full.resilience_signature;
       for (const r of full.risk_factors.slice(0, 3)) {
-        rows.push({ tag: "RISK-FACT", color: "var(--accent-amber)", text: `${r.label} · ${r.severity}` })
+        rows.push({
+          tag: "RISK-FACT",
+          color: "var(--accent-amber)",
+          text: `${r.label} · ${r.severity}`,
+        });
       }
       for (const g of full.redundancy_gaps.slice(0, 2)) {
-        rows.push({ tag: "GAP", color: "var(--accent-amber)", text: g.label })
+        rows.push({ tag: "GAP", color: "var(--accent-amber)", text: g.label });
       }
       for (const o of full.connectivity_options.slice(0, 3)) {
-        rows.push({ tag: "OPTIONS", color: "var(--accent-cyan)", text: `${o.provider} · confidence ${o.confidence}` })
+        rows.push({
+          tag: "OPTIONS",
+          color: "var(--accent-cyan)",
+          text: `${o.provider} · confidence ${o.confidence}`,
+        });
       }
-      rows.push({ tag: "SIGNATURE", color: "var(--accent-green)", text: `Resilience Signature computed: ${sig.score} · ${sig.grade}` })
-      rows.push({ tag: "REPORT", color: "var(--accent-green)", text: "Assessment complete — full advisory output ready" })
+      rows.push({
+        tag: "SIGNATURE",
+        color: "var(--accent-green)",
+        text: `Resilience Signature computed: ${sig.score} · ${sig.grade}`,
+      });
+      rows.push({
+        tag: "REPORT",
+        color: "var(--accent-green)",
+        text: "Assessment complete — full advisory output ready",
+      });
     }
-    return rows
-  }, [abbreviated, full, assessmentInputs.lat, assessmentInputs.lng])
+    return rows;
+  }, [abbreviated, full, assessmentInputs.lat, assessmentInputs.lng]);
 
-  const [visible, setVisible] = useState(0)
+  const [visible, setVisible] = useState(0);
   // Skip telemetry delay when restoring a full unlocked report (also avoids blank PDF page 1).
-  const [done, setDone] = useState(() => depth === "full" && !!full)
+  const [done, setDone] = useState(() => depth === "full" && !!full);
 
   useEffect(() => {
-    if (done) return
-    let i = 0
+    if (done) return;
+    let i = 0;
     const id = setInterval(() => {
-      i += 1
-      setVisible(i)
+      i += 1;
+      setVisible(i);
       if (i >= lines.length) {
-        clearInterval(id)
-        setTimeout(() => setDone(true), 400)
+        clearInterval(id);
+        setTimeout(() => setDone(true), 400);
       }
-    }, 450)
-    return () => clearInterval(id)
-  }, [lines, done])
+    }, 450);
+    return () => clearInterval(id);
+  }, [lines, done]);
 
   if (!done) {
     return (
-      <div style={{
-        backgroundColor: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "var(--radius)", padding: "16px 18px", fontFamily: "var(--font-data)",
-        fontSize: 11, lineHeight: 2, overflow: "hidden", marginBottom: 24,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 10, borderBottom: "1px solid var(--border)" }}>
-          <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2ED47A", boxShadow: "0 0 6px #2ED47A" }} />
-          <span style={{ color: "var(--text-muted)", fontSize: 10, letterSpacing: "0.1em" }}>{t.telemetryHeader}</span>
+      <div
+        style={{
+          backgroundColor: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--radius)",
+          padding: "16px 18px",
+          fontFamily: "var(--font-data)",
+          fontSize: 11,
+          lineHeight: 2,
+          overflow: "hidden",
+          marginBottom: 24,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 12,
+            paddingBottom: 10,
+            borderBottom: "1px solid var(--border)",
+          }}
+        >
+          <div
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              backgroundColor: "#2ED47A",
+              boxShadow: "0 0 6px #2ED47A",
+            }}
+          />
+          <span style={{ color: "var(--text-muted)", fontSize: 10, letterSpacing: "0.1em" }}>
+            {t.telemetryHeader}
+          </span>
         </div>
         {lines.map((line, idx) => (
-          <div key={idx} style={{
-            display: "flex", gap: 12,
-            opacity: idx < visible ? (idx === visible - 1 ? 1 : 0.45) : 0,
-            transition: "opacity 0.35s ease", whiteSpace: "nowrap", overflow: "hidden",
-          }}>
+          <div
+            key={idx}
+            style={{
+              display: "flex",
+              gap: 12,
+              opacity: idx < visible ? (idx === visible - 1 ? 1 : 0.45) : 0,
+              transition: "opacity 0.35s ease",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+            }}
+          >
             <span style={{ color: line.color, minWidth: 80, flexShrink: 0 }}>[{line.tag}]</span>
-            <span style={{ color: idx === visible - 1 ? "var(--text)" : "var(--text-muted)" }}>{line.text}</span>
+            <span style={{ color: idx === visible - 1 ? "var(--text)" : "var(--text-muted)" }}>
+              {line.text}
+            </span>
           </div>
         ))}
       </div>
-    )
+    );
   }
 
   return (
     <div>
-      <div className="gryps-print-target" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <div
+        className="gryps-print-target"
+        style={{ display: "flex", flexDirection: "column", gap: 20 }}
+      >
         <GrypsPrintBrand />
         {depth === "full" && full ? (
-          <ResilienceOutput result={full} input={assessmentInputs} realData={realData} lang={lang} />
+          <ResilienceOutput
+            result={full}
+            input={assessmentInputs}
+            realData={realData}
+            lang={lang}
+          />
         ) : abbreviated ? (
           <>
-            <div className="gryps-no-print" style={{ display: "flex", justifyContent: "flex-end", gap: 10, flexWrap: "wrap", alignItems: "flex-start" }}>
+            <div
+              className="gryps-no-print"
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 10,
+                flexWrap: "wrap",
+                alignItems: "flex-start",
+              }}
+            >
               <SaveToWorkspace inputs={assessmentInputs} abbreviated={abbreviated} lang={lang} />
               <button
                 type="button"
                 onClick={() => window.print()}
                 style={{
-                  display: "inline-flex", alignItems: "center", gap: 6,
-                  backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
-                  borderRadius: 6, padding: "8px 14px", cursor: "pointer",
-                  fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  backgroundColor: "var(--surface2)",
+                  border: "1px solid var(--border2)",
+                  borderRadius: 6,
+                  padding: "8px 14px",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-ui)",
+                  fontWeight: 700,
+                  fontSize: 12,
+                  color: "var(--text-muted)",
                 }}
               >
                 <Download size={13} /> {lang === "fi" ? "Lataa PDF" : "Download PDF"}
@@ -334,232 +457,250 @@ function SignatureReveal({
         className="gryps-no-print"
         onClick={onReset}
         style={{
-          marginTop: 20, display: "flex", alignItems: "center", gap: 6,
-          backgroundColor: "var(--surface2)", border: "1px solid var(--border2)",
-          borderRadius: "var(--radius)", padding: "0 16px", minHeight: 44, cursor: "pointer",
-          fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 12, color: "var(--text-muted)",
+          marginTop: 20,
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          backgroundColor: "var(--surface2)",
+          border: "1px solid var(--border2)",
+          borderRadius: "var(--radius)",
+          padding: "0 16px",
+          minHeight: 44,
+          cursor: "pointer",
+          fontFamily: "var(--font-ui)",
+          fontWeight: 700,
+          fontSize: 12,
+          color: "var(--text-muted)",
         }}
       >
         ← {t.analyseAnother}
       </button>
     </div>
-  )
+  );
 }
 
 function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   // Do not read window search params in useState initializers — SSR returns empty
   // and React hydration keeps those empty values, leaving the Score CTA disabled.
-  const [lat, setLat] = useState(DEFAULT_LAT)
-  const [lng, setLng] = useState(DEFAULT_LNG)
-  const [vertical, setVertical] = useState("")
-  const [providers, setProviders] = useState<string[]>([])
-  const [legacySetup, setLegacySetup] = useState("")
-  const [autonomy, setAutonomy] = useState("")
-  const [criticality, setCriticality] = useState("")
-  const [priorities, setPriorities] = useState<AdvisorPriorityId[]>([])
-  const [loading, setLoading] = useState(false)
-  const [depth, setDepth] = useState<"abbreviated" | "full">("abbreviated")
-  const [abbreviated, setAbbreviated] = useState<AbbreviatedAssessment | null>(null)
-  const [fullResult, setFullResult] = useState<AdvisoryResult | null>(null)
-  const [realData, setRealData] = useState<RealDataEvidence | undefined>(undefined)
-  const [useCase, setUseCase] = useState<string | null>(null)
-  const [error, setError] = useState("")
-  const [boundsError, setBoundsError] = useState("")
-  const [geoBusy, setGeoBusy] = useState(false)
-  const [geoNote, setGeoNote] = useState("")
-  const [shareId, setShareId] = useState<string | null>(null)
-  const [unlockBanner, setUnlockBanner] = useState<string | null>(null)
-  const [unlockBannerTone, setUnlockBannerTone] = useState<"ok" | "err">("ok")
-  const restoredSid = useRef<string | null>(null)
+  const [lat, setLat] = useState(DEFAULT_LAT);
+  const [lng, setLng] = useState(DEFAULT_LNG);
+  const [vertical, setVertical] = useState("");
+  const [providers, setProviders] = useState<string[]>([]);
+  const [legacySetup, setLegacySetup] = useState("");
+  const [autonomy, setAutonomy] = useState("");
+  const [criticality, setCriticality] = useState("");
+  const [priorities, setPriorities] = useState<AdvisorPriorityId[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [depth, setDepth] = useState<"abbreviated" | "full">("abbreviated");
+  const [abbreviated, setAbbreviated] = useState<AbbreviatedAssessment | null>(null);
+  const [fullResult, setFullResult] = useState<AdvisoryResult | null>(null);
+  const [realData, setRealData] = useState<RealDataEvidence | undefined>(undefined);
+  const [useCase, setUseCase] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const [boundsError, setBoundsError] = useState("");
+  const [geoBusy, setGeoBusy] = useState(false);
+  const [geoNote, setGeoNote] = useState("");
+  const [shareId, setShareId] = useState<string | null>(null);
+  const [unlockBanner, setUnlockBanner] = useState<string | null>(null);
+  const [unlockBannerTone, setUnlockBannerTone] = useState<"ok" | "err">("ok");
+  const restoredSid = useRef<string | null>(null);
 
-  const hasResult = depth === "full" ? !!fullResult : !!abbreviated
+  const hasResult = depth === "full" ? !!fullResult : !!abbreviated;
 
   // Hydrate from URL + restore shared / unlocked assessment once on mount.
   useEffect(() => {
-    const q = getQueryParams()
-    const latQ = q.get("lat")
-    const lngQ = q.get("lng")
-    const sectorQ = q.get("sector")
-    const autonomyQ = q.get("autonomy")
-    const criticalityQ = q.get("criticality")
-    const providersQ = parseProvidersParam(q.get("providers"))
+    const q = getQueryParams();
+    const latQ = q.get("lat");
+    const lngQ = q.get("lng");
+    const sectorQ = q.get("sector");
+    const autonomyQ = q.get("autonomy");
+    const criticalityQ = q.get("criticality");
+    const providersQ = parseProvidersParam(q.get("providers"));
     const prioritiesQ = (q.get("priorities") ?? "")
       .split(",")
-      .map(s => s.trim())
+      .map((s) => s.trim())
       .filter((s): s is AdvisorPriorityId => (ADVISOR_PRIORITIES as readonly string[]).includes(s))
-      .slice(0, 3)
-    const setupQ = q.get("setup") ?? ""
-    const sid = q.get("sid")
-    const unlock = q.get("unlock")
-    const wantFull = q.get("unlocked") === "1"
+      .slice(0, 3);
+    const setupQ = q.get("setup") ?? "";
+    const sid = q.get("sid");
+    const unlock = q.get("unlock");
+    const wantFull = q.get("unlocked") === "1";
 
-    if (latQ) setLat(latQ)
-    if (lngQ) setLng(lngQ)
-    if (sectorQ) setVertical(sectorQ)
-    if (autonomyQ) setAutonomy(autonomyQ)
-    if (criticalityQ) setCriticality(criticalityQ)
-    if (providersQ.length) setProviders(providersQ)
-    else if (setupQ) setProviders(inferProvidersFromSetup(setupQ))
-    if (prioritiesQ.length) setPriorities(prioritiesQ)
-    if (setupQ) setLegacySetup(setupQ)
-    if (sid) setShareId(sid)
+    if (latQ) setLat(latQ);
+    if (lngQ) setLng(lngQ);
+    if (sectorQ) setVertical(sectorQ);
+    if (autonomyQ) setAutonomy(autonomyQ);
+    if (criticalityQ) setCriticality(criticalityQ);
+    if (providersQ.length) setProviders(providersQ);
+    else if (setupQ) setProviders(inferProvidersFromSetup(setupQ));
+    if (prioritiesQ.length) setPriorities(prioritiesQ);
+    if (setupQ) setLegacySetup(setupQ);
+    if (sid) setShareId(sid);
 
     if (unlock === "invalid" || unlock === "expired" || unlock === "error") {
-      setUnlockBannerTone("err")
+      setUnlockBannerTone("err");
       setUnlockBanner(
         lang === "fi"
           ? "Vahvistuslinkki ei kelpaa tai on vanhentunut. Pyydä uusi linkki tuloksista."
-          : "That confirmation link is invalid or expired. Request a new one from your results.",
-      )
+          : "That confirmation link is invalid or expired. Request a new one from your results."
+      );
     }
 
-    if (!sid || restoredSid.current === sid) return
-    restoredSid.current = sid
+    if (!sid || restoredSid.current === sid) return;
+    restoredSid.current = sid;
 
     fetch(`/api/submissions/${sid}`)
-      .then(r => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then(data => {
-        if (!data?.result) return
-        const inp = data.input ?? {}
-        const coords = inp.site_coordinates as { lat?: number; lng?: number } | undefined
-        if (coords?.lat != null) setLat(String(coords.lat))
-        if (coords?.lng != null) setLng(String(coords.lng))
-        if (inp.vertical) setVertical(String(inp.vertical))
-        if (inp.autonomy_level) setAutonomy(String(inp.autonomy_level))
-        if (inp.operation_criticality) setCriticality(String(inp.operation_criticality))
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((data) => {
+        if (!data?.result) return;
+        const inp = data.input ?? {};
+        const coords = inp.site_coordinates as { lat?: number; lng?: number } | undefined;
+        if (coords?.lat != null) setLat(String(coords.lat));
+        if (coords?.lng != null) setLng(String(coords.lng));
+        if (inp.vertical) setVertical(String(inp.vertical));
+        if (inp.autonomy_level) setAutonomy(String(inp.autonomy_level));
+        if (inp.operation_criticality) setCriticality(String(inp.operation_criticality));
         if (Array.isArray(inp.providers) && inp.providers.length) {
-          setProviders(inp.providers.map(String))
+          setProviders(inp.providers.map(String));
         } else if (inp.current_setup) {
-          setProviders(inferProvidersFromSetup(String(inp.current_setup)))
+          setProviders(inferProvidersFromSetup(String(inp.current_setup)));
         }
         if (Array.isArray(inp.priorities) && inp.priorities.length) {
           setPriorities(
             inp.priorities
               .map(String)
               .filter((s: string): s is AdvisorPriorityId =>
-                (ADVISOR_PRIORITIES as readonly string[]).includes(s),
+                (ADVISOR_PRIORITIES as readonly string[]).includes(s)
               )
-              .slice(0, 3),
-          )
+              .slice(0, 3)
+          );
         }
-        setShareId(String(data.id))
-        if (data.use_case) setUseCase(String(data.use_case))
+        setShareId(String(data.id));
+        if (data.use_case) setUseCase(String(data.use_case));
 
         if (data.unlocked === true || data.depth === "full") {
           if (isAbbreviatedAssessment(data.result)) {
-            setAbbreviated(data.result)
-            setDepth("abbreviated")
-            setFullResult(null)
-            return
+            setAbbreviated(data.result);
+            setDepth("abbreviated");
+            setFullResult(null);
+            return;
           }
-          setFullResult(data.result as AdvisoryResult)
-          setDepth("full")
-          setAbbreviated(null)
-          clearAnonRuns()
+          setFullResult(data.result as AdvisoryResult);
+          setDepth("full");
+          setAbbreviated(null);
+          clearAnonRuns();
           if (wantFull) {
-            setUnlockBannerTone("ok")
+            setUnlockBannerTone("ok");
             setUnlockBanner(
               lang === "fi"
                 ? "Sähköposti vahvistettu — täysi arvio avattu."
-                : "Email confirmed — full assessment unlocked.",
-            )
+                : "Email confirmed — full assessment unlocked."
+            );
             void import("@/lib/funnel-analytics").then(({ trackFunnelEvent }) => {
-              trackFunnelEvent("unlock_verify", { ok: true })
-            })
+              trackFunnelEvent("unlock_verify", { ok: true });
+            });
           }
-          return
+          return;
         }
 
         if (isAbbreviatedAssessment(data.result)) {
-          setAbbreviated(data.result)
-          setDepth("abbreviated")
-          setFullResult(null)
+          setAbbreviated(data.result);
+          setDepth("abbreviated");
+          setFullResult(null);
         } else {
           // Older rows stored full output before the funnel gate.
-          setFullResult(data.result as AdvisoryResult)
-          setDepth("full")
-          setAbbreviated(null)
+          setFullResult(data.result as AdvisoryResult);
+          setDepth("full");
+          setAbbreviated(null);
         }
       })
-      .catch(err => {
-        console.error("Failed to restore submission", sid, err)
-        restoredSid.current = null
-      })
-  }, [lang])
+      .catch((err) => {
+        console.error("Failed to restore submission", sid, err);
+        restoredSid.current = null;
+      });
+  }, [lang]);
 
   function toggleProvider(id: string) {
-    setProviders(prev => {
-      if (id === "none") return ["none"]
-      const withoutNone = prev.filter(p => p !== "none")
-      if (withoutNone.includes(id)) return withoutNone.filter(p => p !== id)
-      return [...withoutNone, id]
-    })
+    setProviders((prev) => {
+      if (id === "none") return ["none"];
+      const withoutNone = prev.filter((p) => p !== "none");
+      if (withoutNone.includes(id)) return withoutNone.filter((p) => p !== id);
+      return [...withoutNone, id];
+    });
   }
 
   function togglePriority(id: AdvisorPriorityId) {
-    setPriorities(prev => {
-      if (prev.includes(id)) return prev.filter(p => p !== id)
-      if (prev.length >= 3) return prev
-      return [...prev, id]
-    })
+    setPriorities((prev) => {
+      if (prev.includes(id)) return prev.filter((p) => p !== id);
+      if (prev.length >= 3) return prev;
+      return [...prev, id];
+    });
   }
 
   function useMyLocation() {
     if (!navigator.geolocation) {
-      setGeoNote(lang === "fi" ? "Sijaintipalvelua ei ole saatavilla tällä laitteella." : "Geolocation is not available on this device.")
-      return
+      setGeoNote(
+        lang === "fi"
+          ? "Sijaintipalvelua ei ole saatavilla tällä laitteella."
+          : "Geolocation is not available on this device."
+      );
+      return;
     }
-    setGeoBusy(true)
-    setGeoNote("")
+    setGeoBusy(true);
+    setGeoNote("");
     navigator.geolocation.getCurrentPosition(
-      pos => {
-        const la = pos.coords.latitude.toFixed(4)
-        const ln = pos.coords.longitude.toFixed(4)
-        setLat(la)
-        setLng(ln)
-        setGeoBusy(false)
+      (pos) => {
+        const la = pos.coords.latitude.toFixed(4);
+        const ln = pos.coords.longitude.toFixed(4);
+        setLat(la);
+        setLng(ln);
+        setGeoBusy(false);
         if (!coordsInNordicBounds(parseFloat(la), parseFloat(ln))) {
-          setBoundsError(t.boundsHint)
+          setBoundsError(t.boundsHint);
         } else {
-          setBoundsError("")
+          setBoundsError("");
         }
-        setGeoNote(lang === "fi"
-          ? "Sijainti haettu laitteelta — käytetään vain tähän arvioon."
-          : "Location filled from this device — used only for this assessment.")
+        setGeoNote(
+          lang === "fi"
+            ? "Sijainti haettu laitteelta — käytetään vain tähän arvioon."
+            : "Location filled from this device — used only for this assessment."
+        );
       },
       () => {
-        setGeoBusy(false)
-        setGeoNote(lang === "fi"
-          ? "Sijainnin haku epäonnistui. Syötä koordinaatit manuaalisesti."
-          : "Could not read location. Enter coordinates manually.")
+        setGeoBusy(false);
+        setGeoNote(
+          lang === "fi"
+            ? "Sijainnin haku epäonnistui. Syötä koordinaatit manuaalisesti."
+            : "Could not read location. Enter coordinates manually."
+        );
       },
-      { enableHighAccuracy: true, timeout: 12000 },
-    )
+      { enableHighAccuracy: true, timeout: 12000 }
+    );
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!vertical || !autonomy || !criticality) return
+    e.preventDefault();
+    if (!vertical || !autonomy || !criticality) return;
 
-    const latNum = lat ? parseFloat(lat) : parseFloat(DEFAULT_LAT)
-    const lngNum = lng ? parseFloat(lng) : parseFloat(DEFAULT_LNG)
+    const latNum = lat ? parseFloat(lat) : parseFloat(DEFAULT_LAT);
+    const lngNum = lng ? parseFloat(lng) : parseFloat(DEFAULT_LNG);
     if (!coordsInNordicBounds(latNum, lngNum)) {
-      setBoundsError(t.boundsHint)
-      return
+      setBoundsError(t.boundsHint);
+      return;
     }
-    setBoundsError("")
+    setBoundsError("");
 
     const setupStr = providers.length
       ? providersToSetupString(providers)
-      : legacySetup || undefined
+      : legacySetup || undefined;
 
-    setLoading(true)
-    setError("")
-    setAbbreviated(null)
-    setFullResult(null)
-    setRealData(undefined)
-    setUnlockBanner(null)
-    setUnlockBannerTone("ok")
+    setLoading(true);
+    setError("");
+    setAbbreviated(null);
+    setFullResult(null);
+    setRealData(undefined);
+    setUnlockBanner(null);
+    setUnlockBannerTone("ok");
     try {
       const res = await fetch("/api/advise", {
         method: "POST",
@@ -573,45 +714,45 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           operation_criticality: criticality,
           priorities,
         }),
-      })
-      const data = await res.json()
-      if (!res.ok || !data.result) throw new Error(data.error ?? "Analysis failed")
+      });
+      const data = await res.json();
+      if (!res.ok || !data.result) throw new Error(data.error ?? "Analysis failed");
 
-      bumpAnonRuns()
+      bumpAnonRuns();
       void import("@/lib/funnel-analytics").then(({ trackFunnelEvent }) => {
         trackFunnelEvent("advise_run", {
           depth: isAbbreviatedAssessment(data.result) ? "abbreviated" : "full",
           vertical: vertical || "unset",
-        })
-      })
+        });
+      });
 
       if (isAbbreviatedAssessment(data.result)) {
-        setAbbreviated(data.result)
-        setDepth("abbreviated")
+        setAbbreviated(data.result);
+        setDepth("abbreviated");
       } else {
-        setFullResult(data.result as AdvisoryResult)
-        setDepth("full")
+        setFullResult(data.result as AdvisoryResult);
+        setDepth("full");
       }
-      setRealData(data.realData ?? undefined)
-      const shareParams = new URLSearchParams()
-      shareParams.set("lat", String(latNum))
-      shareParams.set("lng", String(lngNum))
-      if (vertical) shareParams.set("sector", vertical)
-      if (autonomy) shareParams.set("autonomy", autonomy)
-      if (criticality) shareParams.set("criticality", criticality)
-      if (providers.length) shareParams.set("providers", providers.join(","))
-      if (priorities.length) shareParams.set("priorities", priorities.join(","))
+      setRealData(data.realData ?? undefined);
+      const shareParams = new URLSearchParams();
+      shareParams.set("lat", String(latNum));
+      shareParams.set("lng", String(lngNum));
+      if (vertical) shareParams.set("sector", vertical);
+      if (autonomy) shareParams.set("autonomy", autonomy);
+      if (criticality) shareParams.set("criticality", criticality);
+      if (providers.length) shareParams.set("providers", providers.join(","));
+      if (priorities.length) shareParams.set("priorities", priorities.join(","));
       if (data.id) {
-        shareParams.set("sid", String(data.id))
-        setShareId(String(data.id))
-        restoredSid.current = String(data.id)
+        shareParams.set("sid", String(data.id));
+        setShareId(String(data.id));
+        restoredSid.current = String(data.id);
       }
-      const qs = shareParams.toString()
-      if (qs) window.history.replaceState(null, "", `?${qs}#advisor`)
+      const qs = shareParams.toString();
+      if (qs) window.history.replaceState(null, "", `?${qs}#advisor`);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Analysis failed")
+      setError(err instanceof Error ? err.message : "Analysis failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -627,12 +768,21 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     outline: "none",
     width: "100%",
     boxSizing: "border-box",
-  }
-  const selectStyle: React.CSSProperties = { ...inputStyle, cursor: "pointer", fontFamily: "var(--font-ui)", fontSize: 15 }
+  };
+  const selectStyle: React.CSSProperties = {
+    ...inputStyle,
+    cursor: "pointer",
+    fontFamily: "var(--font-ui)",
+    fontSize: 15,
+  };
   const labelStyle: React.CSSProperties = {
-    fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)",
-    letterSpacing: "0.1em", display: "block", marginBottom: 8,
-  }
+    fontFamily: "var(--font-data)",
+    fontSize: "var(--text-label)",
+    color: "var(--text-dim)",
+    letterSpacing: "0.1em",
+    display: "block",
+    marginBottom: 8,
+  };
 
   if (hasResult) {
     const assessmentInputs: AssessmentInputs = {
@@ -641,29 +791,43 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
       sector: vertical,
       autonomy_level: autonomy,
       operation_criticality: criticality,
-      current_setup: providers.length ? providersToSetupString(providers) : legacySetup || undefined,
+      current_setup: providers.length
+        ? providersToSetupString(providers)
+        : legacySetup || undefined,
       priorities: priorities.length ? priorities : undefined,
-    }
-    const revealKey = depth === "full"
-      ? (fullResult?.issuedAt ?? `${fullResult?.resilience_signature.score}-${fullResult?.resilience_signature.grade}`)
-      : (abbreviated?.issuedAt ?? `${abbreviated?.resilience_signature.score}-${abbreviated?.recommended.provider}`)
+    };
+    const revealKey =
+      depth === "full"
+        ? (fullResult?.issuedAt ??
+          `${fullResult?.resilience_signature.score}-${fullResult?.resilience_signature.grade}`)
+        : (abbreviated?.issuedAt ??
+          `${abbreviated?.resilience_signature.score}-${abbreviated?.recommended.provider}`);
     return (
       <div>
         {unlockBanner && (
-          <div className="gryps-no-print" style={{
-            marginBottom: 16, padding: "12px 14px",
-            backgroundColor: unlockBannerTone === "err"
-              ? "rgba(248,113,113,0.08)"
-              : "rgba(46,212,122,0.08)",
-            border: unlockBannerTone === "err"
-              ? "1px solid rgba(248,113,113,0.35)"
-              : "1px solid rgba(46,212,122,0.25)",
-            borderRadius: "var(--radius)",
-          }}>
-            <p style={{
-              fontFamily: "var(--font-ui)", fontSize: 13,
-              color: unlockBannerTone === "err" ? "var(--accent-red)" : "var(--accent-green)",
-            }}>{unlockBanner}</p>
+          <div
+            className="gryps-no-print"
+            style={{
+              marginBottom: 16,
+              padding: "12px 14px",
+              backgroundColor:
+                unlockBannerTone === "err" ? "rgba(248,113,113,0.08)" : "rgba(46,212,122,0.08)",
+              border:
+                unlockBannerTone === "err"
+                  ? "1px solid rgba(248,113,113,0.35)"
+                  : "1px solid rgba(46,212,122,0.25)",
+              borderRadius: "var(--radius)",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: 13,
+                color: unlockBannerTone === "err" ? "var(--accent-red)" : "var(--accent-green)",
+              }}
+            >
+              {unlockBanner}
+            </p>
           </div>
         )}
         <SignatureReveal
@@ -678,39 +842,69 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           lang={lang}
           t={t}
           onReset={() => {
-            setAbbreviated(null)
-            setFullResult(null)
-            setRealData(undefined)
-            setLoading(false)
-            setUnlockBanner(null)
-            setUnlockBannerTone("ok")
-            setShareId(null)
-            setUseCase(null)
-            restoredSid.current = null
+            setAbbreviated(null);
+            setFullResult(null);
+            setRealData(undefined);
+            setLoading(false);
+            setUnlockBanner(null);
+            setUnlockBannerTone("ok");
+            setShareId(null);
+            setUseCase(null);
+            restoredSid.current = null;
             try {
-              const u = new URL(window.location.href)
-              u.searchParams.delete("sid")
-              u.searchParams.delete("unlocked")
-              u.searchParams.delete("unlock")
-              const qs = u.searchParams.toString()
-              window.history.replaceState(null, "", qs ? `?${qs}${u.hash}` : `${u.pathname}${u.hash}`)
-            } catch { /* ignore */ }
+              const u = new URL(window.location.href);
+              u.searchParams.delete("sid");
+              u.searchParams.delete("unlocked");
+              u.searchParams.delete("unlock");
+              const qs = u.searchParams.toString();
+              window.history.replaceState(
+                null,
+                "",
+                qs ? `?${qs}${u.hash}` : `${u.pathname}${u.hash}`
+              );
+            } catch {
+              /* ignore */
+            }
           }}
         />
       </div>
-    )
+    );
   }
 
   const chipBase: React.CSSProperties = {
-    fontFamily: "var(--font-data)", fontSize: 11, letterSpacing: "0.04em",
-    padding: "10px 14px", minHeight: 44, borderRadius: "var(--radius)", cursor: "pointer",
-  }
+    fontFamily: "var(--font-data)",
+    fontSize: 11,
+    letterSpacing: "0.04em",
+    padding: "10px 14px",
+    minHeight: 44,
+    borderRadius: "var(--radius)",
+    cursor: "pointer",
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="gryps-console-panel" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+    <form
+      onSubmit={handleSubmit}
+      className="gryps-console-panel"
+      style={{ display: "flex", flexDirection: "column", gap: 18 }}
+    >
       <div className="gryps-field-group">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.1em" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: "var(--text-label)",
+              color: "var(--text-dim)",
+              letterSpacing: "0.1em",
+            }}
+          >
             {lang === "fi" ? "KOHTEEN KOORDINAATIT" : "SITE COORDINATES"}
           </p>
           <button
@@ -718,20 +912,35 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
             onClick={useMyLocation}
             disabled={geoBusy}
             style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600,
-              color: "var(--accent-cyan)", background: "transparent",
-              border: "1px solid rgba(110,231,249,0.35)", borderRadius: "var(--radius)",
-              padding: "8px 12px", minHeight: 44, cursor: geoBusy ? "wait" : "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              fontFamily: "var(--font-ui)",
+              fontSize: 12,
+              fontWeight: 600,
+              color: "var(--accent-cyan)",
+              background: "transparent",
+              border: "1px solid rgba(110,231,249,0.35)",
+              borderRadius: "var(--radius)",
+              padding: "8px 12px",
+              minHeight: 44,
+              cursor: geoBusy ? "wait" : "pointer",
             }}
           >
             <LocateFixed size={14} />
             {geoBusy
-              ? (lang === "fi" ? "Haetaan…" : "Locating…")
-              : (lang === "fi" ? "Käytä sijaintiani" : "Use my location")}
+              ? lang === "fi"
+                ? "Haetaan…"
+                : "Locating…"
+              : lang === "fi"
+                ? "Käytä sijaintiani"
+                : "Use my location"}
           </button>
         </div>
-        <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        <div
+          className="gryps-form-row"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}
+        >
           <div>
             <label style={labelStyle}>{t.latLabel}</label>
             <input
@@ -741,7 +950,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
               autoCapitalize="off"
               placeholder={DEFAULT_LAT}
               value={lat}
-              onChange={e => setLat(e.target.value)}
+              onChange={(e) => setLat(e.target.value)}
               style={inputStyle}
             />
           </div>
@@ -754,30 +963,56 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
               autoCapitalize="off"
               placeholder={DEFAULT_LNG}
               value={lng}
-              onChange={e => setLng(e.target.value)}
+              onChange={(e) => setLng(e.target.value)}
               style={inputStyle}
             />
           </div>
         </div>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5 }}>
+        <p
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontSize: 11,
+            color: "var(--text-muted)",
+            lineHeight: 1.5,
+          }}
+        >
           {lang === "fi"
             ? "Sijaintia käytetään vain tähän resilienssiarvioon — ei seurata."
             : "Location is used only for this resilience assessment — not tracked."}
         </p>
         {geoNote && (
-          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-cyan)" }}>{geoNote}</p>
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--accent-cyan)" }}>
+            {geoNote}
+          </p>
         )}
       </div>
 
       <div className="gryps-field-group">
-        <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.1em" }}>
+        <p
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: "var(--text-label)",
+            color: "var(--text-dim)",
+            letterSpacing: "0.1em",
+          }}
+        >
           {lang === "fi" ? "TOIMINTAPROFIILI" : "OPERATIONAL PROFILE"}
         </p>
-        <div className="gryps-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        <div
+          className="gryps-form-row"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}
+        >
           <div>
             <label style={labelStyle}>{t.sectorLabel} *</label>
-            <select value={vertical} onChange={e => setVertical(e.target.value)} required style={{ ...selectStyle, color: vertical ? "var(--text)" : "var(--text-muted)" }}>
-              <option value="" disabled>{t.sectorPlaceholder}</option>
+            <select
+              value={vertical}
+              onChange={(e) => setVertical(e.target.value)}
+              required
+              style={{ ...selectStyle, color: vertical ? "var(--text)" : "var(--text-muted)" }}
+            >
+              <option value="" disabled>
+                {t.sectorPlaceholder}
+              </option>
               <option value="forestry">Forestry</option>
               <option value="mining">Mining</option>
               <option value="maritime">Maritime</option>
@@ -790,8 +1025,15 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           </div>
           <div>
             <label style={labelStyle}>{t.autonomyLabel} *</label>
-            <select value={autonomy} onChange={e => setAutonomy(e.target.value)} required style={{ ...selectStyle, color: autonomy ? "var(--text)" : "var(--text-muted)" }}>
-              <option value="" disabled>{t.autonomyPlaceholder}</option>
+            <select
+              value={autonomy}
+              onChange={(e) => setAutonomy(e.target.value)}
+              required
+              style={{ ...selectStyle, color: autonomy ? "var(--text)" : "var(--text-muted)" }}
+            >
+              <option value="" disabled>
+                {t.autonomyPlaceholder}
+              </option>
               <option value="manual">Manual operations</option>
               <option value="remote-operated">Remote-operated</option>
               <option value="autonomous">Autonomous</option>
@@ -801,8 +1043,15 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         </div>
         <div>
           <label style={labelStyle}>{t.criticalityLabel} *</label>
-          <select value={criticality} onChange={e => setCriticality(e.target.value)} required style={{ ...selectStyle, color: criticality ? "var(--text)" : "var(--text-muted)" }}>
-            <option value="" disabled>{t.criticalityPlaceholder}</option>
+          <select
+            value={criticality}
+            onChange={(e) => setCriticality(e.target.value)}
+            required
+            style={{ ...selectStyle, color: criticality ? "var(--text)" : "var(--text-muted)" }}
+          >
+            <option value="" disabled>
+              {t.criticalityPlaceholder}
+            </option>
             <option value="standard">Standard</option>
             <option value="high">High criticality</option>
             <option value="safety-critical">Safety-critical</option>
@@ -812,12 +1061,20 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
 
       <div className="gryps-field-group">
         <label style={labelStyle}>{t.providersLabel}</label>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", marginBottom: 4, lineHeight: 1.5 }}>
+        <p
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontSize: 12,
+            color: "var(--text-muted)",
+            marginBottom: 4,
+            lineHeight: 1.5,
+          }}
+        >
           {t.providersHint}
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {ADVISOR_PROVIDERS.map(p => {
-            const selected = providers.includes(p.id)
+          {ADVISOR_PROVIDERS.map((p) => {
+            const selected = providers.includes(p.id);
             return (
               <button
                 key={p.id}
@@ -832,35 +1089,56 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
               >
                 {p.name}
               </button>
-            )
+            );
           })}
           <button
             type="button"
             onClick={() => toggleProvider("none")}
             style={{
               ...chipBase,
-              border: providers.includes("none") ? "1px solid var(--accent-amber)" : "1px solid var(--border2)",
-              backgroundColor: providers.includes("none") ? "rgba(217,119,6,0.12)" : "var(--surface2)",
+              border: providers.includes("none")
+                ? "1px solid var(--accent-amber)"
+                : "1px solid var(--border2)",
+              backgroundColor: providers.includes("none")
+                ? "rgba(217,119,6,0.12)"
+                : "var(--surface2)",
               color: providers.includes("none") ? "var(--accent-amber)" : "var(--text-muted)",
             }}
           >
             {lang === "fi" ? "Ei yhteyttä" : "None"}
           </button>
         </div>
-        <a href="/providers" style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.04em", marginTop: 4 }}>
+        <a
+          href="/providers"
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: 10,
+            color: "var(--text-dim)",
+            letterSpacing: "0.04em",
+            marginTop: 4,
+          }}
+        >
           {t.providersCoi}
         </a>
       </div>
 
       <div className="gryps-field-group">
         <label style={labelStyle}>{t.prioritiesLabel}</label>
-        <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", marginBottom: 4, lineHeight: 1.5 }}>
+        <p
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontSize: 12,
+            color: "var(--text-muted)",
+            marginBottom: 4,
+            lineHeight: 1.5,
+          }}
+        >
           {t.prioritiesHint}
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {ADVISOR_PRIORITIES.map(id => {
-            const selected = priorities.includes(id)
-            const atCap = !selected && priorities.length >= 3
+          {ADVISOR_PRIORITIES.map((id) => {
+            const selected = priorities.includes(id);
+            const atCap = !selected && priorities.length >= 3;
             return (
               <button
                 key={id}
@@ -878,18 +1156,34 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
               >
                 {PRIORITY_LABELS[id][lang]}
               </button>
-            )
+            );
           })}
         </div>
       </div>
 
-      <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.04em" }}>
+      <p
+        style={{
+          fontFamily: "var(--font-data)",
+          fontSize: 10,
+          color: "var(--text-dim)",
+          letterSpacing: "0.04em",
+        }}
+      >
         {t.noAccountNote}
       </p>
 
       {(boundsError || error || unlockBanner) && (
-        <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "var(--radius)", padding: "10px 14px" }}>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-red)" }}>{boundsError || error || unlockBanner}</p>
+        <div
+          style={{
+            backgroundColor: "rgba(239,68,68,0.08)",
+            border: "1px solid rgba(239,68,68,0.3)",
+            borderRadius: "var(--radius)",
+            padding: "10px 14px",
+          }}
+        >
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-red)" }}>
+            {boundsError || error || unlockBanner}
+          </p>
         </div>
       )}
 
@@ -899,35 +1193,39 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         disabled={loading || !vertical || !autonomy || !criticality}
         style={{
           width: "100%",
-          opacity: (!vertical || !autonomy || !criticality) ? 0.5 : 1,
+          opacity: !vertical || !autonomy || !criticality ? 0.5 : 1,
           background: loading ? "var(--surface2)" : "var(--cta-gradient)",
           color: loading ? "var(--text-muted)" : "#070B12",
         }}
       >
         {loading ? (
           <>
-            <span style={{ display: "inline-block", width: 12, height: 12, border: "2px solid var(--text-dim)", borderTopColor: "var(--accent-blue)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+            <span
+              style={{
+                display: "inline-block",
+                width: 12,
+                height: 12,
+                border: "2px solid var(--text-dim)",
+                borderTopColor: "var(--accent-blue)",
+                borderRadius: "50%",
+                animation: "spin 0.7s linear infinite",
+              }}
+            />
             {t.analysing}
           </>
         ) : (
-          <>{t.runAdvisor} <ArrowRight size={14} /></>
+          <>
+            {t.runAdvisor} <ArrowRight size={14} />
+          </>
         )}
       </button>
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </form>
-  )
+  );
 }
 
-// ── Hero signature card ───────────────────────────────────────────────────────
-const HERO_DEMO = scoreDeterministic({
-  lat: 68.2,
-  lng: 27.4,
-  sector: "forestry",
-  autonomy: "autonomous",
-  criticality: "high",
-  providers: ["starlink"],
-})
+// ── Hero signature card (Score 47 · Grade D — single source: lib/hero-demo.ts) ─
 
 function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
   const labels: Record<string, { en: string; fi: string }> = {
@@ -935,43 +1233,71 @@ function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
     latitude: { en: "Latitude", fi: "Leveysaste" },
     operational_profile: { en: "Profile", fi: "Profiili" },
     provider_confidence: { en: "Providers", fi: "Toimittajat" },
-  }
+  };
   return (
     <div className="gryps-comp-bars" style={{ marginTop: 4 }}>
-      <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.1em", marginBottom: 4 }}>
+      <p
+        style={{
+          fontFamily: "var(--font-data)",
+          fontSize: "var(--text-label)",
+          color: "var(--text-dim)",
+          letterSpacing: "0.1em",
+          marginBottom: 4,
+        }}
+      >
         {lang === "fi" ? "PISTEKOMPONENTIT" : "SCORE COMPOSITION"}
       </p>
-      {HERO_DEMO.score_composition.components.map(c => {
-        const pct = c.max > 0 ? Math.max(0, Math.min(100, (c.points / c.max) * 100)) : 0
-        const label = labels[c.id]?.[lang] ?? c.label
+      {HERO_DEMO.score_composition.components.map((c) => {
+        const pct = c.max > 0 ? Math.max(0, Math.min(100, (c.points / c.max) * 100)) : 0;
+        const label = labels[c.id]?.[lang] ?? c.label;
         return (
           <div key={c.id} className="gryps-comp-row">
-            <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}>{label}</span>
-            <span style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text)", fontWeight: 700 }}>{c.points}/{c.max}</span>
+            <span
+              style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}
+            >
+              {label}
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-data)",
+                fontSize: 11,
+                color: "var(--text)",
+                fontWeight: 700,
+              }}
+            >
+              {c.points}/{c.max}
+            </span>
             <div className="gryps-comp-track">
               <div className="gryps-comp-fill" style={{ width: `${pct}%` }} />
             </div>
           </div>
-        )
+        );
       })}
       {HERO_DEMO.score_composition.caps_applied.length > 0 && (
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 9, color: "var(--accent-amber)", marginTop: 4 }}>
+        <p
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: 9,
+            color: "var(--accent-amber)",
+            marginTop: 4,
+          }}
+        >
           {lang === "fi" ? "Katto:" : "Cap:"} {HERO_DEMO.score_composition.caps_applied.join(", ")}
         </p>
       )}
     </div>
-  )
+  );
 }
 
 function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
-  const score = HERO_DEMO.resilience_signature.score
-  const grade = HERO_DEMO.resilience_signature.grade
-  const gc = gradeTextColor(grade)
-  const border = gradeColor(grade)
-  const topRisk = t.heroTopRisk
+  const score = HERO_DEMO.resilience_signature.score;
+  const grade = HERO_DEMO.resilience_signature.grade;
+  const gc = gradeTextColor(grade);
+  const border = gradeColor(grade);
+  const topRisk = t.heroTopRisk;
   const topRec = HERO_DEMO.connectivity_options[0]
     ? `${HERO_DEMO.connectivity_options[0].provider} · ${HERO_DEMO.connectivity_options[0].confidence}`
-    : "Iridium Certus · 90"
+    : "Iridium Certus · 90";
 
   return (
     <div
@@ -987,53 +1313,154 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
       }}
     >
       <div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
-          <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.12em" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            marginBottom: 14,
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: "var(--text-label)",
+              color: "var(--text-dim)",
+              letterSpacing: "0.12em",
+            }}
+          >
             RESILIENCE SIGNATURE
           </p>
           <span
             className="gryps-grade-badge"
-            style={{ color: gc, backgroundColor: gradeBadgeBg(grade), border: `1px solid ${border}55` }}
+            style={{
+              color: gc,
+              backgroundColor: gradeBadgeBg(grade),
+              border: `1px solid ${border}55`,
+            }}
           >
             {lang === "fi" ? "ARVOSANA" : "GRADE"} {grade}
           </span>
         </div>
 
-        <p style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "var(--text-title)", color: "var(--text)", marginBottom: 4 }}>
+        <p
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontWeight: 700,
+            fontSize: "var(--text-title)",
+            color: "var(--text)",
+            marginBottom: 4,
+          }}
+        >
           68.2°N 27.4°E · Lapland
         </p>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.04em", marginBottom: 20 }}>
+        <p
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: 11,
+            color: "var(--text-muted)",
+            letterSpacing: "0.04em",
+            marginBottom: 20,
+          }}
+        >
           Single Starlink · no backup path
         </p>
 
-        <div aria-label={`Score ${score} out of 100, grade ${grade}`} style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
-          <span className="sr-only">Score {score} out of 100, grade {grade}</span>
-          <span aria-hidden="true" style={{
-            fontFamily: "var(--font-data)",
-            fontSize: "clamp(3.5rem, 7vw, 5rem)",
-            fontWeight: 900,
-            color: gc,
-            lineHeight: 1,
-            letterSpacing: "-0.04em",
-          }}>{score}</span>
-          <span aria-hidden="true" style={{ fontFamily: "var(--font-data)", fontSize: 16, color: "var(--text-dim)" }}>/100</span>
+        <div
+          aria-label={`Score ${score} out of 100, grade ${grade}`}
+          style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}
+        >
+          <span className="sr-only">
+            Score {score} out of 100, grade {grade}
+          </span>
+          <span
+            aria-hidden="true"
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: "clamp(3.5rem, 7vw, 5rem)",
+              fontWeight: 900,
+              color: gc,
+              lineHeight: 1,
+              letterSpacing: "-0.04em",
+            }}
+          >
+            {score}
+          </span>
+          <span
+            aria-hidden="true"
+            style={{ fontFamily: "var(--font-data)", fontSize: 16, color: "var(--text-dim)" }}
+          >
+            /100
+          </span>
         </div>
-        <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.06em", marginBottom: 18 }}>
+        <p
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: 10,
+            color: "var(--text-dim)",
+            letterSpacing: "0.06em",
+            marginBottom: 18,
+          }}
+        >
           deterministic-v0.3
         </p>
 
-        <div className="gryps-signature-divider" style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 16 }} />
+        <div
+          className="gryps-signature-divider"
+          style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 16 }}
+        />
 
         <HeroCompositionBars lang={lang} />
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 18 }}>
           <div>
-            <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 6 }}>{t.topRiskLabel}</p>
-            <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-amber)", fontWeight: 600, lineHeight: 1.35 }}>{topRisk}</p>
+            <p
+              style={{
+                fontFamily: "var(--font-data)",
+                fontSize: "var(--text-label)",
+                color: "var(--text-dim)",
+                letterSpacing: "0.08em",
+                marginBottom: 6,
+              }}
+            >
+              {t.topRiskLabel}
+            </p>
+            <p
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: 13,
+                color: "var(--accent-amber)",
+                fontWeight: 600,
+                lineHeight: 1.35,
+              }}
+            >
+              {topRisk}
+            </p>
           </div>
           <div>
-            <p style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-dim)", letterSpacing: "0.08em", marginBottom: 6 }}>{t.topRecLabel}</p>
-            <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-cyan)", fontWeight: 600, lineHeight: 1.35 }}>{topRec}</p>
+            <p
+              style={{
+                fontFamily: "var(--font-data)",
+                fontSize: "var(--text-label)",
+                color: "var(--text-dim)",
+                letterSpacing: "0.08em",
+                marginBottom: 6,
+              }}
+            >
+              {t.topRecLabel}
+            </p>
+            <p
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: 13,
+                color: "var(--accent-cyan)",
+                fontWeight: 600,
+                lineHeight: 1.35,
+              }}
+            >
+              {topRec}
+            </p>
           </div>
         </div>
       </div>
@@ -1044,7 +1471,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
         </a>
       </div>
     </div>
-  )
+  );
 }
 
 function LatitudeRuler() {
@@ -1056,256 +1483,356 @@ function LatitudeRuler() {
     { label: "75N", active: false },
     { label: "80N", active: false },
     { label: "POLAR", active: false },
-  ]
+  ];
   return (
     <div className="gryps-latitude-ruler gryps-no-print" aria-hidden="true">
-      {ticks.map(t => (
-        <span key={t.label} data-active={t.active ? "true" : undefined}>{t.label}</span>
+      {ticks.map((t) => (
+        <span key={t.label} data-active={t.active ? "true" : undefined}>
+          {t.label}
+        </span>
       ))}
     </div>
-  )
+  );
 }
 
 function TrustStrip({ lang }: { lang: "en" | "fi" }) {
-  const items = lang === "fi"
-    ? ["Malli v0.3", "Deterministinen", "EU AI Act Art. 50", "Espoo", "Tutkimusprototyyppi"]
-    : ["Model v0.3", "Deterministic", "EU AI Act Art. 50", "Espoo", "Research prototype"]
+  const items =
+    lang === "fi"
+      ? ["Malli v0.3", "Deterministinen", "EU AI Act Art. 50", "Espoo", "Tutkimusprototyyppi"]
+      : ["Model v0.3", "Deterministic", "EU AI Act Art. 50", "Espoo", "Research prototype"];
   const links = [
     { href: "/methodology", label: lang === "fi" ? "Menetelmä" : "Methodology" },
     { href: "/about", label: lang === "fi" ? "Tietoa" : "About" },
     { href: "/privacy", label: lang === "fi" ? "Tietosuoja" : "Privacy" },
-  ]
+  ];
   return (
     <div className="gryps-trust-strip gryps-no-print">
       <div className="gryps-trust-inner">
         <div className="gryps-trust-items">
           {items.map((item, i) => (
             <span key={item} style={{ display: "inline-flex", alignItems: "center" }}>
-              {i > 0 && <span data-sep aria-hidden="true">·</span>}
+              {i > 0 && (
+                <span data-sep aria-hidden="true">
+                  ·
+                </span>
+              )}
               {item}
             </span>
           ))}
         </div>
         <div className="gryps-trust-links">
-          {links.map(l => (
-            <a key={l.href} href={l.href}>{l.label}</a>
+          {links.map((l) => (
+            <a key={l.href} href={l.href}>
+              {l.label}
+            </a>
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // ── Stat chip ─────────────────────────────────────────────────────────────────
 function Stat({ value, label, href }: { value: string; label: string; href?: string }) {
   const inner = (
     <>
-      <span style={{ fontFamily: "var(--font-data)", fontSize: 22, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.02em" }}>{value}</span>
-      <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.06em" }}>{label}</span>
+      <span
+        style={{
+          fontFamily: "var(--font-data)",
+          fontSize: 22,
+          fontWeight: 800,
+          color: "var(--text)",
+          letterSpacing: "-0.02em",
+        }}
+      >
+        {value}
+      </span>
+      <span
+        style={{
+          fontFamily: "var(--font-ui)",
+          fontSize: 11,
+          color: "var(--text-muted)",
+          letterSpacing: "0.06em",
+        }}
+      >
+        {label}
+      </span>
     </>
-  )
+  );
   if (href) {
     return (
-      <a href={href} style={{ display: "flex", flexDirection: "column", gap: 2, textDecoration: "none" }}>{inner}</a>
-    )
+      <a
+        href={href}
+        style={{ display: "flex", flexDirection: "column", gap: 2, textDecoration: "none" }}
+      >
+        {inner}
+      </a>
+    );
   }
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>{inner}</div>
-  )
+  return <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>{inner}</div>;
 }
 
 // ── Copy (EN / FI) ───────────────────────────────────────────────────────────
 const COPY = {
   en: {
-    tag:        "CONNECTIVITY INTELLIGENCE · NORDIC, ARCTIC & ICELAND",
-    navCta:     "Generate Resilience Signature",
-    h1:         "Know your score before the Arctic finds it for you.",
-    clarify:    "Assess connectivity resilience for remote Nordic, Arctic and high-latitude operations.",
-    sub:        "A Resilience Signature — score, grade and ranked connectivity options for Nordic, Arctic and Icelandic sites.",
+    tag: "CONNECTIVITY INTELLIGENCE · NORDIC, ARCTIC & ICELAND",
+    navCta: "Generate Resilience Signature",
+    h1: "Know your score before the Arctic finds it for you.",
+    clarify:
+      "Assess connectivity resilience for remote Nordic, Arctic and high-latitude operations.",
+    sub: "A Resilience Signature — score, grade and ranked connectivity options for Nordic, Arctic and Icelandic sites.",
     scoreLabel: "Score: {score}/100 · Grade {grade}",
     heroSecondary: "Explore the Map",
-    modelChip:  "Research prototype · Non-commercial · Model-based analysis",
-    sampleCta:  "See a sample Signature",
-    nis2line:   "Supports NIS2/CER readiness documentation · Espoo, Finland · R&D prototype",
-    statsL1:    "Providers indexed (catalog)",
-    statsL2:    "All orbital types",
-    statsL3:    "Polar coverage",
+    modelChip: "Research prototype · Non-commercial · Model-based analysis",
+    sampleCta: "See a sample Signature",
+    nis2line: "Supports NIS2/CER readiness documentation · Espoo, Finland · R&D prototype",
+    statsL1: "Providers indexed (catalog)",
+    statsL2: "All orbital types",
+    statsL3: "Polar coverage",
     liveCounter: "sites assessed in the Nordic & Arctic portfolio",
-    proofBand:  "Illustrative · not live monitoring",
+    proofBand: "Illustrative · not live monitoring",
     advisorCta: "Generate Resilience Signature",
     advisorSub: "Free · No account required",
-    sectorLabel:        "OPERATIONAL SECTOR",
-    sectorPlaceholder:  "Select sector",
-    autonomyLabel:      "AUTONOMY LEVEL",
-    autonomyPlaceholder:"Select autonomy level",
-    criticalityLabel:   "OPERATION CRITICALITY",
+    sectorLabel: "OPERATIONAL SECTOR",
+    sectorPlaceholder: "Select sector",
+    autonomyLabel: "AUTONOMY LEVEL",
+    autonomyPlaceholder: "Select autonomy level",
+    criticalityLabel: "OPERATION CRITICALITY",
     criticalityPlaceholder: "Select criticality",
-    latLabel:   "LATITUDE",
-    lngLabel:   "LONGITUDE",
+    latLabel: "LATITUDE",
+    lngLabel: "LONGITUDE",
     providersLabel: "CURRENT CONNECTIVITY PROVIDERS",
-    providersHint:  "Select all providers currently in use. Choose None if no satellite path is documented. GRYPS has no commercial relationship with any provider listed.",
+    providersHint:
+      "Select all providers currently in use. Choose None if no satellite path is documented. GRYPS has no commercial relationship with any provider listed.",
     providersCoi: "No commercial relationships with ranked providers — see Providers.",
     prioritiesLabel: "MISSION PRIORITIES (OPTIONAL)",
-    prioritiesHint: "Select up to 3. Same site can recommend differently — priorities re-rank options; they do not change the Signature score.",
+    prioritiesHint:
+      "Select up to 3. Same site can recommend differently — priorities re-rank options; they do not change the Signature score.",
     boundsHint: "Coordinates must be within Nordic/Arctic bounds (lat 55–85°, lng −30–40°).",
     noAccountNote: "Free · No account required. Email only if you unlock the detailed assessment.",
     runAdvisor: "Generate Resilience Signature",
-    analysing:  "Generating Signature…",
+    analysing: "Generating Signature…",
     analyseAnother: "Generate another Signature",
-    telemetryLabel:  "Research prototype · illustrative engine output",
+    telemetryLabel: "Research prototype · illustrative engine output",
     telemetryHeader: "ENGINE LOG",
     topRiskLabel: "TOP RISK",
-    topRecLabel:  "REC #1",
-    heroTopRisk:  "No backup",
+    topRecLabel: "REC #1",
+    heroTopRisk: "No backup",
     problemL: "Why sites fail without a Signature",
     problems: [
-      { title: "Zero margin.", body: "A harvester at −30°C, an offshore check-in, a remote sensor cluster — when connectivity fails here, it is a safety event, not an inconvenience." },
-      { title: "One path. No fallback.", body: "Most sites run a single satellite link with nothing documented behind it. Pass geometry and orbital outages stay invisible until they hit operations." },
-      { title: "Undocumented risk.", body: "NIS2 and CER push critical operators to evidence connectivity risk. A Resilience Signature supports readiness documentation — not certification or legal advice." },
+      {
+        title: "Zero margin.",
+        body: "A harvester at −30°C, an offshore check-in, a remote sensor cluster — when connectivity fails here, it is a safety event, not an inconvenience.",
+      },
+      {
+        title: "One path. No fallback.",
+        body: "Most sites run a single satellite link with nothing documented behind it. Pass geometry and orbital outages stay invisible until they hit operations.",
+      },
+      {
+        title: "Undocumented risk.",
+        body: "NIS2 and CER push critical operators to evidence connectivity risk. A Resilience Signature supports readiness documentation — not certification or legal advice.",
+      },
     ],
-    howL:  "How the Advisor works",
+    howL: "How the Advisor works",
     steps: [
-      { n: "01", title: "Enter site profile",    body: "Coordinates, sector, and current providers. Elevation and terrain are factored automatically." },
-      { n: "02", title: "Set autonomy & criticality", body: "Operational dependency and criticality shift Signature weights. Safety-critical autonomous sites without redundancy cannot score above 50." },
-      { n: "03", title: "Set mission priorities", body: "Optional: uptime, latency, bandwidth, redundancy, coverage, mobility, or deployment simplicity — re-ranks recommendations for this mission." },
-      { n: "04", title: "Generate Resilience Signature", body: "Free initial assessment with score and top recommendation. Unlock the detailed assessment with email confirmation." },
+      {
+        n: "01",
+        title: "Enter site profile",
+        body: "Coordinates, sector, and current providers. Elevation and terrain are factored automatically.",
+      },
+      {
+        n: "02",
+        title: "Set autonomy & criticality",
+        body: "Operational dependency and criticality shift Signature weights. Safety-critical autonomous sites without redundancy cannot score above 50.",
+      },
+      {
+        n: "03",
+        title: "Set mission priorities",
+        body: "Optional: uptime, latency, bandwidth, redundancy, coverage, mobility, or deployment simplicity — re-ranks recommendations for this mission.",
+      },
+      {
+        n: "04",
+        title: "Generate Resilience Signature",
+        body: "Free initial assessment with score and top recommendation. Unlock the detailed assessment with email confirmation.",
+      },
     ],
     examplesLabel: "RESEARCH LIBRARY",
-    examplesSub: "Curated Connectivity Intelligence assessments. Open a research Signature, explore mission scenarios, or generate your own above.",
+    examplesSub:
+      "Curated Connectivity Intelligence assessments. Open a research Signature, explore mission scenarios, or generate your own above.",
     scenariosLink: "Mission scenarios →",
     polarHeader: "CONNECTIVITY INTELLIGENCE · NORDIC, ARCTIC & ICELAND",
     polarMapLabel: "MODELED INTELLIGENCE · NOT LIVE RF",
     polarInstrumentTitle: "Explore Connectivity Intelligence",
-    polarInstrumentBody: "Select a region and vertical on the Connectivity Intelligence map, open a research assessment, then Generate a Resilience Signature. Not live constellation telemetry.",
+    polarInstrumentBody:
+      "Select a region and vertical on the Connectivity Intelligence map, open a research assessment, then Generate a Resilience Signature. Not live constellation telemetry.",
     polarFact1: "Sample site 68.2°N · single Starlink path",
     polarFact2: "Latitude weight drops above 70°N",
     polarMethodLink: "See scoring formula →",
     capacityMapLink: "Explore Connectivity Intelligence →",
-    ctaH2:  "Start with a Resilience Signature.",
-    ctaSub: "Free Connectivity Intelligence for any Nordic, Arctic, or Icelandic site. No account — unlock the detailed assessment with email when you want deeper detail.",
+    ctaH2: "Start with a Resilience Signature.",
+    ctaSub:
+      "Free Connectivity Intelligence for any Nordic, Arctic, or Icelandic site. No account — unlock the detailed assessment with email when you want deeper detail.",
     ctaBtn: "Generate Resilience Signature",
     viewSample: "View research assessment →",
-    footerTag:    "Built in Finland for high-latitude resilience.",
+    footerTag: "Built in Finland for high-latitude resilience.",
   },
   fi: {
-    tag:        "CONNECTIVITY INTELLIGENCE · POHJOISMAAT · ARKTIS · ISLANTI",
-    navCta:     "Luo Resilience Signature",
-    h1:         "Tiedä pisteesi ennen kuin arktiset olosuhteet tekevät sen puolestasi.",
-    clarify:    "Arvioi yhteyden resilienssiä etäisissä pohjoismaisissa, arktisissa ja korkeiden leveysasteiden toiminnoissa.",
-    sub:        "Resilience Signature — pisteet, arvosana ja sijoitetut yhteysvaihtoehdot pohjoismaisille, arktisille ja islantilaisille kohteille.",
+    tag: "CONNECTIVITY INTELLIGENCE · POHJOISMAAT · ARKTIS · ISLANTI",
+    navCta: "Luo Resilience Signature",
+    h1: "Tiedä pisteesi ennen kuin arktiset olosuhteet tekevät sen puolestasi.",
+    clarify:
+      "Arvioi yhteyden resilienssiä etäisissä pohjoismaisissa, arktisissa ja korkeiden leveysasteiden toiminnoissa.",
+    sub: "Resilience Signature — pisteet, arvosana ja sijoitetut yhteysvaihtoehdot pohjoismaisille, arktisille ja islantilaisille kohteille.",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
     heroSecondary: "Tutki karttaa",
-    modelChip:  "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi",
-    sampleCta:  "Katso esimerkki-Signature",
-    nis2line:   "Tukee NIS2/CER-valmiusdokumentaatiota · Espoo, Suomi · T&K-prototyyppi",
-    statsL1:    "Toimittajaa hakemistossa",
-    statsL2:    "Kaikki radat",
-    statsL3:    "Napaseudun kattavuus",
+    modelChip: "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi",
+    sampleCta: "Katso esimerkki-Signature",
+    nis2line: "Tukee NIS2/CER-valmiusdokumentaatiota · Espoo, Suomi · T&K-prototyyppi",
+    statsL1: "Toimittajaa hakemistossa",
+    statsL2: "Kaikki radat",
+    statsL3: "Napaseudun kattavuus",
     liveCounter: "kohdetta arvioitu Pohjoismaiden ja arktisen alueen portfoliossa",
-    proofBand:  "Havainnollistava · ei reaaliaikaista seurantaa",
+    proofBand: "Havainnollistava · ei reaaliaikaista seurantaa",
     advisorCta: "Luo Resilience Signature",
     advisorSub: "Ilmainen · Ei tiliä tarvita",
-    sectorLabel:        "TOIMIALA",
-    sectorPlaceholder:  "Valitse toimiala",
-    autonomyLabel:      "AUTONOMIATASO",
-    autonomyPlaceholder:"Valitse autonomiataso",
-    criticalityLabel:   "TOIMINNAN KRIITTISYYS",
+    sectorLabel: "TOIMIALA",
+    sectorPlaceholder: "Valitse toimiala",
+    autonomyLabel: "AUTONOMIATASO",
+    autonomyPlaceholder: "Valitse autonomiataso",
+    criticalityLabel: "TOIMINNAN KRIITTISYYS",
     criticalityPlaceholder: "Valitse kriittisyystaso",
-    latLabel:   "LEVEYSASTE",
-    lngLabel:   "PITUUSASTE",
+    latLabel: "LEVEYSASTE",
+    lngLabel: "PITUUSASTE",
     providersLabel: "NYKYISET YHTEYSTOIMITTAJAT",
-    providersHint:  "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittiyhteyttä ei ole dokumentoitu. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
+    providersHint:
+      "Valitse kaikki käytössä olevat toimittajat. Valitse Ei yhteyttä, jos satelliittiyhteyttä ei ole dokumentoitu. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
     providersCoi: "Ei kaupallisia suhteita suositeltuihin toimittajiin — katso Toimittajat.",
     prioritiesLabel: "TEHTÄVÄN PRIORITEETIT (VALINNAINEN)",
-    prioritiesHint: "Valitse enintään 3. Sama kohde voi tuottaa eri suosituksen — prioriteetit järjestävät vaihtoehdot uudelleen; ne eivät muuta Signature-pistettä.",
-    boundsHint: "Koordinaattien on oltava Pohjoismaiden tai arktisen alueen rajoissa (lat 55–85°, lng −30–40°).",
-    noAccountNote: "Ilmainen · Ei tiliä tarvita. Sähköposti vain, jos avaat yksityiskohtaisen arvion.",
+    prioritiesHint:
+      "Valitse enintään 3. Sama kohde voi tuottaa eri suosituksen — prioriteetit järjestävät vaihtoehdot uudelleen; ne eivät muuta Signature-pistettä.",
+    boundsHint:
+      "Koordinaattien on oltava Pohjoismaiden tai arktisen alueen rajoissa (lat 55–85°, lng −30–40°).",
+    noAccountNote:
+      "Ilmainen · Ei tiliä tarvita. Sähköposti vain, jos avaat yksityiskohtaisen arvion.",
     runAdvisor: "Luo Resilience Signature",
-    analysing:  "Luodaan Signaturea…",
+    analysing: "Luodaan Signaturea…",
     analyseAnother: "Luo toinen Signature",
-    telemetryLabel:  "Tutkimusprototyyppi · havainnollistava moottorin tuloste",
+    telemetryLabel: "Tutkimusprototyyppi · havainnollistava moottorin tuloste",
     telemetryHeader: "MOOTTORILOKI",
     topRiskLabel: "PÄÄRISKI",
-    topRecLabel:  "SUOS #1",
-    heroTopRisk:  "Ei varayhteyttä",
+    topRecLabel: "SUOS #1",
+    heroTopRisk: "Ei varayhteyttä",
     problemL: "Miksi kohteet kaatuvat ilman Signaturea",
     problems: [
-      { title: "Ei pelivaraa.", body: "Hakkuukone −30 °C:ssa, merellä tehtävä kirjaus, etäanturiryhmä — yhteyskatko on turvallisuustapahtuma, ei harmiton häiriö." },
-      { title: "Yksi yhteys. Ei varasuunnitelmaa.", body: "Useimmilla kohteilla on vain yksi satelliittiyhteys ilman dokumentoitua varajärjestelmää. Ohitusgeometria ja radan katkokset pysyvät näkymättöminä, kunnes ne iskevät toimintaan." },
-      { title: "Dokumentoimaton riski.", body: "NIS2 ja CER edellyttävät yhä useammin näyttöä yhteysriskistä. Resilience Signature tukee valmiusdokumentaatiota — se ei ole sertifiointi eikä oikeudellinen neuvonta." },
+      {
+        title: "Ei pelivaraa.",
+        body: "Hakkuukone −30 °C:ssa, merellä tehtävä kirjaus, etäanturiryhmä — yhteyskatko on turvallisuustapahtuma, ei harmiton häiriö.",
+      },
+      {
+        title: "Yksi yhteys. Ei varasuunnitelmaa.",
+        body: "Useimmilla kohteilla on vain yksi satelliittiyhteys ilman dokumentoitua varajärjestelmää. Ohitusgeometria ja radan katkokset pysyvät näkymättöminä, kunnes ne iskevät toimintaan.",
+      },
+      {
+        title: "Dokumentoimaton riski.",
+        body: "NIS2 ja CER edellyttävät yhä useammin näyttöä yhteysriskistä. Resilience Signature tukee valmiusdokumentaatiota — se ei ole sertifiointi eikä oikeudellinen neuvonta.",
+      },
     ],
-    howL:  "Miten Advisor toimii",
+    howL: "Miten Advisor toimii",
     steps: [
-      { n: "01", title: "Syötä kohteen tiedot",    body: "Koordinaatit, toimiala ja nykyiset toimittajat. Korkeus ja maasto otetaan huomioon automaattisesti." },
-      { n: "02", title: "Autonomia ja kriittisyys", body: "Toiminnan riippuvuus ja kriittisyys muuttavat Signature-painoja. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä." },
-      { n: "03", title: "Tehtävän prioriteetit", body: "Valinnainen: käytettävyys, latenssi, kaista, redundanssi, kattavuus, liikkuvuus tai käyttöönoton yksinkertaisuus — järjestää suositukset uudelleen tälle tehtävälle." },
-      { n: "04", title: "Luo Resilience Signature", body: "Ilmainen alustava arvio pisteineen ja ykkössuosituksineen. Avaa yksityiskohtainen arvio sähköpostivahvistuksella." },
+      {
+        n: "01",
+        title: "Syötä kohteen tiedot",
+        body: "Koordinaatit, toimiala ja nykyiset toimittajat. Korkeus ja maasto otetaan huomioon automaattisesti.",
+      },
+      {
+        n: "02",
+        title: "Autonomia ja kriittisyys",
+        body: "Toiminnan riippuvuus ja kriittisyys muuttavat Signature-painoja. Turvallisuuskriittinen autonominen kohde ilman redundanssia ei voi saada yli 50 pistettä.",
+      },
+      {
+        n: "03",
+        title: "Tehtävän prioriteetit",
+        body: "Valinnainen: käytettävyys, latenssi, kaista, redundanssi, kattavuus, liikkuvuus tai käyttöönoton yksinkertaisuus — järjestää suositukset uudelleen tälle tehtävälle.",
+      },
+      {
+        n: "04",
+        title: "Luo Resilience Signature",
+        body: "Ilmainen alustava arvio pisteineen ja ykkössuosituksineen. Avaa yksityiskohtainen arvio sähköpostivahvistuksella.",
+      },
     ],
     examplesLabel: "RESEARCH LIBRARY",
-    examplesSub: "Kuratoituja Connectivity Intelligence -arvioita. Avaa tutkimus-Signature, tutki tehtäväskenaarioita tai luo oma yllä.",
+    examplesSub:
+      "Kuratoituja Connectivity Intelligence -arvioita. Avaa tutkimus-Signature, tutki tehtäväskenaarioita tai luo oma yllä.",
     scenariosLink: "Tehtäväskenaariot →",
     polarHeader: "CONNECTIVITY INTELLIGENCE · POHJOISMAAT, ARKTINEN ALUE JA ISLANTI",
     polarMapLabel: "MALLINNETTU ÄLY · EI REAALIAIKAISTA RF:ÄÄ",
     polarInstrumentTitle: "Tutki Connectivity Intelligencea",
-    polarInstrumentBody: "Valitse alue ja toimiala Connectivity Intelligence -kartalla, avaa tutkimusarvio ja luo Resilience Signature. Ei reaaliaikaista konstellaatiotelemetriaa.",
+    polarInstrumentBody:
+      "Valitse alue ja toimiala Connectivity Intelligence -kartalla, avaa tutkimusarvio ja luo Resilience Signature. Ei reaaliaikaista konstellaatiotelemetriaa.",
     polarFact1: "Esimerkkikohde 68.2°N · yksi Starlink-yhteys",
     polarFact2: "Leveysastepaino laskee yli 70°N",
     polarMethodLink: "Katso pisteytyskaava →",
     capacityMapLink: "Tutki Connectivity Intelligencea →",
-    ctaH2:  "Aloita Resilience Signaturella.",
-    ctaSub: "Ilmainen Connectivity Intelligence mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — avaa yksityiskohtainen arvio sähköpostilla, kun tarvitset syvemmän näkymän.",
+    ctaH2: "Aloita Resilience Signaturella.",
+    ctaSub:
+      "Ilmainen Connectivity Intelligence mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — avaa yksityiskohtainen arvio sähköpostilla, kun tarvitset syvemmän näkymän.",
     ctaBtn: "Luo Resilience Signature",
     viewSample: "Katso tutkimusarvio →",
-    footerTag:    "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
+    footerTag: "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
   },
-}
+};
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function HomePage() {
-  const [lang, setLang] = useLang()
-  const [siteCount, setSiteCount] = useState<number | null>(null)
-  const [chromeH, setChromeH] = useState(82)
-  const chromeRef = useRef<HTMLDivElement>(null)
-  const t = COPY[lang]
-  const modelChip = useMemo(() => t.modelChip.replace("v0.3", modelVersionDisplay()), [t.modelChip])
+  const [lang, setLang] = useLang();
+  const [siteCount, setSiteCount] = useState<number | null>(null);
+  const [chromeH, setChromeH] = useState(82);
+  const chromeRef = useRef<HTMLDivElement>(null);
+  const t = COPY[lang];
+  const modelChip = useMemo(
+    () => t.modelChip.replace("v0.3", modelVersionDisplay()),
+    [t.modelChip]
+  );
 
   useEffect(() => {
     fetch("/api/signatures")
-      .then(r => r.json())
-      .then(d => setSiteCount(Array.isArray(d.sites) ? d.sites.length : null))
-      .catch(() => setSiteCount(null))
-  }, [])
+      .then((r) => r.json())
+      .then((d) => setSiteCount(Array.isArray(d.sites) ? d.sites.length : null))
+      .catch(() => setSiteCount(null));
+  }, []);
 
   useEffect(() => {
-    const el = chromeRef.current
-    if (!el) return
-    const sync = () => setChromeH(Math.ceil(el.getBoundingClientRect().height))
-    sync()
-    const ro = new ResizeObserver(sync)
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [lang])
+    const el = chromeRef.current;
+    if (!el) return;
+    const sync = () => setChromeH(Math.ceil(el.getBoundingClientRect().height));
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [lang]);
 
   useEffect(() => {
-    document.documentElement.style.setProperty("--gryps-header-h", `${chromeH}px`)
-  }, [chromeH])
+    document.documentElement.style.setProperty("--gryps-header-h", `${chromeH}px`);
+  }, [chromeH]);
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
-
       <TopChrome
         ref={chromeRef}
         banner={
-          <div className="gryps-banner" style={{
-            backgroundColor: "rgba(245,184,74,0.06)",
-            borderBottom: "1px solid rgba(245,184,74,0.2)",
-            textAlign: "center",
-            fontFamily: "var(--font-data)",
-            fontSize: 9,
-            color: "var(--accent-amber)",
-            letterSpacing: "0.06em",
-            backdropFilter: "blur(12px)",
-          }}>
+          <div
+            className="gryps-banner"
+            style={{
+              backgroundColor: "rgba(245,184,74,0.06)",
+              borderBottom: "1px solid rgba(245,184,74,0.2)",
+              textAlign: "center",
+              fontFamily: "var(--font-data)",
+              fontSize: 9,
+              color: "var(--accent-amber)",
+              letterSpacing: "0.06em",
+              backdropFilter: "blur(12px)",
+            }}
+          >
             {lang === "en"
               ? "R&D PROTOTYPE · ESPOO, FINLAND · NOT FOR SALE"
               : "T&K-PROTOTYYPPI · ESPOO · EI MYYNNISSÄ"}
@@ -1326,48 +1853,105 @@ export default function HomePage() {
       <section
         id="gryps-hero"
         className="gryps-section-pad gryps-hero-pad gryps-hero-aurora gryps-no-print"
-        style={{ paddingTop: chromeH + 24, paddingBottom: "var(--section-y)", paddingLeft: "var(--pad-x)", paddingRight: "var(--pad-x)" }}
+        style={{
+          paddingTop: chromeH + 24,
+          paddingBottom: "var(--section-y)",
+          paddingLeft: "var(--pad-x)",
+          paddingRight: "var(--pad-x)",
+        }}
       >
         <div className="gryps-content">
-          <div className="gryps-hero-grid" style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1.05fr) minmax(320px, 0.95fr)",
-            gap: 48,
-            alignItems: "center",
-          }}>
-
+          <div
+            className="gryps-hero-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "minmax(0, 1.05fr) minmax(320px, 0.95fr)",
+              gap: 48,
+              alignItems: "center",
+            }}
+          >
             <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
-              <div className="gryps-hero-eyebrow" style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 20 }}>
-                <div style={{
-                  width: 6, height: 6, borderRadius: "50%", flexShrink: 0, marginTop: 4,
-                  background: "var(--aurora-gradient)",
-                  boxShadow: "0 0 10px color-mix(in srgb, var(--aurora-1) 60%, transparent)",
-                }} />
-                <span className="gryps-hero-tag" style={{ fontFamily: "var(--font-data)", fontSize: "var(--text-label)", color: "var(--text-muted)", letterSpacing: "0.14em" }}>{t.tag}</span>
+              <div
+                className="gryps-hero-eyebrow"
+                style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 20 }}
+              >
+                <div
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    flexShrink: 0,
+                    marginTop: 4,
+                    background: "var(--aurora-gradient)",
+                    boxShadow: "0 0 10px color-mix(in srgb, var(--aurora-1) 60%, transparent)",
+                  }}
+                />
+                <span
+                  className="gryps-hero-tag"
+                  style={{
+                    fontFamily: "var(--font-data)",
+                    fontSize: "var(--text-label)",
+                    color: "var(--text-muted)",
+                    letterSpacing: "0.14em",
+                  }}
+                >
+                  {t.tag}
+                </span>
               </div>
 
-              <h1 className="gryps-hero-h1 text-display" style={{
-                fontFamily: "var(--font-ui)",
-                fontSize: "clamp(2.15rem, 4.8vw, 3.5rem)",
-                fontWeight: 600,
-                lineHeight: 1.08,
-                letterSpacing: "-0.02em",
-                color: "var(--text)",
-                marginBottom: 12,
-                maxWidth: lang === "fi" ? "min(100%, 24ch)" : "13ch",
-              }}>
+              <h1
+                className="gryps-hero-h1 text-display"
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: "clamp(2.15rem, 4.8vw, 3.5rem)",
+                  fontWeight: 600,
+                  lineHeight: 1.08,
+                  letterSpacing: "-0.02em",
+                  color: "var(--text)",
+                  marginBottom: 12,
+                  maxWidth: lang === "fi" ? "min(100%, 24ch)" : "13ch",
+                }}
+              >
                 {t.h1}
               </h1>
 
-              <p style={{ fontFamily: "var(--font-ui)", fontSize: 15, fontWeight: 500, color: "var(--text)", maxWidth: "42ch", marginBottom: 12, lineHeight: 1.55 }}>
+              <p
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: "var(--text)",
+                  maxWidth: "42ch",
+                  marginBottom: 12,
+                  lineHeight: 1.55,
+                }}
+              >
                 {t.clarify}
               </p>
 
-              <p className="gryps-hero-sub text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", maxWidth: "42ch", marginBottom: 28, lineHeight: 1.65 }}>
+              <p
+                className="gryps-hero-sub text-body"
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  color: "var(--text-muted)",
+                  maxWidth: "42ch",
+                  marginBottom: 28,
+                  lineHeight: 1.65,
+                }}
+              >
                 {t.sub}
               </p>
 
-              <div className="gryps-hero-actions" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginBottom: 20 }}>
+              <div
+                className="gryps-hero-actions"
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: 12,
+                  marginBottom: 20,
+                }}
+              >
                 <a href="#advisor" className="gryps-cta-btn">
                   {t.advisorCta} <ArrowRight size={14} />
                 </a>
@@ -1376,23 +1960,34 @@ export default function HomePage() {
                 </a>
               </div>
 
-              <span style={{
-                display: "inline-block", fontFamily: "var(--font-data)", fontSize: "var(--text-label)",
-                color: "var(--accent-amber)", letterSpacing: "0.06em",
-                backgroundColor: "rgba(245,184,74,0.08)", border: "1px solid rgba(245,184,74,0.25)",
-                borderRadius: 6, padding: "4px 10px", marginBottom: 8,
-              }}>
+              <span
+                style={{
+                  display: "inline-block",
+                  fontFamily: "var(--font-data)",
+                  fontSize: "var(--text-label)",
+                  color: "var(--accent-amber)",
+                  letterSpacing: "0.06em",
+                  backgroundColor: "rgba(245,184,74,0.08)",
+                  border: "1px solid rgba(245,184,74,0.25)",
+                  borderRadius: 6,
+                  padding: "4px 10px",
+                  marginBottom: 8,
+                }}
+              >
                 {modelChip}
               </span>
             </div>
 
-            <div className="gryps-hero-signature-col" style={{
-              display: "flex",
-              flexDirection: "column",
-              minWidth: 0,
-              alignSelf: "stretch",
-              justifyContent: "center",
-            }}>
+            <div
+              className="gryps-hero-signature-col"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 0,
+                alignSelf: "stretch",
+                justifyContent: "center",
+              }}
+            >
               <div className="gryps-polar-stage">
                 <PolarAtmosphere className="gryps-polar-bg" variant="halo" />
                 <div className="gryps-polar-foreground">
@@ -1413,15 +2008,32 @@ export default function HomePage() {
 
       {/* Live Advisor */}
       <FadeUp>
-        <section id="advisor" className="gryps-section gryps-section-pad" style={{ scrollMarginTop: 80 }}>
+        <section
+          id="advisor"
+          className="gryps-section gryps-section-pad"
+          style={{ scrollMarginTop: 80 }}
+        >
           <div className="gryps-content-narrow">
             <p className="gryps-no-print label" style={{ marginBottom: 10 }}>
               {lang === "fi" ? "RESILIENCE ADVISOR · KONSOLI" : "RESILIENCE ADVISOR · CONSOLE"}
             </p>
-            <h2 className="gryps-no-print text-display" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 10 }}>
+            <h2
+              className="gryps-no-print text-display"
+              style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 10 }}
+            >
               {t.advisorCta}
             </h2>
-            <p className="gryps-no-print text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", marginBottom: 28, fontSize: "var(--text-small)" }}>{t.advisorSub}</p>
+            <p
+              className="gryps-no-print text-body"
+              style={{
+                fontFamily: "var(--font-ui)",
+                color: "var(--text-muted)",
+                marginBottom: 28,
+                fontSize: "var(--text-small)",
+              }}
+            >
+              {t.advisorSub}
+            </p>
             <AdvisorForm t={t} lang={lang} />
           </div>
         </section>
@@ -1429,19 +2041,43 @@ export default function HomePage() {
 
       {/* CTA */}
       <FadeUp>
-        <section className="gryps-section gryps-section-pad gryps-no-print" style={{ borderTop: "1px solid var(--border)", textAlign: "center" }}>
+        <section
+          className="gryps-section gryps-section-pad gryps-no-print"
+          style={{ borderTop: "1px solid var(--border)", textAlign: "center" }}
+        >
           <GrypsMark size={44} animate />
-          <h2 className="text-display" style={{ fontFamily: "var(--font-ui)", color: "var(--text)", margin: "20px 0 12px" }}>
+          <h2
+            className="text-display"
+            style={{ fontFamily: "var(--font-ui)", color: "var(--text)", margin: "20px 0 12px" }}
+          >
             {t.ctaH2}
           </h2>
-          <p className="text-body" style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)", margin: "0 auto 32px", maxWidth: 480, fontSize: "var(--text-small)" }}>
+          <p
+            className="text-body"
+            style={{
+              fontFamily: "var(--font-ui)",
+              color: "var(--text-muted)",
+              margin: "0 auto 32px",
+              maxWidth: 480,
+              fontSize: "var(--text-small)",
+            }}
+          >
             {t.ctaSub}
           </p>
           <a href="#advisor" className="gryps-cta-btn" style={{ display: "inline-flex" }}>
             {t.advisorCta} <ArrowRight size={14} />
           </a>
           <p style={{ marginTop: 20 }}>
-            <a href="/research-prototype" style={{ fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600, color: "var(--accent-blue)", textDecoration: "none" }}>
+            <a
+              href="/research-prototype"
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: 13,
+                fontWeight: 600,
+                color: "var(--accent-blue)",
+                textDecoration: "none",
+              }}
+            >
               {lang === "en" ? "Research & Prototype →" : "Tutkimus ja prototyyppi →"}
             </a>
           </p>
@@ -1450,14 +2086,15 @@ export default function HomePage() {
 
       <Footer
         lang={lang}
-        footerRights={grypsCopyright(lang, lang === "en"
-          ? "Non-commercial R&D prototype"
-          : "Ei-kaupallinen T&K-prototyyppi")}
+        footerRights={grypsCopyright(
+          lang,
+          lang === "en" ? "Non-commercial R&D prototype" : "Ei-kaupallinen T&K-prototyyppi"
+        )}
         footerTag={t.footerTag}
         secondaryLink={{ href: "/map", label: lang === "en" ? "Explore" : "Tutki" }}
       />
 
       <StickyMobileCta label={t.navCta} />
     </div>
-  )
+  );
 }

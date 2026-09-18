@@ -23,8 +23,7 @@ export const GRADE_BANDS = {
   F: { max: 39, label: "<40" },
 } as const;
 
-export const GRADE_BANDS_SUMMARY =
-  "A ≥90 · B 75–89 · C 60–74 · D 40–59 · F <40";
+export const GRADE_BANDS_SUMMARY = "A ≥90 · B 75–89 · C 60–74 · D 40–59 · F <40";
 
 /**
  * Research documentation / methodology framework version.

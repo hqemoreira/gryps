@@ -119,7 +119,15 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
           ]}
         />
         <ResearchDocsNav lang={lang} active="research" />
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 6 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+            marginBottom: 6,
+          }}
+        >
           <TypeLabel kind="RESEARCH" />
           <p
             style={{

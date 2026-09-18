@@ -234,10 +234,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
     [sites, selectedSlug]
   );
 
-  const librarySitesOnMap = useMemo(
-    () => sites.filter((s) => s.inResearchLibrary).length,
-    [sites]
-  );
+  const librarySitesOnMap = useMemo(() => sites.filter((s) => s.inResearchLibrary).length, [sites]);
 
   useEffect(() => {
     if (selectedSlug && !filtered.some((s) => s.slug === selectedSlug)) {
@@ -368,7 +365,10 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
           </p>
         </div>
 
-        <div className="gryps-map-filters" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div
+          className="gryps-map-filters"
+          style={{ display: "flex", flexDirection: "column", gap: 8 }}
+        >
           <FilterRow label={t.region}>
             {RESEARCH_REGIONS.map((r) => (
               <button
@@ -763,15 +763,7 @@ function Metric({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Row({
-  label,
-  value,
-  href,
-}: {
-  label: string;
-  value: string;
-  href?: string;
-}) {
+function Row({ label, value, href }: { label: string; value: string; href?: string }) {
   return (
     <div>
       <dt

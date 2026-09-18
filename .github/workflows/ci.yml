@@ -44,6 +44,6 @@ jobs:
         run: npm run build
         env:
           # Build-time placeholders — never real secrets in CI logs
-          DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+          NEON_DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
           MISTRAL_API_KEY: ci-placeholder
           RESEND_API_KEY: re_ci_placeholder
