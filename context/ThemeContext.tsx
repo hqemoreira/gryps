@@ -28,6 +28,12 @@ const DARK: Record<string, string> = {
     "radial-gradient(circle at 78% 8%, rgba(99, 226, 192, 0.14) 0%, transparent 42%), radial-gradient(circle at 88% 28%, rgba(139, 143, 232, 0.10) 0%, transparent 48%)",
   "--shadow-card": "0 8px 32px rgba(0, 0, 0, 0.35)",
   "--cta-gradient": "linear-gradient(135deg, #4FA8FF 0%, #6EE7F9 100%)",
+  "--mark-g-top": "#E6F2FF",
+  "--mark-g-mid": "#B8D9FF",
+  "--mark-g-bot": "#7BB5FF",
+  "--mark-line": "#99DFFF",
+  "--mark-line-deep": "#5BB8FF",
+  "--mark-node-core": "#E8F7FF",
 };
 const LIGHT: Record<string, string> = {
   "--bg": "#F4F6F9",
@@ -51,6 +57,12 @@ const LIGHT: Record<string, string> = {
     "radial-gradient(circle at 78% 8%, rgba(42, 154, 122, 0.10) 0%, transparent 42%), radial-gradient(circle at 88% 28%, rgba(91, 95, 168, 0.08) 0%, transparent 48%)",
   "--shadow-card": "0 8px 28px rgba(11, 18, 32, 0.08)",
   "--cta-gradient": "linear-gradient(135deg, #0B5FBF 0%, #0B7680 100%)",
+  "--mark-g-top": "#5B9FE8",
+  "--mark-g-mid": "#2F7DD4",
+  "--mark-g-bot": "#0B5FBF",
+  "--mark-line": "#0B5FBF",
+  "--mark-line-deep": "#4FA8FF",
+  "--mark-node-core": "#D6ECFF",
 };
 
 const STORAGE_KEY = "gryps-theme";

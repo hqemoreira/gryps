@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 
-/** Animated favicon — Micro Orbital G with diagonal signal-travel (matches GrypsMark artwork). */
+/** Animated favicon — Micro Orbital G matching identity artwork + signal-travel. */
 export function AnimatedFavicon() {
   useEffect(() => {
     const canvas = document.createElement("canvas");
@@ -14,7 +14,6 @@ export function AnimatedFavicon() {
     const start = performance.now();
     const UPDATE_INTERVAL = 100;
     const CYCLE = 2.4;
-
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     document.querySelectorAll<HTMLLinkElement>("link[rel='icon']").forEach((el) => el.remove());
@@ -29,16 +28,19 @@ export function AnimatedFavicon() {
     const tx = (x: number) => OX + x * S;
     const ty = (y: number) => OY + y * S;
 
-    const CX = 18;
-    const CY = 18;
-    const RO = 13.1;
-    const RI = 8.15;
-    const GAP = (42 * Math.PI) / 180;
-    const DX1 = 4.2;
-    const DY1 = 31.1;
-    const DX2 = 30.85;
-    const DY2 = 6.15;
-    const NODE_R = 2.05;
+    const RO = 13.25;
+    const RI = 8.35;
+    const DX1 = 3.9;
+    const DY1 = 31.4;
+    const DX2 = 31.1;
+    const DY2 = 5.85;
+    const NODE_R = 1.95;
+
+    const G_TOP = "#E6F2FF";
+    const G_MID = "#B8D9FF";
+    const G_BOT = "#7BB5FF";
+    const LINE = "#99DFFF";
+    const LINE_DEEP = "#5BB8FF";
 
     function envelope(phase: number, peak: number, base: number, width = 0.12) {
       const d = Math.abs(phase - peak);
@@ -71,35 +73,59 @@ export function AnimatedFavicon() {
       ctx.fill();
     }
 
-    function drawG(fill: string) {
-      const ox1 = CX + RO * Math.cos(-GAP);
-      const oy1 = CY + RO * Math.sin(-GAP);
-      const ox2 = CX + RO * Math.cos(GAP);
-      const oy2 = CY + RO * Math.sin(GAP);
-      const ix1 = CX + RI * Math.cos(-GAP);
-      const iy1 = CY + RI * Math.sin(-GAP);
-      const ix2 = CX + RI * Math.cos(GAP);
-      const iy2 = CY + RI * Math.sin(GAP);
+    function drawG() {
+      const grd = ctx.createLinearGradient(tx(18), ty(5), tx(18), ty(31));
+      grd.addColorStop(0, G_TOP);
+      grd.addColorStop(0.5, G_MID);
+      grd.addColorStop(1, G_BOT);
+      ctx.fillStyle = grd;
 
-      ctx.fillStyle = fill;
+      // Ring (same arc winding as SVG)
+      const topO = { x: 28.2, y: 10.2 };
+      const botO = { x: 28.4, y: 23.2 };
+      const topI = { x: 22.7, y: 10.65 };
+      const botI = { x: 22.95, y: 21.6 };
+      const cx = tx(18);
+      const cy = ty(18.15);
+
       ctx.beginPath();
-      ctx.moveTo(tx(ox1), ty(oy1));
-      // Large arc through left: canvas CCW = true matches SVG sweep 0
-      ctx.arc(tx(CX), ty(CY), RO * S, Math.atan2(oy1 - CY, ox1 - CX), Math.atan2(oy2 - CY, ox2 - CX), true);
-      ctx.lineTo(tx(ix2), ty(iy2));
-      ctx.arc(tx(CX), ty(CY), RI * S, Math.atan2(iy2 - CY, ix2 - CX), Math.atan2(iy1 - CY, ix1 - CX), false);
+      ctx.moveTo(tx(topO.x), ty(topO.y));
+      ctx.arc(
+        cx,
+        cy,
+        RO * S,
+        Math.atan2(topO.y - 18.15, topO.x - 18),
+        Math.atan2(botO.y - 18.15, botO.x - 18),
+        true
+      );
+      ctx.lineTo(tx(botI.x), ty(botI.y));
+      ctx.arc(
+        cx,
+        cy,
+        RI * S,
+        Math.atan2(botI.y - 18.15, botI.x - 18),
+        Math.atan2(topI.y - 18.15, topI.x - 18),
+        false
+      );
       ctx.closePath();
       ctx.fill();
 
-      // Spur with diagonal cut
+      // Spur
       ctx.beginPath();
-      ctx.moveTo(tx(15.6), ty(15.55));
-      ctx.lineTo(tx(25.35), ty(15.55));
-      ctx.lineTo(tx(27.15), ty(18));
-      ctx.lineTo(tx(25.35), ty(20.45));
-      ctx.lineTo(tx(15.6), ty(20.45));
+      ctx.moveTo(tx(21.6), ty(15.75));
+      ctx.lineTo(tx(26.85), ty(15.75));
+      ctx.lineTo(tx(27.7), ty(18.35));
+      ctx.lineTo(tx(26.85), ty(20.95));
+      ctx.lineTo(tx(21.6), ty(20.95));
+      ctx.lineTo(tx(17.55), ty(18.35));
       ctx.closePath();
       ctx.fill();
+
+      // Pierce slot (cut through lower-left)
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-out";
+      fillTaper(8.55, 26.4, 13.4, 21.95, 0.92, 0.92, "#000");
+      ctx.restore();
     }
 
     function draw(now: number) {
@@ -115,27 +141,26 @@ export function AnimatedFavicon() {
       roundRect(ctx, 0, 0, 32, 32, 6);
       ctx.fill();
 
-      const lineOp = reduceMotion ? 0.95 : envelope(phase, 0.55, 0.4, 0.35);
-      const glowOp = reduceMotion ? 0.22 : envelope(phase, 0.55, 0.12, 0.35);
+      const lineOp = reduceMotion ? 0.98 : envelope(phase, 0.55, 0.4, 0.35);
+      const glowOp = reduceMotion ? 0.28 : envelope(phase, 0.55, 0.14, 0.35);
 
-      // Diagonal behind
-      fillTaper(DX1, DY1, DX2, DY2, 0.35, 1.55, `rgba(79,168,255,${glowOp})`);
-      fillTaper(DX1, DY1, DX2, DY2, 0.08, 0.72, `rgba(110,231,249,${lineOp})`);
+      fillTaper(DX1, DY1, DX2, DY2, 0.4, 1.65, `rgba(91,184,255,${glowOp})`);
+      fillTaper(DX1, DY1, DX2, DY2, 0.06, 0.68, `rgba(153,223,255,${lineOp})`);
 
-      // G occludes left stem
-      drawG("#F7FAFC");
+      drawG();
+      // Re-draw diagonal through pierce so the slot shows the signal line, not the tile bg
+      fillTaper(8.2, 26.7, 14.0, 21.4, 0.06, 0.5, `rgba(153,223,255,${lineOp})`);
+      fillTaper(8.2, 26.7, 14.0, 21.4, 0.25, 0.9, `rgba(91,184,255,${glowOp * 0.7})`);
 
-      // Front segment over spur
-      fillTaper(15.2, 20.35, DX2, DY2, 0.45, 0.72, `rgba(110,231,249,${lineOp})`);
+      fillTaper(14.8, 20.6, DX2, DY2, 0.42, 0.68, `rgba(153,223,255,${lineOp})`);
 
-      // Traveling packet
       if (!reduceMotion) {
         const u = Math.min(1, Math.max(0, (phase - 0.05) / 0.67));
         const px = tx(DX1 + (DX2 - DX1) * u);
         const py = ty(DY1 + (DY2 - DY1) * u);
         const grd = ctx.createRadialGradient(px, py, 0, px, py, 4);
-        grd.addColorStop(0, `rgba(110,231,249,${0.55 * (1 - Math.abs(u - 0.85))})`);
-        grd.addColorStop(1, "rgba(110,231,249,0)");
+        grd.addColorStop(0, `rgba(153,223,255,${0.55 * (1 - Math.abs(u - 0.85))})`);
+        grd.addColorStop(1, "rgba(153,223,255,0)");
         ctx.beginPath();
         ctx.arc(px, py, 4, 0, Math.PI * 2);
         ctx.fillStyle = grd;
@@ -145,20 +170,26 @@ export function AnimatedFavicon() {
       const nodePulse = reduceMotion ? 1 : envelope(phase, 0.72, 0.45, 0.14);
       const nx = tx(DX2);
       const ny = ty(DY2);
-      const nr = NODE_R * 1.12 * S;
+      const nr = NODE_R * 1.15 * S;
 
       const ngrd = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr * 2.6);
-      ngrd.addColorStop(0, `rgba(79,168,255,${nodePulse * 0.45})`);
-      ngrd.addColorStop(1, "rgba(79,168,255,0)");
+      ngrd.addColorStop(0, `rgba(91,184,255,${nodePulse * 0.5})`);
+      ngrd.addColorStop(1, "rgba(91,184,255,0)");
       ctx.beginPath();
       ctx.arc(nx, ny, nr * 2.6, 0, Math.PI * 2);
       ctx.fillStyle = ngrd;
       ctx.fill();
 
+      const ncore = ctx.createRadialGradient(nx - nr * 0.25, ny - nr * 0.3, 0, nx, ny, nr);
+      ncore.addColorStop(0, "#E8F7FF");
+      ncore.addColorStop(0.55, LINE);
+      ncore.addColorStop(1, LINE_DEEP);
       ctx.beginPath();
       ctx.arc(nx, ny, nr, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(110,231,249,${0.65 + 0.35 * nodePulse})`;
+      ctx.fillStyle = ncore;
+      ctx.globalAlpha = 0.65 + 0.35 * nodePulse;
       ctx.fill();
+      ctx.globalAlpha = 1;
 
       link.href = canvas.toDataURL("image/png");
     }

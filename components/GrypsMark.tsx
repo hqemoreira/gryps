@@ -1,4 +1,4 @@
-/** Orbital G brand mark — matches identity artwork: filled G, tapered diagonal, terminus node. */
+/** Orbital G — identity artwork: gradient typographic G, pierce-cut, tapered signal + node. */
 
 export type GrypsMarkVariant = "micro" | "core" | "display";
 
@@ -11,34 +11,24 @@ function resolveVariant(size: number, variant?: GrypsMarkVariant): GrypsMarkVari
   return "core";
 }
 
-/** Shared geometry in viewBox 0 0 36 36 — tuned to the Orbital G artwork. */
-const CX = 18;
-const CY = 18;
-const RO = 13.1;
-const RI = 8.15;
-const GAP = (42 * Math.PI) / 180;
+/** Artwork palette (dark presentation). Light theme via --mark-* from ThemeContext. */
+const ART = {
+  gTop: "#E6F2FF",
+  gMid: "#B8D9FF",
+  gBot: "#7BB5FF",
+  line: "#99DFFF",
+  lineDeep: "#5BB8FF",
+  nodeCore: "#E8F7FF",
+  printG: "#0B1220",
+  printLine: "#0B5FBF",
+} as const;
 
-const ox1 = CX + RO * Math.cos(-GAP);
-const oy1 = CY + RO * Math.sin(-GAP);
-const ox2 = CX + RO * Math.cos(GAP);
-const oy2 = CY + RO * Math.sin(GAP);
-const ix1 = CX + RI * Math.cos(-GAP);
-const iy1 = CY + RI * Math.sin(-GAP);
-const ix2 = CX + RI * Math.cos(GAP);
-const iy2 = CY + RI * Math.sin(GAP);
-
-/** Annular G body (gap on the right). Sweep 0 = long arc through the left. */
-const G_RING = `M${ox1.toFixed(2)} ${oy1.toFixed(2)} A${RO} ${RO} 0 1 0 ${ox2.toFixed(2)} ${oy2.toFixed(2)} L${ix2.toFixed(2)} ${iy2.toFixed(2)} A${RI} ${RI} 0 1 1 ${ix1.toFixed(2)} ${iy1.toFixed(2)} Z`;
-
-/** Crossbar with end cut parallel to the orbital diagonal. */
-const G_SPUR = "M15.6 15.55 L25.35 15.55 L27.15 18 L25.35 20.45 L15.6 20.45 Z";
-
-/** Diagonal: tip (BL) → node (TR). */
-const DX1 = 4.2;
-const DY1 = 31.1;
-const DX2 = 30.85;
-const DY2 = 6.15;
-const NODE_R = 2.05;
+/** Diagonal tip (BL) → node (TR). */
+const DX1 = 3.9;
+const DY1 = 31.4;
+const DX2 = 31.1;
+const DY2 = 5.85;
+const NODE_R = 1.95;
 
 function taperPolygon(
   x1: number,
@@ -53,17 +43,32 @@ function taperPolygon(
   const len = Math.hypot(dx, dy) || 1;
   const px = -dy / len;
   const py = dx / len;
-  const a = `${(x1 + px * w1).toFixed(2)} ${(y1 + py * w1).toFixed(2)}`;
-  const b = `${(x2 + px * w2).toFixed(2)} ${(y2 + py * w2).toFixed(2)}`;
-  const c = `${(x2 - px * w2).toFixed(2)} ${(y2 - py * w2).toFixed(2)}`;
-  const d = `${(x1 - px * w1).toFixed(2)} ${(y1 - py * w1).toFixed(2)}`;
-  return `${a} ${b} ${c} ${d}`;
+  return [
+    `${(x1 + px * w1).toFixed(2)} ${(y1 + py * w1).toFixed(2)}`,
+    `${(x2 + px * w2).toFixed(2)} ${(y2 + py * w2).toFixed(2)}`,
+    `${(x2 - px * w2).toFixed(2)} ${(y2 - py * w2).toFixed(2)}`,
+    `${(x1 - px * w1).toFixed(2)} ${(y1 - py * w1).toFixed(2)}`,
+  ].join(" ");
 }
 
-const DIAG_CORE = taperPolygon(DX1, DY1, DX2, DY2, 0.08, 0.72);
-const DIAG_GLOW = taperPolygon(DX1, DY1, DX2, DY2, 0.35, 1.55);
-/** Front segment sits over the spur (line passes in front of the G terminal). */
-const DIAG_FRONT = taperPolygon(15.2, 20.35, DX2, DY2, 0.45, 0.72);
+const DIAG_CORE = taperPolygon(DX1, DY1, DX2, DY2, 0.06, 0.68);
+const DIAG_GLOW = taperPolygon(DX1, DY1, DX2, DY2, 0.4, 1.65);
+const DIAG_FRONT = taperPolygon(14.8, 20.6, DX2, DY2, 0.42, 0.68);
+
+/**
+ * Annular G — opening on the right.
+ * Top terminals joined by a slight inward-sloping cut (artwork).
+ */
+const G_RING =
+  "M28.2 10.2 A13.25 13.25 0 1 0 28.4 23.2 L22.95 21.6 A8.35 8.35 0 1 1 22.7 10.65 Z";
+
+/**
+ * Inward spur with downward-faceted tip (classic G bar into the bowl).
+ */
+const G_SPUR = "M21.6 15.75 L26.85 15.75 L27.7 18.35 L26.85 20.95 L21.6 20.95 L17.55 18.35 Z";
+
+/** Pierce slot through lower-left stem — line passes through the letter. */
+const PIERCE_SLOT = taperPolygon(8.55, 26.4, 13.4, 21.95, 0.92, 0.92);
 
 function OrbitalGPaths({
   variant,
@@ -76,53 +81,69 @@ function OrbitalGPaths({
   animate: boolean;
   uid: string;
 }) {
-  const gFill = tone === "print" ? "#0B1220" : "currentColor";
-  const accent = tone === "print" ? "#0B5FBF" : "var(--accent-blue, #4FA8FF)";
-  const accentBright = tone === "print" ? "#0B5FBF" : "var(--accent-cyan, #6EE7F9)";
-  const nodeR = variant === "micro" ? NODE_R * 1.12 : NODE_R;
-  const glowOp = variant === "micro" ? 0.2 : 0.28;
+  const isPrint = tone === "print";
+  const gTop = isPrint ? ART.printG : `var(--mark-g-top, ${ART.gTop})`;
+  const gMid = isPrint ? ART.printG : `var(--mark-g-mid, ${ART.gMid})`;
+  const gBot = isPrint ? ART.printG : `var(--mark-g-bot, ${ART.gBot})`;
+  const line = isPrint ? ART.printLine : `var(--mark-line, ${ART.line})`;
+  const lineDeep = isPrint ? ART.printLine : `var(--mark-line-deep, ${ART.lineDeep})`;
+  const nodeCore = isPrint ? "#3B82F6" : `var(--mark-node-core, ${ART.nodeCore})`;
+  const nodeR = variant === "micro" ? NODE_R * 1.15 : NODE_R;
+  const glowOp = variant === "micro" ? 0.22 : 0.32;
 
   return (
     <>
       <defs>
-        <radialGradient id={`${uid}-node`} cx="35%" cy="35%" r="65%">
-          <stop offset="0%" stopColor={tone === "print" ? "#3B82F6" : "#E0F7FF"} />
-          <stop offset="55%" stopColor={accentBright} />
-          <stop offset="100%" stopColor={accent} />
+        <linearGradient id={`${uid}-g`} x1="18" y1="5" x2="18" y2="31" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor={gTop} />
+          <stop offset="50%" stopColor={gMid} />
+          <stop offset="100%" stopColor={gBot} />
+        </linearGradient>
+        <radialGradient id={`${uid}-node`} cx="35%" cy="30%" r="70%">
+          <stop offset="0%" stopColor={nodeCore} />
+          <stop offset="55%" stopColor={line} />
+          <stop offset="100%" stopColor={lineDeep} />
         </radialGradient>
+        <mask id={`${uid}-pierce`} maskUnits="userSpaceOnUse" x="0" y="0" width="36" height="36">
+          <rect width="36" height="36" fill="white" />
+          <polygon points={PIERCE_SLOT} fill="black" />
+        </mask>
       </defs>
 
-      {/* 1 — full diagonal behind (tip → node), soft glow + core */}
+      {variant !== "micro" && !isPrint && (
+        <circle cx="18" cy="18" r="16.2" fill={lineDeep} opacity="0.07" />
+      )}
+
       <polygon
         points={DIAG_GLOW}
-        fill={accent}
+        fill={lineDeep}
         opacity={glowOp}
         className={animate ? "gryps-signal-glow" : undefined}
       />
       <polygon
         points={DIAG_CORE}
-        fill={accentBright}
+        fill={line}
         className={animate ? "gryps-signal-line" : undefined}
-        opacity={animate ? undefined : 0.95}
+        opacity={animate ? undefined : 0.98}
       />
 
-      {/* 2 — G ring covers the left stem so the line reads as passing behind */}
-      <path d={G_RING} fill={gFill} fillRule="nonzero" />
-      <path d={G_SPUR} fill={gFill} />
+      <g mask={`url(#${uid}-pierce)`}>
+        <path d={G_RING} fill={isPrint ? ART.printG : `url(#${uid}-g)`} />
+        <path d={G_SPUR} fill={isPrint ? ART.printG : `url(#${uid}-g)`} />
+      </g>
 
-      {/* 3 — front diagonal over the spur + terminus node */}
       <polygon
         points={DIAG_FRONT}
-        fill={accentBright}
+        fill={line}
         className={animate ? "gryps-signal-line" : undefined}
-        opacity={animate ? undefined : 0.95}
+        opacity={animate ? undefined : 0.98}
       />
       <circle
         cx={DX2}
         cy={DY2}
-        r={nodeR * 2.1}
-        fill={accent}
-        opacity={glowOp + 0.08}
+        r={nodeR * 2.35}
+        fill={lineDeep}
+        opacity={glowOp}
         className={animate ? "gryps-signal-node-glow" : undefined}
       />
       <circle
@@ -136,20 +157,20 @@ function OrbitalGPaths({
       {animate && (
         <style>{`
           @keyframes gryps-signal-travel {
-            0% { opacity: 0.35; }
-            45% { opacity: 1; }
-            70% { opacity: 1; }
+            0% { opacity: 0.4; }
+            48% { opacity: 1; }
+            72% { opacity: 1; }
             100% { opacity: 0.55; }
           }
           @keyframes gryps-signal-node {
-            0%, 50% { opacity: 0.5; }
-            72% { opacity: 1; filter: drop-shadow(0 0 3.5px ${tone === "print" ? "#0B5FBF" : "#4FA8FF"}); }
-            100% { opacity: 0.7; }
+            0%, 48% { opacity: 0.55; }
+            72% { opacity: 1; filter: drop-shadow(0 0 4px ${isPrint ? ART.printLine : "#99DFFF"}); }
+            100% { opacity: 0.75; }
           }
           @keyframes gryps-signal-node-glow {
-            0%, 50% { opacity: 0.12; }
-            72% { opacity: 0.4; }
-            100% { opacity: 0.18; }
+            0%, 48% { opacity: 0.14; }
+            72% { opacity: 0.42; }
+            100% { opacity: 0.2; }
           }
           .gryps-signal-line,
           .gryps-signal-glow {
@@ -171,7 +192,7 @@ function OrbitalGPaths({
               filter: none !important;
             }
             .gryps-signal-glow { opacity: ${glowOp} !important; }
-            .gryps-signal-node-glow { opacity: ${glowOp + 0.08} !important; }
+            .gryps-signal-node-glow { opacity: ${glowOp} !important; }
           }
         `}</style>
       )}
@@ -179,7 +200,6 @@ function OrbitalGPaths({
   );
 }
 
-/** On-screen brand mark (nav / footer / CTA). */
 export function GrypsMark({
   size = 36,
   animate = false,
@@ -190,7 +210,6 @@ export function GrypsMark({
   variant?: GrypsMarkVariant;
 }) {
   const v = resolveVariant(size, variant);
-  // Deterministic id — avoid SSR/client counter drift; sizes differ per surface.
   const uid = `og-${v}-${Math.round(size)}-${animate ? "a" : "s"}`;
   return (
     <svg
@@ -201,14 +220,13 @@ export function GrypsMark({
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       className="gryps-mark"
-      style={{ color: "var(--text)", display: "block", flexShrink: 0 }}
+      style={{ display: "block", flexShrink: 0 }}
     >
       <OrbitalGPaths variant={v} tone="screen" animate={animate} uid={uid} />
     </svg>
   );
 }
 
-/** Print/PDF mark — darker fills so the logo stays visible on white paper. */
 function GrypsMarkPrint({ size = 28 }: { size?: number }) {
   return (
     <svg
@@ -225,10 +243,6 @@ function GrypsMarkPrint({ size = 28 }: { size?: number }) {
   );
 }
 
-/**
- * Company-document letterhead for Save as PDF / print.
- * Hidden on screen; in-flow top-left brand on the first printed page.
- */
 export function GrypsPrintBrand({ subtitle = "Connectivity Intelligence" }: { subtitle?: string }) {
   return (
     <div className="gryps-print-letterhead" aria-hidden="true">
@@ -241,27 +255,36 @@ export function GrypsPrintBrand({ subtitle = "Connectivity Intelligence" }: { su
   );
 }
 
-/** Static Orbital G for ImageResponse / OG (no CSS variables). */
-export function OrbitalGIconSvg({
-  size = 24,
-  gColor = "#F7FAFC",
-  accent = "#4FA8FF",
-  node = "#6EE7F9",
-}: {
-  size?: number;
-  gColor?: string;
-  accent?: string;
-  node?: string;
-}) {
+/** Static Orbital G for ImageResponse / OG — artwork colours. */
+export function OrbitalGIconSvg({ size = 24 }: { size?: number }) {
+  const uid = `og-icon-${Math.round(size)}`;
   return (
     <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-      <polygon points={DIAG_GLOW} fill={accent} opacity="0.25" />
-      <polygon points={DIAG_CORE} fill={node} />
-      <path d={G_RING} fill={gColor} />
-      <path d={G_SPUR} fill={gColor} />
-      <polygon points={DIAG_FRONT} fill={node} />
-      <circle cx={DX2} cy={DY2} r={NODE_R * 2} fill={accent} opacity="0.3" />
-      <circle cx={DX2} cy={DY2} r={NODE_R} fill={node} />
+      <defs>
+        <linearGradient id={`${uid}-g`} x1="18" y1="5" x2="18" y2="31" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor={ART.gTop} />
+          <stop offset="50%" stopColor={ART.gMid} />
+          <stop offset="100%" stopColor={ART.gBot} />
+        </linearGradient>
+        <radialGradient id={`${uid}-node`} cx="35%" cy="30%" r="70%">
+          <stop offset="0%" stopColor={ART.nodeCore} />
+          <stop offset="55%" stopColor={ART.line} />
+          <stop offset="100%" stopColor={ART.lineDeep} />
+        </radialGradient>
+        <mask id={`${uid}-pierce`} maskUnits="userSpaceOnUse" x="0" y="0" width="36" height="36">
+          <rect width="36" height="36" fill="white" />
+          <polygon points={PIERCE_SLOT} fill="black" />
+        </mask>
+      </defs>
+      <polygon points={DIAG_GLOW} fill={ART.lineDeep} opacity="0.3" />
+      <polygon points={DIAG_CORE} fill={ART.line} />
+      <g mask={`url(#${uid}-pierce)`}>
+        <path d={G_RING} fill={`url(#${uid}-g)`} />
+        <path d={G_SPUR} fill={`url(#${uid}-g)`} />
+      </g>
+      <polygon points={DIAG_FRONT} fill={ART.line} />
+      <circle cx={DX2} cy={DY2} r={NODE_R * 2.2} fill={ART.lineDeep} opacity="0.3" />
+      <circle cx={DX2} cy={DY2} r={NODE_R} fill={`url(#${uid}-node)`} />
     </svg>
   );
 }
