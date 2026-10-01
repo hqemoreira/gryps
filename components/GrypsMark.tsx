@@ -1,7 +1,7 @@
 /**
  * Orbital G — geometric G whose aperture opens toward a tapered signal line.
  * The line pierces the lower-left of the bowl, exits through the opening and
- * ends in a terminus node. Geometry lives in a 42×30 artboard.
+ * ends in a terminus node. Geometry lives in a 38×30 artboard.
  */
 
 export type GrypsMarkVariant = "micro" | "core" | "display";
@@ -15,18 +15,15 @@ function resolveVariant(size: number, variant?: GrypsMarkVariant): GrypsMarkVari
   return "core";
 }
 
-const ARTBOARD_W = 42;
+const ARTBOARD_W = 38;
 const ARTBOARD_H = 30;
 /** Square crop used by favicons / app icons. */
-export const SQUARE_VIEWBOX = { x: 3, y: -2, size: 34 } as const;
+export const SQUARE_VIEWBOX = { x: 5, y: -1, size: 32 } as const;
 
-const CX = 17;
-const CY = 15.5;
+const CX = 19.5;
+const CY = 15;
 const RO = 11;
-const RI = 7.5;
-const BAR_TOP = 15.3;
-const BAR_LEFT = 23.8;
-const BAR_TIP_X = 29.3;
+const RI = 8.3;
 
 const f = (n: number) => n.toFixed(2);
 
@@ -35,66 +32,129 @@ function polar(r: number, deg: number): [number, number] {
   return [CX + r * Math.cos(a), CY + r * Math.sin(a)];
 }
 
-const [outerTopX, outerTopY] = polar(RO, -33);
-const [innerTopX, innerTopY] = polar(RI, -43);
-const [outerLowX, outerLowY] = polar(RO, 12);
-const barJoinY = CY + Math.sqrt(RI * RI - (BAR_LEFT - CX) ** 2);
+const rel = (x: number, y: number): [number, number] => [CX + x, CY + y];
 
-/** Bowl with slanted top terminal and a crossbar that ends in a forward point. */
+const OUTER_TOP = polar(RO, -41.5);
+const INNER_TOP = polar(RI, -46);
+const BAR_TIP = polar(RO, -3);
+const BAR_TOP_IN = rel(6.3, -0.2);
+const BAR_TOP_LEFT = rel(4.8, 0.2);
+const BAR_BOTTOM = 1.85;
+const BAR_LOW_LEFT = rel(5.35, BAR_BOTTOM);
+const BAR_JOIN = rel(Math.sqrt(RI * RI - BAR_BOTTOM * BAR_BOTTOM), BAR_BOTTOM);
+const BAR_OUTER_LOW = polar(RO, (Math.asin(BAR_BOTTOM / RO) * 180) / Math.PI);
+
+const pt = ([x, y]: [number, number]) => `${f(x)} ${f(y)}`;
+
+/** Ring + crossbar: terminal cut parallel to the signal, bar bevelled toward the bowl. */
 export const G_PATH = [
-  `M${f(outerTopX)} ${f(outerTopY)}`,
-  `A${RO} ${RO} 0 1 0 ${f(outerLowX)} ${f(outerLowY)}`,
-  `L${BAR_TIP_X} ${BAR_TOP}`,
-  `L${BAR_LEFT} ${BAR_TOP}`,
-  `L${BAR_LEFT} ${f(barJoinY)}`,
-  `A${RI} ${RI} 0 1 1 ${f(innerTopX)} ${f(innerTopY)}`,
+  `M${pt(OUTER_TOP)}`,
+  `A${RO} ${RO} 0 1 0 ${pt(BAR_TIP)}`,
+  `L${pt(BAR_TOP_IN)}`,
+  `L${pt(BAR_TOP_LEFT)}`,
+  `L${pt(BAR_LOW_LEFT)}`,
+  `L${pt(BAR_JOIN)}`,
+  `A${RI} ${RI} 0 1 1 ${pt(INNER_TOP)}`,
   "Z",
 ].join(" ");
 
-/** Signal line: fine tip (lower-left) → terminus node (upper-right), ~29°. */
+/** Crossbar slab drawn over the ring in its own lighter gradient. */
+export const BAR_PATH = [
+  `M${pt(BAR_TIP)}`,
+  `L${pt(BAR_TOP_IN)}`,
+  `L${pt(BAR_TOP_LEFT)}`,
+  `L${pt(BAR_LOW_LEFT)}`,
+  `L${pt(BAR_OUTER_LOW)}`,
+  "Z",
+].join(" ");
+
+/** Ring shading: highlight at the upper-left, saturated blue in the lower bowl. */
+export const G_GRADIENT = { cx: CX - 4.5, cy: CY - 9.1, r: 20 } as const;
+export const BAR_GRADIENT = { x1: CX + 4.8, x2: CX + RO } as const;
+
+/** Signal line: fine tip (lower-left) → terminus node (upper-right), ~29.5°. */
 export const SIGNAL = (() => {
-  const x2 = 33.8;
-  const y2 = 6.5;
-  const x1 = 1.2;
-  const y1 = y2 + (x2 - x1) * 0.553;
+  const x2 = CX + 14.23;
+  const y2 = CY - 6.6;
+  const x1 = CX - 19;
+  const y1 = y2 + (x2 - x1) * 0.565;
   return { x1, y1, x2, y2 };
 })();
 
-export function taperPoints(w1: number, w2: number): [number, number][] {
+const SIGNAL_KNEE = 0.55;
+
+function signalFrame() {
   const { x1, y1, x2, y2 } = SIGNAL;
   const len = Math.hypot(x2 - x1, y2 - y1);
-  const px = -(y2 - y1) / len;
-  const py = (x2 - x1) / len;
+  return { x1, y1, dx: x2 - x1, dy: y2 - y1, px: -(y2 - y1) / len, py: (x2 - x1) / len };
+}
+
+/** Line silhouette: `tail` half-width at the tip, widening to `body` by the knee. */
+export function taperPoints(tail: number, body: number): [number, number][] {
+  const { x1, y1, dx, dy, px, py } = signalFrame();
+  const at = (t: number, w: number): [number, number] => [x1 + dx * t + px * w, y1 + dy * t + py * w];
   return [
-    [x1 + px * w1, y1 + py * w1],
-    [x2 + px * w2, y2 + py * w2],
-    [x2 - px * w2, y2 - py * w2],
-    [x1 - px * w1, y1 - py * w1],
+    at(0, tail),
+    at(SIGNAL_KNEE, body),
+    at(1, body),
+    at(1, -body),
+    at(SIGNAL_KNEE, -body),
+    at(0, -tail),
   ];
 }
 
-const toPoints = (pts: [number, number][]) => pts.map(([x, y]) => `${f(x)},${f(y)}`).join(" ");
-
-export function signalDims(variant: GrypsMarkVariant) {
-  if (variant === "micro") return { core: [0.06, 0.45], glow: [0.05, 1.2], node: 1.45 } as const;
-  if (variant === "display") return { core: [0.03, 0.3], glow: [0.04, 0.95], node: 1.15 } as const;
-  return { core: [0.04, 0.34], glow: [0.04, 1.0], node: 1.25 } as const;
+/** Full-length band offset `above` / `below` the signal axis. */
+export function stripPoints(above: number, below: number): [number, number][] {
+  const { x1, y1, dx, dy, px, py } = signalFrame();
+  return [
+    [x1 - px * above, y1 - py * above],
+    [x1 + dx - px * above, y1 + dy - py * above],
+    [x1 + dx + px * below, y1 + dy + py * below],
+    [x1 + px * below, y1 + py * below],
+  ];
 }
 
-/** Gap cut into the bowl where the line crosses it. */
-export const PIERCE_HALF_WIDTH = 0.95;
+/** Gap cut into the bowl where the line crosses it (wider on the lower side). */
+export const PIERCE = { above: 0.8, below: 1.15 } as const;
+
+export function signalDims(variant: GrypsMarkVariant) {
+  if (variant === "micro") return { core: [0.06, 0.48], glow: [0.1, 0.75], node: 1.5 } as const;
+  if (variant === "display") return { core: [0.02, 0.37], glow: [0.04, 0.6], node: 1.3 } as const;
+  return { core: [0.03, 0.4], glow: [0.05, 0.65], node: 1.35 } as const;
+}
+
+/** Resting position of the white flash along the line (0 = tip, 1 = node). */
+export const FLASH_REST = 0.69;
+export const FLASH_SPREAD = { before: 0.16, after: 0.12 } as const;
 
 export const MARK_PALETTE = {
-  gTop: "#F2F7FF",
-  gMid: "#CFE1FF",
-  gBot: "#8FB9F7",
-  line: "#3B8BFF",
-  lineHead: "#8FD3FF",
-  nodeCore: "#FFFFFF",
-  nodeMid: "#A8DCFF",
+  gTop: "#FFFFFF",
+  gHi: "#E4EEFA",
+  gMid: "#B3D1F8",
+  gBot: "#5A9FFD",
+  gRim: "#6CAAFD",
+  barL: "#D6E9FF",
+  barR: "#98C5FC",
+  line: "#4995ED",
+  lineMid: "#6FC2F7",
+  lineHead: "#9FE2FD",
+  flash: "#E6F7FF",
+  nodeCore: "#E0F6FC",
+  nodeMid: "#8FDCFD",
+  nodeEdge: "#74C0FB",
   print: "#0B1220",
   printLine: "#0B5FBF",
 } as const;
+
+const toPoints = (pts: [number, number][]) => pts.map(([x, y]) => `${f(x)},${f(y)}`).join(" ");
+
+const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
+
+/** Flash travels tip → node over the first 72% of the cycle, then rests off-line. */
+function flashOffsets(shift: number) {
+  const centres = [-0.2, 1.1, 1.1];
+  return centres.map((c) => f(clamp01(c + shift))).join(";");
+}
 
 function OrbitalG({
   variant,
@@ -109,91 +169,147 @@ function OrbitalG({
 }) {
   const p = MARK_PALETTE;
   const isPrint = tone === "print";
-  const gTop = isPrint ? p.print : `var(--mark-g-top, ${p.gTop})`;
-  const gMid = isPrint ? p.print : `var(--mark-g-mid, ${p.gMid})`;
-  const gBot = isPrint ? p.print : `var(--mark-g-bot, ${p.gBot})`;
-  const line = isPrint ? p.printLine : `var(--mark-line, ${p.line})`;
-  const lineHead = isPrint ? p.printLine : `var(--mark-line-head, ${p.lineHead})`;
-  const nodeCore = isPrint ? p.printLine : `var(--mark-node-core, ${p.nodeCore})`;
+  const v = (name: string, fallback: string) => (isPrint ? p.print : `var(--mark-${name}, ${fallback})`);
+  const lv = (name: string, fallback: string) => (isPrint ? p.printLine : `var(--mark-${name}, ${fallback})`);
+  const line = lv("line", p.line);
+  const lineMid = lv("line-mid", p.lineMid);
+  const lineHead = lv("line-head", p.lineHead);
+  const flash = lv("flash", p.flash);
   const dims = signalDims(variant);
   const { x1, y1, x2, y2 } = SIGNAL;
+  const gg = G_GRADIENT;
+  const bg = BAR_GRADIENT;
+  const fr = FLASH_REST;
+  const fs = FLASH_SPREAD;
 
   return (
     <>
       <defs>
-        <linearGradient id={`${uid}-g`} x1="8" y1="4" x2="26" y2="27" gradientUnits="userSpaceOnUse">
-          <stop offset="0" style={{ stopColor: gTop }} />
-          <stop offset="0.5" style={{ stopColor: gMid }} />
-          <stop offset="1" style={{ stopColor: gBot }} />
+        <radialGradient id={`${uid}-g`} cx={gg.cx} cy={gg.cy} r={gg.r} gradientUnits="userSpaceOnUse">
+          <stop offset="0" style={{ stopColor: v("g-top", p.gTop) }} />
+          <stop offset="0.3" style={{ stopColor: v("g-hi", p.gHi) }} />
+          <stop offset="0.45" style={{ stopColor: v("g-mid", p.gMid) }} />
+          <stop offset="0.65" style={{ stopColor: v("g-bot", p.gBot) }} />
+          <stop offset="1" style={{ stopColor: v("g-rim", p.gRim) }} />
+        </radialGradient>
+        <linearGradient id={`${uid}-b`} x1={bg.x1} y1="0" x2={bg.x2} y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" style={{ stopColor: v("bar-l", p.barL) }} />
+          <stop offset="1" style={{ stopColor: v("bar-r", p.barR) }} />
         </linearGradient>
         <linearGradient id={`${uid}-l`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
           <stop offset="0" style={{ stopColor: line, stopOpacity: 0 }} />
-          <stop offset="0.35" style={{ stopColor: line, stopOpacity: 0.95 }} />
-          <stop offset="1" style={{ stopColor: lineHead, stopOpacity: 1 }} />
+          <stop offset="0.1" style={{ stopColor: line, stopOpacity: 0.7 }} />
+          <stop offset="0.22" style={{ stopColor: line, stopOpacity: 1 }} />
+          <stop offset="0.5" style={{ stopColor: lineMid }} />
+          <stop offset="0.85" style={{ stopColor: lineMid }} />
+          <stop offset="1" style={{ stopColor: lineHead }} />
         </linearGradient>
         <linearGradient id={`${uid}-lg`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
           <stop offset="0" style={{ stopColor: line, stopOpacity: 0 }} />
-          <stop offset="0.55" style={{ stopColor: line, stopOpacity: 0.12 }} />
-          <stop offset="1" style={{ stopColor: lineHead, stopOpacity: 0.5 }} />
+          <stop offset="0.4" style={{ stopColor: line, stopOpacity: 0.08 }} />
+          <stop offset="0.69" style={{ stopColor: lineMid, stopOpacity: 0.75 }} />
+          <stop offset="0.86" style={{ stopColor: line, stopOpacity: 0.2 }} />
+          <stop offset="1" style={{ stopColor: lineHead, stopOpacity: 0.4 }} />
         </linearGradient>
-        <radialGradient id={`${uid}-n`} cx="0.4" cy="0.4" r="0.6">
-          <stop offset="0" style={{ stopColor: nodeCore }} />
-          <stop offset="0.5" style={{ stopColor: lineHead }} />
-          <stop offset="1" style={{ stopColor: line }} />
+        <linearGradient id={`${uid}-f`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
+          <stop offset={fr - fs.before} style={{ stopColor: flash, stopOpacity: 0 }} />
+          <stop offset={fr} style={{ stopColor: flash, stopOpacity: 0.95 }} />
+          <stop offset={fr + fs.after} style={{ stopColor: flash, stopOpacity: 0 }} />
+        </linearGradient>
+        {animate && (
+          <linearGradient id={`${uid}-fa`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
+            <stop offset="0" style={{ stopColor: flash, stopOpacity: 0 }}>
+              <FlashAnim shift={-fs.before} />
+            </stop>
+            <stop offset="0" style={{ stopColor: flash, stopOpacity: 0.95 }}>
+              <FlashAnim shift={0} />
+            </stop>
+            <stop offset="0" style={{ stopColor: flash, stopOpacity: 0 }}>
+              <FlashAnim shift={fs.after} />
+            </stop>
+          </linearGradient>
+        )}
+        <radialGradient id={`${uid}-n`} cx="0.42" cy="0.3" r="0.75">
+          <stop offset="0" style={{ stopColor: lv("node-core", p.nodeCore) }} />
+          <stop offset="0.5" style={{ stopColor: lv("node-mid", p.nodeMid) }} />
+          <stop offset="1" style={{ stopColor: lv("node-edge", p.nodeEdge) }} />
         </radialGradient>
         <radialGradient id={`${uid}-h`}>
-          <stop offset="0" style={{ stopColor: lineHead, stopOpacity: 0.6 }} />
-          <stop offset="0.45" style={{ stopColor: line, stopOpacity: 0.22 }} />
+          <stop offset="0" style={{ stopColor: lineHead, stopOpacity: 0.35 }} />
+          <stop offset="0.5" style={{ stopColor: line, stopOpacity: 0.1 }} />
           <stop offset="1" style={{ stopColor: line, stopOpacity: 0 }} />
         </radialGradient>
-        <mask id={`${uid}-m`} maskUnits="userSpaceOnUse" x="-4" y="-4" width="50" height="40">
-          <rect x="-4" y="-4" width="50" height="40" fill="white" />
-          <polygon points={toPoints(taperPoints(PIERCE_HALF_WIDTH, PIERCE_HALF_WIDTH))} fill="black" />
+        <filter id={`${uid}-bl`} x="-10%" y="-30%" width="120%" height="160%">
+          <feGaussianBlur stdDeviation="0.7" />
+        </filter>
+        <mask id={`${uid}-m`} maskUnits="userSpaceOnUse" x="-4" y="-4" width="46" height="40">
+          <rect x="-4" y="-4" width="46" height="40" fill="white" />
+          <polygon points={toPoints(stripPoints(PIERCE.above, PIERCE.below))} fill="black" />
         </mask>
       </defs>
 
       <path d={G_PATH} fill={`url(#${uid}-g)`} mask={`url(#${uid}-m)`} />
+      <path d={BAR_PATH} fill={`url(#${uid}-b)`} />
 
       {!isPrint && (
         <polygon
           points={toPoints(taperPoints(dims.glow[0], dims.glow[1]))}
           fill={`url(#${uid}-lg)`}
+          filter={`url(#${uid}-bl)`}
           className={animate ? "gryps-signal-glow" : undefined}
         />
       )}
-      <polygon
-        points={toPoints(taperPoints(dims.core[0], dims.core[1]))}
-        fill={`url(#${uid}-l)`}
-        className={animate ? "gryps-signal-line" : undefined}
-      />
+      <polygon points={toPoints(taperPoints(dims.core[0], dims.core[1]))} fill={`url(#${uid}-l)`} />
+      {!isPrint && (
+        <polygon
+          points={toPoints(taperPoints(dims.core[0], dims.core[1]))}
+          fill={`url(#${uid}-f)`}
+          className={animate ? "gryps-signal-flash-rest" : undefined}
+        />
+      )}
+      {animate && (
+        <polygon
+          points={toPoints(taperPoints(dims.core[0], dims.core[1]))}
+          fill={`url(#${uid}-fa)`}
+          className="gryps-signal-flash"
+        />
+      )}
 
       {!isPrint && (
-        <circle cx={x2} cy={y2} r={dims.node * 3.2} fill={`url(#${uid}-h)`} className={animate ? "gryps-signal-halo" : undefined} />
+        <circle cx={x2} cy={y2} r={dims.node * 1.9} fill={`url(#${uid}-h)`} className={animate ? "gryps-signal-halo" : undefined} />
       )}
       <circle cx={x2} cy={y2} r={dims.node} fill={`url(#${uid}-n)`} className={animate ? "gryps-signal-node" : undefined} />
 
       {animate && (
-        <circle r={dims.node * 0.62} fill="#E6F6FF" opacity="0" className="gryps-signal-packet">
-          <animateMotion path={`M${f(x1)} ${f(y1)} L${f(x2)} ${f(y2)}`} dur="2.4s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.72;1" calcMode="linear" />
-          <animate attributeName="opacity" values="0;0.95;0.95;0" keyTimes="0;0.2;0.68;0.74" dur="2.4s" repeatCount="indefinite" />
-        </circle>
-      )}
-
-      {animate && (
         <style>{`
-          @keyframes gryps-signal-line { 0% { opacity: 0.78; } 50%, 72% { opacity: 1; } 100% { opacity: 0.78; } }
-          @keyframes gryps-signal-node { 0%, 55% { opacity: 0.8; } 72% { opacity: 1; } 100% { opacity: 0.8; } }
-          @keyframes gryps-signal-halo { 0%, 55% { opacity: 0.55; } 74% { opacity: 1; } 100% { opacity: 0.55; } }
-          .gryps-signal-line, .gryps-signal-glow { animation: gryps-signal-line 2.4s ease-in-out infinite; }
+          @keyframes gryps-signal-glow { 0% { opacity: 0.8; } 50%, 72% { opacity: 1; } 100% { opacity: 0.8; } }
+          @keyframes gryps-signal-node { 0%, 60% { opacity: 0.85; } 74% { opacity: 1; } 100% { opacity: 0.85; } }
+          @keyframes gryps-signal-halo { 0%, 60% { opacity: 0.6; } 76% { opacity: 1; } 100% { opacity: 0.6; } }
+          .gryps-signal-glow { animation: gryps-signal-glow 2.4s ease-in-out infinite; }
           .gryps-signal-node { animation: gryps-signal-node 2.4s ease-in-out infinite; }
           .gryps-signal-halo { animation: gryps-signal-halo 2.4s ease-in-out infinite; }
+          .gryps-signal-flash-rest { display: none; }
           @media (prefers-reduced-motion: reduce) {
-            .gryps-signal-line, .gryps-signal-glow, .gryps-signal-node, .gryps-signal-halo { animation: none !important; }
-            .gryps-signal-packet { display: none; }
+            .gryps-signal-glow, .gryps-signal-node, .gryps-signal-halo { animation: none !important; }
+            .gryps-signal-flash { display: none; }
+            .gryps-signal-flash-rest { display: inline; }
           }
         `}</style>
       )}
     </>
+  );
+}
+
+function FlashAnim({ shift }: { shift: number }) {
+  return (
+    <animate
+      attributeName="offset"
+      values={flashOffsets(shift)}
+      keyTimes="0;0.72;1"
+      dur="2.4s"
+      repeatCount="indefinite"
+      calcMode="linear"
+    />
   );
 }
 
@@ -267,40 +383,63 @@ export function OrbitalGIconSvg({ size = 24, bg = "#070B12" }: { size?: number; 
   const { x1, y1, x2, y2 } = SIGNAL;
   const uid = `og-icon-${Math.round(size)}`;
   const vb = SQUARE_VIEWBOX;
+  const gg = G_GRADIENT;
+  const bgr = BAR_GRADIENT;
+  const fr = FLASH_REST;
+  const fs = FLASH_SPREAD;
+  const core = toPoints(taperPoints(dims.core[0], dims.core[1]));
   return (
     <svg width={size} height={size} viewBox={`${vb.x} ${vb.y} ${vb.size} ${vb.size}`} fill="none">
       <defs>
-        <linearGradient id={`${uid}-g`} x1="8" y1="4" x2="26" y2="27" gradientUnits="userSpaceOnUse">
+        <radialGradient id={`${uid}-g`} cx={gg.cx} cy={gg.cy} r={gg.r} gradientUnits="userSpaceOnUse">
           <stop offset="0" stopColor={p.gTop} />
-          <stop offset="0.5" stopColor={p.gMid} />
-          <stop offset="1" stopColor={p.gBot} />
+          <stop offset="0.3" stopColor={p.gHi} />
+          <stop offset="0.45" stopColor={p.gMid} />
+          <stop offset="0.65" stopColor={p.gBot} />
+          <stop offset="1" stopColor={p.gRim} />
+        </radialGradient>
+        <linearGradient id={`${uid}-b`} x1={bgr.x1} y1="0" x2={bgr.x2} y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor={p.barL} />
+          <stop offset="1" stopColor={p.barR} />
         </linearGradient>
         <linearGradient id={`${uid}-l`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
           <stop offset="0" stopColor={p.line} stopOpacity="0" />
-          <stop offset="0.35" stopColor={p.line} stopOpacity="0.95" />
+          <stop offset="0.1" stopColor={p.line} stopOpacity="0.7" />
+          <stop offset="0.22" stopColor={p.line} />
+          <stop offset="0.5" stopColor={p.lineMid} />
+          <stop offset="0.85" stopColor={p.lineMid} />
           <stop offset="1" stopColor={p.lineHead} />
         </linearGradient>
         <linearGradient id={`${uid}-lg`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
           <stop offset="0" stopColor={p.line} stopOpacity="0" />
-          <stop offset="0.55" stopColor={p.line} stopOpacity="0.12" />
-          <stop offset="1" stopColor={p.lineHead} stopOpacity="0.5" />
+          <stop offset="0.4" stopColor={p.line} stopOpacity="0.06" />
+          <stop offset="0.69" stopColor={p.lineMid} stopOpacity="0.4" />
+          <stop offset="0.86" stopColor={p.line} stopOpacity="0.12" />
+          <stop offset="1" stopColor={p.lineHead} stopOpacity="0.25" />
         </linearGradient>
-        <radialGradient id={`${uid}-n`} cx="0.4" cy="0.4" r="0.6">
+        <linearGradient id={`${uid}-f`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
+          <stop offset={fr - fs.before} stopColor={p.flash} stopOpacity="0" />
+          <stop offset={fr} stopColor={p.flash} stopOpacity="0.95" />
+          <stop offset={fr + fs.after} stopColor={p.flash} stopOpacity="0" />
+        </linearGradient>
+        <radialGradient id={`${uid}-n`} cx="0.42" cy="0.3" r="0.75">
           <stop offset="0" stopColor={p.nodeCore} />
-          <stop offset="0.5" stopColor={p.lineHead} />
-          <stop offset="1" stopColor={p.line} />
+          <stop offset="0.5" stopColor={p.nodeMid} />
+          <stop offset="1" stopColor={p.nodeEdge} />
         </radialGradient>
         <radialGradient id={`${uid}-h`}>
-          <stop offset="0" stopColor={p.lineHead} stopOpacity="0.6" />
-          <stop offset="0.45" stopColor={p.line} stopOpacity="0.22" />
+          <stop offset="0" stopColor={p.lineHead} stopOpacity="0.35" />
+          <stop offset="0.5" stopColor={p.line} stopOpacity="0.1" />
           <stop offset="1" stopColor={p.line} stopOpacity="0" />
         </radialGradient>
       </defs>
       <path d={G_PATH} fill={`url(#${uid}-g)`} />
-      <polygon points={toPoints(taperPoints(PIERCE_HALF_WIDTH, PIERCE_HALF_WIDTH))} fill={bg} />
+      <polygon points={toPoints(stripPoints(PIERCE.above, PIERCE.below))} fill={bg} />
+      <path d={BAR_PATH} fill={`url(#${uid}-b)`} />
       <polygon points={toPoints(taperPoints(dims.glow[0], dims.glow[1]))} fill={`url(#${uid}-lg)`} />
-      <polygon points={toPoints(taperPoints(dims.core[0], dims.core[1]))} fill={`url(#${uid}-l)`} />
-      <circle cx={x2} cy={y2} r={dims.node * 3.2} fill={`url(#${uid}-h)`} />
+      <polygon points={core} fill={`url(#${uid}-l)`} />
+      <polygon points={core} fill={`url(#${uid}-f)`} />
+      <circle cx={x2} cy={y2} r={dims.node * 1.9} fill={`url(#${uid}-h)`} />
       <circle cx={x2} cy={y2} r={dims.node} fill={`url(#${uid}-n)`} />
     </svg>
   );

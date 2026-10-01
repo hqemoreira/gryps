@@ -1,16 +1,22 @@
 "use client";
 import { useEffect } from "react";
 import {
+  BAR_GRADIENT,
+  BAR_PATH,
+  FLASH_REST,
+  FLASH_SPREAD,
+  G_GRADIENT,
   G_PATH,
   MARK_PALETTE,
-  PIERCE_HALF_WIDTH,
+  PIERCE,
   SIGNAL,
   SQUARE_VIEWBOX,
   signalDims,
+  stripPoints,
   taperPoints,
 } from "@/components/GrypsMark";
 
-/** Animated favicon — Orbital G with a signal packet travelling to the node. */
+/** Animated favicon — Orbital G with a light flash travelling to the node. */
 export function AnimatedFavicon() {
   useEffect(() => {
     const canvas = document.createElement("canvas");
@@ -37,11 +43,13 @@ export function AnimatedFavicon() {
     const dims = signalDims("micro");
     const { x1, y1, x2, y2 } = SIGNAL;
     const gPath = new Path2D(G_PATH);
+    const barPath = new Path2D(BAR_PATH);
+    const core = taperPoints(dims.core[0], dims.core[1]);
 
-    // Map the square crop of the artboard into a 24px box inset 4px in the tile.
-    const scale = 24 / SQUARE_VIEWBOX.size;
-    const offX = 4 - SQUARE_VIEWBOX.x * scale;
-    const offY = 4 - SQUARE_VIEWBOX.y * scale;
+    // Map the square crop of the artboard into a 26px box inset 3px in the tile.
+    const scale = 26 / SQUARE_VIEWBOX.size;
+    const offX = 3 - SQUARE_VIEWBOX.x * scale;
+    const offY = 3 - SQUARE_VIEWBOX.y * scale;
 
     function polygon(pts: [number, number][], fill: string | CanvasGradient) {
       ctx.beginPath();
@@ -64,14 +72,17 @@ export function AnimatedFavicon() {
       return base + (1 - base) * x;
     }
 
+    const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
+
     function draw(now: number) {
       raf = requestAnimationFrame(draw);
       if (now - lastUpdate < UPDATE_INTERVAL) return;
       lastUpdate = now;
 
-      const phase = reduceMotion ? 0.72 : (((now - start) / 1000) % CYCLE) / CYCLE;
+      const phase = reduceMotion ? 0.6 : (((now - start) / 1000) % CYCLE) / CYCLE;
 
       ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.globalAlpha = 1;
       ctx.clearRect(0, 0, 32, 32);
       ctx.fillStyle = BG;
       roundRect(ctx, 0, 0, 32, 32, 6);
@@ -79,52 +90,68 @@ export function AnimatedFavicon() {
 
       ctx.setTransform(scale, 0, 0, scale, offX, offY);
 
-      const gGrad = ctx.createLinearGradient(8, 4, 26, 27);
+      const gg = G_GRADIENT;
+      const gGrad = ctx.createRadialGradient(gg.cx, gg.cy, 0, gg.cx, gg.cy, gg.r);
       gGrad.addColorStop(0, P.gTop);
-      gGrad.addColorStop(0.5, P.gMid);
-      gGrad.addColorStop(1, P.gBot);
+      gGrad.addColorStop(0.3, P.gHi);
+      gGrad.addColorStop(0.45, P.gMid);
+      gGrad.addColorStop(0.65, P.gBot);
+      gGrad.addColorStop(1, P.gRim);
       ctx.fillStyle = gGrad;
       ctx.fill(gPath);
 
       // Pierce gap painted in tile colour — the line then sits inside it.
-      polygon(taperPoints(PIERCE_HALF_WIDTH, PIERCE_HALF_WIDTH), BG);
+      polygon(stripPoints(PIERCE.above, PIERCE.below), BG);
 
-      const lineOp = reduceMotion ? 1 : envelope(phase, 0.6, 0.78, 0.4);
+      const bGrad = ctx.createLinearGradient(BAR_GRADIENT.x1, 0, BAR_GRADIENT.x2, 0);
+      bGrad.addColorStop(0, P.barL);
+      bGrad.addColorStop(1, P.barR);
+      ctx.fillStyle = bGrad;
+      ctx.fill(barPath);
+
+      ctx.globalAlpha = reduceMotion ? 1 : envelope(phase, 0.6, 0.8, 0.4);
       const glowGrad = ctx.createLinearGradient(x1, y1, x2, y2);
-      glowGrad.addColorStop(0, "rgba(59,139,255,0)");
-      glowGrad.addColorStop(0.55, "rgba(59,139,255,0.12)");
-      glowGrad.addColorStop(1, "rgba(143,211,255,0.5)");
-      ctx.globalAlpha = lineOp;
+      glowGrad.addColorStop(0, "rgba(73,149,237,0)");
+      glowGrad.addColorStop(0.4, "rgba(73,149,237,0.06)");
+      glowGrad.addColorStop(0.69, "rgba(111,194,247,0.4)");
+      glowGrad.addColorStop(0.86, "rgba(73,149,237,0.12)");
+      glowGrad.addColorStop(1, "rgba(159,226,253,0.25)");
       polygon(taperPoints(dims.glow[0], dims.glow[1]), glowGrad);
 
+      ctx.globalAlpha = 1;
       const lGrad = ctx.createLinearGradient(x1, y1, x2, y2);
-      lGrad.addColorStop(0, "rgba(59,139,255,0)");
-      lGrad.addColorStop(0.35, P.line);
+      lGrad.addColorStop(0, "rgba(73,149,237,0)");
+      lGrad.addColorStop(0.1, "rgba(73,149,237,0.7)");
+      lGrad.addColorStop(0.22, P.line);
+      lGrad.addColorStop(0.5, P.lineMid);
+      lGrad.addColorStop(0.85, P.lineMid);
       lGrad.addColorStop(1, P.lineHead);
-      ctx.globalAlpha = lineOp;
-      polygon(taperPoints(dims.core[0], dims.core[1]), lGrad);
+      polygon(core, lGrad);
 
-      if (!reduceMotion && phase < 0.72) {
-        const u = phase / 0.72;
-        ctx.globalAlpha = Math.min(1, u * 5) * 0.95;
-        circle(x1 + (x2 - x1) * u, y1 + (y2 - y1) * u, dims.node * 0.62, "#E6F6FF");
+      const centre = reduceMotion ? FLASH_REST : phase < 0.72 ? -0.2 + (1.3 * phase) / 0.72 : 1.1;
+      if (centre < 1.1) {
+        const fGrad = ctx.createLinearGradient(x1, y1, x2, y2);
+        fGrad.addColorStop(clamp01(centre - FLASH_SPREAD.before), "rgba(230,247,255,0)");
+        fGrad.addColorStop(clamp01(centre), "rgba(230,247,255,0.95)");
+        fGrad.addColorStop(clamp01(centre + FLASH_SPREAD.after), "rgba(230,247,255,0)");
+        polygon(core, fGrad);
       }
 
-      const halo = reduceMotion ? 1 : envelope(phase, 0.74, 0.55, 0.18);
-      const hR = dims.node * 3.2;
+      ctx.globalAlpha = reduceMotion ? 1 : envelope(phase, 0.76, 0.6, 0.18);
+      const hR = dims.node * 1.9;
       const hGrad = ctx.createRadialGradient(x2, y2, 0, x2, y2, hR);
-      hGrad.addColorStop(0, "rgba(143,211,255,0.6)");
-      hGrad.addColorStop(0.45, "rgba(59,139,255,0.22)");
-      hGrad.addColorStop(1, "rgba(59,139,255,0)");
-      ctx.globalAlpha = halo;
+      hGrad.addColorStop(0, "rgba(159,226,253,0.35)");
+      hGrad.addColorStop(0.5, "rgba(73,149,237,0.1)");
+      hGrad.addColorStop(1, "rgba(73,149,237,0)");
       circle(x2, y2, hR, hGrad);
 
-      const nGrad = ctx.createRadialGradient(x2 - 0.3, y2 - 0.3, 0, x2, y2, dims.node);
-      nGrad.addColorStop(0, P.nodeCore);
-      nGrad.addColorStop(0.5, P.lineHead);
-      nGrad.addColorStop(1, P.line);
       ctx.globalAlpha = 1;
-      circle(x2, y2, dims.node, nGrad);
+      const r = dims.node;
+      const nGrad = ctx.createRadialGradient(x2 - 0.16 * r, y2 - 0.4 * r, 0, x2, y2, r * 1.2);
+      nGrad.addColorStop(0, P.nodeCore);
+      nGrad.addColorStop(0.5, P.nodeMid);
+      nGrad.addColorStop(1, P.nodeEdge);
+      circle(x2, y2, r, nGrad);
 
       link.href = canvas.toDataURL("image/png");
     }
