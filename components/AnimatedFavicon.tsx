@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 
-/** Animated favicon — Micro Orbital G with diagonal signal-travel. */
+/** Animated favicon — Micro Orbital G with diagonal signal-travel (matches GrypsMark artwork). */
 export function AnimatedFavicon() {
   useEffect(() => {
     const canvas = document.createElement("canvas");
@@ -23,18 +23,83 @@ export function AnimatedFavicon() {
     link.type = "image/png";
     document.head.appendChild(link);
 
-    // Scale from viewBox 36 → canvas inset (pad 4 → draw in 24×24 at origin 4,4)
     const S = 24 / 36;
     const OX = 4;
     const OY = 4;
     const tx = (x: number) => OX + x * S;
     const ty = (y: number) => OY + y * S;
 
+    const CX = 18;
+    const CY = 18;
+    const RO = 13.1;
+    const RI = 8.15;
+    const GAP = (42 * Math.PI) / 180;
+    const DX1 = 4.2;
+    const DY1 = 31.1;
+    const DX2 = 30.85;
+    const DY2 = 6.15;
+    const NODE_R = 2.05;
+
     function envelope(phase: number, peak: number, base: number, width = 0.12) {
       const d = Math.abs(phase - peak);
       const wrapped = Math.min(d, 1 - d);
       const x = Math.max(0, 1 - wrapped / width);
       return base + (1 - base) * x;
+    }
+
+    function fillTaper(
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number,
+      w1: number,
+      w2: number,
+      color: string
+    ) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const len = Math.hypot(dx, dy) || 1;
+      const px = -dy / len;
+      const py = dx / len;
+      ctx.beginPath();
+      ctx.moveTo(tx(x1 + px * w1), ty(y1 + py * w1));
+      ctx.lineTo(tx(x2 + px * w2), ty(y2 + py * w2));
+      ctx.lineTo(tx(x2 - px * w2), ty(y2 - py * w2));
+      ctx.lineTo(tx(x1 - px * w1), ty(y1 - py * w1));
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    function drawG(fill: string) {
+      const ox1 = CX + RO * Math.cos(-GAP);
+      const oy1 = CY + RO * Math.sin(-GAP);
+      const ox2 = CX + RO * Math.cos(GAP);
+      const oy2 = CY + RO * Math.sin(GAP);
+      const ix1 = CX + RI * Math.cos(-GAP);
+      const iy1 = CY + RI * Math.sin(-GAP);
+      const ix2 = CX + RI * Math.cos(GAP);
+      const iy2 = CY + RI * Math.sin(GAP);
+
+      ctx.fillStyle = fill;
+      ctx.beginPath();
+      ctx.moveTo(tx(ox1), ty(oy1));
+      // Large arc through left: canvas CCW = true matches SVG sweep 0
+      ctx.arc(tx(CX), ty(CY), RO * S, Math.atan2(oy1 - CY, ox1 - CX), Math.atan2(oy2 - CY, ox2 - CX), true);
+      ctx.lineTo(tx(ix2), ty(iy2));
+      ctx.arc(tx(CX), ty(CY), RI * S, Math.atan2(iy2 - CY, ix2 - CX), Math.atan2(iy1 - CY, ix1 - CX), false);
+      ctx.closePath();
+      ctx.fill();
+
+      // Spur with diagonal cut
+      ctx.beginPath();
+      ctx.moveTo(tx(15.6), ty(15.55));
+      ctx.lineTo(tx(25.35), ty(15.55));
+      ctx.lineTo(tx(27.15), ty(18));
+      ctx.lineTo(tx(25.35), ty(20.45));
+      ctx.lineTo(tx(15.6), ty(20.45));
+      ctx.closePath();
+      ctx.fill();
     }
 
     function draw(now: number) {
@@ -46,47 +111,28 @@ export function AnimatedFavicon() {
       const phase = reduceMotion ? 0.72 : (t % CYCLE) / CYCLE;
 
       ctx.clearRect(0, 0, 32, 32);
-
       ctx.fillStyle = "#070B12";
       roundRect(ctx, 0, 0, 32, 32, 6);
       ctx.fill();
 
-      // G ring
-      ctx.strokeStyle = "#F7FAFC";
-      ctx.lineWidth = 5.5 * S;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      // M25.2 9.6 A11.2 11.2 0 1 0 25.2 26.4  → center 18,18 r 11.2
-      const cx = tx(18);
-      const cy = ty(18);
-      const r = 11.2 * S;
-      const startAng = Math.atan2(9.6 - 18, 25.2 - 18);
-      const endAng = Math.atan2(26.4 - 18, 25.2 - 18);
-      // A ... 0 1 0 → large arc, counterclockwise in SVG (sweep=0)
-      ctx.arc(cx, cy, r, startAng, endAng, true);
-      ctx.stroke();
+      const lineOp = reduceMotion ? 0.95 : envelope(phase, 0.55, 0.4, 0.35);
+      const glowOp = reduceMotion ? 0.22 : envelope(phase, 0.55, 0.12, 0.35);
 
-      // G spur
-      ctx.beginPath();
-      ctx.moveTo(tx(17.2), ty(18));
-      ctx.lineTo(tx(26.4), ty(18));
-      ctx.lineWidth = 5.1 * S;
-      ctx.stroke();
+      // Diagonal behind
+      fillTaper(DX1, DY1, DX2, DY2, 0.35, 1.55, `rgba(79,168,255,${glowOp})`);
+      fillTaper(DX1, DY1, DX2, DY2, 0.08, 0.72, `rgba(110,231,249,${lineOp})`);
 
-      // Diagonal signal — dash travel via opacity envelope along the path
-      const lineOpacity = reduceMotion ? 0.95 : envelope(phase, 0.55, 0.35, 0.35);
-      ctx.strokeStyle = `rgba(79,168,255,${lineOpacity})`;
-      ctx.lineWidth = 1.85 * S;
-      ctx.beginPath();
-      ctx.moveTo(tx(7.5), ty(28.5));
-      ctx.lineTo(tx(28.2), ty(7.8));
-      ctx.stroke();
+      // G occludes left stem
+      drawG("#F7FAFC");
 
-      // Traveling packet glow along diagonal
+      // Front segment over spur
+      fillTaper(15.2, 20.35, DX2, DY2, 0.45, 0.72, `rgba(110,231,249,${lineOp})`);
+
+      // Traveling packet
       if (!reduceMotion) {
         const u = Math.min(1, Math.max(0, (phase - 0.05) / 0.67));
-        const px = tx(7.5 + (28.2 - 7.5) * u);
-        const py = ty(28.5 + (7.8 - 28.5) * u);
+        const px = tx(DX1 + (DX2 - DX1) * u);
+        const py = ty(DY1 + (DY2 - DY1) * u);
         const grd = ctx.createRadialGradient(px, py, 0, px, py, 4);
         grd.addColorStop(0, `rgba(110,231,249,${0.55 * (1 - Math.abs(u - 0.85))})`);
         grd.addColorStop(1, "rgba(110,231,249,0)");
@@ -96,16 +142,16 @@ export function AnimatedFavicon() {
         ctx.fill();
       }
 
-      // Node peak when signal arrives (~72% of cycle)
       const nodePulse = reduceMotion ? 1 : envelope(phase, 0.72, 0.45, 0.14);
-      const nx = tx(28.2);
-      const ny = ty(7.8);
-      const nr = 2.35 * S;
-      const ngrd = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr * 2.5);
-      ngrd.addColorStop(0, `rgba(110,231,249,${nodePulse * 0.55})`);
-      ngrd.addColorStop(1, "rgba(110,231,249,0)");
+      const nx = tx(DX2);
+      const ny = ty(DY2);
+      const nr = NODE_R * 1.12 * S;
+
+      const ngrd = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr * 2.6);
+      ngrd.addColorStop(0, `rgba(79,168,255,${nodePulse * 0.45})`);
+      ngrd.addColorStop(1, "rgba(79,168,255,0)");
       ctx.beginPath();
-      ctx.arc(nx, ny, nr * 2.5, 0, Math.PI * 2);
+      ctx.arc(nx, ny, nr * 2.6, 0, Math.PI * 2);
       ctx.fillStyle = ngrd;
       ctx.fill();
 

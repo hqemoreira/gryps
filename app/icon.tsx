@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { OrbitalGIconSvg } from "@/components/GrypsMark";
 
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
@@ -17,34 +18,7 @@ export default function Icon() {
         justifyContent: "center",
       }}
     >
-      <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
-        <path
-          d="M25.2 9.6 A11.2 11.2 0 1 0 25.2 26.4"
-          stroke="#F7FAFC"
-          strokeWidth="5.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <line
-          x1="17.2"
-          y1="18"
-          x2="26.4"
-          y2="18"
-          stroke="#F7FAFC"
-          strokeWidth="5.1"
-          strokeLinecap="round"
-        />
-        <line
-          x1="7.5"
-          y1="28.5"
-          x2="28.2"
-          y2="7.8"
-          stroke="#4FA8FF"
-          strokeWidth="1.85"
-          strokeLinecap="round"
-        />
-        <circle cx="28.2" cy="7.8" r="2.35" fill="#6EE7F9" />
-      </svg>
+      <OrbitalGIconSvg size={24} />
     </div>,
     { ...size }
   );
