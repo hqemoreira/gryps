@@ -28,19 +28,18 @@ export function AnimatedFavicon() {
     const tx = (x: number) => OX + x * S;
     const ty = (y: number) => OY + y * S;
 
-    const RO = 13.25;
-    const RI = 8.35;
     const DX1 = 3.9;
     const DY1 = 31.4;
     const DX2 = 31.1;
     const DY2 = 5.85;
-    const NODE_R = 1.95;
+    const NODE_R = 2.05;
 
-    const G_TOP = "#E6F2FF";
-    const G_MID = "#B8D9FF";
-    const G_BOT = "#7BB5FF";
-    const LINE = "#99DFFF";
-    const LINE_DEEP = "#5BB8FF";
+    const G_TOP = "#C5DFFF";
+    const G_MID = "#A8D0FF";
+    const G_BOT = "#8BB8F0";
+    const LINE = "#70CFFF";
+    const LINE_DEEP = "#4FB8FF";
+    const G_OPACITY = 0.82;
 
     function envelope(phase: number, peak: number, base: number, width = 0.12) {
       const d = Math.abs(phase - peak);
@@ -76,17 +75,24 @@ export function AnimatedFavicon() {
     function drawG() {
       const grd = ctx.createLinearGradient(tx(18), ty(5), tx(18), ty(31));
       grd.addColorStop(0, G_TOP);
-      grd.addColorStop(0.5, G_MID);
+      grd.addColorStop(0.45, G_MID);
       grd.addColorStop(1, G_BOT);
+      ctx.globalAlpha = G_OPACITY;
       ctx.fillStyle = grd;
 
-      // Ring (same arc winding as SVG)
-      const topO = { x: 28.2, y: 10.2 };
-      const botO = { x: 28.4, y: 23.2 };
-      const topI = { x: 22.7, y: 10.65 };
-      const botI = { x: 22.95, y: 21.6 };
+      // Soft glow under G
+      ctx.save();
+      ctx.shadowColor = "rgba(168,208,255,0.45)";
+      ctx.shadowBlur = 3;
+
+      const topO = { x: 28.15, y: 10.35 };
+      const botO = { x: 28.35, y: 23.05 };
+      const topI = { x: 22.85, y: 10.85 };
+      const botI = { x: 23.05, y: 21.45 };
       const cx = tx(18);
       const cy = ty(18.15);
+      const RO = 13.1;
+      const RI = 8.5;
 
       ctx.beginPath();
       ctx.moveTo(tx(topO.x), ty(topO.y));
@@ -110,21 +116,21 @@ export function AnimatedFavicon() {
       ctx.closePath();
       ctx.fill();
 
-      // Spur
       ctx.beginPath();
-      ctx.moveTo(tx(21.6), ty(15.75));
-      ctx.lineTo(tx(26.85), ty(15.75));
-      ctx.lineTo(tx(27.7), ty(18.35));
-      ctx.lineTo(tx(26.85), ty(20.95));
-      ctx.lineTo(tx(21.6), ty(20.95));
-      ctx.lineTo(tx(17.55), ty(18.35));
+      ctx.moveTo(tx(21.7), ty(15.9));
+      ctx.lineTo(tx(26.7), ty(15.9));
+      ctx.lineTo(tx(27.45), ty(18.3));
+      ctx.lineTo(tx(26.7), ty(20.7));
+      ctx.lineTo(tx(21.7), ty(20.7));
+      ctx.lineTo(tx(18.0), ty(18.3));
       ctx.closePath();
       ctx.fill();
+      ctx.restore();
 
-      // Pierce slot (cut through lower-left)
+      ctx.globalAlpha = 1;
       ctx.save();
       ctx.globalCompositeOperation = "destination-out";
-      fillTaper(8.55, 26.4, 13.4, 21.95, 0.92, 0.92, "#000");
+      fillTaper(8.6, 26.35, 13.35, 21.95, 0.85, 0.85, "#000");
       ctx.restore();
     }
 
@@ -144,15 +150,15 @@ export function AnimatedFavicon() {
       const lineOp = reduceMotion ? 0.98 : envelope(phase, 0.55, 0.4, 0.35);
       const glowOp = reduceMotion ? 0.28 : envelope(phase, 0.55, 0.14, 0.35);
 
-      fillTaper(DX1, DY1, DX2, DY2, 0.4, 1.65, `rgba(91,184,255,${glowOp})`);
-      fillTaper(DX1, DY1, DX2, DY2, 0.06, 0.68, `rgba(153,223,255,${lineOp})`);
+      fillTaper(DX1, DY1, DX2, DY2, 0.45, 1.85, `rgba(79,184,255,${glowOp})`);
+      fillTaper(DX1, DY1, DX2, DY2, 0.05, 0.62, `rgba(112,207,255,${lineOp})`);
 
       drawG();
       // Re-draw diagonal through pierce so the slot shows the signal line, not the tile bg
-      fillTaper(8.2, 26.7, 14.0, 21.4, 0.06, 0.5, `rgba(153,223,255,${lineOp})`);
-      fillTaper(8.2, 26.7, 14.0, 21.4, 0.25, 0.9, `rgba(91,184,255,${glowOp * 0.7})`);
+      fillTaper(8.2, 26.7, 14.0, 21.4, 0.05, 0.45, `rgba(112,207,255,${lineOp})`);
+      fillTaper(8.2, 26.7, 14.0, 21.4, 0.25, 0.9, `rgba(79,184,255,${glowOp * 0.7})`);
 
-      fillTaper(14.8, 20.6, DX2, DY2, 0.42, 0.68, `rgba(153,223,255,${lineOp})`);
+      fillTaper(14.8, 20.6, DX2, DY2, 0.38, 0.62, `rgba(112,207,255,${lineOp})`);
 
       if (!reduceMotion) {
         const u = Math.min(1, Math.max(0, (phase - 0.05) / 0.67));
