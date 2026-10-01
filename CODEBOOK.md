@@ -318,20 +318,26 @@ Terms §04 and Privacy §05 — see Legal coupling above.
 
 ---
 
+## Brand mark — Orbital G (GrypsMark.tsx)
+
+Canonical mark: thick incomplete **G** + signature **diagonal** + terminus **node**. Variants: Micro (≤24px), Core (default), Display (≥40px). Screen uses `currentColor` for the G (follows `--text`) and `--accent-blue` / `--accent-cyan` for the diagonal + node (light-theme secondary). Print uses darker fixed strokes.
+
+Optional `animate`: ~2.4s **signal-travel** along the diagonal (glow → node peak). Replaces the old LEO→MEO→GEO broadcast. Honors `prefers-reduced-motion`.
+
 ## Animated canvas favicon (AnimatedFavicon.tsx)
 
-Runs a `requestAnimationFrame` loop on an offscreen `<canvas>`. On each frame, draws 3 orbital arcs with independent pulse rhythms, a scanning dot on the LEO arc, and an origin glow. Writes the result to `link[rel='icon']` via `canvas.toDataURL()`.
+Runs a `requestAnimationFrame` loop on an offscreen `<canvas>`. Draws Micro Orbital G with diagonal signal-travel (~2.4s) and node peak. Writes to `link[rel='icon']` via `canvas.toDataURL()`. Static first paint: `app/icon.tsx`. Apple touch: `app/apple-icon.tsx`.
 
 ```tsx
 useEffect(() => {
   const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = 64;
+  canvas.width = canvas.height = 32;
   const ctx = canvas.getContext("2d")!;
   let raf: number;
 
   function draw(t: number) {
-    ctx.clearRect(0, 0, 64, 64);
-    // ... draw arcs, scanning dot, glow
+    ctx.clearRect(0, 0, 32, 32);
+    // ... Orbital G + signal packet along diagonal
     const link = document.querySelector("link[rel='icon']") as HTMLLinkElement;
     if (link) link.href = canvas.toDataURL();
     raf = requestAnimationFrame(draw);
@@ -356,14 +362,15 @@ gryps/
 │   ├── signatures/             # Versioned Signature list + [slug] (noindex)
 │   ├── map/                    # Connectivity Intelligence map (MapLibre)
 │   ├── (prototype)/            # /terms · /privacy
-│   ├── icon.tsx                # Static PNG favicon (32×32) via ImageResponse
+│   ├── icon.tsx                # Static PNG favicon (32×32) — Micro Orbital G
+│   ├── apple-icon.tsx          # Apple touch icon (180×180) — Orbital G tile
 │   └── api/                    # advise, contact, signatures, submissions, notify
 ├── components/
 │   ├── OpsConsoleMap.tsx       # Shared MapLibre ops map
 │   ├── CapacityMap*.tsx        # Capacity map shell
 │   ├── SignaturesMap.tsx       # Signatures map (Leaflet)
 │   ├── PolarAtmosphere.tsx     # Landing polar geometry
-│   ├── GrypsMark.tsx           # Mark / lockup
+│   ├── GrypsMark.tsx           # Orbital G mark / print lockup
 │   └── Footer.tsx / Header.tsx
 └── lib/
     ├── deterministic-score.ts  # Signature engine v0.3

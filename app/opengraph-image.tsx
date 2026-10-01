@@ -6,6 +6,7 @@ import {
   HERO_DEMO_TOP_REC,
   HERO_DEMO_TOP_RISK_EN,
 } from "@/lib/hero-demo";
+import { OrbitalGIconSvg } from "@/components/GrypsMark";
 
 export const runtime = "nodejs";
 export const alt = HERO_DEMO_OG_ALT;
@@ -29,8 +30,8 @@ export default function OpenGraphImage() {
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 14, height: 14, borderRadius: 999, background: "#2ED47A" }} />
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <OrbitalGIconSvg size={36} />
           <span style={{ color: "#64748B", fontSize: 22, letterSpacing: 4 }}>
             GRYPS · MODEL v0.3
           </span>

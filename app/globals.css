@@ -227,6 +227,12 @@ body {
   z-index: 2;
   max-width: min(100%, 360px);
   overflow: hidden;
+  color: var(--text);
+}
+/* Orbital G: letterform follows text; diagonal + node use brand accents */
+.gryps-mark {
+  color: var(--text);
+  flex-shrink: 0;
 }
 .gryps-nav-wordmark {
   font-family: var(--font-ui);
@@ -1205,6 +1211,9 @@ body {
   color: var(--text);
   text-decoration: none;
   width: fit-content;
+}
+.gryps-footer-mark .gryps-mark {
+  color: var(--text);
 }
 .gryps-footer-tag {
   font-family: var(--font-ui);

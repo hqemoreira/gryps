@@ -2045,7 +2045,7 @@ export default function HomePage() {
           className="gryps-section gryps-section-pad gryps-no-print"
           style={{ borderTop: "1px solid var(--border)", textAlign: "center" }}
         >
-          <GrypsMark size={44} animate />
+          <GrypsMark size={44} variant="display" animate />
           <h2
             className="text-display"
             style={{ fontFamily: "var(--font-ui)", color: "var(--text)", margin: "20px 0 12px" }}
