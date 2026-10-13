@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored patched third-party CJS (see vendor/braces/README.md).
+    "vendor/**",
   ]),
   {
     rules: {
