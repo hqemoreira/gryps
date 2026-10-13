@@ -19,19 +19,19 @@
   },
   "dependencies": {
     "@mistralai/mistralai": "^2.7.0",
-    "@neondatabase/serverless": "^1.1.0",
+    "@neondatabase/serverless": "^1.2.0",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/semantic-conventions": "^1.43.0",
     "@vercel/analytics": "^2.0.1",
     "adm-zip": "^0.6.0",
     "leaflet": "^1.9.4",
-    "lucide-react": "^1.45.0",
-    "maplibre-gl": "^6.9.0",
-    "next": "^16.3.6",
+    "lucide-react": "^1.56.0",
+    "maplibre-gl": "^6.14.0",
+    "next": "^16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-leaflet": "^5.0.0",
-    "resend": "^6.27.0"
+    "resend": "^6.32.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -41,14 +41,16 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "^16.3.6",
+    "eslint-config-next": "^16.4.0",
     "googleapis": "^178.1.1",
-    "prettier": "^3.9.8",
+    "prettier": "^3.9.10",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
   "overrides": {
     "brace-expansion@1": "1.1.21",
-    "brace-expansion@5": "5.0.12"
+    "brace-expansion@5": "5.0.12",
+    "sharp": "0.35.5",
+    "source-map-js": "1.2.2"
   }
 }
