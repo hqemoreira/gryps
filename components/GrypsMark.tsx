@@ -58,6 +58,26 @@ export const G_PATH = [
   "Z",
 ].join(" ");
 
+/**
+ * Ribbon twist: an oblique slit across the band at the upper-left, running from
+ * the outer edge (~241°) to the inner edge (~206°) so both strands taper to points.
+ */
+export const TWIST_PATH = (() => {
+  const steps = 14;
+  const pts: string[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const s = -0.15 + (1.3 * i) / steps;
+    pts.push(pt(polar(RO - (RO - RI) * s, 241.5 - 35.5 * s)));
+  }
+  return `M${pts.join(" L")}`;
+})();
+
+export function twistWidth(variant: GrypsMarkVariant) {
+  if (variant === "micro") return 0.75;
+  if (variant === "display") return 0.42;
+  return 0.5;
+}
+
 /** Crossbar slab drawn over the ring in its own lighter gradient. */
 export const BAR_PATH = [
   `M${pt(BAR_TIP)}`,
@@ -245,6 +265,7 @@ function OrbitalG({
         <mask id={`${uid}-m`} maskUnits="userSpaceOnUse" x="-4" y="-4" width="46" height="40">
           <rect x="-4" y="-4" width="46" height="40" fill="white" />
           <polygon points={toPoints(stripPoints(PIERCE.above, PIERCE.below))} fill="black" />
+          <path d={TWIST_PATH} stroke="black" strokeWidth={twistWidth(variant)} fill="none" />
         </mask>
       </defs>
 
@@ -435,6 +456,7 @@ export function OrbitalGIconSvg({ size = 24, bg = "#070B12" }: { size?: number; 
       </defs>
       <path d={G_PATH} fill={`url(#${uid}-g)`} />
       <polygon points={toPoints(stripPoints(PIERCE.above, PIERCE.below))} fill={bg} />
+      <path d={TWIST_PATH} stroke={bg} strokeWidth={twistWidth(size <= 40 ? "micro" : "core")} fill="none" />
       <path d={BAR_PATH} fill={`url(#${uid}-b)`} />
       <polygon points={toPoints(taperPoints(dims.glow[0], dims.glow[1]))} fill={`url(#${uid}-lg)`} />
       <polygon points={core} fill={`url(#${uid}-l)`} />

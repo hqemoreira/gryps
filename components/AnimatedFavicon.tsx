@@ -11,9 +11,11 @@ import {
   PIERCE,
   SIGNAL,
   SQUARE_VIEWBOX,
+  TWIST_PATH,
   signalDims,
   stripPoints,
   taperPoints,
+  twistWidth,
 } from "@/components/GrypsMark";
 
 /** Animated favicon — Orbital G with a light flash travelling to the node. */
@@ -44,6 +46,7 @@ export function AnimatedFavicon() {
     const { x1, y1, x2, y2 } = SIGNAL;
     const gPath = new Path2D(G_PATH);
     const barPath = new Path2D(BAR_PATH);
+    const twistPath = new Path2D(TWIST_PATH);
     const core = taperPoints(dims.core[0], dims.core[1]);
 
     // Map the square crop of the artboard into a 26px box inset 3px in the tile.
@@ -102,6 +105,9 @@ export function AnimatedFavicon() {
 
       // Pierce gap painted in tile colour — the line then sits inside it.
       polygon(stripPoints(PIERCE.above, PIERCE.below), BG);
+      ctx.strokeStyle = BG;
+      ctx.lineWidth = twistWidth("micro");
+      ctx.stroke(twistPath);
 
       const bGrad = ctx.createLinearGradient(BAR_GRADIENT.x1, 0, BAR_GRADIENT.x2, 0);
       bGrad.addColorStop(0, P.barL);
