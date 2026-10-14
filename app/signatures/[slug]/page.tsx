@@ -5,9 +5,14 @@ import { ArrowRight } from "lucide-react";
 import { getSiteBySlug, getAllSites } from "@/lib/signatures-db";
 import { ResilienceOutput } from "@/components/ResilienceOutput";
 import { GrypsPrintBrand } from "@/components/GrypsMark";
+import { MimirAssistant } from "@/components/MimirAssistant";
 import { gradeColor } from "@/lib/resilience-colors";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import {
+  buildMimirSignatureContext,
+  chipsFromResult,
+} from "@/lib/mimir/signature-context";
 import { grypsCopyright } from "@/lib/gryps-copyright";
 import {
   getResearchByLegacySignatureSlug,
@@ -221,6 +226,14 @@ export default async function SignatureSitePage({ params }: Props) {
       <Footer
         footerRights={grypsCopyright("en", "Espoo, Finland · Non-commercial R&D prototype")}
         secondaryLink={{ href: "/research", label: "Research Library" }}
+      />
+
+      <MimirAssistant
+        signatureContext={buildMimirSignatureContext(site.output, {
+          site: site.name,
+          latitude: site.lat,
+        })}
+        chips={chipsFromResult(site.output, site.lat)}
       />
     </div>
   );

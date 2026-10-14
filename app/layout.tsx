@@ -58,9 +58,10 @@ const jsonLd = {
 };
 
 export const metadata: Metadata = {
-  title: "GRYPS — Know your score before the Arctic finds it for you",
+  title:
+    "GRYPS — Connectivity resilience scoring for Nordic, Arctic and Icelandic sites",
   description:
-    "Resilience Signatures for Nordic, Arctic & Icelandic operations. Score satellite dependency and redundancy gaps in 60 seconds — supports NIS2/CER readiness documentation. Free R&D prototype · Model v0.4 · Espoo, Finland.",
+    "Resilience Signatures for Nordic, Arctic & Icelandic operations. Deterministic, documented, free. Supports NIS2/CER readiness documentation. R&D prototype · Model v0.4 · Espoo, Finland.",
   keywords:
     "connectivity resilience, satellite connectivity scoring, autonomous operations connectivity, NIS2 connectivity risk, CER critical operator resilience, satellite resilience Arctic, satellite resilience Iceland, remote site connectivity risk, forestry autonomous fleet connectivity, Starlink Arctic coverage, Iridium Certus polar, OneWeb high latitude, LEO MEO GEO redundancy",
   metadataBase: new URL("https://gryps.vercel.app"),
@@ -68,7 +69,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: HERO_DEMO_OG_TITLE,
     description:
-      "Know your score before the Arctic finds it for you. Free Resilience Signature demo for Nordic & Arctic operations.",
+      "Connectivity resilience scoring for Nordic, Arctic and Icelandic sites. Deterministic, documented, free.",
     type: "website",
     siteName: "GRYPS",
     url: "https://gryps.vercel.app",
@@ -77,7 +78,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: HERO_DEMO_OG_TITLE,
     description:
-      "Know your score before the Arctic finds it for you. Resilience Signatures for Nordic, Arctic & Icelandic ops.",
+      "Connectivity resilience scoring for Nordic, Arctic and Icelandic sites. Deterministic, documented, free.",
   },
   robots: { index: true, follow: true },
   verification: { google: "vbGW3-1oXwqBQl7NlA461C2enz8BtVkFOPqW0SiJVy0" },

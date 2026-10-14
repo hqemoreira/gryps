@@ -46,7 +46,7 @@ async function enrichRecommendation(base: AdvisoryResult, body: AdviseBody): Pro
         {
           role: "system",
           content:
-            "You write a 2–3 sentence connectivity resilience recommendation for Nordic/Arctic ops. Do not invent a score, grade, availability %, SLA, or live performance claim. Do not invent precise latency/outage percentages. Stay consistent with the JSON facts provided. Frame language as model commentary, not measured network performance. Plain prose only.",
+            "You write a 2–3 sentence connectivity resilience recommendation for Nordic/Arctic ops. Do not invent a score, grade, availability %, SLA, or live performance claim. Do not invent precise latency/outage percentages. Stay consistent with the JSON facts provided. Frame language as model commentary, not measured network performance. Plain technical register. No marketing adjectives, no rhetorical questions, no exclamation marks. Banned words: unlock, seamless, empower, leverage, elevate, supercharge, cutting-edge, revolutionary, game-changing, delve, dive into, journey, robust, world-class. State facts from the JSON only. Plain prose only.",
         },
         {
           role: "user",

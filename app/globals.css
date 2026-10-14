@@ -1008,9 +1008,22 @@ body {
   font-family: var(--font-data);
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.04em;
   padding: 4px 10px;
   border-radius: 6px;
+}
+
+.gryps-grade-badge-label {
+  letter-spacing: 0.08em;
+}
+
+.gryps-grade-badge-sep {
+  letter-spacing: 0;
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+.gryps-grade-badge-letter {
+  letter-spacing: 0;
 }
 
 .gryps-ops-map-shell {
@@ -1085,6 +1098,127 @@ body {
   .gryps-sticky-cta {
     display: block;
   }
+}
+
+/* ── Mimir dock (above sticky CTA on phone) ───────────────────────────────── */
+.gryps-mimir-dock {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  z-index: 920;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  max-width: calc(100vw - 24px);
+  pointer-events: none;
+}
+.gryps-mimir-dock > * {
+  pointer-events: auto;
+}
+.gryps-mimir-dialog {
+  width: min(380px, calc(100vw - 32px));
+  height: min(520px, calc(100dvh - 120px));
+  max-height: calc(100dvh - 100px);
+  background-color: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.gryps-mimir-fab {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  background-color: var(--surface);
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.gryps-mimir-fab-label {
+  white-space: nowrap;
+}
+.gryps-mimir-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.gryps-mimir-chip {
+  text-align: left;
+  background-color: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-height: 44px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--accent-cyan);
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+/* Cap / range / levers — Signature surfaces */
+.gryps-cap-notice {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--accent-amber);
+  margin-top: 8px;
+  line-height: 1.45;
+  max-width: min(280px, 100%);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.gryps-range-provenance {
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  max-width: min(320px, 100%);
+}
+.gryps-levers-panel {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+.gryps-levers-panel--inline {
+  margin-top: 16px;
+  padding: 14px 0 0;
+  border: none;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background-color: transparent;
+}
+.gryps-levers-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.gryps-levers-panel li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text);
+  min-height: 32px;
 }
 
 /* Scroll fade-up */
@@ -1554,6 +1688,21 @@ body {
     position: static;
     min-height: 0 !important;
   }
+  .gryps-cap-notice,
+  .gryps-range-provenance {
+    max-width: 100%;
+  }
+  .gryps-levers-panel {
+    padding: 14px 16px;
+  }
+  .gryps-levers-panel li {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 12px;
+  }
+  .gryps-grade-badge {
+    flex-shrink: 0;
+  }
   .gryps-problem-grid {
     grid-template-columns: 1fr !important;
     gap: 28px !important;
@@ -1658,6 +1807,21 @@ body {
     --pad-x: 20px;
     --text-display: 1.75rem;
     --text-title: 1.125rem;
+  }
+  /* Clear the full-width sticky Generate CTA (~72px + safe area) */
+  .gryps-mimir-dock {
+    right: max(12px, env(safe-area-inset-right, 0px));
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+  .gryps-mimir-dialog {
+    width: min(100vw - 24px, 400px);
+    height: min(480px, calc(100dvh - 160px));
+    max-height: calc(100dvh - 140px);
+  }
+  .gryps-mimir-fab {
+    padding: 10px 14px;
+    min-width: 44px;
+    min-height: 44px;
   }
   .gryps-nav-label {
     display: none !important;
@@ -1859,6 +2023,13 @@ body {
   .gryps-top-chrome .gryps-banner {
     font-size: 7px !important;
     letter-spacing: 0.01em !important;
+  }
+  .gryps-mimir-fab-label {
+    display: none;
+  }
+  .gryps-mimir-fab {
+    padding: 12px;
+    border-radius: 999px;
   }
 }
 

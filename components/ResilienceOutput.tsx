@@ -8,7 +8,9 @@ import {
   type AdvisoryResult,
   type AssessmentInputs,
   type ScoreComposition,
+  type ScoreLever,
 } from "@/lib/resilience-colors";
+import { capNoticesLine } from "@/lib/cap-labels";
 import type {
   AdvisorIntelligence,
   ComparisonRow,
@@ -238,6 +240,7 @@ const UI = {
     provenanceOperator: "includes operator-reported inputs",
     leversLabel: "WHAT WOULD CHANGE THIS SCORE",
     leversSub: "Top actionable levers — Layer B only. Conditions do not change.",
+    leversEmpty: "No Layer-B lever would raise this score under the current profile.",
     leverDelta: "+",
     evidenceContextLabel: "EVIDENCE CONTEXT — EXCLUDED FROM SCORE",
     evidenceContextSub:
@@ -318,7 +321,7 @@ const UI = {
     aiAssistedLabel: RECOMMENDATION_AI_LABEL,
     art50: "EU AI Act Art. 50",
     generated: "Generated",
-    printAttr: "GRYPS · Connectivity Intelligence · gryps.vercel.app",
+    printAttr: "GRYPS · Connectivity resilience · gryps.vercel.app",
     measured: "measured",
     medianDownload: "Mbit/s median download",
     medianLatency: "ms median latency",
@@ -415,6 +418,7 @@ const UI = {
     provenanceOperator: "sisältää operaattorin ilmoittamia syötteitä",
     leversLabel: "MIKÄ MUUTTAISI TÄTÄ PISTETTÄ",
     leversSub: "Kolme tärkeintä vipua — vain Lievennys-kerros. Olosuhteet eivät muutu.",
+    leversEmpty: "Mikään Lievennys-kerroksen vipu ei nostaisi pistettä nykyisellä profiililla.",
     leverDelta: "+",
     evidenceContextLabel: "NÄYTTÖKONTEKSTI — EI SISÄLLY PISTEESEEN",
     evidenceContextSub:
@@ -496,7 +500,7 @@ const UI = {
     aiAssistedLabel: "Tekoälyavusteinen tulkinta",
     art50: "EU AI Act Art. 50",
     generated: "Luotu",
-    printAttr: "GRYPS · Connectivity Intelligence · gryps.vercel.app",
+    printAttr: "GRYPS · Connectivity resilience · gryps.vercel.app",
     measured: "mitattu",
     medianDownload: "Mbit/s mediaanilataus",
     medianLatency: "ms mediaanilatenssi",
@@ -645,6 +649,97 @@ function bandLabel(band: string, t: UiCopy): string {
 
 function layerBandLabel(band: string, t: UiCopy): string {
   return band;
+}
+
+function LeversPanel({
+  levers,
+  t,
+  bordered = true,
+}: {
+  levers: ScoreLever[];
+  t: UiCopy;
+  bordered?: boolean;
+}) {
+  return (
+    <div
+      className={bordered ? "gryps-levers-panel" : "gryps-levers-panel gryps-levers-panel--inline"}
+    >
+      {bordered && <TypeLabel kind="MODELLED" />}
+      <p
+        style={{
+          fontFamily: "var(--font-data)",
+          fontSize: 9,
+          color: "var(--text-dim)",
+          letterSpacing: "0.1em",
+          marginBottom: 6,
+        }}
+      >
+        {t.leversLabel}
+      </p>
+      <p
+        style={{
+          fontFamily: "var(--font-ui)",
+          fontSize: 11,
+          color: "var(--text-muted)",
+          marginBottom: 10,
+          lineHeight: 1.5,
+        }}
+      >
+        {t.leversSub}
+      </p>
+      {levers.length === 0 ? (
+        <p
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontSize: 13,
+            color: "var(--text-muted)",
+            lineHeight: 1.5,
+          }}
+        >
+          {t.leversEmpty}
+        </p>
+      ) : (
+        <ul
+          style={{
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          {levers.map((lever) => (
+            <li
+              key={`${lever.label}-${lever.delta}`}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 12,
+                alignItems: "baseline",
+                fontFamily: "var(--font-ui)",
+                fontSize: 13,
+                color: "var(--text)",
+              }}
+            >
+              <span>{lever.label}</span>
+              <span
+                style={{
+                  fontFamily: "var(--font-data)",
+                  fontWeight: 700,
+                  color: "var(--accent-green)",
+                  flexShrink: 0,
+                }}
+              >
+                {t.leverDelta}
+                {lever.delta}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 function ScoreCompositionPanel({
@@ -954,67 +1049,7 @@ function ScoreCompositionPanel({
           : t.scoreNoCaps}
       </p>
 
-      {levers.length > 0 && (
-        <div
-          style={{
-            marginTop: 16,
-            paddingTop: 14,
-            borderTop: "1px solid var(--border)",
-          }}
-        >
-          <p
-            style={{
-              fontFamily: "var(--font-data)",
-              fontSize: 9,
-              color: "var(--text-dim)",
-              letterSpacing: "0.1em",
-              marginBottom: 6,
-            }}
-          >
-            {t.leversLabel}
-          </p>
-          <p
-            style={{
-              fontFamily: "var(--font-ui)",
-              fontSize: 11,
-              color: "var(--text-muted)",
-              marginBottom: 10,
-              lineHeight: 1.5,
-            }}
-          >
-            {t.leversSub}
-          </p>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-            {levers.map((lever) => (
-              <li
-                key={`${lever.label}-${lever.delta}`}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 12,
-                  alignItems: "baseline",
-                  fontFamily: "var(--font-ui)",
-                  fontSize: 13,
-                  color: "var(--text)",
-                }}
-              >
-                <span>{lever.label}</span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-data)",
-                    fontWeight: 700,
-                    color: "var(--accent-green)",
-                    flexShrink: 0,
-                  }}
-                >
-                  {t.leverDelta}
-                  {lever.delta}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <LeversPanel levers={levers} t={t} bordered={false} />
 
       <div
         style={{
@@ -2377,17 +2412,24 @@ export function ResilienceOutput({
               {t.resilienceSignature}
             </div>
             {score_composition?.confidence_range && (
-              <div
-                style={{
-                  fontFamily: "var(--font-data)",
-                  fontSize: 11,
-                  color: "var(--text-muted)",
-                  marginTop: 8,
-                }}
-              >
+              <div className="gryps-range-provenance">
                 {score_composition.confidence_range.low}–{score_composition.confidence_range.high}
+                {" · "}
+                {score_composition.confidence_range.provenance === "catalog"
+                  ? t.provenanceCatalog
+                  : t.provenanceOperator}
               </div>
             )}
+            {(() => {
+              const caps =
+                score_composition?.caps_applied?.length
+                  ? score_composition.caps_applied
+                  : result.caps_applied;
+              const notice = caps?.length ? capNoticesLine(caps, lang) : null;
+              return notice ? (
+                <p className="gryps-cap-notice">{notice}</p>
+              ) : null;
+            })()}
             {score_composition?.layers && score_composition.layers.length > 0 && (
               <div
                 style={{
@@ -2684,6 +2726,10 @@ export function ResilienceOutput({
                   : "Template wording from the deterministic assessment. Does not change score, grade, risks, or ranks."}
             </p>
           </div>
+
+          {score_composition && (
+            <LeversPanel levers={score_composition.levers ?? []} t={t} />
+          )}
 
           <p
             className="gryps-no-print"

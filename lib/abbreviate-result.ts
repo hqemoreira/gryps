@@ -22,6 +22,7 @@ export type AbbreviatedAssessment = {
     high: number;
     provenance: "catalog" | "operator-reported";
   };
+  caps_applied?: string[];
   levers?: { label: string; delta: number; provider?: string }[];
   recommended: {
     provider: string;
@@ -121,6 +122,8 @@ export function abbreviateResult(full: AdvisoryResult): AbbreviatedAssessment {
     },
     layers: full.score_composition?.layers,
     confidence_range: full.score_composition?.confidence_range,
+    caps_applied:
+      full.score_composition?.caps_applied ?? full.caps_applied ?? [],
     levers: full.score_composition?.levers?.slice(0, 3),
     recommended: {
       provider,

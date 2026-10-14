@@ -40,7 +40,7 @@ export async function sendUnlockEmail(opts: {
   const fi = opts.locale === "fi";
   const subject = fi
     ? "Vahvista sähköposti — avaa täysi GRYPS-arvio"
-    : "Confirm your email — unlock full GRYPS assessment";
+    : "Confirm your email — open the full GRYPS assessment";
   const text = fi
     ? [
         "Hei,",
@@ -55,7 +55,7 @@ export async function sendUnlockEmail(opts: {
     : [
         "Hi,",
         "",
-        "You asked for the full GRYPS Advisor assessment. Confirm your email to unlock the detailed analysis:",
+        "You asked for the full GRYPS Advisor assessment. Confirm your email to open the detailed analysis:",
         opts.verifyUrl,
         "",
         "This link expires in 24 hours. If you did not request this, you can ignore the message.",

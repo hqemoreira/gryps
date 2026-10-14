@@ -95,7 +95,7 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 | Fonts      | `next/font/google` — Space Grotesk + JetBrains Mono                | Eliminates render-blocking Google Fonts import                                           |
 | Maps       | MapLibre GL + key-free Esri raster tiles                           | Ops console maps without a Carto/tile API key (`lib/basemap.ts`)                         |
 | Scoring    | Deterministic Signature engine v0.4 (`lib/deterministic-score.ts`) | Two-layer score / grade / risks / ranked providers / levers                              |
-| Assistant  | Mimir (`components/MimirAssistant.tsx`, `/api/mimir/chat`)        | Retrieval-first explainer; never invents scores                                          |
+| Assistant  | Mimir (`components/MimirAssistant.tsx`, `/api/mimir/chat`)        | Retrieval-first explainer; Mannaz-in-ring glyph; never invents scores                    |
 | Database   | Neon serverless PostgreSQL (EU Frankfurt)                          | EU data residency for Nordic operators                                                   |
 | Analytics  | Vercel Analytics                                                   | Cookieless, GDPR-compliant by default                                                    |
 | Deployment | Vercel                                                             | ~30s deploys from git push                                                               |
@@ -302,6 +302,19 @@ Canonical wording: *Scores are computed by a deterministic model. Some
 interpretation text is AI-assisted when enabled, and Mimir is an AI chatbot.*
 Must stay aligned with Terms §04 and Privacy §05 — see Legal coupling above.
 
+### Mimir ops — question log → Research Library backlog
+
+User questions are logged (`lib/mimir/log.ts` → Neon `mimir_chat_logs` when configured).
+**Weekly review:** skim unanswered / low-confidence questions and promote recurring
+themes into Knowledge notes or Research Library assessments. No public admin UI —
+this is an internal prioritization instrument.
+
+### Mimir mark — Mannaz-in-ring
+
+System glyph only (`components/MimirMark.tsx`, `public/mimir-mark.svg`): circle +
+Mannaz rune. Scales FAB → dialog header → empty state. Not a mascot; not a face.
+Product brand remains Orbital G.
+
 ---
 
 ## Brand mark — Orbital G (GrypsMark.tsx)
@@ -419,6 +432,25 @@ Manual unlock tests: prefer `hqe.moreira@gmail.com` until the domain is verified
   (GRYPS, Resilience Signature, Connectivity Advisor, Capacity Map, Mistral).
 - UI languages are **EN and FI only** — no third language.
 - Prefer natural Finnish over calques (e.g. `alusta` / `palvelu`, not `platformin`).
+
+---
+
+## Voice register (anti–AI-ad-copy)
+
+Target register: Methodology page / `"Single Starlink · no backup path"`.
+State what it is; nouns and numbers over adjectives; one idea per sentence.
+Engineer-email test: would a Finnish connectivity engineer write this?
+
+**Tells to flag (grep monthly):** personification of nature/tech; triadic fragments
+(`One X. Many Y. One Z.`); banned words — unlock, seamless, empower, leverage,
+elevate, supercharge, cutting-edge, revolutionary, game-changing, delve,
+dive into, journey, robust, world-class; “not just X — Y”; rhetorical-question
+headings; intensifiers (genuinely, truly, powerful, incredibly); abstract noun
+piles (`intelligence` as product gloss); exclamation marks.
+
+Also guard `enrichRecommendation` and Mimir prompts with the same banned list.
+
+Copy lives in EN/FI `COPY` objects (no next-intl). Prefer deletion over rewrite.
 
 ---
 

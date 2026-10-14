@@ -38,6 +38,10 @@ import {
 } from "@/lib/hero-demo";
 import { SCORING_ENGINE } from "@/lib/model-constants";
 import { MimirAssistant } from "@/components/MimirAssistant";
+import {
+  buildMimirSignatureContext,
+  chipsFromResult,
+} from "@/lib/mimir/signature-context";
 
 function gradeBadgeBg(grade: string): string {
   const c = gradeColor(grade);
@@ -486,22 +490,21 @@ function SignatureReveal({
         lang={lang}
         signatureContext={
           depth === "full" && full
-            ? JSON.stringify({
-                score: full.resilience_signature.score,
-                grade: full.resilience_signature.grade,
-                summary: full.resilience_signature.summary,
-                layers: full.score_composition?.layers,
-                range: full.score_composition?.confidence_range,
+            ? buildMimirSignatureContext(full, {
+                latitude: assessmentInputs?.lat,
               })
             : abbreviated
-              ? JSON.stringify({
-                  score: abbreviated.resilience_signature.score,
-                  grade: abbreviated.resilience_signature.grade,
-                  summary: abbreviated.resilience_signature.summary,
-                  layers: abbreviated.layers,
-                  range: abbreviated.confidence_range,
+              ? buildMimirSignatureContext(abbreviated, {
+                  latitude: assessmentInputs?.lat,
                 })
               : undefined
+        }
+        chips={
+          depth === "full" && full
+            ? chipsFromResult(full, assessmentInputs?.lat)
+            : abbreviated
+              ? chipsFromResult(abbreviated, assessmentInputs?.lat)
+              : []
         }
       />
     </div>
@@ -1336,15 +1339,16 @@ function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
         );
       })}
       {range && (
-        <p
-          style={{
-            fontFamily: "var(--font-data)",
-            fontSize: 10,
-            color: "var(--text-muted)",
-            marginTop: 6,
-          }}
-        >
+        <p className="gryps-range-provenance" style={{ fontSize: 10, marginTop: 6 }}>
           {lang === "fi" ? "Väli" : "Range"}: {range.low}–{range.high}
+          {" · "}
+          {range.provenance === "catalog"
+            ? lang === "fi"
+              ? "perustuu katalogidataan"
+              : "based on catalog data"
+            : lang === "fi"
+              ? "sisältää operaattorin ilmoittamia syötteitä"
+              : "includes operator-reported inputs"}
         </p>
       )}
       <a
@@ -1414,7 +1418,11 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
               border: `1px solid ${border}55`,
             }}
           >
-            {lang === "fi" ? "ARVOSANA" : "GRADE"} {grade}
+            <span className="gryps-grade-badge-label">{lang === "fi" ? "ARVOSANA" : "GRADE"}</span>
+            <span className="gryps-grade-badge-sep" aria-hidden>
+              ·
+            </span>
+            <span className="gryps-grade-badge-letter">{grade}</span>
           </span>
         </div>
 
@@ -1661,9 +1669,9 @@ function Stat({ value, label, href }: { value: string; label: string; href?: str
 // ── Copy (EN / FI) ───────────────────────────────────────────────────────────
 const COPY = {
   en: {
-    tag: "CONNECTIVITY INTELLIGENCE · NORDIC, ARCTIC & ICELAND",
+    tag: "CONNECTIVITY RESILIENCE · NORDIC, ARCTIC & ICELAND",
     navCta: "Generate Resilience Signature",
-    h1: "Know your score before the Arctic finds it for you.",
+    h1: "Connectivity resilience scoring for Nordic, Arctic and Icelandic sites. Deterministic, documented, free.",
     clarify:
       "Assess connectivity resilience for remote Nordic, Arctic and high-latitude operations.",
     sub: "A Resilience Signature — score, grade and ranked connectivity options for Nordic, Arctic and Icelandic sites.",
@@ -1678,7 +1686,7 @@ const COPY = {
     liveCounter: "sites assessed in the Nordic & Arctic portfolio",
     proofBand: "Illustrative · not live monitoring",
     advisorCta: "Generate Resilience Signature",
-    advisorSub: "Score your site in under a minute",
+    advisorSub: "Most assessments take about a minute.",
     sectorLabel: "OPERATIONAL SECTOR",
     sectorPlaceholder: "Select sector",
     autonomyLabel: "AUTONOMY LEVEL",
@@ -1695,7 +1703,7 @@ const COPY = {
     prioritiesHint:
       "Select up to 3. Same site can recommend differently — priorities re-rank options; they do not change the Signature score.",
     boundsHint: "Coordinates must be within Nordic/Arctic bounds (lat 55–85°, lng −30–40°).",
-    noAccountNote: "Free · No account required. Email only if you unlock the detailed assessment.",
+    noAccountNote: "Free · No account required. Email only if you want the detailed assessment.",
     runAdvisor: "Generate Resilience Signature",
     analysing: "Generating Signature…",
     analyseAnother: "Generate another Signature",
@@ -1739,33 +1747,32 @@ const COPY = {
       {
         n: "04",
         title: "Generate Resilience Signature",
-        body: "Free initial assessment with score and top recommendation. Unlock the detailed assessment with email confirmation.",
+        body: "Free initial assessment with score and top recommendation. Email only if you want the detailed assessment.",
       },
     ],
     examplesLabel: "RESEARCH LIBRARY",
     examplesSub:
-      "Curated Connectivity Intelligence assessments. Open a research Signature, explore mission scenarios, or generate your own above.",
+      "Example Signatures from the Research Library. Open a research Signature, explore mission scenarios, or generate your own above.",
     scenariosLink: "Mission scenarios →",
-    polarHeader: "CONNECTIVITY INTELLIGENCE · NORDIC, ARCTIC & ICELAND",
-    polarMapLabel: "MODELED INTELLIGENCE · NOT LIVE RF",
-    polarInstrumentTitle: "Explore Connectivity Intelligence",
+    polarHeader: "CONNECTIVITY RESILIENCE · NORDIC, ARCTIC & ICELAND",
+    polarMapLabel: "MODELLED · NOT LIVE RF",
+    polarInstrumentTitle: "Explore assessed sites on the map",
     polarInstrumentBody:
-      "Select a region and vertical on the Connectivity Intelligence map, open a research assessment, then Generate a Resilience Signature. Not live constellation telemetry.",
+      "Select a region and vertical on the map, open a research assessment, then generate a Resilience Signature. Not live constellation telemetry.",
     polarFact1: "Sample site 67.0°N · Starlink + Iridium dual path",
     polarFact2: "Latitude weight drops above 70°N",
     polarMethodLink: "See scoring formula →",
-    capacityMapLink: "Explore Connectivity Intelligence →",
-    ctaH2: "Start with a Resilience Signature.",
-    ctaSub:
-      "Free Connectivity Intelligence for any Nordic, Arctic, or Icelandic site. No account — unlock the detailed assessment with email when you want deeper detail.",
+    capacityMapLink: "Open the map →",
+    ctaH2: "Generate a Resilience Signature",
+    ctaSub: "Free · No account required. Nordic, Arctic and Icelandic sites.",
     ctaBtn: "Generate Resilience Signature",
     viewSample: "View research assessment →",
     footerTag: "Built in Finland for high-latitude resilience.",
   },
   fi: {
-    tag: "CONNECTIVITY INTELLIGENCE · POHJOISMAAT · ARKTIS · ISLANTI",
+    tag: "YHTEYSRESILIENSSI · POHJOISMAAT · ARKTIS · ISLANTI",
     navCta: "Luo Resilience Signature",
-    h1: "Tiedä pisteesi ennen kuin arktiset olosuhteet tekevät sen puolestasi.",
+    h1: "Yhteyden resilienssipisteytys pohjoismaisille, arktisille ja islantilaisille kohteille. Deterministinen, dokumentoitu, ilmainen.",
     clarify:
       "Arvioi yhteyden resilienssiä etäisissä pohjoismaisissa, arktisissa ja korkeiden leveysasteiden toiminnoissa.",
     sub: "Resilience Signature — pisteet, arvosana ja sijoitetut yhteysvaihtoehdot pohjoismaisille, arktisille ja islantilaisille kohteille.",
@@ -1780,7 +1787,7 @@ const COPY = {
     liveCounter: "kohdetta arvioitu Pohjoismaiden ja arktisen alueen portfoliossa",
     proofBand: "Havainnollistava · ei reaaliaikaista seurantaa",
     advisorCta: "Luo Resilience Signature",
-    advisorSub: "Pisteytä kohde alle minuutissa",
+    advisorSub: "Useimmat arviot kestävät noin minuutin.",
     sectorLabel: "TOIMIALA",
     sectorPlaceholder: "Valitse toimiala",
     autonomyLabel: "AUTONOMIATASO",
@@ -1799,7 +1806,7 @@ const COPY = {
     boundsHint:
       "Koordinaattien on oltava Pohjoismaiden tai arktisen alueen rajoissa (lat 55–85°, lng −30–40°).",
     noAccountNote:
-      "Ilmainen · Ei tiliä tarvita. Sähköposti vain, jos avaat yksityiskohtaisen arvion.",
+      "Ilmainen · Ei tiliä tarvita. Sähköposti vain, jos haluat yksityiskohtaisen arvion.",
     runAdvisor: "Luo Resilience Signature",
     analysing: "Luodaan Signaturea…",
     analyseAnother: "Luo toinen Signature",
@@ -1843,25 +1850,24 @@ const COPY = {
       {
         n: "04",
         title: "Luo Resilience Signature",
-        body: "Ilmainen alustava arvio pisteineen ja ykkössuosituksineen. Avaa yksityiskohtainen arvio sähköpostivahvistuksella.",
+        body: "Ilmainen alustava arvio pisteineen ja ykkössuosituksineen. Sähköposti vain, jos haluat yksityiskohtaisen arvion.",
       },
     ],
     examplesLabel: "RESEARCH LIBRARY",
     examplesSub:
-      "Kuratoituja Connectivity Intelligence -arvioita. Avaa tutkimus-Signature, tutki tehtäväskenaarioita tai luo oma yllä.",
+      "Esimerkki-Signatureja Research Librarysta. Avaa tutkimus-Signature, tutki tehtäväskenaarioita tai luo oma yllä.",
     scenariosLink: "Tehtäväskenaariot →",
-    polarHeader: "CONNECTIVITY INTELLIGENCE · POHJOISMAAT, ARKTINEN ALUE JA ISLANTI",
-    polarMapLabel: "MALLINNETTU ÄLY · EI REAALIAIKAISTA RF:ÄÄ",
-    polarInstrumentTitle: "Tutki Connectivity Intelligencea",
+    polarHeader: "YHTEYSRESILIENSSI · POHJOISMAAT, ARKTINEN ALUE JA ISLANTI",
+    polarMapLabel: "MALLINNETTU · EI REAALIAIKAISTA RF:ÄÄ",
+    polarInstrumentTitle: "Tutki arvioituja kohteita kartalla",
     polarInstrumentBody:
-      "Valitse alue ja toimiala Connectivity Intelligence -kartalla, avaa tutkimusarvio ja luo Resilience Signature. Ei reaaliaikaista konstellaatiotelemetriaa.",
+      "Valitse alue ja toimiala kartalla, avaa tutkimusarvio ja luo Resilience Signature. Ei reaaliaikaista konstellaatiotelemetriaa.",
     polarFact1: "Esimerkkikohde 67.0°N · Starlink + Iridium kaksoispolku",
     polarFact2: "Leveysastepaino laskee yli 70°N",
     polarMethodLink: "Katso pisteytyskaava →",
-    capacityMapLink: "Tutki Connectivity Intelligencea →",
-    ctaH2: "Aloita Resilience Signaturella.",
-    ctaSub:
-      "Ilmainen Connectivity Intelligence mille tahansa pohjoismaiselle, arktiselle tai islantilaiselle kohteelle. Ei tiliä — avaa yksityiskohtainen arvio sähköpostilla, kun tarvitset syvemmän näkymän.",
+    capacityMapLink: "Avaa kartta →",
+    ctaH2: "Luo Resilience Signature",
+    ctaSub: "Ilmainen · Ei tiliä tarvita. Pohjoismaiset, arktiset ja islantilaiset kohteet.",
     ctaBtn: "Luo Resilience Signature",
     viewSample: "Katso tutkimusarvio →",
     footerTag: "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",

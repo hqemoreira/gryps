@@ -9,12 +9,12 @@ import {
 } from "@/lib/research-library";
 
 export const metadata: Metadata = {
-  title: "Explore Connectivity Intelligence | GRYPS",
+  title: "Assessed sites on the map | GRYPS",
   description:
-    "Explore modeled satellite connectivity resilience across Nordic, Arctic, and Icelandic sites. Select a region and vertical, then Generate a Resilience Signature. Research prototype — not live RF.",
+    "Assessed sites, providers and research on a map across Nordic, Arctic, and Icelandic sites. Select a region and vertical, then Generate a Resilience Signature. Research prototype — not live RF.",
   alternates: { canonical: "https://gryps.vercel.app/map" },
   openGraph: {
-    title: "Explore Connectivity Intelligence | GRYPS",
+    title: "Assessed sites on the map | GRYPS",
     description:
       "Select a region → understand the connectivity environment → Generate Resilience Signature. Research prototype · Non-commercial · Model-based analysis.",
   },

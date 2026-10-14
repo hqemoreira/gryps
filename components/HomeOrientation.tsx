@@ -45,7 +45,7 @@ const EXAMPLE_CARDS = [
 const COPY = {
   en: {
     modelL: "HOW GRYPS WORKS",
-    modelH: "One location. Multiple signals. One resilience view.",
+    modelH: "From coordinates and an operational profile to a scored, ranked view of connectivity options.",
     loc: "LOCATION",
     locB: "Where is the operation?",
     op: "OPERATION",
@@ -62,14 +62,14 @@ const COPY = {
     sites: "assessed sites",
     providers: "providers",
     examplesL: "EXAMPLE RESILIENCE SIGNATURES",
-    examplesSub: "What GRYPS produces — curated Research Library assessments.",
+    examplesSub: "Example Signatures from the Research Library.",
     view: "View assessment →",
     posture: "Research & Prototype posture →",
-    intelligence: "How the intelligence is built →",
+    intelligence: "How scoring, evidence and caps work →",
   },
   fi: {
     modelL: "MITEN GRYPS TOIMII",
-    modelH: "Yksi sijainti. Useita signaaleja. Yksi resilienssinäkymä.",
+    modelH: "Koordinaateista ja toimintaprofiilista pisteytettyyn, järjestettyyn näkymään yhteysvaihtoehdoista.",
     loc: "SIJAINTI",
     locB: "Missä toiminta on?",
     op: "TOIMINTA",
@@ -86,10 +86,10 @@ const COPY = {
     sites: "arvioitua kohdetta",
     providers: "toimittajaa",
     examplesL: "ESIMERKKI RESILIENCE SIGNATUREJA",
-    examplesSub: "Mitä GRYPS tuottaa — kuratoituja Research Library -arvioita.",
+    examplesSub: "Esimerkki-Signatureja Research Librarysta.",
     view: "Katso arvio →",
     posture: "Tutkimus ja prototyyppi →",
-    intelligence: "Miten äly on rakennettu →",
+    intelligence: "Miten pisteytys, näyttö ja katot toimivat →",
   },
 } as const;
 

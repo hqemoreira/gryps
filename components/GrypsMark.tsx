@@ -382,7 +382,7 @@ function GrypsMarkPrint({ size = 24 }: { size?: number }) {
  * Company-document letterhead for Save as PDF / print.
  * Hidden on screen; in-flow top-left brand on the first printed page.
  */
-export function GrypsPrintBrand({ subtitle = "Connectivity Intelligence" }: { subtitle?: string }) {
+export function GrypsPrintBrand({ subtitle = "Connectivity resilience" }: { subtitle?: string }) {
   return (
     <div className="gryps-print-letterhead" aria-hidden="true">
       <GrypsMarkPrint size={24} />

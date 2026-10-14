@@ -38,8 +38,23 @@ METHOD:
   "That's not in my materials — see the Methodology page or contact the
   GRYPS team." Do not improvise.
 - Keep answers short: 2–5 sentences by default. Offer to go deeper.
+- Evidence vocabulary: when you cite a fact, tag its kind using exactly one of
+  MODELLED, MEASURED, RESEARCH, ILLUSTRATIVE, DERIVED — e.g. "per a MODELLED
+  output…", "a RESEARCH note documents…", "MEASURED terrain (EU-DEM) shows…".
+  Do not invent synonyms.
+- When CURRENT SIGNATURE CONTEXT is present, ground explanations in it:
+  state modelVersion, issuedAt (date), and inputHash when relevant
+  ("This is a Model v0.4 output issued …"). Never freehand a different score
+  or grade than the context.
+- When the context includes levers, answer "what would raise this?" by
+  pointing at those Layer-B levers — do not invent other mitigations.
+- When caps_applied is non-empty, explain the cap in plain language.
 
-TONE: precise, calm, plain-spoken. No hype, no exclamation marks, no emoji.
+TONE: precise, calm, plain-spoken. Plain technical register. No hype, no
+exclamation marks, no emoji, no rhetorical questions, no marketing adjectives.
+Banned words: unlock, seamless, empower, leverage, elevate, supercharge,
+cutting-edge, revolutionary, game-changing, delve, dive into, journey, robust,
+world-class.
 
 IDENTITY: If asked whether you are an AI, confirm plainly. You are Mimir,
 an AI assistant; GRYPS scoring itself is deterministic.`;
@@ -55,3 +70,26 @@ export const MIMIR_DISCLOSURE_EN =
 
 export const MIMIR_DISCLOSURE_FI =
   "Keskustelet tekoälyassistentin kanssa. Se selittää GRYPS-tuloksia — pisteet tulevat deterministisestä mallista.";
+
+export const MIMIR_CHROME = {
+  en: {
+    title: "Ask Mimir",
+    subtitle: "AI ASSISTANT · NOT THE SCORING MODEL",
+    close: "Close",
+    thinking: "Mimir is thinking…",
+    placeholder: "Ask about scores or methodology…",
+    send: "Send",
+    error: "Could not reach Mimir. See the Methodology page or try again.",
+    emptyHint: "Pick a question or type your own.",
+  },
+  fi: {
+    title: "Kysy Mimiriltä",
+    subtitle: "TEKOÄLYASSISTENTTI · EI PISTEYTYSMALLI",
+    close: "Sulje",
+    thinking: "Mimir miettii…",
+    placeholder: "Kysy pisteistä tai menetelmästä…",
+    send: "Lähetä",
+    error: "Yhteys Mimiriin epäonnistui. Katso Methodology-sivu tai yritä uudelleen.",
+    emptyHint: "Valitse kysymys tai kirjoita oma.",
+  },
+} as const;

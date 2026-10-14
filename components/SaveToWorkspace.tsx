@@ -14,7 +14,7 @@ const COPY = {
     saved: "Saved",
     open: "Open Assessments →",
     note: "Stored locally in this browser — research modelling, not a customer account.",
-    noteTeaser: "Local teaser only — unlock by email for the full report. Not a customer account.",
+    noteTeaser: "Local teaser only — email if you want the full report. Not a customer account.",
   },
   fi: {
     save: "Tallenna Arvioihin",

@@ -32,8 +32,8 @@ export const IA_MODES: IaMode[] = [
         href: "/map",
         en: "Map",
         fi: "Kartta",
-        descEn: "Geographic connectivity intelligence",
-        descFi: "Maantieteellinen yhteysäly",
+        descEn: "Assessed sites, providers and research on a map.",
+        descFi: "Arvioidut kohteet, toimittajat ja tutkimus kartalla.",
       },
       {
         href: "/providers",
@@ -88,8 +88,8 @@ export const IA_MODES: IaMode[] = [
         href: "/methodology",
         en: "Methodology",
         fi: "Menetelmä",
-        descEn: "How GRYPS evaluates resilience",
-        descFi: "Miten GRYPS arvioi resilienssiä",
+        descEn: "How scoring, evidence and caps work.",
+        descFi: "Miten pisteytys, näyttö ja katot toimivat.",
       },
       {
         href: "/knowledge",

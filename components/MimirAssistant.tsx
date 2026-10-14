@@ -2,11 +2,14 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import {
+  MIMIR_CHROME,
   MIMIR_DISCLOSURE_EN,
   MIMIR_DISCLOSURE_FI,
   MIMIR_OPENING_EN,
   MIMIR_OPENING_FI,
 } from "@/lib/mimir/prompt";
+import { type MimirChip } from "@/lib/mimir/signature-context";
+import { MimirMark } from "@/components/MimirMark";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -14,6 +17,8 @@ type Props = {
   lang?: "en" | "fi";
   /** Optional Signature summary for grounded explanations */
   signatureContext?: string;
+  /** Proactive chips when a Signature is in context */
+  chips?: MimirChip[];
 };
 
 function newSessionId(): string {
@@ -23,7 +28,7 @@ function newSessionId(): string {
   return `mimir-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export function MimirAssistant({ lang = "en", signatureContext }: Props) {
+export function MimirAssistant({ lang = "en", signatureContext, chips = [] }: Props) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -32,8 +37,11 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
   const listRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
 
+  const chrome = MIMIR_CHROME[lang];
   const opening = lang === "fi" ? MIMIR_OPENING_FI : MIMIR_OPENING_EN;
   const disclosure = lang === "fi" ? MIMIR_DISCLOSURE_FI : MIMIR_DISCLOSURE_EN;
+  const showChips = Boolean(signatureContext) && chips.length > 0;
+  const onlyOpening = messages.length === 1 && messages[0]?.role === "assistant";
 
   useEffect(() => {
     setSessionId(newSessionId());
@@ -45,11 +53,11 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, open, busy]);
 
-  async function send() {
-    const text = input.trim();
-    if (!text || busy) return;
+  async function sendText(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed || busy) return;
     setInput("");
-    const nextHistory = [...messages, { role: "user" as const, content: text }];
+    const nextHistory = [...messages, { role: "user" as const, content: trimmed }];
     setMessages(nextHistory);
     setBusy(true);
     try {
@@ -57,7 +65,7 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: text,
+          message: trimmed,
           sessionId,
           history: nextHistory.slice(-8),
           signatureContext,
@@ -71,41 +79,25 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
         { role: "assistant", content: String(data.reply ?? "") },
       ]);
     } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content:
-            lang === "fi"
-              ? "Yhteys Mimiriin epäonnistui. Katso Methodology-sivu tai yritä uudelleen."
-              : "Could not reach Mimir. See the Methodology page or try again.",
-        },
-      ]);
+      setMessages((prev) => [...prev, { role: "assistant", content: chrome.error }]);
       console.error(err);
     } finally {
       setBusy(false);
     }
   }
 
+  async function send() {
+    await sendText(input);
+  }
+
   return (
-    <div className="gryps-no-print" style={{ position: "fixed", right: 20, bottom: 20, zIndex: 60 }}>
+    <div className="gryps-mimir-dock gryps-no-print">
       {open && (
         <div
           role="dialog"
           aria-modal="false"
           aria-labelledby={titleId}
-          style={{
-            width: "min(380px, calc(100vw - 32px))",
-            height: "min(520px, calc(100vh - 100px))",
-            backgroundColor: "var(--surface)",
-            border: "1px solid var(--border2)",
-            borderRadius: 12,
-            boxShadow: "0 12px 40px rgba(0,0,0,0.35)",
-            display: "flex",
-            flexDirection: "column",
-            marginBottom: 12,
-            overflow: "hidden",
-          }}
+          className="gryps-mimir-dialog"
         >
           <div
             style={{
@@ -117,35 +109,40 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
               gap: 8,
             }}
           >
-            <div>
-              <p
-                id={titleId}
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontWeight: 700,
-                  fontSize: 14,
-                  color: "var(--text)",
-                  margin: 0,
-                }}
-              >
-                Ask Mimir
-              </p>
-              <p
-                style={{
-                  fontFamily: "var(--font-data)",
-                  fontSize: 9,
-                  color: "var(--text-dim)",
-                  letterSpacing: "0.06em",
-                  margin: "4px 0 0",
-                }}
-              >
-                AI ASSISTANT · NOT THE SCORING MODEL
-              </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+              <span style={{ color: "var(--accent-cyan)", display: "flex", flexShrink: 0 }}>
+                <MimirMark size={28} title="Mimir" />
+              </span>
+              <div style={{ minWidth: 0 }}>
+                <p
+                  id={titleId}
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontWeight: 700,
+                    fontSize: 14,
+                    color: "var(--text)",
+                    margin: 0,
+                  }}
+                >
+                  {chrome.title}
+                </p>
+                <p
+                  style={{
+                    fontFamily: "var(--font-data)",
+                    fontSize: 9,
+                    color: "var(--text-dim)",
+                    letterSpacing: "0.06em",
+                    margin: "4px 0 0",
+                  }}
+                >
+                  {chrome.subtitle}
+                </p>
+              </div>
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              aria-label={lang === "fi" ? "Sulje" : "Close"}
+              aria-label={chrome.close}
               style={{
                 background: "none",
                 border: "1px solid var(--border)",
@@ -187,6 +184,34 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
               gap: 10,
             }}
           >
+            {onlyOpening && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "12px 8px 4px",
+                  color: "var(--accent-cyan)",
+                }}
+              >
+                <MimirMark size={40} />
+                {showChips && (
+                  <p
+                    style={{
+                      fontFamily: "var(--font-ui)",
+                      fontSize: 11,
+                      color: "var(--text-dim)",
+                      margin: 0,
+                      textAlign: "center",
+                    }}
+                  >
+                    {chrome.emptyHint}
+                  </p>
+                )}
+              </div>
+            )}
+
             {messages.map((m, i) => (
               <div
                 key={`${m.role}-${i}`}
@@ -208,6 +233,22 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
                 {m.content}
               </div>
             ))}
+
+            {showChips && onlyOpening && !busy && (
+              <div className="gryps-mimir-chips">
+                {chips.map((chip) => (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    className="gryps-mimir-chip"
+                    onClick={() => void sendText(lang === "fi" ? chip.fi : chip.en)}
+                  >
+                    {lang === "fi" ? chip.fi : chip.en}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {busy && (
               <p
                 style={{
@@ -216,7 +257,7 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
                   color: "var(--text-dim)",
                 }}
               >
-                {lang === "fi" ? "Mimir miettii…" : "Mimir is thinking…"}
+                {chrome.thinking}
               </p>
             )}
           </div>
@@ -236,9 +277,7 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={
-                lang === "fi" ? "Kysy pisteistä tai menetelmästä…" : "Ask about scores or methodology…"
-              }
+              placeholder={chrome.placeholder}
               disabled={busy}
               style={{
                 flex: 1,
@@ -268,7 +307,7 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
                 opacity: busy || !input.trim() ? 0.5 : 1,
               }}
             >
-              {lang === "fi" ? "Lähetä" : "Send"}
+              {chrome.send}
             </button>
           </form>
         </div>
@@ -276,27 +315,14 @@ export function MimirAssistant({ lang = "en", signatureContext }: Props) {
 
       <button
         type="button"
+        className="gryps-mimir-fab"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={titleId}
-        style={{
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          backgroundColor: "var(--surface)",
-          border: "1px solid var(--accent-cyan)",
-          color: "var(--accent-cyan)",
-          borderRadius: 999,
-          padding: "12px 18px",
-          fontFamily: "var(--font-ui)",
-          fontWeight: 700,
-          fontSize: 13,
-          cursor: "pointer",
-          boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
-        }}
+        aria-label={chrome.title}
       >
-        Ask Mimir
+        <MimirMark size={18} />
+        <span className="gryps-mimir-fab-label">{chrome.title}</span>
       </button>
     </div>
   );

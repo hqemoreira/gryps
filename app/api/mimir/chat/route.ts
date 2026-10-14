@@ -3,6 +3,7 @@ import { Mistral } from "@mistralai/mistralai";
 import { MIMIR_SYSTEM_PROMPT } from "@/lib/mimir/prompt";
 import { formatRetrievalContext, retrieveChunks } from "@/lib/mimir/retrieve";
 import { logMimirMessage } from "@/lib/mimir/log";
+import { checkMimirRateLimit } from "@/lib/mimir/rate-limit";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -13,6 +14,20 @@ function getClientIp(req: NextRequest): string {
 }
 
 export async function POST(req: NextRequest) {
+  const clientIp = getClientIp(req);
+  const limit = checkMimirRateLimit(clientIp);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "Too many requests. Try again shortly." },
+      {
+        status: 429,
+        headers: limit.retryAfterSec
+          ? { "Retry-After": String(limit.retryAfterSec) }
+          : undefined,
+      }
+    );
+  }
+
   let body: {
     message?: string;
     sessionId?: string;
@@ -33,7 +48,7 @@ export async function POST(req: NextRequest) {
   const sessionId =
     typeof body.sessionId === "string" && body.sessionId.length > 0
       ? body.sessionId.slice(0, 64)
-      : `anon-${getClientIp(req)}-${Date.now()}`;
+      : `anon-${clientIp}-${Date.now()}`;
 
   const history = Array.isArray(body.history)
     ? body.history
@@ -48,7 +63,7 @@ export async function POST(req: NextRequest) {
     : [];
 
   const signatureContext =
-    typeof body.signatureContext === "string" ? body.signatureContext.slice(0, 1500) : "";
+    typeof body.signatureContext === "string" ? body.signatureContext.slice(0, 4000) : "";
 
   const { chunks, confidence } = retrieveChunks(message);
   const retrievalBlock = formatRetrievalContext(chunks, confidence);

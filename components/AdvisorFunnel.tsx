@@ -2,6 +2,7 @@
 import { useState } from "react";
 import type { AbbreviatedAssessment } from "@/lib/abbreviate-result";
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors";
+import { capNoticesLine } from "@/lib/cap-labels";
 
 type Lang = "en" | "fi";
 
@@ -15,7 +16,7 @@ const COPY = {
     latency: "Typical orbital-class latency (reference)",
     why: "Model commentary",
     teaser:
-      "This is an abbreviated preview. Unlock the detailed assessment for the evidence chain, provider comparison, risk factors, and methodology behind this Signature.",
+      "This is an abbreviated preview. Email only if you want the detailed assessment — evidence chain, provider comparison, risk factors, and methodology.",
     model: "Research prototype · Non-commercial · Model-based analysis",
     confidenceNote:
       "Confidence reflects confidence in the assessment/data basis, not guaranteed service availability.",
@@ -142,16 +143,20 @@ export function InitialAssessment({
               {sig.grade}
             </span>
             {result.confidence_range && (
-              <p
-                style={{
-                  fontFamily: "var(--font-data)",
-                  fontSize: 12,
-                  color: "var(--text-muted)",
-                  marginTop: 8,
-                }}
-              >
+              <p className="gryps-range-provenance" style={{ fontSize: 12 }}>
                 {result.confidence_range.low}–{result.confidence_range.high}
+                {" · "}
+                {result.confidence_range.provenance === "catalog"
+                  ? lang === "fi"
+                    ? "perustuu katalogidataan"
+                    : "based on catalog data"
+                  : lang === "fi"
+                    ? "sisältää operaattorin ilmoittamia syötteitä"
+                    : "includes operator-reported inputs"}
               </p>
+            )}
+            {result.caps_applied && result.caps_applied.length > 0 && (
+              <p className="gryps-cap-notice">{capNoticesLine(result.caps_applied, lang)}</p>
             )}
             {result.layers && result.layers.length > 0 && (
               <div
@@ -425,21 +430,21 @@ export function UnlockFullAssessment({
           needTopic: "Valitse vähintään yksi vaihtoehto.",
         }
       : {
-          headline: "Unlock the detailed assessment",
-          body: "Email unlocks the full report via a confirmation link — no account. Optional update topics are separate from saving locally in this browser.",
+          headline: "Get the detailed assessment",
+          body: "Email confirms the full report via a link — no account. Optional update topics are separate from saving locally in this browser.",
           saveHint:
-            "“Save to Assessments” stores a local teaser in this browser only — it does not unlock the full report.",
+            "“Save to Assessments” stores a local teaser in this browser only — it does not open the full report.",
           placeholder: "your@email.com",
           submit: "Send confirmation link",
           sending: "Sending…",
-          success: "Check your email — the confirmation link unlocks the detailed assessment.",
+          success: "Check your email — the confirmation link opens the detailed assessment.",
           successManual:
             "Email could not be sent (Resend domain/test limit). Open the confirmation link below:",
           openLink: "Open detailed assessment",
           footnote:
             "No account required. We only send a confirmation link. Update topics are optional.",
           topicsLabel: "What do you want? (pick one or more)",
-          topicFull: "Unlock detailed assessment for this site",
+          topicFull: "Detailed assessment for this site",
           topicReports: "Notify when full reports launch",
           topicMonitor: "Get updates / monitoring later",
           needId: "Assessment was not saved — try generating a Signature again.",

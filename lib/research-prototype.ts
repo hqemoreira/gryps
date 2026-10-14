@@ -6,8 +6,8 @@
 
 export const RESEARCH_AREAS: { en: string; fi: string; href?: string }[] = [
   {
-    en: "Geographic connectivity intelligence",
-    fi: "Maantieteellinen yhteysäly",
+    en: "Assessed sites, providers and research on a map",
+    fi: "Arvioidut kohteet, toimittajat ja tutkimus kartalla",
     href: "/map",
   },
   {

@@ -57,11 +57,10 @@ export default function OpenGraphImage() {
             lineHeight: 1.2,
           }}
         >
-          Know your score before the Arctic finds it for you.
+          Connectivity resilience scoring for Nordic, Arctic and Icelandic sites.
         </div>
         <div style={{ color: "#64748B", fontSize: 24, maxWidth: 820, lineHeight: 1.4 }}>
-          Resilience Signatures for Nordic, Arctic & Icelandic operations — satellite dependency
-          scored in 60 seconds.
+          Deterministic, documented, free. Resilience Signatures for high-latitude operations.
         </div>
       </div>
 

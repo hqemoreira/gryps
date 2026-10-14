@@ -84,12 +84,12 @@ type LibraryFilter = "all" | "library";
 
 const COPY = {
   en: {
-    tagline: "EXPLORE CONNECTIVITY INTELLIGENCE",
-    title: "Explore Connectivity Intelligence",
+    tagline: "ASSESSED SITES · MAP",
+    title: "Assessed sites, providers and research on a map",
     lead: "Select a region and operating vertical to understand the modeled connectivity environment — then Generate a Resilience Signature for that site.",
     disclosure:
-      "Model-based Connectivity Intelligence — not live RF, constellation telemetry, or a coverage SLA. Research prototype · Non-commercial · Model-based analysis.",
-    modelMeta: `${MODEL_VERSION} · Deterministic intelligence model`,
+      "Model-based assessments — not live RF, constellation telemetry, or a coverage SLA. Research prototype · Non-commercial · Model-based analysis.",
+    modelMeta: `${MODEL_VERSION} · Deterministic scoring model`,
     hint: "Pan · zoom · select a site",
     all: "All",
     region: "Region",
@@ -122,12 +122,12 @@ const COPY = {
     flow: "Explore → region / vertical → Generate Resilience Signature",
   },
   fi: {
-    tagline: "TUTKI CONNECTIVITY INTELLIGENCEA",
-    title: "Tutki Connectivity Intelligencea",
+    tagline: "ARVIOIDUT KOHTEET · KARTTA",
+    title: "Arvioidut kohteet, toimittajat ja tutkimus kartalla",
     lead: "Valitse alue ja toimiala ymmärtääksesi mallinnetun yhteysympäristön — ja luo sitten Resilience Signature kyseiselle kohteelle.",
     disclosure:
-      "Mallipohjainen Connectivity Intelligence — ei live-RF:ää, konstellaatiotelemetriaa eikä kattavuus-SLA:ta. Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi.",
-    modelMeta: `${MODEL_VERSION} · Deterministinen älymalli`,
+      "Mallipohjaiset arviot — ei live-RF:ää, konstellaatiotelemetriaa eikä kattavuus-SLA:ta. Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi.",
+    modelMeta: `${MODEL_VERSION} · Deterministinen pisteytysmalli`,
     hint: "Vieritä · zoom · valitse kohde",
     all: "Kaikki",
     region: "Alue",

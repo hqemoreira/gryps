@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+  <!-- Mannaz-in-ring  Mimir system mark -->
+  <circle cx="16" cy="16" r="13.5" stroke="currentColor" stroke-width="1.5"/>
+  <!-- Mannaz rune: two verticals + crossing diagonals -->
+  <path
+    d="M11 9.5 V22.5 M21 9.5 V22.5 M11 9.5 L21 22.5 M21 9.5 L11 22.5"
+    stroke="currentColor"
+    stroke-width="1.75"
+    stroke-linecap="square"
+    stroke-linejoin="miter"
+  />
+</svg>
