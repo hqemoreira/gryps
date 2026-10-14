@@ -1671,10 +1671,9 @@ const COPY = {
   en: {
     tag: "CONNECTIVITY RESILIENCE · NORDIC, ARCTIC & ICELAND",
     navCta: "Generate Resilience Signature",
-    h1: "Connectivity resilience scoring for Nordic, Arctic and Icelandic sites. Deterministic, documented, free.",
-    clarify:
-      "Assess connectivity resilience for remote Nordic, Arctic and high-latitude operations.",
-    sub: "A Resilience Signature — score, grade and ranked connectivity options for Nordic, Arctic and Icelandic sites.",
+    h1: "Connectivity resilience scoring for Nordic, Arctic and Icelandic sites.",
+    h1Meta: "Deterministic · documented · free",
+    sub: "A Resilience Signature — score, grade and ranked connectivity options.",
     scoreLabel: "Score: {score}/100 · Grade {grade}",
     heroSecondary: "Explore the Map",
     modelChip: "Research prototype · Non-commercial · Model-based analysis",
@@ -1772,10 +1771,9 @@ const COPY = {
   fi: {
     tag: "YHTEYSRESILIENSSI · POHJOISMAAT · ARKTIS · ISLANTI",
     navCta: "Luo Resilience Signature",
-    h1: "Yhteyden resilienssipisteytys pohjoismaisille, arktisille ja islantilaisille kohteille. Deterministinen, dokumentoitu, ilmainen.",
-    clarify:
-      "Arvioi yhteyden resilienssiä etäisissä pohjoismaisissa, arktisissa ja korkeiden leveysasteiden toiminnoissa.",
-    sub: "Resilience Signature — pisteet, arvosana ja sijoitetut yhteysvaihtoehdot pohjoismaisille, arktisille ja islantilaisille kohteille.",
+    h1: "Yhteyden resilienssipisteytys pohjoismaisille, arktisille ja islantilaisille kohteille.",
+    h1Meta: "Deterministinen · dokumentoitu · ilmainen",
+    sub: "Resilience Signature — pisteet, arvosana ja sijoitetut yhteysvaihtoehdot.",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
     heroSecondary: "Tutki karttaa",
     modelChip: "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi",
@@ -1946,7 +1944,7 @@ export default function HomePage() {
         id="gryps-hero"
         className="gryps-section-pad gryps-hero-pad gryps-hero-aurora gryps-no-print"
         style={{
-          paddingTop: chromeH + 24,
+          paddingTop: chromeH + 40,
           paddingBottom: "var(--section-y)",
           paddingLeft: "var(--pad-x)",
           paddingRight: "var(--pad-x)",
@@ -1958,92 +1956,21 @@ export default function HomePage() {
             style={{
               display: "grid",
               gridTemplateColumns: "minmax(0, 1.05fr) minmax(320px, 0.95fr)",
-              gap: 48,
+              gap: 56,
               alignItems: "center",
             }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
-              <div
-                className="gryps-hero-eyebrow"
-                style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 20 }}
-              >
-                <div
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: "50%",
-                    flexShrink: 0,
-                    marginTop: 4,
-                    background: "var(--aurora-gradient)",
-                    boxShadow: "0 0 10px color-mix(in srgb, var(--aurora-1) 60%, transparent)",
-                  }}
-                />
-                <span
-                  className="gryps-hero-tag"
-                  style={{
-                    fontFamily: "var(--font-data)",
-                    fontSize: "var(--text-label)",
-                    color: "var(--text-muted)",
-                    letterSpacing: "0.14em",
-                  }}
-                >
-                  {t.tag}
-                </span>
+            <div className="gryps-hero-copy">
+              <div className="gryps-hero-eyebrow">
+                <div className="gryps-hero-eyebrow-dot" aria-hidden />
+                <span className="gryps-hero-tag">{t.tag}</span>
               </div>
 
-              <h1
-                className="gryps-hero-h1 text-display"
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontSize: "clamp(2.15rem, 4.8vw, 3.5rem)",
-                  fontWeight: 600,
-                  lineHeight: 1.08,
-                  letterSpacing: "-0.02em",
-                  color: "var(--text)",
-                  marginBottom: 12,
-                  maxWidth: lang === "fi" ? "min(100%, 24ch)" : "13ch",
-                }}
-              >
-                {t.h1}
-              </h1>
+              <h1 className="gryps-hero-h1">{t.h1}</h1>
+              <p className="gryps-hero-meta">{t.h1Meta}</p>
+              <p className="gryps-hero-sub">{t.sub}</p>
 
-              <p
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  color: "var(--text)",
-                  maxWidth: "42ch",
-                  marginBottom: 12,
-                  lineHeight: 1.55,
-                }}
-              >
-                {t.clarify}
-              </p>
-
-              <p
-                className="gryps-hero-sub text-body"
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  color: "var(--text-muted)",
-                  maxWidth: "42ch",
-                  marginBottom: 28,
-                  lineHeight: 1.65,
-                }}
-              >
-                {t.sub}
-              </p>
-
-              <div
-                className="gryps-hero-actions"
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  gap: 12,
-                  marginBottom: 20,
-                }}
-              >
+              <div className="gryps-hero-actions">
                 <a href="#advisor" className="gryps-cta-btn">
                   {t.advisorCta} <ArrowRight size={14} />
                 </a>
@@ -2052,22 +1979,7 @@ export default function HomePage() {
                 </a>
               </div>
 
-              <span
-                style={{
-                  display: "inline-block",
-                  fontFamily: "var(--font-data)",
-                  fontSize: "var(--text-label)",
-                  color: "var(--accent-amber)",
-                  letterSpacing: "0.06em",
-                  backgroundColor: "rgba(245,184,74,0.08)",
-                  border: "1px solid rgba(245,184,74,0.25)",
-                  borderRadius: 6,
-                  padding: "4px 10px",
-                  marginBottom: 8,
-                }}
-              >
-                {modelChip}
-              </span>
+              <span className="gryps-hero-model-chip">{modelChip}</span>
             </div>
 
             <div

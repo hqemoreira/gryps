@@ -655,6 +655,83 @@ body {
   line-height: 1.05;
 }
 
+/* Hero copy — open hierarchy; avoid wall-of-text display */
+.gryps-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  min-width: 0;
+  max-width: 36rem;
+}
+.gryps-hero-eyebrow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.gryps-hero-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+  background: var(--aurora-gradient);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--aurora-1) 60%, transparent);
+}
+.gryps-hero-tag {
+  font-family: var(--font-data);
+  font-size: var(--text-label);
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  line-height: 1.45;
+}
+.gryps-hero-h1 {
+  font-family: var(--font-ui);
+  font-size: clamp(1.85rem, 3.4vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  margin: 0 0 16px;
+  max-width: 18ch;
+}
+.gryps-hero-meta {
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  margin: 0 0 20px;
+}
+.gryps-hero-sub {
+  font-family: var(--font-ui);
+  font-size: 1.0625rem;
+  color: var(--text-muted);
+  max-width: 38ch;
+  margin: 0 0 32px;
+  line-height: 1.65;
+}
+.gryps-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.gryps-hero-model-chip {
+  display: inline-block;
+  font-family: var(--font-data);
+  font-size: var(--text-label);
+  color: var(--accent-amber);
+  letter-spacing: 0.06em;
+  background-color: rgba(245, 184, 74, 0.08);
+  border: 1px solid rgba(245, 184, 74, 0.25);
+  border-radius: 6px;
+  padding: 5px 11px;
+}
+
 .gryps-hero-aurora {
   position: relative;
   overflow: hidden;
@@ -1682,11 +1759,14 @@ body {
   }
   .gryps-hero-grid {
     grid-template-columns: 1fr !important;
-    gap: 28px !important;
+    gap: 40px !important;
   }
   .gryps-hero-signature {
     position: static;
     min-height: 0 !important;
+  }
+  .gryps-hero-h1 {
+    max-width: 100%;
   }
   .gryps-cap-notice,
   .gryps-range-provenance {
@@ -1867,20 +1947,35 @@ body {
     padding-left: 20px !important;
     padding-right: 20px !important;
   }
+  .gryps-hero-copy {
+    max-width: 100%;
+  }
+  .gryps-hero-eyebrow {
+    margin-bottom: 20px;
+  }
   .gryps-hero-tag {
-    letter-spacing: 0.06em !important;
+    letter-spacing: 0.06em;
     overflow-wrap: anywhere;
     word-break: break-word;
     max-width: 100%;
   }
   .gryps-hero-h1 {
-    font-size: clamp(1.7rem, 7vw, 2.05rem) !important;
-    max-width: 100% !important;
-    overflow-wrap: break-word;
+    font-size: clamp(1.65rem, 6.5vw, 2rem);
+    max-width: 100%;
+    line-height: 1.22;
+    margin-bottom: 12px;
+  }
+  .gryps-hero-meta {
+    margin-bottom: 16px;
+    font-size: 11px;
   }
   .gryps-hero-sub {
-    font-size: 15px !important;
-    max-width: 100% !important;
+    font-size: 15px;
+    max-width: 100%;
+    margin-bottom: 24px;
+  }
+  .gryps-hero-actions {
+    margin-bottom: 18px;
   }
   .gryps-stats-row {
     gap: 20px !important;
