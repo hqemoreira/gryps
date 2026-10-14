@@ -56,7 +56,7 @@ const COPY = {
     sigB: "A structured view of connectivity resilience.",
     modesL: "THREE WAYS TO USE GRYPS",
     exploreCta: "Explore",
-    assessCta: "Generate Signature",
+    assessCta: "Open the advisor →",
     researchCta: "Explore Research",
     datasetL: "CURRENT RESEARCH DATASET",
     sites: "assessed sites",
@@ -65,7 +65,7 @@ const COPY = {
     examplesSub: "Example Signatures from the Research Library.",
     view: "View assessment →",
     posture: "Research & Prototype posture →",
-    intelligence: "How scoring, evidence and caps work →",
+    libraryLink: "Signatures from assessed research sites →",
   },
   fi: {
     modelL: "MITEN GRYPS TOIMII",
@@ -80,7 +80,7 @@ const COPY = {
     sigB: "Rakenteinen näkymä yhteyden resilienssiin.",
     modesL: "KOLME TAPAA KÄYTTÄÄ GRYPS:ÄÄ",
     exploreCta: "Tutki",
-    assessCta: "Luo Signature",
+    assessCta: "Avaa Advisor →",
     researchCta: "Tutki tutkimusta",
     datasetL: "NYKYINEN TUTKIMUSAINEISTO",
     sites: "arvioitua kohdetta",
@@ -89,7 +89,7 @@ const COPY = {
     examplesSub: "Esimerkki-Signatureja Research Librarysta.",
     view: "Katso arvio →",
     posture: "Tutkimus ja prototyyppi →",
-    intelligence: "Miten pisteytys, näyttö ja katot toimivat →",
+    libraryLink: "Signatureja arvioiduista tutkimuskohteista →",
   },
 } as const;
 
@@ -384,7 +384,7 @@ export function HomeOrientation({
           </div>
           <p style={{ marginTop: 28, display: "flex", flexWrap: "wrap", gap: 16 }}>
             <Link
-              href="/methodology"
+              href="/research"
               style={{
                 fontFamily: "var(--font-ui)",
                 fontSize: 13,
@@ -393,7 +393,7 @@ export function HomeOrientation({
                 textDecoration: "none",
               }}
             >
-              {t.intelligence}
+              {t.libraryLink}
             </Link>
             <Link
               href="/research-prototype"

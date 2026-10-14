@@ -31,6 +31,9 @@ export const HERO_DEMO_PLACE = "67.0°N 26.0°E · Northern Finland";
 export const HERO_DEMO_SUBTITLE_EN = "Starlink + Iridium Certus · dual LEO paths";
 export const HERO_DEMO_SUBTITLE_FI = "Starlink + Iridium Certus · kaksi LEO-polkua";
 
+/** Closest Research Library dual-path mining case for the hero sample card. */
+export const HERO_DEMO_RESEARCH_HREF = "/research/finnish-arctic-mining-kittila";
+
 export const HERO_DEMO_OG_TITLE = `GRYPS · Score: ${HERO_DEMO_SCORE}/100 · Grade ${HERO_DEMO_GRADE}`;
 export const HERO_DEMO_OG_ALT = `GRYPS Resilience Signature · Score ${HERO_DEMO_SCORE} · Grade ${HERO_DEMO_GRADE}`;
 

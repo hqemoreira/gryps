@@ -67,8 +67,8 @@ export const IA_MODES: IaMode[] = [
         href: "/#advisor",
         en: "Resilience Advisor",
         fi: "Resilience Advisor",
-        descEn: "Generate a new Resilience Signature",
-        descFi: "Luo uusi Resilience Signature",
+        descEn: "Open the advisor and score a site",
+        descFi: "Avaa Advisor ja pisteytä kohde",
       },
       {
         href: "/workspace",

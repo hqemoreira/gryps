@@ -321,18 +321,38 @@ body {
 }
 .gryps-nav-cta {
   font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--accent-blue);
   text-decoration: none;
-  border: 1px solid rgba(79, 168, 255, 0.3);
-  padding: 0 14px;
+  border: none;
+  background: transparent;
+  padding: 0 4px;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
-  border-radius: var(--radius);
+  border-radius: 0;
   flex-shrink: 0;
   white-space: nowrap;
+}
+.gryps-nav-cta:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.gryps-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-blue);
+  text-decoration: none;
+  min-height: 44px;
+}
+.gryps-text-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* Explore · Assess · Research */

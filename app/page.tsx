@@ -14,7 +14,7 @@ import {
 } from "@/components/AdvisorFunnel";
 import { SaveToWorkspace } from "@/components/SaveToWorkspace";
 import { isAbbreviatedAssessment, type AbbreviatedAssessment } from "@/lib/abbreviate-result";
-import { GrypsMark, GrypsPrintBrand } from "@/components/GrypsMark";
+import { GrypsPrintBrand } from "@/components/GrypsMark";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { TopChrome } from "@/components/TopChrome";
@@ -33,6 +33,7 @@ import { MODEL_VERSION } from "@/lib/signature-meta";
 import {
   HERO_DEMO,
   HERO_DEMO_PLACE,
+  HERO_DEMO_RESEARCH_HREF,
   HERO_DEMO_SUBTITLE_EN,
   HERO_DEMO_SUBTITLE_FI,
 } from "@/lib/hero-demo";
@@ -1548,8 +1549,8 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
       </div>
 
       <div>
-        <a href="#advisor" className="gryps-cta-btn" style={{ width: "100%" }}>
-          {t.advisorCta} <ArrowRight size={14} />
+        <a href={HERO_DEMO_RESEARCH_HREF} className="gryps-text-link">
+          {lang === "fi" ? "Katso täysi Signature →" : "View full Signature →"}
         </a>
       </div>
     </div>
@@ -1685,6 +1686,7 @@ const COPY = {
     liveCounter: "sites assessed in the Nordic & Arctic portfolio",
     proofBand: "Illustrative · not live monitoring",
     advisorCta: "Generate Resilience Signature",
+    advisorHeading: "Resilience Advisor",
     advisorSub: "Most assessments take about a minute.",
     sectorLabel: "OPERATIONAL SECTOR",
     sectorPlaceholder: "Select sector",
@@ -1762,9 +1764,6 @@ const COPY = {
     polarFact2: "Latitude weight drops above 70°N",
     polarMethodLink: "See scoring formula →",
     capacityMapLink: "Open the map →",
-    ctaH2: "Generate a Resilience Signature",
-    ctaSub: "Free · No account required. Nordic, Arctic and Icelandic sites.",
-    ctaBtn: "Generate Resilience Signature",
     viewSample: "View research assessment →",
     footerTag: "Built in Finland for high-latitude resilience.",
   },
@@ -1785,6 +1784,7 @@ const COPY = {
     liveCounter: "kohdetta arvioitu Pohjoismaiden ja arktisen alueen portfoliossa",
     proofBand: "Havainnollistava · ei reaaliaikaista seurantaa",
     advisorCta: "Luo Resilience Signature",
+    advisorHeading: "Resilience Advisor",
     advisorSub: "Useimmat arviot kestävät noin minuutin.",
     sectorLabel: "TOIMIALA",
     sectorPlaceholder: "Valitse toimiala",
@@ -1864,9 +1864,6 @@ const COPY = {
     polarFact2: "Leveysastepaino laskee yli 70°N",
     polarMethodLink: "Katso pisteytyskaava →",
     capacityMapLink: "Avaa kartta →",
-    ctaH2: "Luo Resilience Signature",
-    ctaSub: "Ilmainen · Ei tiliä tarvita. Pohjoismaiset, arktiset ja islantilaiset kohteet.",
-    ctaBtn: "Luo Resilience Signature",
     viewSample: "Katso tutkimusarvio →",
     footerTag: "Rakennettu Suomessa korkeiden leveysasteiden yhteysresilienssiä varten.",
   },
@@ -2025,7 +2022,7 @@ export default function HomePage() {
               className="gryps-no-print text-display"
               style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 10 }}
             >
-              {t.advisorCta}
+              {t.advisorHeading}
             </h2>
             <p
               className="gryps-no-print text-body"
@@ -2040,51 +2037,6 @@ export default function HomePage() {
             </p>
             <AdvisorForm t={t} lang={lang} />
           </div>
-        </section>
-      </FadeUp>
-
-      {/* CTA */}
-      <FadeUp>
-        <section
-          className="gryps-section gryps-section-pad gryps-no-print"
-          style={{ borderTop: "1px solid var(--border)", textAlign: "center" }}
-        >
-          <GrypsMark size={44} variant="display" animate />
-          <h2
-            className="text-display"
-            style={{ fontFamily: "var(--font-ui)", color: "var(--text)", margin: "20px 0 12px" }}
-          >
-            {t.ctaH2}
-          </h2>
-          <p
-            className="text-body"
-            style={{
-              fontFamily: "var(--font-ui)",
-              color: "var(--text-muted)",
-              margin: "0 auto 32px",
-              maxWidth: 480,
-              fontSize: "var(--text-small)",
-            }}
-          >
-            {t.ctaSub}
-          </p>
-          <a href="#advisor" className="gryps-cta-btn" style={{ display: "inline-flex" }}>
-            {t.advisorCta} <ArrowRight size={14} />
-          </a>
-          <p style={{ marginTop: 20 }}>
-            <a
-              href="/research-prototype"
-              style={{
-                fontFamily: "var(--font-ui)",
-                fontSize: 13,
-                fontWeight: 600,
-                color: "var(--accent-blue)",
-                textDecoration: "none",
-              }}
-            >
-              {lang === "en" ? "Research & Prototype →" : "Tutkimus ja prototyyppi →"}
-            </a>
-          </p>
         </section>
       </FadeUp>
 
