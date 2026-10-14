@@ -30,7 +30,14 @@ import {
   type AdvisorPriorityId,
 } from "@/lib/advisor-priorities";
 import { MODEL_VERSION } from "@/lib/signature-meta";
-import { HERO_DEMO } from "@/lib/hero-demo";
+import {
+  HERO_DEMO,
+  HERO_DEMO_PLACE,
+  HERO_DEMO_SUBTITLE_EN,
+  HERO_DEMO_SUBTITLE_FI,
+} from "@/lib/hero-demo";
+import { SCORING_ENGINE } from "@/lib/model-constants";
+import { MimirAssistant } from "@/components/MimirAssistant";
 
 function gradeBadgeBg(grade: string): string {
   const c = gradeColor(grade);
@@ -162,8 +169,8 @@ const NORDIC_LAT_MIN = 55;
 const NORDIC_LAT_MAX = 85;
 const NORDIC_LNG_MIN = -30;
 const NORDIC_LNG_MAX = 40;
-const DEFAULT_LAT = "68.2";
-const DEFAULT_LNG = "27.4";
+const DEFAULT_LAT = "67.0";
+const DEFAULT_LNG = "26.0";
 
 function modelVersionDisplay(): string {
   const m = MODEL_VERSION.match(/v[\d.]+/);
@@ -475,6 +482,28 @@ function SignatureReveal({
       >
         ← {t.analyseAnother}
       </button>
+      <MimirAssistant
+        lang={lang}
+        signatureContext={
+          depth === "full" && full
+            ? JSON.stringify({
+                score: full.resilience_signature.score,
+                grade: full.resilience_signature.grade,
+                summary: full.resilience_signature.summary,
+                layers: full.score_composition?.layers,
+                range: full.score_composition?.confidence_range,
+              })
+            : abbreviated
+              ? JSON.stringify({
+                  score: abbreviated.resilience_signature.score,
+                  grade: abbreviated.resilience_signature.grade,
+                  summary: abbreviated.resilience_signature.summary,
+                  layers: abbreviated.layers,
+                  range: abbreviated.confidence_range,
+                })
+              : undefined
+        }
+      />
     </div>
   );
 }
@@ -490,6 +519,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   const [autonomy, setAutonomy] = useState("");
   const [criticality, setCriticality] = useState("");
   const [priorities, setPriorities] = useState<AdvisorPriorityId[]>([]);
+  const [aiInterpretation, setAiInterpretation] = useState(false);
   const [loading, setLoading] = useState(false);
   const [depth, setDepth] = useState<"abbreviated" | "full">("abbreviated");
   const [abbreviated, setAbbreviated] = useState<AbbreviatedAssessment | null>(null);
@@ -713,6 +743,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
           autonomy_level: autonomy,
           operation_criticality: criticality,
           priorities,
+          ai_interpretation: aiInterpretation || undefined,
         }),
       });
       const data = await res.json();
@@ -882,6 +913,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   };
 
   return (
+    <>
     <form
       onSubmit={handleSubmit}
       className="gryps-console-panel"
@@ -1161,6 +1193,31 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         </div>
       </div>
 
+      <label
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 10,
+          cursor: "pointer",
+          fontFamily: "var(--font-ui)",
+          fontSize: 13,
+          color: "var(--text-muted)",
+          lineHeight: 1.45,
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={aiInterpretation}
+          onChange={(e) => setAiInterpretation(e.target.checked)}
+          style={{ marginTop: 3, flexShrink: 0 }}
+        />
+        <span>
+          {lang === "fi"
+            ? "Tekoälyavusteinen tulkinta (valinnainen) — hioo vain suosituskappaleen; ei muuta pistettä."
+            : "AI-assisted interpretation (optional) — polishes recommendation wording only; never changes the score."}
+        </span>
+      </label>
+
       <p
         style={{
           fontFamily: "var(--font-data)",
@@ -1222,18 +1279,24 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </form>
+    <MimirAssistant lang={lang} />
+    </>
   );
 }
 
-// ── Hero signature card (Score 47 · Grade D — single source: lib/hero-demo.ts) ─
+// ── Hero signature card (mid-range B — single source: lib/hero-demo.ts) ─
 
 function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
-  const labels: Record<string, { en: string; fi: string }> = {
-    redundancy: { en: "Redundancy", fi: "Redundanssi" },
-    latitude: { en: "Latitude", fi: "Leveysaste" },
-    operational_profile: { en: "Profile", fi: "Profiili" },
-    provider_confidence: { en: "Providers", fi: "Toimittajat" },
-  };
+  const layers = HERO_DEMO.score_composition.layers ?? [];
+  const range = HERO_DEMO.score_composition.confidence_range;
+  const layerLabel = (id: string) =>
+    id === "conditions"
+      ? lang === "fi"
+        ? "Olosuhteet"
+        : "Conditions"
+      : lang === "fi"
+        ? "Lievennys"
+        : "Mitigation";
   return (
     <div className="gryps-comp-bars" style={{ marginTop: 4 }}>
       <p
@@ -1245,17 +1308,16 @@ function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
           marginBottom: 4,
         }}
       >
-        {lang === "fi" ? "PISTEKOMPONENTIT" : "SCORE COMPOSITION"}
+        {lang === "fi" ? "KAKSI KERROSTA" : "TWO-LAYER SCORE"}
       </p>
-      {HERO_DEMO.score_composition.components.map((c) => {
-        const pct = c.max > 0 ? Math.max(0, Math.min(100, (c.points / c.max) * 100)) : 0;
-        const label = labels[c.id]?.[lang] ?? c.label;
+      {layers.map((layer) => {
+        const pct = layer.max > 0 ? Math.max(0, Math.min(100, (layer.points / layer.max) * 100)) : 0;
         return (
-          <div key={c.id} className="gryps-comp-row">
+          <div key={layer.id} className="gryps-comp-row">
             <span
               style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}
             >
-              {label}
+              {layerLabel(layer.id)} · {layer.band}
             </span>
             <span
               style={{
@@ -1265,7 +1327,7 @@ function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
                 fontWeight: 700,
               }}
             >
-              {c.points}/{c.max}
+              {layer.points}/{layer.max}
             </span>
             <div className="gryps-comp-track">
               <div className="gryps-comp-fill" style={{ width: `${pct}%` }} />
@@ -1273,18 +1335,30 @@ function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
           </div>
         );
       })}
-      {HERO_DEMO.score_composition.caps_applied.length > 0 && (
+      {range && (
         <p
           style={{
             fontFamily: "var(--font-data)",
-            fontSize: 9,
-            color: "var(--accent-amber)",
-            marginTop: 4,
+            fontSize: 10,
+            color: "var(--text-muted)",
+            marginTop: 6,
           }}
         >
-          {lang === "fi" ? "Katto:" : "Cap:"} {HERO_DEMO.score_composition.caps_applied.join(", ")}
+          {lang === "fi" ? "Väli" : "Range"}: {range.low}–{range.high}
         </p>
       )}
+      <a
+        href="#score-composition-anchor"
+        style={{
+          fontFamily: "var(--font-data)",
+          fontSize: 10,
+          color: "var(--accent-blue)",
+          marginTop: 8,
+          display: "inline-block",
+        }}
+      >
+        {lang === "fi" ? "Mitä tämä tarkoittaa →" : "What this means →"}
+      </a>
     </div>
   );
 }
@@ -1353,7 +1427,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
             marginBottom: 4,
           }}
         >
-          68.2°N 27.4°E · Lapland
+          {HERO_DEMO_PLACE}
         </p>
         <p
           style={{
@@ -1364,7 +1438,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
             marginBottom: 20,
           }}
         >
-          Single Starlink · no backup path
+          {lang === "fi" ? HERO_DEMO_SUBTITLE_FI : HERO_DEMO_SUBTITLE_EN}
         </p>
 
         <div
@@ -1403,7 +1477,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
             marginBottom: 18,
           }}
         >
-          deterministic-v0.3
+          {SCORING_ENGINE}
         </p>
 
         <div
@@ -1478,7 +1552,7 @@ function LatitudeRuler() {
   const ticks = [
     { label: "60N", active: false },
     { label: "65N", active: false },
-    { label: "68N", active: true },
+    { label: "67N", active: true },
     { label: "70N", active: false },
     { label: "75N", active: false },
     { label: "80N", active: false },
@@ -1498,8 +1572,20 @@ function LatitudeRuler() {
 function TrustStrip({ lang }: { lang: "en" | "fi" }) {
   const items =
     lang === "fi"
-      ? ["Malli v0.3", "Deterministinen", "EU AI Act Art. 50", "Espoo", "Tutkimusprototyyppi"]
-      : ["Model v0.3", "Deterministic", "EU AI Act Art. 50", "Espoo", "Research prototype"];
+      ? [
+          "Malli v0.4",
+          "Deterministinen pisteytys",
+          "Tekoälyavusteinen tulkinta (valinnainen)",
+          "Espoo",
+          "Tutkimusprototyyppi",
+        ]
+      : [
+          "Model v0.4",
+          "Deterministic scoring",
+          "AI-assisted interpretation (opt-in)",
+          "Espoo",
+          "Research prototype",
+        ];
   const links = [
     { href: "/methodology", label: lang === "fi" ? "Menetelmä" : "Methodology" },
     { href: "/about", label: lang === "fi" ? "Tietoa" : "About" },
@@ -1592,7 +1678,7 @@ const COPY = {
     liveCounter: "sites assessed in the Nordic & Arctic portfolio",
     proofBand: "Illustrative · not live monitoring",
     advisorCta: "Generate Resilience Signature",
-    advisorSub: "Free · No account required",
+    advisorSub: "Score your site in under a minute",
     sectorLabel: "OPERATIONAL SECTOR",
     sectorPlaceholder: "Select sector",
     autonomyLabel: "AUTONOMY LEVEL",
@@ -1617,7 +1703,7 @@ const COPY = {
     telemetryHeader: "ENGINE LOG",
     topRiskLabel: "TOP RISK",
     topRecLabel: "REC #1",
-    heroTopRisk: "No backup",
+    heroTopRisk: "LEO broadband concentration",
     problemL: "Why sites fail without a Signature",
     problems: [
       {
@@ -1665,7 +1751,7 @@ const COPY = {
     polarInstrumentTitle: "Explore Connectivity Intelligence",
     polarInstrumentBody:
       "Select a region and vertical on the Connectivity Intelligence map, open a research assessment, then Generate a Resilience Signature. Not live constellation telemetry.",
-    polarFact1: "Sample site 68.2°N · single Starlink path",
+    polarFact1: "Sample site 67.0°N · Starlink + Iridium dual path",
     polarFact2: "Latitude weight drops above 70°N",
     polarMethodLink: "See scoring formula →",
     capacityMapLink: "Explore Connectivity Intelligence →",
@@ -1694,7 +1780,7 @@ const COPY = {
     liveCounter: "kohdetta arvioitu Pohjoismaiden ja arktisen alueen portfoliossa",
     proofBand: "Havainnollistava · ei reaaliaikaista seurantaa",
     advisorCta: "Luo Resilience Signature",
-    advisorSub: "Ilmainen · Ei tiliä tarvita",
+    advisorSub: "Pisteytä kohde alle minuutissa",
     sectorLabel: "TOIMIALA",
     sectorPlaceholder: "Valitse toimiala",
     autonomyLabel: "AUTONOMIATASO",
@@ -1721,7 +1807,7 @@ const COPY = {
     telemetryHeader: "MOOTTORILOKI",
     topRiskLabel: "PÄÄRISKI",
     topRecLabel: "SUOS #1",
-    heroTopRisk: "Ei varayhteyttä",
+    heroTopRisk: "LEO-laajakaistan keskittyminen",
     problemL: "Miksi kohteet kaatuvat ilman Signaturea",
     problems: [
       {
@@ -1769,7 +1855,7 @@ const COPY = {
     polarInstrumentTitle: "Tutki Connectivity Intelligencea",
     polarInstrumentBody:
       "Valitse alue ja toimiala Connectivity Intelligence -kartalla, avaa tutkimusarvio ja luo Resilience Signature. Ei reaaliaikaista konstellaatiotelemetriaa.",
-    polarFact1: "Esimerkkikohde 68.2°N · yksi Starlink-yhteys",
+    polarFact1: "Esimerkkikohde 67.0°N · Starlink + Iridium kaksoispolku",
     polarFact2: "Leveysastepaino laskee yli 70°N",
     polarMethodLink: "Katso pisteytyskaava →",
     capacityMapLink: "Tutki Connectivity Intelligencea →",

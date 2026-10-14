@@ -9,6 +9,20 @@ export type AbbreviatedAssessment = {
     grade: string;
     summary: string;
   };
+  layers?: {
+    id: "conditions" | "mitigation";
+    label: string;
+    points: number;
+    max: number;
+    band: string;
+    fixed: boolean;
+  }[];
+  confidence_range?: {
+    low: number;
+    high: number;
+    provenance: "catalog" | "operator-reported";
+  };
+  levers?: { label: string; delta: number; provider?: string }[];
   recommended: {
     provider: string;
     type: string;
@@ -105,6 +119,9 @@ export function abbreviateResult(full: AdvisoryResult): AbbreviatedAssessment {
       grade: full.resilience_signature.grade,
       summary: full.resilience_signature.summary,
     },
+    layers: full.score_composition?.layers,
+    confidence_range: full.score_composition?.confidence_range,
+    levers: full.score_composition?.levers?.slice(0, 3),
     recommended: {
       provider,
       type,

@@ -31,7 +31,7 @@ const COPY = {
       },
       {
         title: "2 · Relevant research",
-        body: "GRYPS Knowledge notes and the Research Library document high-latitude constraints (GEO elevation loss, LEO broadband vs polar narrowband, redundancy under autonomy). These are editorial research artefacts aligned to Model v0.3 — not vendor white papers.",
+        body: "GRYPS Knowledge notes and the Research Library document high-latitude constraints (GEO elevation loss, LEO broadband vs polar narrowband, redundancy under autonomy). These are editorial research artefacts aligned to Model v0.4 — not vendor white papers.",
       },
       {
         title: "3 · Connectivity characteristics",
@@ -39,7 +39,7 @@ const COPY = {
       },
       {
         title: "4 · GRYPS scoring factors",
-        body: "Deterministic Model v0.3 sums redundancy, latitude, operational profile, and provider confidence, then applies hard caps. Mission priorities may re-rank recommendations; they do not change the Signature score.",
+        body: "Deterministic Model v0.4 scores two layers: Site Conditions (fixed latitude + forestry elevation demerit) and Mitigation Quality (independent-path redundancy, provider/path independence, profile–autonomy alignment), then applies hard caps. Mission priorities may re-rank recommendations; they do not change the Signature score.",
       },
       {
         title: "5 · Provider recommendation",
@@ -47,11 +47,11 @@ const COPY = {
       },
     ],
     geometryCaption:
-      "Modeled polar geometry — latitude rings and LEO / MEO / GEO orbital paths. Interactive highlight · animated passes. Scoring uses deterministic Model v0.3 weights, not live RF.",
+      "Modeled polar geometry — latitude rings and LEO / MEO / GEO orbital paths. Interactive highlight · animated passes. Scoring uses deterministic Model v0.4 weights, not live RF.",
     geometryHint: "Highlight an orbit class to see how geometry informs Signature weighting.",
     attributionH2: "Source attribution & data freshness",
     attributionItems: [
-      `Model — GRYPS deterministic engine (Model v0.3 / ${SCORING_ENGINE_DISPLAY}); score/grade/risks/ranks are reproducible for identical inputs.`,
+      `Model — GRYPS deterministic engine (Model v0.4 / ${SCORING_ENGINE_DISPLAY}); score/grade/risks/ranks are reproducible for identical inputs.`,
       "Catalog — curated provider index; confidence = assessment/data basis, not availability %. No commercial relationships.",
       "Datasets — EU-DEM (Copernicus/EEA via OpenTopoData) for terrain evidence; Bittimittari (Traficom, CC BY 4.0) for Finnish municipality seeds only. Neither is blended into the 0–100 Signature.",
       "Research — GRYPS Knowledge articles and Research Library assessments; editorial freshness noted on each Signature evidence panel.",
@@ -76,23 +76,24 @@ const COPY = {
       "Assessment confidence on the evidence panel reflects confidence in the assessment/data basis (catalog fit, documented paths, latitude constraints). It is not a probability of service availability and not an SLA.",
     formulaH2: `${SCORING_MODEL_LABEL} formula (${SCORING_ENGINE_DISPLAY})`,
     formulaP1: `The Resilience Score is deterministic and reproducible for the same inputs (${SCORING_MODEL_LABEL}). Optional language-model text may polish the recommendation paragraph only — it never changes score, grade, risks, or ranked providers.`,
-    formulaP2: "Score = sum of four components (then hard caps, clamped 0–100):",
+    formulaP2:
+      "Score = Site Conditions (0–20) + Mitigation Quality (0–80), then hard caps, clamped 0–100. Points earned, higher = better. An independent path requires a different orbit class, ground segment, or failure mode.",
     components: [
       {
-        title: "Redundancy (0–30)",
-        body: "0 providers → 0; 1 → 8; 2 → 22 (+6 if independent orbital types / LEO broadband+narrowband); ≥3 → 28.",
+        title: "Layer A — Site Conditions (0–20, fixed)",
+        body: "Latitude band (≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8) plus forestry elevation demerit (−4 below 300 m). Operators cannot change these; the label translates points earned (e.g. 8/20 → harsh).",
       },
       {
-        title: "Latitude (0–20)",
-        body: "≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8. Forestry sites below 300 m elevation: −4 (canopy/terrain).",
+        title: "Layer B — Redundancy / independent paths (0–35)",
+        body: "Remapped from the v0.3 redundancy curve (0 / 8 / 22+orbit-mix / 28) onto a 0–35 scale. Same constellation × two terminals still counts as one path.",
       },
       {
-        title: "Operational profile (0–15)",
-        body: "manual 15 · remote-operated 11 · mixed 8 · autonomous 5.",
+        title: "Layer B — Provider / path independence (0–25)",
+        body: "Remapped from catalog provider confidence (avg × 0.30 on the old 0–30 scale). GEO above 70°N uses degraded confidence. Confidence = assessment/data basis — not availability %.",
       },
       {
-        title: "Provider confidence (0–30)",
-        body: "average catalog confidence × 0.30. GEO providers above 70°N use a degraded confidence. Confidence reflects assessment/data basis — not guaranteed service availability.",
+        title: "Layer B — Profile–autonomy alignment (0–20)",
+        body: "Remapped from operational profile (manual 15 · remote-operated 11 · mixed 8 · autonomous 5 on the old 0–15 scale).",
       },
     ],
     gradesH2: "Grades",
@@ -147,7 +148,7 @@ const COPY = {
       },
       {
         title: "2 · Relevantti tutkimus",
-        body: "GRYPS Knowledge -muistiinpanot ja Research Library dokumentoivat korkeiden leveysasteiden rajoitteita (GEO-elevaation heikkeneminen, LEO-laajakaista vs polaarinen kapeakaista, redundanssi autonomiassa). Nämä ovat Model v0.3:een linjattuja toimituksellisia tutkimusartefakteja — eivät toimittajien white papereita.",
+        body: "GRYPS Knowledge -muistiinpanot ja Research Library dokumentoivat korkeiden leveysasteiden rajoitteita (GEO-elevaation heikkeneminen, LEO-laajakaista vs polaarinen kapeakaista, redundanssi autonomiassa). Nämä ovat Model v0.4:ään linjattuja toimituksellisia tutkimusartefakteja — eivät toimittajien white papereita.",
       },
       {
         title: "3 · Yhteyden ominaisuudet",
@@ -155,7 +156,7 @@ const COPY = {
       },
       {
         title: "4 · GRYPS-pisteytystekijät",
-        body: "Deterministinen malli v0.3 summaa redundanssin, leveysasteen, toimintaprofiilin ja toimittajaluottamuksen, sitten soveltaa kovia kattoja. Tehtävän prioriteetit voivat järjestää suositukset uudelleen; ne eivät muuta Signature-pistettä.",
+        body: "Deterministinen malli v0.4 pisteyttää kaksi kerrosta: Paikan olosuhteet (kiinteä leveysaste + metsäkorkeus) ja Lievennyksen laatu (riippumattomat polut, toimittaja-/polkuriippumattomuus, profiili–autonomia), sitten soveltaa kovia kattoja. Tehtävän prioriteetit voivat järjestää suositukset uudelleen; ne eivät muuta Signature-pistettä.",
       },
       {
         title: "5 · Toimittajasuositus",
@@ -163,12 +164,12 @@ const COPY = {
       },
     ],
     geometryCaption:
-      "Mallinnettu polaarigeometria — leveyspiirit sekä LEO-, MEO- ja GEO-radat. Interaktiivinen korostus · animoidut ohitukset. Pisteytys perustuu deterministiseen malliin v0.3, ei reaaliaikaiseen RF-mittaukseen.",
+      "Mallinnettu polaarigeometria — leveyspiirit sekä LEO-, MEO- ja GEO-radat. Interaktiivinen korostus · animoidut ohitukset. Pisteytys perustuu deterministiseen malliin v0.4, ei reaaliaikaiseen RF-mittaukseen.",
     geometryHint:
       "Korosta rataluokkaa nähdäksesi, miten geometria vaikuttaa Signature-painotuksiin.",
     attributionH2: "Lähdeattribuutio ja datan tuoreus",
     attributionItems: [
-      `Malli — GRYPS-deterministinen moottori (malli v0.3 / ${SCORING_ENGINE_DISPLAY}); piste/arvosana/riskit/sijoitukset toistettavissa samoilla syötteillä.`,
+      `Malli — GRYPS-deterministinen moottori (malli v0.4 / ${SCORING_ENGINE_DISPLAY}); piste/arvosana/riskit/sijoitukset toistettavissa samoilla syötteillä.`,
       "Hakemisto — kuratoitu toimittajahakemisto; luottamus = arvioinnin/dataperustan varmuus, ei saatavuus-%. Ei kaupallisia suhteita.",
       "Aineistot — EU-DEM (Copernicus/EEA OpenTopoDatan kautta) maastonäyttöön; Bittimittari (Traficom, CC BY 4.0) vain Suomen kuntasiemenille. Kumpaakaan ei sekoiteta 0–100 Signatureen.",
       "Tutkimus — GRYPS Knowledge -artikkelit ja Research Library -arviot; toimituksellinen tuoreus merkitty kunkin Signaturen näyttöpaneeliin.",
@@ -191,26 +192,27 @@ const COPY = {
     confidenceH2: "Luottamus",
     confidenceP:
       "Näyttöpaneelin arviointiluottamus kuvaa luottamusta arvioinnin/dataperustaan (hakemistosopivuus, dokumentoidut polut, leveysasterajoitteet). Se ei ole palvelun saatavuuden todennäköisyys eikä SLA.",
-    formulaH2: `Deterministinen malli v0.3 (${SCORING_ENGINE_DISPLAY})`,
+    formulaH2: `Deterministinen malli v0.4 (${SCORING_ENGINE_DISPLAY})`,
     formulaP1:
-      "Resilience-piste on deterministinen ja toistettavissa samoilla syötteillä (deterministinen malli v0.3). Valinnainen kielimalliteksti voi hioa vain suosituskappaleen — se ei koskaan muuta pistettä, arvosanaa, riskejä tai toimittajasuosituksia.",
-    formulaP2: "Piste = neljän komponentin summa (sen jälkeen kovat katot, rajattu 0–100):",
+      "Resilience-piste on deterministinen ja toistettavissa samoilla syötteillä (deterministinen malli v0.4). Valinnainen kielimalliteksti voi hioa vain suosituskappaleen — se ei koskaan muuta pistettä, arvosanaa, riskejä tai toimittajasuosituksia.",
+    formulaP2:
+      "Piste = Paikan olosuhteet (0–20) + Lievennyksen laatu (0–80), sitten kovat katot, rajattu 0–100. Ansaitut pisteet, korkeampi = parempi. Riippumaton polku vaatii eri rataluokan, maa-asemaverkon tai vikatilan.",
     components: [
       {
-        title: "Redundanssi (0–30)",
-        body: "0 toimittajaa → 0; 1 → 8; 2 → 22 (+6 jos itsenäiset radat / LEO broadband+narrowband); ≥3 → 28.",
+        title: "Kerros A — Paikan olosuhteet (0–20, kiinteä)",
+        body: "Leveysastekaista (≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8) plus metsäkorkeus (−4 alle 300 m). Operaattori ei voi muuttaa näitä; etiketti kääntää ansaitut pisteet (esim. 8/20 → ankara).",
       },
       {
-        title: "Leveysaste (0–20)",
-        body: "≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8. Metsäkohteet alle 300 m korkeudessa: −4 (latvus/maasto).",
+        title: "Kerros B — Redundanssi / riippumattomat polut (0–35)",
+        body: "Mapattu v0.3-redundanssikäyrästä (0 / 8 / 22+rata-mix / 28) 0–35-asteikolle. Sama konstellaatio × kaksi päätettä = yksi polku.",
       },
       {
-        title: "Toimintaprofiili (0–15)",
-        body: "manuaalinen 15 · etäohjattu 11 · yhdistelmä 8 · autonominen 5.",
+        title: "Kerros B — Toimittaja- / polkuriippumattomuus (0–25)",
+        body: "Mapattu hakemiston toimittajaluottamuksesta. GEO yli 70°N käyttää heikennettyä luottamusta. Luottamus = arvioinnin/dataperustan varmuus — ei saatavuus-%.",
       },
       {
-        title: "Toimittajaluottamus (0–30)",
-        body: "hakemiston keskimääräinen luottamus × 0.30. GEO-toimittajat yli 70°N käyttävät heikennettyä luottamusta. Luottamus kuvaa arvioinnin/dataperustan varmuutta — ei palvelun saatavuustakuuta.",
+        title: "Kerros B — Profiili–autonomia -linjaus (0–20)",
+        body: "Mapattu toimintaprofiilista (manuaalinen 15 · etäohjattu 11 · yhdistelmä 8 · autonominen 5 vanhalla 0–15-asteikolla).",
       },
     ],
     gradesH2: "Arvosanat",

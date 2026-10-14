@@ -32,12 +32,13 @@ const COPY = {
     title: "Research Library",
     lead: "Explore modeled satellite connectivity resilience across remote and autonomous operating environments. Curated research assessments — not customer cases or procurement reports.",
     disclosure:
-      "Research prototype · Non-commercial · Model-based analysis. Each assessment uses deterministic Model v0.3. Illustrative operating scenarios with real coordinates — not live RF monitoring.",
+      "Research prototype · Non-commercial · Model-based analysis. Each assessment uses deterministic Model v0.4. Curated sample — illustrative operating scenarios with real coordinates, not live RF monitoring.",
     vertical: "Vertical",
     region: "Region",
     empty: "No assessments match these filters.",
     view: "View assessment →",
-    model: "Model v0.3",
+    model: "Model v0.4",
+    sampleNote: `Curated sample — ${RESEARCH_LIBRARY_COUNT} of N planned.`,
     ctaHeading: "Generate Resilience Signature",
     ctaSub: "Free · No account required. Same scoring model as the research assessments above.",
     ctaBtn: "Generate Resilience Signature",
@@ -49,12 +50,13 @@ const COPY = {
     title: "Research Library",
     lead: "Tutki mallinnettua satelliittiyhteyden resilienssiä etäisissä ja autonomisissa toimintaympäristöissä. Kuratoituja tutkimusarvioita — ei asiakastarinoita eikä hankintaraportteja.",
     disclosure:
-      "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi. Jokainen arvio käyttää determinististä mallia v0.3. Havainnollistavia skenaarioita todellisilla koordinaateilla — ei reaaliaikaista RF-seurantaa.",
+      "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi. Jokainen arvio käyttää determinististä mallia v0.4. Kuratoitu otos — havainnollistavia skenaarioita todellisilla koordinaateilla, ei live-RF-seurantaa.",
     vertical: "Toimiala",
     region: "Alue",
     empty: "Yksikään arvio ei vastaa suodattimia.",
     view: "Katso arvio →",
-    model: "Malli v0.3",
+    model: "Malli v0.4",
+    sampleNote: `Kuratoitu otos — ${RESEARCH_LIBRARY_COUNT} / N suunnitellusta.`,
     ctaHeading: "Luo Resilience Signature",
     ctaSub:
       "Ilmainen · Ei tiliä tarvita. Sama pisteytysmalli kuin yllä olevissa tutkimusarvioissa.",
@@ -178,6 +180,16 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
           }}
         >
           {t.disclosure}
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: 11,
+            color: "var(--text-muted)",
+            marginBottom: 16,
+          }}
+        >
+          {t.sampleNote}
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>

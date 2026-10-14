@@ -249,11 +249,36 @@ export type ChangelogEntry = {
 /** Methodology / prototype evolution — demonstrates how the research model advances. */
 export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
   {
+    version: "v0.6",
+    date: "2026-10-13",
+    title: "Two-layer Signature (Model v0.4)",
+    titleFi: "Kaksikerroksinen Signature (malli v0.4)",
+    scoringEngine: SCORING_ENGINE,
+    items: [
+      {
+        en: "Split score into Site Conditions (fixed) and Mitigation Quality (actionable); composite always shown with both layers.",
+        fi: "Piste jaettu Paikan olosuhteisiin (kiinteä) ja Lievennyksen laatuun (hallittavissa); yhdistelmä näytetään aina molempien kerrosten kanssa.",
+      },
+      {
+        en: "Reweight mitigation factors (35 / 25 / 20) via ratio remap of v0.3 inputs; grade bands A≥85 · B 70–84 · C 55–69 · D 40–54 · F <40.",
+        fi: "Lievennystekijöiden uudelleenpainotus (35 / 25 / 20) v0.3-syötteiden suhdemapilla; arvosanakaistat A≥85 · B 70–84 · C 55–69 · D 40–54 · F <40.",
+      },
+      {
+        en: "Confidence ranges from evidence band; Layer-B levers; adjacent evidence panel (EU-DEM excluded from 0–100).",
+        fi: "Luottamusvälit näyttökaistasta; Layer-B-vivut; viereinen näyttöpaneeli (EU-DEM pois 0–100:sta).",
+      },
+      {
+        en: "AI-assisted interpretation becomes opt-in; Art. 50 disclosure moved off the score badge.",
+        fi: "Tekoälyavusteinen tulkinta opt-in; Art. 50 -ilmoitus pois pistebadgesta.",
+      },
+    ],
+  },
+  {
     version: "v0.5",
     date: METHODOLOGY_RELEASED,
     title: "Portfolio / Demonstration Layer",
     titleFi: "Portfolio- / demonstraatiokerros",
-    scoringEngine: SCORING_ENGINE,
+    scoringEngine: "deterministic-v0.3",
     items: [
       {
         en: "Portfolio case study: problem, research question, approach, live prototype links, learnings, and explicit non-production limits.",

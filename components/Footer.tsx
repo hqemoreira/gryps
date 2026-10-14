@@ -3,7 +3,7 @@ import Link from "next/link";
 import { GrypsMark } from "@/components/GrypsMark";
 import { CTA_FULL, IA_LEGAL, IA_MODES, IA_REFERENCE, labelFor } from "@/lib/ia-nav";
 
-const MODEL_SHORT = "v0.3";
+const MODEL_SHORT = "v0.4";
 
 export function Footer({
   lang = "en",

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ResilienceOutput } from "@/components/ResilienceOutput";
+import { MimirAssistant } from "@/components/MimirAssistant";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { TypeLabel } from "@/components/TypeLabel";
 import { gradeColor } from "@/lib/resilience-colors";
@@ -280,6 +281,18 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
           {t.ctaBtn} <ArrowRight size={14} />
         </Link>
       </div>
+
+      <MimirAssistant
+        lang={lang}
+        signatureContext={JSON.stringify({
+          score: sig.score,
+          grade: sig.grade,
+          summary: sig.summary,
+          layers: result.score_composition?.layers,
+          range: result.score_composition?.confidence_range,
+          site: siteLabel,
+        })}
+      />
     </article>
   );
 }

@@ -59,10 +59,10 @@ const BASE_SOURCES: EvidenceSource[] = [
     id: "model-v03",
     title: "GRYPS Deterministic Signature Engine",
     type: "model",
-    attribution: "GRYPS R&D · Model v0.3",
+    attribution: "GRYPS R&D · Model v0.4",
     url: "/methodology",
     freshness: `${MODEL_VERSION} · ${SCORING_ENGINE_DISPLAY}`,
-    notes: "Score, grade, risks, and ranks are reproducible for identical inputs.",
+    notes: "Two-layer Signature (Conditions + Mitigation). Score, grade, risks, and ranks are reproducible for identical inputs.",
   },
   {
     id: "provider-catalog",
@@ -70,7 +70,7 @@ const BASE_SOURCES: EvidenceSource[] = [
     type: "catalog",
     attribution: "GRYPS curated public-knowledge index — no commercial relationships",
     url: "/providers",
-    freshness: "Catalog snapshot · Model v0.3 weights",
+    freshness: "Catalog snapshot · Model v0.4 weights",
     notes: "Catalog confidence is assessment/data-basis confidence, not SLA availability.",
   },
   {
@@ -193,8 +193,8 @@ function scoringFactorsSummary(opts: {
     ? ` Mission priorities (${opts.priorities.join(", ").replace(/_/g, " ")}) re-rank recommendations only.`
     : "";
   return (
-    `Model v0.3 weights redundancy (0–30), latitude (0–20), operational profile (0–15), and provider confidence (0–30), then applies hard caps.` +
-    ` This ${opts.sector.replace(/-/g, " ")} profile at ~${opts.lat.toFixed(1)}°N with ${opts.providerCount} documented provider(s) drives the Signature components.` +
+    `Model v0.4 scores Site Conditions (0–20, fixed) and Mitigation Quality (0–80: redundancy 0–35, provider/path independence 0–25, profile–autonomy alignment 0–20), then applies hard caps.` +
+    ` This ${opts.sector.replace(/-/g, " ")} profile at ~${opts.lat.toFixed(1)}°N with ${opts.providerCount} documented provider(s) drives the Signature layers.` +
     priorityBit
   );
 }
@@ -357,11 +357,11 @@ export function buildEvidencePackage(opts: {
       "Recommendations are indicative outputs of an experimental intelligence framework.",
     ],
     methodology_summary:
-      "GRYPS is an experimental Connectivity Intelligence framework. Research context and public datasets inform deterministic Model v0.3 scoring; ranked providers follow from that score composition and optional mission priorities. Outputs support human judgement — they are not procurement advice.",
+      "GRYPS is an experimental Connectivity Intelligence framework. Research context and public datasets inform deterministic Model v0.4 scoring (Site Conditions + Mitigation Quality); ranked providers follow from that composition and optional mission priorities. Outputs support human judgement — they are not procurement advice.",
     confidence,
     data_freshness: {
       model: `${MODEL_VERSION} (${SCORING_ENGINE_DISPLAY})`,
-      catalog: "Provider index · Model v0.3 catalog confidence",
+      catalog: "Provider index · Model v0.4 catalog confidence",
       reference_datasets: "EU-DEM on demand · Bittimittari for FI municipality seeds",
       knowledge: "GRYPS Knowledge + Research Library · editorial 2026",
     },

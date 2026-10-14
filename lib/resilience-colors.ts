@@ -20,11 +20,35 @@ export type ScoreComponent = {
   max: number;
 };
 
+export type ScoreLayer = {
+  id: "conditions" | "mitigation";
+  label: string;
+  points: number;
+  max: number;
+  band: string;
+  fixed: boolean;
+};
+
+export type ScoreLever = {
+  label: string;
+  delta: number;
+  provider?: string;
+};
+
+export type ConfidenceRange = {
+  low: number;
+  high: number;
+  provenance: "catalog" | "operator-reported";
+};
+
 export type ScoreComposition = {
   components: ScoreComponent[];
+  layers?: ScoreLayer[];
   raw_sum: number;
   final_score: number;
   caps_applied: string[];
+  confidence_range?: ConfidenceRange;
+  levers?: ScoreLever[];
 };
 
 import type { AdvisorIntelligence } from "@/lib/advisor-intelligence";
@@ -51,6 +75,8 @@ export type AdvisoryResult = {
   intelligence?: AdvisorIntelligence;
   /** Sprint 5 — research → data → scoring → recommendation evidence */
   evidence?: EvidencePackage;
+  /** True when recommendation prose was AI-enriched (opt-in). */
+  recommendation_ai?: boolean;
 };
 
 export type AssessmentInputs = {

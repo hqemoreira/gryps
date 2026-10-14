@@ -17,6 +17,8 @@ type AdviseBody = {
   elevation_m?: number;
   priorities?: string[];
   email?: string;
+  /** Opt-in: polish recommendation paragraph with Mistral. Default off. */
+  ai_interpretation?: boolean;
 };
 
 function toScoreInput(body: AdviseBody): ScoreInput {
@@ -72,8 +74,9 @@ async function enrichRecommendation(base: AdvisoryResult, body: AdviseBody): Pro
 }
 
 /**
- * Single source of truth for resilience scoring — deterministic Model v0.3.
+ * Single source of truth for resilience scoring — deterministic Model v0.4.
  * Used by /api/advise and site seeding.
+ * Mistral prose runs only when ai_interpretation is explicitly true.
  */
 export async function scoreSite(body: object): Promise<ResilienceOutput> {
   const input = body as AdviseBody;
@@ -89,12 +92,17 @@ export async function scoreSite(body: object): Promise<ResilienceOutput> {
     score_composition: det.score_composition,
     intelligence: det.intelligence,
     evidence: det.evidence,
+    recommendation_ai: false,
   };
 
-  const withProse: AdvisoryResult = {
-    ...structured,
-    recommendation: await enrichRecommendation(structured, input),
-  };
+  const useAi = input.ai_interpretation === true;
+  const withProse: AdvisoryResult = useAi
+    ? {
+        ...structured,
+        recommendation: await enrichRecommendation(structured, input),
+        recommendation_ai: true,
+      }
+    : structured;
 
   return versionSignature(
     applyHardRules(withProse, {

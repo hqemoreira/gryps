@@ -6,11 +6,20 @@ import {
   type AdvisorIntelligence,
 } from "@/lib/advisor-intelligence";
 import { buildEvidencePackage, type EvidencePackage } from "@/lib/evidence-model";
+import {
+  CONDITIONS_MAX,
+  CONFIDENCE_RANGE_HALF,
+  MITIGATION_MAX,
+  PROFILE_ALIGNMENT_MAX_V04,
+  PROVIDER_INDEPENDENCE_MAX_V04,
+  REDUNDANCY_MAX_V04,
+} from "@/lib/model-constants";
 
 /**
- * Deterministic Resilience Signature engine (Model v0.3).
+ * Deterministic Resilience Signature engine (Model v0.4).
+ * Two-layer score: Site Conditions (fixed) + Mitigation Quality (actionable).
  * Score / grade / risks are fully reproducible for the same site profile.
- * Mission priorities (v0.3 intelligence layer) re-rank recommendations only.
+ * Mission priorities re-rank recommendations only — they do not change the score.
  */
 
 export type ProviderId = "oneweb" | "starlink" | "iridium" | "inmarsat" | "vsat" | "none";
@@ -58,11 +67,46 @@ export type ScoreComponent = {
   max: number;
 };
 
+export type ScoreLayerBand =
+  | "mild"
+  | "moderate"
+  | "harsh"
+  | "extreme"
+  | "strong"
+  | "adequate"
+  | "weak"
+  | "critical";
+
+export type ScoreLayer = {
+  id: "conditions" | "mitigation";
+  label: string;
+  points: number;
+  max: number;
+  /** Human band derived from points earned (higher = better). */
+  band: ScoreLayerBand;
+  fixed: boolean;
+};
+
+export type ScoreLever = {
+  label: string;
+  delta: number;
+  provider?: string;
+};
+
+export type ConfidenceRange = {
+  low: number;
+  high: number;
+  provenance: "catalog" | "operator-reported";
+};
+
 export type ScoreComposition = {
   components: ScoreComponent[];
+  layers: ScoreLayer[];
   raw_sum: number;
   final_score: number;
   caps_applied: string[];
+  confidence_range?: ConfidenceRange;
+  levers?: ScoreLever[];
 };
 
 export type DeterministicResult = {
@@ -187,13 +231,161 @@ export function parseProviders(input: ScoreInput): ProviderMeta[] {
 }
 
 export function gradeFromDeterministicScore(score: number): "A" | "B" | "C" | "D" | "F" {
-  // Bands: A ≥90 · B 75–89 · C 60–74 · D 40–59 · F <40 (spec E → F).
+  // Bands: A ≥85 · B 70–84 · C 55–69 · D 40–54 · F <40 (spec E → F).
   // Keep in sync with GRADE_BANDS in lib/model-constants.ts.
-  if (score >= 90) return "A";
-  if (score >= 75) return "B";
-  if (score >= 60) return "C";
+  if (score >= 85) return "A";
+  if (score >= 70) return "B";
+  if (score >= 55) return "C";
   if (score >= 40) return "D";
   return "F";
+}
+
+/** Remap v0.3 raw component points onto v0.4 Layer B maxima. */
+function remapMitigationComponents(redPts: number, confPts: number, opPts: number) {
+  const redundancy = Math.max(
+    0,
+    Math.min(REDUNDANCY_MAX_V04, Math.round((redPts * REDUNDANCY_MAX_V04) / 30))
+  );
+  const provider_independence = Math.max(
+    0,
+    Math.min(PROVIDER_INDEPENDENCE_MAX_V04, Math.round((confPts * PROVIDER_INDEPENDENCE_MAX_V04) / 30))
+  );
+  const profile_alignment = Math.max(
+    0,
+    Math.min(PROFILE_ALIGNMENT_MAX_V04, Math.round((opPts * PROFILE_ALIGNMENT_MAX_V04) / 15))
+  );
+  return { redundancy, provider_independence, profile_alignment };
+}
+
+function conditionsBand(points: number, max: number): ScoreLayerBand {
+  const r = max > 0 ? points / max : 0;
+  if (r >= 0.75) return "mild";
+  if (r >= 0.5) return "moderate";
+  if (r >= 0.25) return "harsh";
+  return "extreme";
+}
+
+function mitigationBand(points: number, max: number): ScoreLayerBand {
+  const r = max > 0 ? points / max : 0;
+  if (r >= 0.75) return "strong";
+  if (r >= 0.5) return "adequate";
+  if (r >= 0.25) return "weak";
+  return "critical";
+}
+
+function mitigationTotal(red: number, conf: number, op: number): number {
+  return red + conf + op;
+}
+
+function applyCaps(
+  score: number,
+  criticality: string,
+  autonomy: string,
+  providers: ProviderMeta[],
+  lat: number
+): { score: number; caps_applied: string[] } {
+  let next = score;
+  const caps_applied: string[] = [];
+  const onlyGeo = providers.length > 0 && providers.every((p) => p.orbit === "GEO");
+
+  if (criticality === "safety-critical" && autonomy === "autonomous" && providers.length < 2) {
+    if (next > 50) {
+      next = 50;
+      caps_applied.push("safety-critical-autonomous-no-redundancy");
+    }
+  } else if (criticality === "safety-critical" && providers.length === 1) {
+    if (next > 60) {
+      next = 60;
+      caps_applied.push("safety-critical-single-provider");
+    }
+  }
+
+  if (lat > 72 && onlyGeo) {
+    if (next > 45) {
+      next = 45;
+      caps_applied.push("geo-unusable-above-72n");
+    }
+  }
+
+  return { score: Math.max(0, Math.min(100, Math.round(next))), caps_applied };
+}
+
+function confidenceRangeFor(
+  score: number,
+  band: "High" | "Medium" | "Low",
+  provenance: ConfidenceRange["provenance"]
+): ConfidenceRange {
+  const half = CONFIDENCE_RANGE_HALF[band];
+  return {
+    low: Math.max(0, score - half),
+    high: Math.min(100, score + half),
+    provenance,
+  };
+}
+
+/** Counterfactual Layer-B levers — never touch Conditions (Layer A). */
+function buildLevers(opts: {
+  providers: ProviderMeta[];
+  lat: number;
+  autonomy: string;
+  criticality: string;
+  conditionsPts: number;
+  baseScore: number;
+}): ScoreLever[] {
+  const { providers, lat, autonomy, criticality, conditionsPts, baseScore } = opts;
+  const selectedIds = new Set(providers.map((p) => p.id));
+  const candidates = ADVISOR_PROVIDERS.filter((p) => p.id !== "none" && !selectedIds.has(p.id));
+  const levers: ScoreLever[] = [];
+
+  for (const candidate of candidates) {
+    const nextProviders = [...providers, candidate];
+    const mapped = remapMitigationComponents(
+      redundancyPoints(nextProviders),
+      providerConfidencePoints(nextProviders, lat),
+      autonomyPoints(autonomy)
+    );
+    const mit = mitigationTotal(
+      mapped.redundancy,
+      mapped.provider_independence,
+      mapped.profile_alignment
+    );
+    const capped = applyCaps(conditionsPts + mit, criticality, autonomy, nextProviders, lat);
+    const delta = capped.score - baseScore;
+    if (delta > 0) {
+      const independenceBit =
+        hasOrbitMix(nextProviders) && !hasOrbitMix(providers)
+          ? "independent path"
+          : "backup path";
+      levers.push({
+        label: `Add ${candidate.name} (${independenceBit})`,
+        delta,
+        provider: candidate.name,
+      });
+    }
+  }
+
+  if (autonomy === "autonomous") {
+    const mappedRemote = remapMitigationComponents(
+      redundancyPoints(providers),
+      providerConfidencePoints(providers, lat),
+      autonomyPoints("remote-operated")
+    );
+    const mit = mitigationTotal(
+      mappedRemote.redundancy,
+      mappedRemote.provider_independence,
+      mappedRemote.profile_alignment
+    );
+    const capped = applyCaps(conditionsPts + mit, criticality, "remote-operated", providers, lat);
+    const delta = capped.score - baseScore;
+    if (delta > 0) {
+      levers.push({
+        label: "Align autonomy classification to remote-operated",
+        delta,
+      });
+    }
+  }
+
+  return levers.sort((a, b) => b.delta - a.delta).slice(0, 3);
 }
 
 function effectiveConfidence(p: ProviderMeta, lat: number): number {
@@ -388,49 +580,91 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
   const criticality = raw.criticality;
   const priorities = normalizePriorities(raw.priorities);
 
-  const redPts = redundancyPoints(providers);
+  // v0.3-style raw components (unchanged input semantics)
+  const redRaw = redundancyPoints(providers);
   const latPts = latitudePoints(lat, sector, elevation);
-  const opPts = autonomyPoints(autonomy);
-  const confPts = providerConfidencePoints(providers, lat);
+  const opRaw = autonomyPoints(autonomy);
+  const confRaw = providerConfidencePoints(providers, lat);
 
-  let score = redPts + latPts + opPts + confPts;
-  const raw_sum = score;
+  // Layer A — Site Conditions (fixed)
+  const conditionsPts = Math.max(0, Math.min(CONDITIONS_MAX, latPts));
 
-  const caps_applied: string[] = [];
+  // Layer B — Mitigation Quality (reweighted)
+  const mapped = remapMitigationComponents(redRaw, confRaw, opRaw);
+  const mitigationPts = mitigationTotal(
+    mapped.redundancy,
+    mapped.provider_independence,
+    mapped.profile_alignment
+  );
+
+  const raw_sum = conditionsPts + mitigationPts;
+  const capped = applyCaps(raw_sum, criticality, autonomy, providers, lat);
+  const score = capped.score;
+  const caps_applied = capped.caps_applied;
+  const grade = gradeFromDeterministicScore(score);
   const onlyGeo = providers.length > 0 && providers.every((p) => p.orbit === "GEO");
 
-  if (criticality === "safety-critical" && autonomy === "autonomous" && providers.length < 2) {
-    if (score > 50) {
-      score = 50;
-      caps_applied.push("safety-critical-autonomous-no-redundancy");
-    }
-  } else if (criticality === "safety-critical" && providers.length === 1) {
-    if (score > 60) {
-      score = 60;
-      caps_applied.push("safety-critical-single-provider");
-    }
-  }
-
-  if (lat > 72 && onlyGeo) {
-    if (score > 45) {
-      score = 45;
-      caps_applied.push("geo-unusable-above-72n");
-    }
-  }
-
-  score = Math.max(0, Math.min(100, Math.round(score)));
-  const grade = gradeFromDeterministicScore(score);
+  const provenance: ConfidenceRange["provenance"] =
+    raw.current_setup && raw.current_setup.trim().length > 0 && !(raw.providers?.length)
+      ? "operator-reported"
+      : "catalog";
 
   const score_composition: ScoreComposition = {
     components: [
-      { id: "redundancy", label: "Redundancy", points: redPts, max: 30 },
-      { id: "latitude", label: "Latitude", points: latPts, max: 20 },
-      { id: "operational_profile", label: "Operational profile", points: opPts, max: 15 },
-      { id: "provider_confidence", label: "Provider confidence", points: confPts, max: 30 },
+      {
+        id: "redundancy",
+        label: "Redundancy (independent paths)",
+        points: mapped.redundancy,
+        max: REDUNDANCY_MAX_V04,
+      },
+      {
+        id: "latitude",
+        label: "Site conditions",
+        points: conditionsPts,
+        max: CONDITIONS_MAX,
+      },
+      {
+        id: "operational_profile",
+        label: "Profile–autonomy alignment",
+        points: mapped.profile_alignment,
+        max: PROFILE_ALIGNMENT_MAX_V04,
+      },
+      {
+        id: "provider_confidence",
+        label: "Provider / path independence",
+        points: mapped.provider_independence,
+        max: PROVIDER_INDEPENDENCE_MAX_V04,
+      },
+    ],
+    layers: [
+      {
+        id: "conditions",
+        label: "Site Conditions",
+        points: conditionsPts,
+        max: CONDITIONS_MAX,
+        band: conditionsBand(conditionsPts, CONDITIONS_MAX),
+        fixed: true,
+      },
+      {
+        id: "mitigation",
+        label: "Mitigation Quality",
+        points: Math.min(MITIGATION_MAX, mitigationPts),
+        max: MITIGATION_MAX,
+        band: mitigationBand(mitigationPts, MITIGATION_MAX),
+        fixed: false,
+      },
     ],
     raw_sum,
     final_score: score,
     caps_applied: [...caps_applied],
+    levers: buildLevers({
+      providers,
+      lat,
+      autonomy,
+      criticality,
+      conditionsPts,
+      baseScore: score,
+    }),
   };
 
   const risk_factors = buildRisks(providers, lat, sector, autonomy, criticality, score);
@@ -486,18 +720,27 @@ export function scoreDeterministic(raw: ScoreInput): DeterministicResult {
     grade,
   });
 
+  score_composition.confidence_range = confidenceRangeFor(
+    score,
+    evidence.confidence.band,
+    provenance
+  );
+
   const caveats = [
-    "Research prototype — illustrative deterministic engine output (Model v0.3).",
+    "Research prototype — illustrative deterministic engine output (Model v0.4).",
+    "Site Conditions are fixed attributes of the location; Mitigation Quality reflects operator choices.",
     "Mission priorities re-rank recommendations; they do not change the Signature score.",
     "Indicative research intelligence — not procurement advice or a site survey.",
     "Not a substitute for an on-site RF / sky-view survey.",
     ...(caps_applied.length ? [`Hard cap(s) applied: ${caps_applied.join(", ")}.`] : []),
   ];
 
+  const conditionsLayer = score_composition.layers[0];
+  const mitigationLayer = score_composition.layers[1];
   const summary =
     providers.length === 0
-      ? `${sector} site at ${lat.toFixed(1)}°N with no documented connectivity path — score ${score} · ${grade}.`
-      : `${sector} site at ${lat.toFixed(1)}°N with ${providers.map((p) => p.name).join(" + ")} — score ${score} · ${grade}.`;
+      ? `${sector} site at ${lat.toFixed(1)}°N with no documented connectivity path — score ${score} · ${grade} (Conditions: ${conditionsLayer.band}, Mitigation: ${mitigationLayer.band}).`
+      : `${sector} site at ${lat.toFixed(1)}°N with ${providers.map((p) => p.name).join(" + ")} — score ${score} · ${grade} (Conditions: ${conditionsLayer.band}, Mitigation: ${mitigationLayer.band}).`;
 
   const recommendation = templateRecommendation(
     score,
@@ -566,6 +809,9 @@ export function assertSanityCases(): void {
         if (r.resilience_signature.grade !== "B" && r.resilience_signature.grade !== "A") {
           throw new Error(`expected A/B, got ${r.resilience_signature.grade}`);
         }
+        if (!r.score_composition.layers?.length) {
+          throw new Error("expected two-layer composition");
+        }
       },
     },
     {
@@ -608,6 +854,34 @@ export function assertSanityCases(): void {
         }
         if (!["A", "B"].includes(r.resilience_signature.grade)) {
           throw new Error(`expected A/B, got ${r.resilience_signature.grade}`);
+        }
+      },
+    },
+    {
+      name: "Lapland Starlink-only high (hero pedagogy)",
+      input: {
+        lat: 68.2,
+        sector: "forestry",
+        providers: ["starlink"],
+        autonomy: "autonomous",
+        criticality: "high",
+        elevation_m: 200,
+      },
+      check: (r) => {
+        const score = r.resilience_signature.score;
+        if (score < 42 || score > 50) {
+          throw new Error(`expected ~46, got ${score}`);
+        }
+        if (r.resilience_signature.grade !== "D") {
+          throw new Error(`expected D, got ${r.resilience_signature.grade}`);
+        }
+        const conditions = r.score_composition.layers.find((l) => l.id === "conditions");
+        const mitigation = r.score_composition.layers.find((l) => l.id === "mitigation");
+        if (!conditions || conditions.points !== 8) {
+          throw new Error(`expected Conditions 8/20, got ${conditions?.points}`);
+        }
+        if (!mitigation || mitigation.points < 36 || mitigation.points > 40) {
+          throw new Error(`expected Mitigation ~38/80, got ${mitigation?.points}`);
         }
       },
     },

@@ -141,6 +141,35 @@ export function InitialAssessment({
             >
               {sig.grade}
             </span>
+            {result.confidence_range && (
+              <p
+                style={{
+                  fontFamily: "var(--font-data)",
+                  fontSize: 12,
+                  color: "var(--text-muted)",
+                  marginTop: 8,
+                }}
+              >
+                {result.confidence_range.low}–{result.confidence_range.high}
+              </p>
+            )}
+            {result.layers && result.layers.length > 0 && (
+              <div
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 12,
+                  color: "var(--text-muted)",
+                  lineHeight: 1.45,
+                  marginTop: 8,
+                }}
+              >
+                {result.layers.map((layer) => (
+                  <div key={layer.id}>
+                    {layer.label}: {layer.band} ({layer.points}/{layer.max})
+                  </div>
+                ))}
+              </div>
+            )}
             <p
               style={{
                 fontFamily: "var(--font-ui)",

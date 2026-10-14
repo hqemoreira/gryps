@@ -225,16 +225,34 @@ const UI = {
       "Indicative research intelligence — not procurement advice or a site survey.",
     scoreComposition: "HOW THIS SCORE WAS COMPUTED",
     scoreCompositionSub:
-      "Model v0.3 component breakdown before hard caps. Full formula on the methodology page.",
+      "Model v0.4 two-layer breakdown (Conditions fixed · Mitigation actionable) before hard caps. Full formula on the methodology page.",
+    scoreLayersLabel: "TWO-LAYER BREAKDOWN",
+    scoreLayersSub: "Conditions are fixed site attributes. Mitigation reflects operator choices.",
+    layerConditions: "Site Conditions",
+    layerMitigation: "Mitigation Quality",
+    layerFixed: "fixed",
+    layerActionable: "actionable",
+    pointsEarned: "earned",
+    scoreRangeLabel: "Score range",
+    provenanceCatalog: "based on catalog data",
+    provenanceOperator: "includes operator-reported inputs",
+    leversLabel: "WHAT WOULD CHANGE THIS SCORE",
+    leversSub: "Top actionable levers — Layer B only. Conditions do not change.",
+    leverDelta: "+",
+    evidenceContextLabel: "EVIDENCE CONTEXT — EXCLUDED FROM SCORE",
+    evidenceContextSub:
+      "EU-DEM terrain, weather notes, and infrastructure reach are shown as adjacent evidence. They are not blended into the 0–100 Signature.",
+    evidenceContextLink: "Open evidence chain →",
+    whatThisMeans: "What this means →",
     scoreRawSum: "Raw sum",
     scoreFinal: "Final score",
     scoreCaps: "Hard caps applied",
     scoreNoCaps: "No hard caps applied",
     methodologyLink: "Full scoring methodology →",
-    componentRedundancy: "Redundancy",
-    componentLatitude: "Latitude",
-    componentProfile: "Operational profile",
-    componentConfidence: "Provider confidence",
+    componentRedundancy: "Redundancy (independent paths)",
+    componentLatitude: "Site conditions",
+    componentProfile: "Profile–autonomy alignment",
+    componentConfidence: "Provider / path independence",
     riskFactors: "RISK FACTORS",
     redundancyGaps: "REDUNDANCY GAPS",
     scoreImpact: "↓ SCORE IMPACT",
@@ -294,8 +312,11 @@ const UI = {
     coverageField: "COVERAGE (MODEL) ",
     failoverField: "FAILOVER SWITCHING (MODEL) ",
     provenanceNote: `Resilience Score (${SCORING_MODEL_LABEL}): deterministic score, grade, risks, and ranks. Recommendation text (${RECOMMENDATION_AI_LABEL}): optional prose polish only. Reference data (EU-DEM / Bittimittari) is separate and not blended into the Signature score.`,
-    aiBadgeTitle: `EU AI Act Art. 50 — ${RECOMMENDATION_AI_LABEL} (optional Mistral prose). Limited-risk system. Resilience Score is ${SCORING_MODEL_LABEL} — never AI-generated. Not a guarantee of network availability. Supports human judgement; no automated legal decisions.`,
-    art50: "Art. 50 EU AI Act",
+    modelBadge: `${SCORING_MODEL_LABEL} · deterministic`,
+    aiDisclosure:
+      "Scores are computed by a deterministic model. Some interpretation text is AI-assisted when enabled, and Mimir is an AI chatbot.",
+    aiAssistedLabel: RECOMMENDATION_AI_LABEL,
+    art50: "EU AI Act Art. 50",
     generated: "Generated",
     printAttr: "GRYPS · Connectivity Intelligence · gryps.vercel.app",
     measured: "measured",
@@ -311,8 +332,8 @@ const UI = {
     resilienceScore: "RESILIENSSIPISTEET",
     resilienceSignature: "RESILIENCE SIGNATURE",
     modelGenerated:
-      "Deterministinen malli v0.3 — havainnollistava tutkimustulos, ei kattavuustakuuta",
-    scoreAuthority: "Deterministinen malli v0.3",
+      "Deterministinen malli v0.4 — havainnollistava tutkimustulos, ei kattavuustakuuta",
+    scoreAuthority: "Deterministinen malli v0.4",
     recommendationAuthority: "Tekoälyavusteinen tulkinta",
     assessmentInputs: "ARVIOINNIN SYÖTTEET",
     assessmentSub: "Tämän pisteytysajon deterministiset parametrit.",
@@ -381,16 +402,34 @@ const UI = {
     evidenceIndicative: "Suuntaa-antava tutkimusäly — ei hankintaneuvontaa eikä paikkamitasta.",
     scoreComposition: "MITEN TÄMÄ PISTE LASKETTIIN",
     scoreCompositionSub:
-      "Mallin v0.3 komponenttijako ennen kovia kattoja. Täysi kaava menetelmäsivulla.",
+      "Mallin v0.4 kaksikerroksinen jako (Olosuhteet kiinteät · Lievennys hallittavissa) ennen kovia kattoja. Täysi kaava menetelmäsivulla.",
+    scoreLayersLabel: "KAKSIKERROKSINEN JAKO",
+    scoreLayersSub: "Olosuhteet ovat kiinteitä paikkatietoja. Lievennys heijastaa operaattorin valintoja.",
+    layerConditions: "Paikan olosuhteet",
+    layerMitigation: "Lievennyksen laatu",
+    layerFixed: "kiinteä",
+    layerActionable: "hallittavissa",
+    pointsEarned: "ansaittu",
+    scoreRangeLabel: "Pisteväli",
+    provenanceCatalog: "perustuu katalogidataan",
+    provenanceOperator: "sisältää operaattorin ilmoittamia syötteitä",
+    leversLabel: "MIKÄ MUUTTAISI TÄTÄ PISTETTÄ",
+    leversSub: "Kolme tärkeintä vipua — vain Lievennys-kerros. Olosuhteet eivät muutu.",
+    leverDelta: "+",
+    evidenceContextLabel: "NÄYTTÖKONTEKSTI — EI SISÄLLY PISTEESEEN",
+    evidenceContextSub:
+      "EU-DEM-maasto, säämuistiinpanot ja infrastruktuurin ulottuvuus näytetään viereisenä näyttönä. Niitä ei sekoiteta 0–100 Signatureen.",
+    evidenceContextLink: "Avaa näyttöketju →",
+    whatThisMeans: "Mitä tämä tarkoittaa →",
     scoreRawSum: "Raakasumma",
     scoreFinal: "Lopullinen pistemäärä",
     scoreCaps: "Käytetyt kovat katot",
     scoreNoCaps: "Ei kovia kattoja",
     methodologyLink: "Täysi pisteytysmenetelmä →",
-    componentRedundancy: "Redundanssi",
-    componentLatitude: "Leveysaste",
-    componentProfile: "Toimintaprofiili",
-    componentConfidence: "Toimittajaluottamus",
+    componentRedundancy: "Redundanssi (riippumattomat polut)",
+    componentLatitude: "Paikan olosuhteet",
+    componentProfile: "Profiili–autonomia -linjaus",
+    componentConfidence: "Toimittaja- / polkuriippumattomuus",
     riskFactors: "RISKITEKIJÄT",
     redundancyGaps: "REDUNDANSSIAUKOT",
     scoreImpact: "↓ VAIKUTUS PISTEISIIN",
@@ -405,7 +444,7 @@ const UI = {
       "Rataluokan huomiot ovat viite- / mallikommenttia julkisesta toimialatiedosta — eivät virallisia toimittajamäärityksiä, mitattua kohdesuorituskykyä, SLA:ita tai suosituksia. GRYPS:llä ei ole kaupallista suhdetta listattuihin toimittajiin.",
     provenanceLabel: "ALKUPERÄ",
     provenanceScoringModel: "Resilience-pisteet",
-    provenanceScoringModelValue: `Deterministinen malli v0.3 (${SCORING_ENGINE_DISPLAY}) — toistettava piste, arvosana, riskit ja sijoitukset`,
+    provenanceScoringModelValue: `Deterministinen malli v0.4 (${SCORING_ENGINE_DISPLAY}) — toistettava piste, arvosana, riskit ja sijoitukset`,
     provenanceCommentary: "Suositusteksti",
     provenanceCommentaryValue:
       "Tekoälyavusteinen tulkinta — valinnainen proosan viimeistely; ei muuta lukuja. Ei live-telemetriaa eikä toimittajan sitoumusta",
@@ -450,10 +489,12 @@ const UI = {
     coverageField: "KATTAVUUS (MALLI) ",
     failoverField: "FAILOVER-VAIHTO (MALLI) ",
     provenanceNote:
-      "Resilience-pisteet (deterministinen malli v0.3): toistettava piste, arvosana, riskit ja sijoitukset. Suositusteksti (tekoälyavusteinen tulkinta): vain valinnainen proosan viimeistely. Viitedata (EU-DEM / Bittimittari) on erillinen eikä sekoitu Signature-pisteeseen.",
-    aiBadgeTitle:
-      "EU AI Act Art. 50 — tekoälyavusteinen tulkinta (valinnainen Mistral-proosa). Rajoitetun riskin järjestelmä. Resilience-pisteet ovat deterministinen malli v0.3 — eivät tekoälyn tuottamia. Ei verkon saatavuustakuuta. Tukee ihmisen harkintaa; ei automaattisia oikeudellisia päätöksiä.",
-    art50: "Art. 50 EU AI Act",
+      "Resilience-pisteet (deterministinen malli v0.4): toistettava piste, arvosana, riskit ja sijoitukset. Suositusteksti (tekoälyavusteinen tulkinta): vain valinnainen proosan viimeistely. Viitedata (EU-DEM / Bittimittari) on erillinen eikä sekoitu Signature-pisteeseen.",
+    modelBadge: "Deterministinen malli v0.4 · deterministinen",
+    aiDisclosure:
+      "Pisteet laskee deterministinen malli. Osa tulkintatekstistä on tekoälyavusteista kun se on käytössä, ja Mimir on tekoälychatbot.",
+    aiAssistedLabel: "Tekoälyavusteinen tulkinta",
+    art50: "EU AI Act Art. 50",
     generated: "Luotu",
     printAttr: "GRYPS · Connectivity Intelligence · gryps.vercel.app",
     measured: "mitattu",
@@ -602,24 +643,34 @@ function bandLabel(band: string, t: UiCopy): string {
   return band;
 }
 
+function layerBandLabel(band: string, t: UiCopy): string {
+  return band;
+}
+
 function ScoreCompositionPanel({
   composition,
   explanations,
   overall,
   t,
+  onJumpEvidence,
 }: {
   composition: ScoreComposition;
   explanations?: ScoreExplanation[];
   overall?: string;
   t: UiCopy;
+  onJumpEvidence?: () => void;
 }) {
   const byId = new Map((explanations ?? []).map((e) => [e.id, e]));
   const [openId, setOpenId] = useState<string | null>(null);
   const openComp = composition.components.find((c) => c.id === openId) ?? null;
   const openExpl = openId ? byId.get(openId) : undefined;
+  const layers = composition.layers ?? [];
+  const levers = composition.levers ?? [];
+  const range = composition.confidence_range;
 
   return (
     <div
+      id="score-composition"
       style={{
         backgroundColor: "var(--surface)",
         border: "1px solid var(--border)",
@@ -668,6 +719,108 @@ function ScoreCompositionPanel({
           {overall}
         </p>
       )}
+
+      {layers.length > 0 && (
+        <div style={{ marginBottom: 16 }}>
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 9,
+              color: "var(--text-dim)",
+              letterSpacing: "0.1em",
+              marginBottom: 8,
+            }}
+          >
+            {t.scoreLayersLabel}
+          </p>
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 11,
+              color: "var(--text-muted)",
+              marginBottom: 10,
+              lineHeight: 1.5,
+            }}
+          >
+            {t.scoreLayersSub}
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {layers.map((layer) => {
+              const pct =
+                layer.max > 0 ? Math.max(0, Math.min(100, (layer.points / layer.max) * 100)) : 0;
+              return (
+                <div key={layer.id}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 12,
+                      marginBottom: 4,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "var(--font-ui)",
+                        fontSize: 13,
+                        color: "var(--text)",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {layer.id === "conditions" ? t.layerConditions : t.layerMitigation}
+                      {" · "}
+                      {layerBandLabel(layer.band, t)}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-data)",
+                        fontSize: 11,
+                        color: "var(--text-muted)",
+                      }}
+                    >
+                      {layer.points}/{layer.max} {t.pointsEarned}
+                      {" · "}
+                      {layer.fixed ? t.layerFixed : t.layerActionable}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      height: 6,
+                      backgroundColor: "var(--surface2)",
+                      borderRadius: 3,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${pct}%`,
+                        height: "100%",
+                        backgroundColor:
+                          layer.id === "conditions" ? "var(--accent-blue)" : "var(--accent-cyan)",
+                        borderRadius: 3,
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {range && (
+            <p
+              style={{
+                fontFamily: "var(--font-data)",
+                fontSize: 11,
+                color: "var(--text-muted)",
+                marginTop: 12,
+              }}
+            >
+              {t.scoreRangeLabel}: {range.low}–{range.high}
+              {" · "}
+              {range.provenance === "catalog" ? t.provenanceCatalog : t.provenanceOperator}
+            </p>
+          )}
+        </div>
+      )}
+
       <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 14 }}>
         {composition.components.map((c) => {
           const pct = c.max > 0 ? Math.max(0, Math.min(100, (c.points / c.max) * 100)) : 0;
@@ -800,6 +953,128 @@ function ScoreCompositionPanel({
           ? `${t.scoreCaps}: ${composition.caps_applied.join(", ")}`
           : t.scoreNoCaps}
       </p>
+
+      {levers.length > 0 && (
+        <div
+          style={{
+            marginTop: 16,
+            paddingTop: 14,
+            borderTop: "1px solid var(--border)",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 9,
+              color: "var(--text-dim)",
+              letterSpacing: "0.1em",
+              marginBottom: 6,
+            }}
+          >
+            {t.leversLabel}
+          </p>
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 11,
+              color: "var(--text-muted)",
+              marginBottom: 10,
+              lineHeight: 1.5,
+            }}
+          >
+            {t.leversSub}
+          </p>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 8 }}>
+            {levers.map((lever) => (
+              <li
+                key={`${lever.label}-${lever.delta}`}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  alignItems: "baseline",
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 13,
+                  color: "var(--text)",
+                }}
+              >
+                <span>{lever.label}</span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-data)",
+                    fontWeight: 700,
+                    color: "var(--accent-green)",
+                    flexShrink: 0,
+                  }}
+                >
+                  {t.leverDelta}
+                  {lever.delta}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div
+        style={{
+          marginTop: 16,
+          paddingTop: 14,
+          borderTop: "1px solid var(--border)",
+        }}
+      >
+        <p
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: 9,
+            color: "var(--text-dim)",
+            letterSpacing: "0.1em",
+            marginBottom: 6,
+          }}
+        >
+          {t.evidenceContextLabel}
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontSize: 11,
+            color: "var(--text-muted)",
+            lineHeight: 1.5,
+            marginBottom: 8,
+          }}
+        >
+          {t.evidenceContextSub}
+        </p>
+        {onJumpEvidence ? (
+          <button
+            type="button"
+            onClick={onJumpEvidence}
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 10,
+              color: "var(--accent-blue)",
+              background: "none",
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+            }}
+          >
+            {t.evidenceContextLink}
+          </button>
+        ) : (
+          <Link
+            href="/methodology"
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 10,
+              color: "var(--accent-blue)",
+            }}
+          >
+            {t.methodologyLink}
+          </Link>
+        )}
+      </div>
+
       <Link
         href="/methodology"
         style={{
@@ -2101,6 +2376,59 @@ export function ResilienceOutput({
             >
               {t.resilienceSignature}
             </div>
+            {score_composition?.confidence_range && (
+              <div
+                style={{
+                  fontFamily: "var(--font-data)",
+                  fontSize: 11,
+                  color: "var(--text-muted)",
+                  marginTop: 8,
+                }}
+              >
+                {score_composition.confidence_range.low}–{score_composition.confidence_range.high}
+              </div>
+            )}
+            {score_composition?.layers && score_composition.layers.length > 0 && (
+              <div
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 11,
+                  color: "var(--text-muted)",
+                  marginTop: 6,
+                  lineHeight: 1.45,
+                  textAlign: "left",
+                }}
+              >
+                {score_composition.layers.map((layer) => (
+                  <div key={layer.id}>
+                    {layer.id === "conditions" ? t.layerConditions : t.layerMitigation}:{" "}
+                    {layer.band} ({layer.points}/{layer.max})
+                  </div>
+                ))}
+              </div>
+            )}
+            <a
+              href="#score-composition"
+              onClick={(e) => {
+                e.preventDefault();
+                setTab("method");
+                requestAnimationFrame(() => {
+                  document.getElementById("score-composition")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                });
+              }}
+              style={{
+                fontFamily: "var(--font-data)",
+                fontSize: 10,
+                color: "var(--accent-blue)",
+                marginTop: 8,
+                display: "inline-block",
+              }}
+            >
+              {t.whatThisMeans}
+            </a>
           </div>
           <div
             className="gryps-signature-divider"
@@ -2216,7 +2544,7 @@ export function ResilienceOutput({
               letterSpacing: "0.08em",
             }}
           >
-            {t.scoreAuthority}
+            {t.modelBadge}
           </span>
           <span style={{ color: "var(--border2)" }}>·</span>
           <span
@@ -2224,10 +2552,10 @@ export function ResilienceOutput({
               fontFamily: "var(--font-data)",
               fontSize: 9,
               color: "var(--text-dim)",
-              letterSpacing: "0.08em",
+              letterSpacing: "0.06em",
             }}
           >
-            {t.recommendationAuthority}
+            {t.provenanceDate}: {dateLabel}
           </span>
           <span style={{ color: "var(--border2)" }}>·</span>
           <span
@@ -2328,6 +2656,7 @@ export function ResilienceOutput({
               }}
             >
               {t.recommendation}
+              {result.recommendation_ai ? ` · ${t.aiAssistedLabel}` : ""}
             </p>
             <p
               style={{
@@ -2348,7 +2677,11 @@ export function ResilienceOutput({
                 marginTop: 10,
               }}
             >
-              {t.recommendationNote}
+              {result.recommendation_ai
+                ? t.recommendationNote
+                : lang === "fi"
+                  ? "Deterministisen arvioinnin malliteksti. Ei muuta pistettä, arvosanaa, riskejä tai sijoituksia."
+                  : "Template wording from the deterministic assessment. Does not change score, grade, risks, or ranks."}
             </p>
           </div>
 
@@ -2982,6 +3315,7 @@ export function ResilienceOutput({
               explanations={intelligence?.score_explanations}
               overall={intelligence?.overall_score_explanation}
               t={t}
+              onJumpEvidence={() => setTab("evidence")}
             />
           )}
 
@@ -3301,26 +3635,10 @@ export function ResilienceOutput({
           borderTop: "1px solid var(--border)",
           paddingTop: 12,
           display: "flex",
-          alignItems: "flex-start",
-          gap: 10,
+          flexDirection: "column",
+          gap: 8,
         }}
       >
-        <span
-          title={t.aiBadgeTitle}
-          style={{
-            fontFamily: "var(--font-data)",
-            fontSize: 8,
-            color: "var(--text-dim)",
-            border: "1px solid var(--border)",
-            borderRadius: 3,
-            padding: "2px 5px",
-            flexShrink: 0,
-            marginTop: 2,
-            cursor: "help",
-          }}
-        >
-          AI
-        </span>
         <p
           style={{
             fontFamily: "var(--font-ui)",
@@ -3329,7 +3647,35 @@ export function ResilienceOutput({
             lineHeight: 1.6,
           }}
         >
-          {t.scoreAuthority} · {t.recommendationAuthority}. {caveats.join(" · ")} ·{" "}
+          {t.modelBadge}
+          {" · "}
+          {t.provenanceDate}: {dateLabel}
+          {" · "}
+          {caveats.slice(0, 2).join(" · ")}
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontSize: 11,
+            color: "var(--text-dim)",
+            lineHeight: 1.6,
+          }}
+        >
+          {result.recommendation_ai ? (
+            <span
+              style={{
+                fontFamily: "var(--font-data)",
+                fontSize: 8,
+                border: "1px solid var(--border)",
+                borderRadius: 3,
+                padding: "1px 5px",
+                marginRight: 6,
+              }}
+            >
+              {t.aiAssistedLabel}
+            </span>
+          ) : null}
+          {t.aiDisclosure}{" "}
           <Link href="/terms" style={{ color: "var(--text-dim)", textDecoration: "underline" }}>
             {t.art50}
           </Link>

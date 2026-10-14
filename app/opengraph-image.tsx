@@ -33,7 +33,7 @@ export default function OpenGraphImage() {
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <OrbitalGIconSvg size={36} />
           <span style={{ color: "#64748B", fontSize: 22, letterSpacing: 4 }}>
-            GRYPS · MODEL v0.3
+            GRYPS · MODEL v0.4
           </span>
         </div>
         <span style={{ color: "#D97706", fontSize: 18, letterSpacing: 2 }}>RESEARCH PROTOTYPE</span>

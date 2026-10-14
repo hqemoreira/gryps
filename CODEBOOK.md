@@ -9,7 +9,7 @@
 
 - **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC. Private ops tooling (if any) stays private — do not discuss or couple product UI to it.
 - **Phase goal (product):** experimental research prototype for Connectivity Intelligence — commercialization and monetization are outside the current scope. Public posture: `/research-prototype`. Portfolio demonstration (career narrative): `/case-study`. Do not mix personal administrative / benefit notes into the product UI.
-- **Object:** Resilience Signature (deterministic engine **v0.3**). Product vocabulary: Connectivity Intelligence → Advisor action **Generate Resilience Signature** → output **Resilience Signature** → map **Explore Connectivity Intelligence**. Supporting surfaces: `/methodology`, `/providers`, `/research` (Research Library), `/map`, `/about`, `/knowledge`, `/case-study`, `/research-prototype`, research docs (`/data-sources`, `/assumptions`, `/limitations`, `/changelog`). Thin `/signatures/[slug]` Site XX pages are **noindex** and excluded from the sitemap (kept for map/dev).
+- **Object:** Resilience Signature (deterministic engine **v0.4**, two-layer: Site Conditions + Mitigation Quality). Product vocabulary: Connectivity Intelligence → Advisor action **Generate Resilience Signature** → output **Resilience Signature** → map **Explore Connectivity Intelligence**. Assistant: **Mimir** (explains only; never scores). Supporting surfaces: `/methodology`, `/providers`, `/research` (Research Library), `/map`, `/about`, `/knowledge`, `/case-study`, `/research-prototype`, research docs (`/data-sources`, `/assumptions`, `/limitations`, `/changelog`). Thin `/signatures/[slug]` Site XX pages are **noindex** and excluded from the sitemap (kept for map/dev).
 - **Golden demo:** Homepage sample Signature is **Score 47 · Grade D** (forestry · 68.2°N · Starlink · autonomous · high). Single source: `lib/hero-demo.ts` (also drives OG / social previews). Verify with `npm run test:score`.
 - **Landing:** Arctic ops-console composition — sticky Signature card, polar atmosphere around (not through) the Signature, GrypsMark footer lockup.
 - **Legal chrome:** Terms/Privacy at `/terms` and `/privacy` — labeled non-commercial R&D — not multi-section commercial “Legal”.
@@ -94,7 +94,8 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 | Styling    | CSS custom properties + Tailwind CSS v4 (PostCSS `@import`)        | Theme via CSS variables; Tailwind as build-time utility layer — product UI mostly custom |
 | Fonts      | `next/font/google` — Space Grotesk + JetBrains Mono                | Eliminates render-blocking Google Fonts import                                           |
 | Maps       | MapLibre GL + key-free Esri raster tiles                           | Ops console maps without a Carto/tile API key (`lib/basemap.ts`)                         |
-| Scoring    | Deterministic Signature engine v0.3 (`lib/deterministic-score.ts`) | Reproducible score / grade / risks / ranked providers                                    |
+| Scoring    | Deterministic Signature engine v0.4 (`lib/deterministic-score.ts`) | Two-layer score / grade / risks / ranked providers / levers                              |
+| Assistant  | Mimir (`components/MimirAssistant.tsx`, `/api/mimir/chat`)        | Retrieval-first explainer; never invents scores                                          |
 | Database   | Neon serverless PostgreSQL (EU Frankfurt)                          | EU data residency for Nordic operators                                                   |
 | Analytics  | Vercel Analytics                                                   | Cookieless, GDPR-compliant by default                                                    |
 | Deployment | Vercel                                                             | ~30s deploys from git push                                                               |
@@ -291,30 +292,15 @@ Fixed header is 72px tall. Without `scrollMarginTop`, clicking a nav link scroll
 
 ---
 
-## EU AI Act Article 50 — AI badge
+## EU AI Act Article 50 — disclosure
 
-Inline `[AI]` badge on every AI-generated analytical summary (Advisor /
-Resilience Signature caveats). Tooltip discloses limited-risk classification,
-Mistral-only provider, human oversight, and Art. 50. Must stay aligned with
-Terms §04 and Privacy §05 — see Legal coupling above.
+Scores are deterministic (`Model v0.4 · deterministic` on the Signature badge).
+Art. 50 disclosure sits next to **opt-in AI-assisted interpretation** prose and
+**Ask Mimir** (conversation open + footer line), not on the score badge.
 
-```tsx
-<span
-  title="EU AI Act Art. 50 — AI-generated analytical summary (Mistral). Limited-risk system. …"
-  style={{
-    fontFamily: "var(--font-data)",
-    fontSize: 8,
-    color: "var(--text-dim)",
-    border: "1px solid var(--border)",
-    borderRadius: 3,
-    padding: "2px 5px",
-    letterSpacing: "0.06em",
-    cursor: "help",
-  }}
->
-  AI
-</span>
-```
+Canonical wording: *Scores are computed by a deterministic model. Some
+interpretation text is AI-assisted when enabled, and Mimir is an AI chatbot.*
+Must stay aligned with Terms §04 and Privacy §05 — see Legal coupling above.
 
 ---
 
@@ -373,7 +359,7 @@ gryps/
 │   ├── GrypsMark.tsx           # Orbital G mark / print lockup
 │   └── Footer.tsx / Header.tsx
 └── lib/
-    ├── deterministic-score.ts  # Signature engine v0.3
+    ├── deterministic-score.ts  # Signature engine v0.4 (two-layer)
     ├── hero-demo.ts            # Golden demo Score 47 · Grade D
     ├── basemap.ts              # Esri raster tile URLs
     ├── ops-map-style.ts        # Shared MapLibre style

@@ -54,9 +54,9 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     locationLabel: "Lapland, Finland · ~68.2°N",
     locationLabelFi: "Lappi, Suomi · ~68.2°N",
     context:
-      "Autonomous harvester fleet operations in Finnish Lapland with a single LEO broadband path and no documented backup. Assesses single-provider and canopy/terrain exposure under safety-critical autonomy.",
+      "Failure-mode pedagogy: autonomous harvester fleet in Finnish Lapland with a single LEO broadband path and no documented backup. Shows how harsh Site Conditions plus weak Mitigation produce a low Signature — contrast with well-configured dual-path examples.",
     contextFi:
-      "Autonominen hakkuukonekalusto Suomen Lapissa yhdellä LEO-laajakaistayhteydellä ilman dokumentoitua varayhteyttä. Arvioi yhden toimittajan ja latvus-/maastoriskin turvallisuuskriittisessä autonomiassa.",
+      "Vikamoodipedagogiikka: autonominen hakkuukonekalusto Suomen Lapissa yhdellä LEO-laajakaistayhteydellä ilman dokumentoitua varayhteyttä. Näyttää, miten ankarat olosuhteet ja heikko lievennys tuottavat matalan Signaturen — vertaa hyvin konfiguroituihin kaksoispolkuesimerkkeihin.",
     source: "example",
     sourceId: "forestry-mixed",
     legacySignatureSlug: "site-01-lapland-harvester-fleet",
