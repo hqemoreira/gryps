@@ -50,7 +50,6 @@ export default async function ResearchAssessmentPage({ params }: Props) {
       "@type": "Organization",
       name: "GRYPS",
       url: "https://gryps.vercel.app",
-      email: "hello@gryps.eu",
     },
     spatialCoverage: {
       "@type": "Place",

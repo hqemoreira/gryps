@@ -8,8 +8,9 @@ Security fixes are applied to the default branch (`main`) of this repository. Pr
 
 If you discover a security issue, please **do not** open a public GitHub issue.
 
-Email: **ghostcat.0to1@ik.me** (security)  
-Product / licensing: **hqe.moreira@gmail.com**
+Security email: **ghostcat.0to1@ik.me**  
+
+Product / prototype contact: use the [Terms contact form](https://gryps.vercel.app/terms) on the live site (no public product inbox until a GRYPS domain is registered).
 
 Include:
 

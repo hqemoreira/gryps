@@ -402,13 +402,13 @@ changes in this product repo.
 | `NEON_DATABASE_URL`   | `api/advise/*`, `lib/signatures-db.ts`, `api/notify/verify`, `api/contact` | Neon PostgreSQL connection string                                                                                                                                                                                            |
 | `MISTRAL_API_KEY`     | `lib/scoring.ts`                                                           | Optional Mistral recommendation prose                                                                                                                                                                                        |
 | `RESEND_API_KEY`      | `lib/mail.ts`                                                              | Send unlock confirmation emails (magic link)                                                                                                                                                                                 |
-| `RESEND_FROM`         | `lib/mail.ts`                                                              | From address on a **verified** Resend domain, e.g. `GRYPS <hello@gryps.eu>`. Until the domain is verified, Resend only delivers to the account owner (`hqe.moreira@gmail.com`) and rejects addresses like `henrique+test@…`. |
+| `RESEND_FROM`         | `lib/mail.ts`                                                              | From address on a **verified** Resend domain you own (do not publish a brand inbox until DNS + mailbox exist). Until verified, Resend only delivers to the Resend account owner and rejects arbitrary test recipients. |
 | `NEXT_PUBLIC_APP_URL` | `lib/mail.ts`                                                              | Canonical site origin for magic-link URLs (prefer over Vercel preview host)                                                                                                                                                  |
 
 Set in: Vercel → gryps project → Settings → Environment Variables  
 (or `vercel env add` for each key). Do not commit secrets. Placeholders: `.env.example`.
 
-When Resend rejects a send (unverified domain / test-mode recipient), `/api/advise/unlock` still returns `verifyUrl` so the UI can unlock without inbox delivery. After `gryps.eu` (or another domain) is verified at [resend.com/domains](https://resend.com/domains), set `RESEND_FROM` accordingly and test mail will reach `henrique+test@henriquemoreira.eu`.
+When Resend rejects a send (unverified domain / test-mode recipient), `/api/advise/unlock` still returns `verifyUrl` so the UI can unlock without inbox delivery. After a GRYPS domain is verified at [resend.com/domains](https://resend.com/domains), set `RESEND_FROM` accordingly and test against a mailbox on a domain you control.
 
 ### Advisor funnel (product)
 
@@ -420,7 +420,7 @@ When Resend rejects a send (unverified domain / test-mode recipient), `/api/advi
 - Local **Save to Assessments** is browser-only teaser/full workspace storage — not the email unlock path.
 - Prefer **verified** `notify_requests` (+ contact emails) as identified interest; raw anonymous runs stay anonymous.
 
-Manual unlock tests: prefer `hqe.moreira@gmail.com` until the domain is verified; otherwise use the on-page verify link.
+Manual unlock tests: use a mailbox you control on a verified domain, or the on-page verify link until Resend domain verification is done.
 
 ---
 
@@ -460,11 +460,11 @@ Privacy (`/privacy`) and Terms (`/terms`) are the required public
 legal pages (footer-linked; route group `app/(prototype)/`). Both locales must stay aligned on:
 
 - Plain, short notices — not multi-section commercial T&Cs
-- Operator: Henrique Moreira · Espoo, Finland · contact `hqe.moreira@gmail.com`
+- Operator: Henrique Moreira · Espoo, Finland · public contact via `/terms` form only (no published personal inbox on the product)
 - Non-commercial research / demonstration prototype — no company, no revenue, no sale
 - AI processing disclosed: **Mistral** (+ Vercel hosting) for demonstration Resilience Signature
 - No marketing tracking / analytics cookies claimed in Privacy
-- Optional email only when the user requests full-assessment unlock / save / updates; confirmation via magic link (Resend). Deletion via `hello@gryps.eu` or Terms contact form
+- Optional email only when the user requests full-assessment unlock / save / updates; confirmation via magic link (Resend). Deletion via Terms contact form
 - Point-of-exposure UI: `[AI]` badge remains on Advisor outputs; Terms link is `/terms`
 
 This is product copy/compliance alignment — not legal advice.

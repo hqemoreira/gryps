@@ -83,4 +83,5 @@ Proprietary — see [`LICENSE`](./LICENSE). All rights reserved.
 ## Contact
 
 Henrique Moreira · Espoo, Finland  
-Email: hqe.moreira@gmail.com · Web: [henriquemoreira.eu](https://henriquemoreira.eu) · GitHub: [hqemoreira](https://github.com/hqemoreira)
+
+Use the contact form on the live site: [Terms](https://gryps.vercel.app/terms) · Portfolio: [henriquemoreira.eu](https://henriquemoreira.eu) · GitHub: [hqemoreira](https://github.com/hqemoreira)

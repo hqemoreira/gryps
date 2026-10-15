@@ -43,7 +43,6 @@ const jsonLd = {
     "@type": "Person",
     name: "Henrique Moreira",
     url: "https://henriquemoreira.eu",
-    email: "hello@gryps.eu",
     jobTitle: "Connectivity resilience researcher",
     address: {
       "@type": "PostalAddress",

@@ -14,10 +14,12 @@ const COPY = {
     identityH2: "Identity",
     identityItems: [
       "Maintainer: Henrique Moreira · Espoo, Finland",
-      "Contact: hello@gryps.eu (or the contact form on Terms)",
       "No registered company · no revenue · no commercial activity",
       "Model v0.4 · Deterministic Model — score is never AI-generated",
     ],
+    contactLabel: "Contact",
+    contactLink: "Terms contact form",
+    contactNote: "— the maintainer reads submissions from there (no public product inbox yet).",
     linksH2: "Learn more",
     caseStudy: "Portfolio case study",
     researchPrototype: "Research & Prototype",
@@ -43,10 +45,12 @@ const COPY = {
     identityH2: "Identiteetti",
     identityItems: [
       "Ylläpitäjä: Henrique Moreira · Espoo, Suomi",
-      "Yhteystieto: hello@gryps.eu (tai Ehdot-sivun lomake)",
       "Ei rekisteröityä yritystä · ei tuloja · ei kaupallista toimintaa",
       "Malli v0.4 · Deterministinen malli — pisteitä ei tuota tekoäly",
     ],
+    contactLabel: "Yhteystieto",
+    contactLink: "Ehdot-sivun yhteydenottolomake",
+    contactNote: "— ylläpitäjä lukee lähetykset sieltä (ei julkista tuotesähköpostia vielä).",
     linksH2: "Lue lisää",
     caseStudy: "Portfoliocase study",
     researchPrototype: "Tutkimus ja prototyyppi",
@@ -109,6 +113,13 @@ function AboutArticle({ lang }: { lang: DocLang }) {
         {t.identityItems.map((item) => (
           <li key={item}>{item}</li>
         ))}
+        <li>
+          {t.contactLabel}:{" "}
+          <Link href="/terms" style={{ color: "var(--accent-blue)" }}>
+            {t.contactLink}
+          </Link>{" "}
+          {t.contactNote}
+        </li>
       </ul>
 
       <h2 style={h2}>{t.linksH2}</h2>

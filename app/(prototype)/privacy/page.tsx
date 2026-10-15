@@ -10,7 +10,7 @@ const COPY = {
       "This non-commercial R&D prototype processes only what you voluntarily enter to generate a demonstration Resilience Signature. It is not a commercial service.",
     controllerH: "Controller",
     controllerBody:
-      "Henrique Moreira, Espoo, Finland. Contact: hello@gryps.eu or the contact form on the Terms page.",
+      "Henrique Moreira, Espoo, Finland. Contact: use the contact form on the Terms page.",
     whatH: "What we process",
     whatItems: [
       "Site coordinates, operational sector, autonomy, criticality, and selected connectivity providers — to compute a Signature (stored anonymously with the run).",
@@ -30,7 +30,7 @@ const COPY = {
     ],
     retentionH: "Retention",
     retentionBody:
-      "Demo submissions may be retained for learning and debugging of this R&D prototype. Email and unlock records can be deleted on request via the Terms contact form or hello@gryps.eu.",
+      "Demo submissions may be retained for learning and debugging of this R&D prototype. Email and unlock records can be deleted on request via the Terms contact form.",
     rightsH: "Your rights",
     rightsItems: [
       "Request access to or deletion of personal data you submitted (email and related submission / unlock request).",
@@ -50,7 +50,7 @@ const COPY = {
       "Tämä ei-kaupallinen T&K-prototyyppi käsittelee vain sen, mitä syötät vapaaehtoisesti demonstraatio-Resilience Signaturen tuottamiseksi. Se ei ole kaupallinen palvelu.",
     controllerH: "Rekisterinpitäjä",
     controllerBody:
-      "Henrique Moreira, Espoo, Suomi. Yhteystieto: hello@gryps.eu tai Ehdot-sivun yhteydenottolomake.",
+      "Henrique Moreira, Espoo, Suomi. Yhteystieto: Ehdot-sivun yhteydenottolomake.",
     whatH: "Mitä käsittelemme",
     whatItems: [
       "Kohteen koordinaatit, toimiala, autonomia, kriittisyys ja valitut yhteystoimittajat — Signaturen laskentaa varten (tallennetaan anonymisti ajon kanssa).",
@@ -70,7 +70,7 @@ const COPY = {
     ],
     retentionH: "Säilytys",
     retentionBody:
-      "Demolähetyksiä voidaan säilyttää tämän T&K-prototyypin oppimista ja virheenkorjausta varten. Sähköposti- ja unlock-tiedot voi pyytää poistettaviksi Ehdot-sivun lomakkeella tai osoitteesta hello@gryps.eu.",
+      "Demolähetyksiä voidaan säilyttää tämän T&K-prototyypin oppimista ja virheenkorjausta varten. Sähköposti- ja unlock-tiedot voi pyytää poistettaviksi Ehdot-sivun lomakkeella.",
     rightsH: "Oikeutesi",
     rightsItems: [
       "Pyytää pääsyä lähettämääsi henkilötietoon tai sen poistoa (sähköposti ja siihen liittyvä lähetys / unlock-pyyntö).",
