@@ -4,9 +4,7 @@
  */
 
 import {
-  MODEL_VERSION,
   SCORING_ENGINE,
-  SCORING_ENGINE_DISPLAY,
   METHODOLOGY_VERSION,
   METHODOLOGY_LABEL,
 } from "@/lib/model-constants";
@@ -77,14 +75,14 @@ export type DataProvenanceRecord = {
 /** Important datasets and references with provenance fields. */
 export const DATA_PROVENANCE: DataProvenanceRecord[] = [
   {
-    id: "model-v03",
+    id: "model-v04",
     name: "Deterministic Signature engine",
     nameFi: "Deterministinen Signature-moottori",
     source:
-      "GRYPS R&D — Model v0.3 scoring rules (redundancy, latitude, operational profile, provider confidence, hard caps)",
+      "GRYPS R&D — Model v0.4 scoring rules (Site Conditions + Mitigation Quality: redundancy, provider/path independence, profile–autonomy alignment, hard caps)",
     sourceFi:
-      "GRYPS T&K — mallin v0.3 pisteytyssäännöt (redundanssi, leveysaste, toimintaprofiili, toimittajaluottamus, kovat katot)",
-    dateAccessed: "2026-09-11",
+      "GRYPS T&K — mallin v0.4 pisteytyssäännöt (Paikan olosuhteet + Lievennyksen laatu: redundanssi, toimittaja-/polkuriippumattomuus, profiili–autonomia, kovat katot)",
+    dateAccessed: "2026-10-13",
     dataType: "Internal research model / reproducible algorithm",
     dataTypeFi: "Sisäinen tutkimusmalli / toistettava algoritmi",
     howUsed:
@@ -95,8 +93,8 @@ export const DATA_PROVENANCE: DataProvenanceRecord[] = [
   },
   {
     id: "provider-catalog",
-    name: "Provider index (catalog confidence)",
-    nameFi: "Toimittajahakemisto (hakemistoluottamus)",
+    name: "Providers (catalog confidence)",
+    nameFi: "Toimittajat (hakemistoluottamus)",
     source:
       "GRYPS curated public-knowledge index — no commercial relationships with listed operators",
     sourceFi:
@@ -166,9 +164,9 @@ export const DATA_PROVENANCE: DataProvenanceRecord[] = [
     dataType: "Illustrative research scenarios with real coordinates",
     dataTypeFi: "Havainnollistavia tutkimusskenaarioita todellisilla koordinaateilla",
     howUsed:
-      "Public research portfolio. Same Model v0.3 engine as the Advisor — not customer cases or live RF monitoring.",
+      "Public research portfolio. Same Model v0.4 engine as the Advisor — not customer cases or live RF monitoring.",
     howUsedFi:
-      "Julkinen tutkimusportfolio. Sama malli v0.3 kuin Advisorissa — ei asiakastarinoita eikä live-RF-seurantaa.",
+      "Julkinen tutkimusportfolio. Sama malli v0.4 kuin Advisorissa — ei asiakastarinoita eikä live-RF-seurantaa.",
     url: "/research",
   },
 ];
@@ -299,7 +297,8 @@ export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
     date: METHODOLOGY_RELEASED,
     title: "Prototype Research Quality",
     titleFi: "Prototyypin tutkimuksen laatu",
-    scoringEngine: SCORING_ENGINE,
+    /** Historical methodology layer — scoring engine at that time was still v0.3. */
+    scoringEngine: "deterministic-v0.3",
     items: [
       {
         en: "Formal research documentation set: methodology, data sources, assumptions, limitations, changelog.",
@@ -324,11 +323,11 @@ export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
     date: "2026-Q1–Q3",
     title: "Deterministic Signature + Advisor Intelligence",
     titleFi: "Deterministinen Signature + Advisor-äly",
-    scoringEngine: SCORING_ENGINE,
+    scoringEngine: "deterministic-v0.3",
     items: [
       {
-        en: `Scoring engine ${SCORING_ENGINE_DISPLAY} / ${MODEL_VERSION}: redundancy, latitude, operational profile, provider confidence, hard caps.`,
-        fi: `Pisteytysmoottori ${SCORING_ENGINE_DISPLAY} / ${MODEL_VERSION}: redundanssi, leveysaste, toimintaprofiili, toimittajaluottamus, kovat katot.`,
+        en: "Scoring engine deterministic-v0.3 / gryps-signature-v0.3: redundancy, latitude, operational profile, provider confidence, hard caps.",
+        fi: "Pisteytysmoottori deterministic-v0.3 / gryps-signature-v0.3: redundanssi, leveysaste, toimintaprofiili, toimittajaluottamus, kovat katot.",
       },
       {
         en: "Advisor Intelligence: recommendation package, score explanations, mission priorities, provider comparison.",
@@ -355,8 +354,8 @@ export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
         fi: "Kanoninen CTA: Luo Resilience Signature; luottamus ≠ saatavuus; väitehygienia.",
       },
       {
-        en: "MapLibre ops console, provider index, knowledge notes, Advisor funnel (abbreviated → unlock).",
-        fi: "MapLibre-ops-konsoli, toimittajahakemisto, tietomuistiinpanot, Advisor-suppilo (lyhennetty → avaus).",
+        en: "MapLibre ops console, Providers catalog, knowledge notes, Advisor funnel (abbreviated → unlock).",
+        fi: "MapLibre-ops-konsoli, Toimittajat-hakemisto, tietomuistiinpanot, Advisor-suppilo (lyhennetty → avaus).",
       },
     ],
   },

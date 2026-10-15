@@ -246,7 +246,7 @@ function explainComponent(
           : "Provider catalog confidence is moderate or degraded (e.g. GEO at high latitude).";
       break;
     default:
-      explanation = `${label} scored ${points}/${max} in Model v0.3.`;
+      explanation = `${label} scored ${points}/${max} in Model v0.4.`;
   }
   return { id, label, points, max, explanation };
 }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { IA_MODES, labelFor, descFor } from "@/lib/ia-nav";
 import { PROVIDER_INDEX_COUNT } from "@/lib/providers";
+import { RESEARCH_LIBRARY_COUNT } from "@/lib/research-library";
 import { SEED_SITES } from "@/lib/seed-sites";
 import type { Lang } from "@/lib/use-lang";
 
@@ -59,7 +60,8 @@ const COPY = {
     assessCta: "Open the advisor →",
     researchCta: "Explore Research",
     datasetL: "CURRENT RESEARCH DATASET",
-    sites: "assessed sites",
+    sites: "assessed sites (includes seed sites)",
+    datasetNote: `${RESEARCH_LIBRARY_COUNT} curated Research Library assessments · seeds fill the map portfolio`,
     providers: "providers",
     examplesL: "EXAMPLE RESILIENCE SIGNATURES",
     examplesSub: "Example Signatures from the Research Library.",
@@ -83,7 +85,8 @@ const COPY = {
     assessCta: "Avaa Advisor →",
     researchCta: "Tutki tutkimusta",
     datasetL: "NYKYINEN TUTKIMUSAINEISTO",
-    sites: "arvioitua kohdetta",
+    sites: "arvioitua kohdetta (sisältää siemenkohteet)",
+    datasetNote: `${RESEARCH_LIBRARY_COUNT} kuratoitua Research Library -arviota · siemenet täydentävät karttaportfolion`,
     providers: "toimittajaa",
     examplesL: "ESIMERKKI RESILIENCE SIGNATUREJA",
     examplesSub: "Esimerkki-Signatureja Research Librarysta.",
@@ -190,13 +193,7 @@ export function HomeOrientation({
           <p className="label" style={{ marginBottom: 28 }}>
             {t.modesL}
           </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: 20,
-            }}
-          >
+          <div className="gryps-three-ways-grid">
             {IA_MODES.map((mode, i) => (
               <div key={mode.id} style={{ padding: "4px 0" }}>
                 <p
@@ -282,6 +279,17 @@ export function HomeOrientation({
             <span>LEO · MEO · GEO</span>
             <span>70°N+</span>
           </div>
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 12,
+              color: "var(--text-dim)",
+              margin: "12px 0 0",
+              lineHeight: 1.45,
+            }}
+          >
+            {t.datasetNote}
+          </p>
         </div>
       </section>
 

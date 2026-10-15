@@ -19,7 +19,7 @@ const COPY = {
     count: (n: number) => `${n} research scenarios`,
     ctaHeading: "Generate Resilience Signature",
     ctaSub:
-      "Score a concrete Nordic / Arctic / Icelandic site with the same Model v0.3 used in these scenarios.",
+      "Score a concrete Nordic / Arctic / Icelandic site with the same Model v0.4 used in these scenarios.",
     ctaBtn: "Generate Resilience Signature",
     navCta: "Generate Resilience Signature",
     chain: "Environment · Requirements · Challenges · Technology · Providers",
@@ -34,7 +34,7 @@ const COPY = {
     count: (n: number) => `${n} tutkimusskenaariota`,
     ctaHeading: "Luo Resilience Signature",
     ctaSub:
-      "Pisteytä konkreettinen pohjoismainen / arktinen / islantilainen kohde samalla mallilla v0.3 kuin näissä skenaarioissa.",
+      "Pisteytä konkreettinen pohjoismainen / arktinen / islantilainen kohde samalla mallilla v0.4 kuin näissä skenaarioissa.",
     ctaBtn: "Luo Resilience Signature",
     navCta: "Luo Resilience Signature",
     chain: "Ympäristö · Vaatimukset · Haasteet · Teknologia · Toimittajat",

@@ -140,6 +140,13 @@ export const IA_REFERENCE: IaNavItem[] = [
     descFi: "Kuka ylläpitää GRYPS:ää",
   },
   {
+    href: "/fi",
+    en: "Finnish summary",
+    fi: "Suomenkielinen tiivistelmä",
+    descEn: "What GRYPS is — Finnish overview",
+    descFi: "Mitä GRYPS on — suomenkielinen tiivistelmä",
+  },
+  {
     href: "/research-prototype",
     en: "Research & Prototype",
     fi: "Tutkimus ja prototyyppi",

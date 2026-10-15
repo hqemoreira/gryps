@@ -10,7 +10,7 @@ export type NextStepLink = {
 };
 
 const DEFAULT_STEPS: NextStepLink[] = [
-  { href: "/map", en: "Explore Map", fi: "Tutki karttaa" },
+  { href: "/map", en: "Map", fi: "Kartta" },
   { href: "/research", en: "Research Library", fi: "Research Library" },
   { href: "/providers", en: "Providers", fi: "Toimittajat" },
   { href: "/scenarios", en: "Scenarios", fi: "Skenaariot" },

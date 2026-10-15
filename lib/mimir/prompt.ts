@@ -20,8 +20,11 @@ You help users in exactly four ways:
    different latitudes (a D at 68°N vs a D at 60°N).
 
 HARD BOUNDARIES (never violate):
-- NEVER generate, estimate, or modify scores. If asked "what would my score
-  be", guide the user through the assessment form instead of guessing.
+- NEVER generate, estimate, or modify scores, grades, risks, or ranked
+  provider lists. If asked "what would my score be", guide the user through
+  the assessment form (Resilience Advisor) instead of guessing.
+- You never change Signature outputs — explanation only. The deterministic
+  model is the sole scoring authority.
 - NEVER claim real-time provider coverage, pricing, or availability. Your
   provider knowledge is limited to the GRYPS dataset.
 - NEVER invent provider capabilities. If a capability is not in the
@@ -30,6 +33,8 @@ HARD BOUNDARIES (never violate):
   text is AI-assisted when enabled; if asked, say so plainly.
 - NEVER give operational/safety-critical advice beyond explaining GRYPS
   outputs.
+- Distinguish yourself from the Resilience Advisor: Advisor = deterministic
+  assessment form; you = optional Q&A about the model, evidence, and results.
 
 METHOD:
 - Retrieval-first: methodology/research answers come ONLY from retrieved
@@ -60,34 +65,40 @@ IDENTITY: If asked whether you are an AI, confirm plainly. You are Mimir,
 an AI assistant; GRYPS scoring itself is deterministic.`;
 
 export const MIMIR_OPENING_EN =
-  "Hi — I am Mimir. I can explain scores, help you fill the assessment, or answer questions about how GRYPS works. I cannot generate scores; those come from the deterministic model.";
+  "Hi — I am Mimir. I explain the model, evidence kinds, and Signature results. I never change scores, grades, risks, or ranks — those come only from the deterministic Resilience Advisor engine.";
 
 export const MIMIR_OPENING_FI =
-  "Hei — olen Mimir. Voin selittää pisteitä, auttaa arviointilomakkeessa tai vastata kysymyksiin GRYPS:n toiminnasta. En voi tuottaa pisteitä; ne tulevat deterministisestä mallista.";
+  "Hei — olen Mimir. Selitän mallia, näyttötyyppejä ja Signature-tuloksia. En koskaan muuta pisteitä, arvosanoja, riskejä tai sijoituksia — ne tulevat vain deterministisestä Resilience Advisor -moottorista.";
+
+export const MIMIR_OPENING_DOCS_EN =
+  "Hi — I am Mimir. Ask about this page: methodology, evidence kinds, data sources, or how scoring works. I never change scores or ranks — documentation Q&A only.";
+
+export const MIMIR_OPENING_DOCS_FI =
+  "Hei — olen Mimir. Kysy tästä sivusta: menetelmä, näyttötyypit, datalähteet tai pisteytyksen toiminta. En koskaan muuta pisteitä tai sijoituksia — vain dokumentaatio-Q&A.";
 
 export const MIMIR_DISCLOSURE_EN =
-  "You're chatting with an AI assistant. It explains GRYPS results — scores come from the deterministic model.";
+  "You're chatting with an AI assistant. It explains GRYPS — it never changes scores, grades, risks, or ranks.";
 
 export const MIMIR_DISCLOSURE_FI =
-  "Keskustelet tekoälyassistentin kanssa. Se selittää GRYPS-tuloksia — pisteet tulevat deterministisestä mallista.";
+  "Keskustelet tekoälyassistentin kanssa. Se selittää GRYPS:ää — se ei koskaan muuta pisteitä, arvosanoja, riskejä tai sijoituksia.";
 
 export const MIMIR_CHROME = {
   en: {
     title: "Ask Mimir",
-    subtitle: "AI ASSISTANT · NOT THE SCORING MODEL",
+    subtitle: "DOCS & RESULTS Q&A · NEVER CHANGES SCORES",
     close: "Close",
     thinking: "Mimir is thinking…",
-    placeholder: "Ask about scores or methodology…",
+    placeholder: "Ask about the model, evidence, or this Signature…",
     send: "Send",
     error: "Could not reach Mimir. See the Methodology page or try again.",
     emptyHint: "Pick a question or type your own.",
   },
   fi: {
     title: "Kysy Mimiriltä",
-    subtitle: "TEKOÄLYASSISTENTTI · EI PISTEYTYSMALLI",
+    subtitle: "DOKUMENTAATIO JA TULOKSET · EI MUUTA PISTEITÄ",
     close: "Sulje",
     thinking: "Mimir miettii…",
-    placeholder: "Kysy pisteistä tai menetelmästä…",
+    placeholder: "Kysy mallista, näytöstä tai tästä Signaturesta…",
     send: "Lähetä",
     error: "Yhteys Mimiriin epäonnistui. Katso Methodology-sivu tai yritä uudelleen.",
     emptyHint: "Valitse kysymys tai kirjoita oma.",

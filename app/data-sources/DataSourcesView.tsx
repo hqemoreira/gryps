@@ -2,6 +2,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { DocShell, type DocLang } from "@/components/DocShell";
+import { MimirAssistant } from "@/components/MimirAssistant";
 import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav";
 import { DATA_PROVENANCE, METHODOLOGY_LABEL } from "@/lib/research-docs";
 
@@ -127,7 +128,16 @@ function Field({ label, value, href }: { label: string; value: string; href?: st
 }
 
 export function DataSourcesView() {
-  return <DocShell>{(lang) => <Article lang={lang} />}</DocShell>;
+  return (
+    <DocShell>
+      {(lang) => (
+        <>
+          <Article lang={lang} />
+          <MimirAssistant lang={lang} variant="docs" />
+        </>
+      )}
+    </DocShell>
+  );
 }
 
 const h1: CSSProperties = {

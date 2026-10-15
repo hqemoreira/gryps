@@ -339,7 +339,7 @@ export function ScenarioDetailView({ scenario }: { scenario: MissionScenario }) 
               en: "Assess this scenario",
               fi: "Arvioi tämä skenaario",
             },
-            { href: "/map", en: "Explore Map", fi: "Tutki karttaa" },
+            { href: "/map", en: "Map", fi: "Kartta" },
             { href: "/providers", en: "Providers", fi: "Toimittajat" },
             { href: "/knowledge", en: "Evidence", fi: "Näyttö" },
             { href: "/methodology", en: "Methodology", fi: "Menetelmä" },

@@ -5,6 +5,8 @@ import {
   MIMIR_CHROME,
   MIMIR_DISCLOSURE_EN,
   MIMIR_DISCLOSURE_FI,
+  MIMIR_OPENING_DOCS_EN,
+  MIMIR_OPENING_DOCS_FI,
   MIMIR_OPENING_EN,
   MIMIR_OPENING_FI,
 } from "@/lib/mimir/prompt";
@@ -19,6 +21,8 @@ type Props = {
   signatureContext?: string;
   /** Proactive chips when a Signature is in context */
   chips?: MimirChip[];
+  /** Docs pages: methodology / data sources / library Q&A framing */
+  variant?: "default" | "docs";
 };
 
 function newSessionId(): string {
@@ -28,7 +32,12 @@ function newSessionId(): string {
   return `mimir-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export function MimirAssistant({ lang = "en", signatureContext, chips = [] }: Props) {
+export function MimirAssistant({
+  lang = "en",
+  signatureContext,
+  chips = [],
+  variant = "default",
+}: Props) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -38,7 +47,14 @@ export function MimirAssistant({ lang = "en", signatureContext, chips = [] }: Pr
   const titleId = useId();
 
   const chrome = MIMIR_CHROME[lang];
-  const opening = lang === "fi" ? MIMIR_OPENING_FI : MIMIR_OPENING_EN;
+  const opening =
+    variant === "docs"
+      ? lang === "fi"
+        ? MIMIR_OPENING_DOCS_FI
+        : MIMIR_OPENING_DOCS_EN
+      : lang === "fi"
+        ? MIMIR_OPENING_FI
+        : MIMIR_OPENING_EN;
   const disclosure = lang === "fi" ? MIMIR_DISCLOSURE_FI : MIMIR_DISCLOSURE_EN;
   const showChips = Boolean(signatureContext) && chips.length > 0;
   const onlyOpening = messages.length === 1 && messages[0]?.role === "assistant";

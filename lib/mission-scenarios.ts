@@ -82,7 +82,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "LEO broadband catalog options (e.g. Starlink, OneWeb) for throughput under open sky",
         "Polar narrowband for high-latitude reach when broadband LEO is obstructed",
         "Avoid GEO-only architectures for Arctic stump-side primary connectivity",
-        "GRYPS ranks options via Model v0.3 — illustrative, no commercial relationships",
+        "GRYPS ranks options via Model v0.4 — illustrative, no commercial relationships",
       ],
       architecture:
         "A research-fit architecture for Arctic forestry often looks like LEO broadband for logistics video/telemetry plus an independent polar narrowband path for control and distress — scored for redundancy and latitude, not sold as a package.",
@@ -112,7 +112,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "LEO-laajakaistan hakemistovaihtoehdot (esim. Starlink, OneWeb) avoimen taivaan kapasiteettiin",
         "Polaarinen kapeakaista korkeiden leveysasteiden ulottuvuuteen, kun LEO-laajakaista estyy",
         "Vältä vain-GEO-arkkitehtuureja arktisen kannon ensisijaiseksi yhteydeksi",
-        "GRYPS sijoittaa vaihtoehdot mallilla v0.3 — havainnollistavaa, ei kaupallisia suhteita",
+        "GRYPS sijoittaa vaihtoehdot mallilla v0.4 — havainnollistavaa, ei kaupallisia suhteita",
       ],
       architecture:
         "Tutkimuksellisesti sopiva arkkitehtuuri arktiseen metsätalouteen näyttää usein LEO-laajakaistalta logistiikan videoon/telemetriaan plus itsenäiseltä polaariselta kapeakaistapolulta ohjaukseen ja hätään — pisteytetty redundanssin ja leveysasteen mukaan, ei myyty pakettina.",
@@ -145,7 +145,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "Modeled Signature evidence for readiness docs — not procurement bidding",
       ],
       challenges: [
-        "Safety-critical + autonomous + single provider triggers hard score caps in Model v0.3",
+        "Safety-critical + autonomous + single provider triggers hard score caps in Model v0.4",
         "Pit geometry and berms can obstruct sky-view similarly to forestry canopy",
         "Failover often exists on paper but is not automated or drilled",
         "GEO links may serve camp offices while being unsuitable for pit primary paths above ~70°N",
@@ -175,7 +175,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "Mallinnettu Signature-näyttö valmiusdokumentteihin — ei hankintatarjouskilpailu",
       ],
       challenges: [
-        "Turvallisuuskriittinen + autonominen + yksi toimittaja laukaisee mallin v0.3 kovat katot",
+        "Turvallisuuskriittinen + autonominen + yksi toimittaja laukaisee mallin v0.4 kovat katot",
         "Louhoksen geometria ja penkereet voivat peittää taivasnäkymän kuten metsän latvus",
         "Failover on usein paperilla mutta ei automatisoitu tai harjoiteltu",
         "GEO voi palvella leiritoimistoja mutta ei sovi ainoaksi avolouhoksen primääriksi yli ~70°N",

@@ -18,6 +18,7 @@ import {
   type ResearchVertical,
 } from "@/lib/research-library";
 import { TypeLabel } from "@/components/TypeLabel";
+import { MimirAssistant } from "@/components/MimirAssistant";
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors";
 
 type CardMeta = {
@@ -38,7 +39,7 @@ const COPY = {
     empty: "No assessments match these filters.",
     view: "View assessment →",
     model: "Model v0.4",
-    sampleNote: `Curated sample — ${RESEARCH_LIBRARY_COUNT} of N planned.`,
+    sampleNote: `Curated Research Library — ${RESEARCH_LIBRARY_COUNT} assessments (map portfolio also includes seed sites).`,
     ctaHeading: "Generate Resilience Signature",
     ctaSub: "Free · No account required. Same scoring model as the research assessments above.",
     ctaBtn: "Generate Resilience Signature",
@@ -56,7 +57,7 @@ const COPY = {
     empty: "Yksikään arvio ei vastaa suodattimia.",
     view: "Katso arvio →",
     model: "Malli v0.4",
-    sampleNote: `Kuratoitu otos — ${RESEARCH_LIBRARY_COUNT} / N suunnitellusta.`,
+    sampleNote: `Kuratoitu Research Library — ${RESEARCH_LIBRARY_COUNT} arviota (karttaportfolio sisältää myös siemenkohteita).`,
     ctaHeading: "Luo Resilience Signature",
     ctaSub:
       "Ilmainen · Ei tiliä tarvita. Sama pisteytysmalli kuin yllä olevissa tutkimusarvioissa.",
@@ -367,7 +368,7 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
           <NextStepsLinks
             lang={lang}
             links={[
-              { href: "/map", en: "Explore Map", fi: "Tutki karttaa" },
+              { href: "/map", en: "Map", fi: "Kartta" },
               { href: "/providers", en: "Providers", fi: "Toimittajat" },
               { href: "/scenarios", en: "Scenarios", fi: "Skenaariot" },
               { href: "/methodology", en: "Methodology", fi: "Menetelmä" },
@@ -430,6 +431,7 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
         )}
         secondaryLink={{ href: "/map", label: lang === "en" ? "Explore" : "Tutki" }}
       />
+      <MimirAssistant lang={lang} variant="docs" />
     </div>
   );
 }

@@ -27,7 +27,7 @@ const COPY = {
     dataSources: "Data sources",
     limitations: "Limitations",
     changelog: "Methodology changelog",
-    providers: "Provider index (no commercial relationships)",
+    providers: "Providers (no commercial relationships)",
     privacy: "Privacy",
     terms: "Terms & contact",
     advisor: "Generate Resilience Signature",

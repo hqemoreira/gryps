@@ -11,14 +11,21 @@ export type DocLang = Lang;
 export function DocShell({
   children,
   ctaHref = "/#advisor",
+  defaultLang = "en",
 }: {
   children: ReactNode | ((lang: DocLang) => ReactNode);
   ctaHref?: string;
+  /** Prefer this locale on first paint (e.g. /fi summary). */
+  defaultLang?: DocLang;
   /** @deprecated Chrome CTA comes from IA short label */
   ctaLabel?: string;
 }) {
-  const [lang, setLang] = useLang();
+  const [lang, setLang] = useLang(defaultLang);
   const content = typeof children === "function" ? children(lang) : children;
+
+  useEffect(() => {
+    if (defaultLang === "fi") setLang("fi");
+  }, [defaultLang, setLang]);
 
   useEffect(() => {
     if (!document.documentElement.style.getPropertyValue("--gryps-header-h")) {

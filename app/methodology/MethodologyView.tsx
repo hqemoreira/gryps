@@ -2,6 +2,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { DocShell, type DocLang } from "@/components/DocShell";
+import { MimirAssistant } from "@/components/MimirAssistant";
 import { PolarAtmosphere } from "@/components/PolarAtmosphere";
 import { PrototypeDisclaimerBanner, ResearchDocsNav } from "@/components/ResearchDocsNav";
 import { EvidenceKindLegend } from "@/components/TypeLabel";
@@ -23,7 +24,7 @@ const COPY = {
       "Every Signature follows the same research path. The chain is explicit so operators can see how environment and published knowledge become a scored recommendation.",
     evidenceKindsH2: "Evidence kinds",
     evidenceKindsP:
-      "The same chip vocabulary appears on Signatures, Research assessments, the Map, and the Provider index. Same label = same meaning everywhere.",
+      "The same chip vocabulary appears on Signatures, Research assessments, the Map, and Providers. Same label = same meaning everywhere.",
     chain: [
       {
         title: "1 · Operating environment",
@@ -115,7 +116,7 @@ const COPY = {
     versionH2: "Versioning (monitoring later)",
     versionP: `Every Signature carries issuedAt, modelVersion (${MODEL_VERSION}), and inputHash. Monitoring is the same engine at T1, T2 — not a second product. Live drift alerting is not productized.`,
     researchLink: "Research Library",
-    mapLink: "Explore Map",
+    mapLink: "Map",
     scenariosLink: "Mission scenarios",
     workspaceLink: "Assessments",
     dataSourcesLink: "Data sources",
@@ -123,7 +124,7 @@ const COPY = {
     limitationsLink: "Limitations",
     changelogLink: "Changelog",
     knowledgeLink: "Evidence",
-    providersLink: "Provider index",
+    providersLink: "Providers",
     advisorLink: "Generate Resilience Signature",
   },
   fi: {
@@ -234,7 +235,7 @@ const COPY = {
     versionH2: "Versiointi (seuranta myöhemmin)",
     versionP: `Jokainen Signature sisältää issuedAt-, modelVersion- (${MODEL_VERSION}) ja inputHash-kentät. Seuranta on sama moottori hetkillä T1 ja T2 — ei erillinen tuote. Reaaliaikaisia ajautumahälytyksiä ei ole tuotteistettu.`,
     researchLink: "Research Library",
-    mapLink: "Tutki karttaa",
+    mapLink: "Kartta",
     scenariosLink: "Tehtäväskenaariot",
     workspaceLink: "Arviot",
     dataSourcesLink: "Datalähteet",
@@ -242,7 +243,7 @@ const COPY = {
     limitationsLink: "Rajoitteet",
     changelogLink: "Muutosloki",
     knowledgeLink: "Näyttö",
-    providersLink: "Toimittajahakemisto",
+    providersLink: "Toimittajat",
     advisorLink: "Luo Resilience Signature",
   },
 } as const;
@@ -443,7 +444,16 @@ function MethodologyArticle({ lang }: { lang: DocLang }) {
 }
 
 export function MethodologyView() {
-  return <DocShell>{(lang) => <MethodologyArticle lang={lang} />}</DocShell>;
+  return (
+    <DocShell>
+      {(lang) => (
+        <>
+          <MethodologyArticle lang={lang} />
+          <MimirAssistant lang={lang} variant="docs" />
+        </>
+      )}
+    </DocShell>
+  );
 }
 
 const h2: CSSProperties = {

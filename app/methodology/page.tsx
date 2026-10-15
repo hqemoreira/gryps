@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import { MethodologyView } from "./MethodologyView";
-import { GRADE_BANDS_SUMMARY, METHODOLOGY_LABEL } from "@/lib/model-constants";
+import {
+  GRADE_BANDS_SUMMARY,
+  METHODOLOGY_LABEL,
+  SCORING_ENGINE_DISPLAY,
+  SCORING_MODEL_LABEL,
+} from "@/lib/model-constants";
 
 export const metadata: Metadata = {
   title: `Methodology — ${METHODOLOGY_LABEL}`,
-  description: `${METHODOLOGY_LABEL}: experimental Connectivity Intelligence — evidence chain, Model v0.3 scoring, data provenance, assumptions, and limitations. Indicative research — not procurement advice.`,
+  description: `${METHODOLOGY_LABEL}: experimental Connectivity Intelligence — evidence chain, ${SCORING_MODEL_LABEL} scoring, data provenance, assumptions, and limitations. Indicative research — not procurement advice.`,
   alternates: { canonical: "https://gryps.vercel.app/methodology" },
 };
 
@@ -17,7 +22,7 @@ const jsonLd = {
       name: "What is GRYPS Research Methodology?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: `${METHODOLOGY_LABEL} is the documentation framework for an experimental Connectivity Intelligence prototype. It connects operating environment, research, reference data, and deterministic Model v0.3 scoring. Outputs are indicative — not procurement, coverage certification, or engineering advice.`,
+        text: `${METHODOLOGY_LABEL} is the documentation framework for an experimental Connectivity Intelligence prototype. It connects operating environment, research, reference data, and ${SCORING_MODEL_LABEL} scoring. Outputs are indicative — not procurement, coverage certification, or engineering advice.`,
       },
     },
     {
@@ -25,7 +30,7 @@ const jsonLd = {
       name: "How is the 0–100 Resilience Score computed?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: `Model v0.3 is deterministic. Score = redundancy (0–30) + latitude (0–20) + operational profile (0–15) + provider confidence (0–30), then hard caps. Grades: ${GRADE_BANDS_SUMMARY}. Terrain evidence from EU-DEM is shown separately and is not blended into the Signature score.`,
+        text: `${SCORING_MODEL_LABEL} (${SCORING_ENGINE_DISPLAY}) is deterministic. Score = Site Conditions (0–20) + Mitigation Quality (0–80: redundancy 0–35, provider/path independence 0–25, profile–autonomy alignment 0–20), then hard caps. Grades: ${GRADE_BANDS_SUMMARY}. Terrain evidence from EU-DEM is shown separately and is not blended into the Signature score.`,
       },
     },
     {

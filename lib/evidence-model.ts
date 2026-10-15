@@ -66,7 +66,7 @@ const BASE_SOURCES: EvidenceSource[] = [
   },
   {
     id: "provider-catalog",
-    title: "Provider index (catalog confidence)",
+    title: "Providers (catalog confidence)",
     type: "catalog",
     attribution: "GRYPS curated public-knowledge index — no commercial relationships",
     url: "/providers",
@@ -111,9 +111,9 @@ const BASE_SOURCES: EvidenceSource[] = [
     id: "resilience-scoring",
     title: "Connectivity resilience scoring",
     type: "research",
-    attribution: "GRYPS Knowledge · Model v0.3 explainer",
+    attribution: "GRYPS Knowledge · Model v0.4 explainer",
     url: "/knowledge/satellite-connectivity-resilience-scoring",
-    freshness: "Aligned to Model v0.3",
+    freshness: "Aligned to Model v0.4",
   },
   {
     id: "forestry-fi",
@@ -129,7 +129,7 @@ const BASE_SOURCES: EvidenceSource[] = [
     type: "research",
     attribution: "Curated Connectivity Intelligence assessments",
     url: "/research",
-    freshness: "Curated set · Model v0.3 Signatures",
+    freshness: "Curated set · Model v0.4 Signatures",
   },
 ];
 
@@ -361,7 +361,7 @@ export function buildEvidencePackage(opts: {
     confidence,
     data_freshness: {
       model: `${MODEL_VERSION} (${SCORING_ENGINE_DISPLAY})`,
-      catalog: "Provider index · Model v0.4 catalog confidence",
+      catalog: "Providers · Model v0.4 catalog confidence",
       reference_datasets: "EU-DEM on demand · Bittimittari for FI municipality seeds",
       knowledge: "GRYPS Knowledge + Research Library · editorial 2026",
     },

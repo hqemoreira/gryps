@@ -147,7 +147,7 @@ function main() {
       outlineSeed: [
         `Q: What is ${primary}?`,
         "Short answer (AEO-friendly, 2–4 sentences)",
-        "Evidence / how GRYPS models it (Model v0.3)",
+        "Evidence / how GRYPS models it (Model v0.4)",
         "CTA → Capacity map + Advisor",
       ],
       internalLinks: ["/methodology", "/map", "/#advisor", "/providers"],
@@ -239,7 +239,7 @@ function main() {
         outlineSeed: [
           `Q: ${row.key}`,
           "Short answer (AEO-friendly)",
-          "Nordic/Arctic ops context + Model v0.3 framing",
+          "Nordic/Arctic ops context + Model v0.4 framing",
           "CTA → /map + /#advisor",
         ],
         internalLinks: ["/map", "/methodology", "/#advisor"],

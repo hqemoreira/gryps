@@ -9,9 +9,9 @@ Assessment-first **Resilience Signature** scoring for satellite dependency and r
 
 ## Golden demo
 
-Homepage sample Signature (forestry · 68.2°N · Starlink · autonomous · high criticality):
+Homepage sample Signature (mining · 67.0°N · Starlink + Iridium · remote-operated · high criticality):
 
-**Score 47 · Grade D** — Model v0.3 (`lib/hero-demo.ts` + `lib/deterministic-score.ts`).
+Recomputed via `scoreDeterministic` in `lib/hero-demo.ts` (engine **Model v0.4** / `lib/deterministic-score.ts`).
 
 ## Surfaces
 
@@ -29,6 +29,7 @@ Homepage sample Signature (forestry · 68.2°N · Starlink · autonomous · high
 | `/map`                                                           | Explore Connectivity Intelligence                   |
 | `/knowledge`                                                     | Evidence notes                                      |
 | `/about`                                                         | About                                               |
+| `/fi`                                                            | Finnish summary (sitewide EN/FI toggle unchanged)    |
 | `/terms` · `/privacy`                                            | Non-commercial R&D notices                          |
 
 ## Stack
@@ -37,7 +38,7 @@ Technologies this repo actually uses:
 
 - **Next.js 16** (App Router) · **React 19** · **TypeScript**
 - **CSS custom properties** + Tailwind CSS v4 (PostCSS layer)
-- Deterministic Signature engine **v0.3** (`lib/deterministic-score.ts`)
+- Deterministic Signature engine **v0.4** (`lib/deterministic-score.ts`)
 - **MapLibre GL** (+ Leaflet on legacy signatures map) · key-free Esri raster basemap
 - **Neon** Postgres (EU) · **Mistral** (optional recommendation prose) · **Resend** (unlock email)
 - **Vercel** Analytics · deploy on Vercel

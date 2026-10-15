@@ -72,7 +72,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
       recommendation:
         "Model commentary: document an independent LEO backup alongside the current GEO path. Single-GEO at 71°N scores below the model's resilience threshold for safety-critical operations. A dual LEO+GEO architecture would raise this modeled score into a stronger band.",
       caveats: [
-        "Score reflects current single-provider configuration in Model v0.3 — not live network performance",
+        "Score reflects current single-provider configuration in Model v0.4 — not live network performance",
         "Model commentary — not a substitute for professional connectivity planning or a provider SLA",
       ],
     },

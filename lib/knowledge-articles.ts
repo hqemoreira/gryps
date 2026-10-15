@@ -51,7 +51,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         },
         {
           h2: "How GRYPS frames Arctic connectivity",
-          body: "GRYPS is satellite connectivity intelligence for Nordic and Arctic remote ops — forestry, maritime, mining, autonomous fleets. Model v0.3 weights redundancy, latitude, operational profile, and catalog confidence, then applies hard caps. It does not sell terminals or airtime.",
+          body: "GRYPS is satellite Connectivity Intelligence for Nordic and Arctic remote ops — forestry, maritime, mining, autonomous fleets. Model v0.4 scores Site Conditions and Mitigation Quality, then applies hard caps. It does not sell terminals or airtime.",
         },
       ],
       limitationsH2: "Limitations",
@@ -122,7 +122,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         },
         {
           h2: "GEO (geostationary)",
-          body: "Fixed sky position simplifies tracking where elevation is healthy. At high Nordic/Arctic latitudes, low elevation increases weather and obstruction sensitivity. GEO-only designs above ~72°N are capped hard in GRYPS Model v0.3 for that reason.",
+          body: "Fixed sky position simplifies tracking where elevation is healthy. At high Nordic/Arctic latitudes, low elevation increases weather and obstruction sensitivity. GEO-only designs above ~72°N are capped hard in GRYPS Model v0.4 for that reason.",
         },
         {
           h2: "What GRYPS scores",
@@ -186,7 +186,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       h1: "Forestry satellite connectivity in Finland",
       question: "What matters for satellite connectivity on Finnish forestry sites?",
       shortAnswer:
-        "Latitude band, canopy/terrain sky view, autonomy level, and whether the site depends on a single provider. GRYPS Model v0.3 applies a forestry terrain penalty below 300 m elevation and scores redundancy and operational profile separately from live RF.",
+        "Latitude band, canopy/terrain sky view, autonomy level, and whether the site depends on a single provider. GRYPS Model v0.4 applies a forestry terrain penalty below 300 m elevation and scores redundancy and operational profile separately from live RF.",
       sections: [
         {
           h2: "Operational reality",
@@ -218,7 +218,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       h1: "Metsätalouden satelliittiyhteydet Suomessa",
       question: "Mikä ratkaisee satelliittiyhteyden metsäkohteilla Suomessa?",
       shortAnswer:
-        "Leveysastevyöhyke, latvuksen/maaston taivasnäkymä, autonomia sekä se, nojaako kohde yhteen toimittajaan. GRYPS-malli v0.3 lisää metsämaastorangaistuksen alle 300 m korkeudessa ja pisteyttää redundanssin sekä toimintaprofiilin erikseen reaaliaikaisesta RF:stä.",
+        "Leveysastevyöhyke, latvuksen/maaston taivasnäkymä, autonomia sekä se, nojaako kohde yhteen toimittajaan. GRYPS-malli v0.4 lisää metsämaastorangaistuksen alle 300 m korkeudessa ja pisteyttää redundanssin sekä toimintaprofiilin erikseen reaaliaikaisesta RF:stä.",
       sections: [
         {
           h2: "Toimintaympäristö",
@@ -256,11 +256,11 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       h1: "Satellite connectivity resilience scoring",
       question: "What is satellite connectivity resilience scoring?",
       shortAnswer:
-        "It is a structured assessment of how brittle a site’s satellite setup is under redundancy, latitude, operations profile, and provider confidence — not a speed test and not live coverage. GRYPS Model v0.3 outputs a versioned Resilience Signature (score, grade, risks, ranked options).",
+        "It is a structured assessment of how brittle a site’s satellite setup is under redundancy, latitude, operations profile, and provider confidence — not a speed test and not live coverage. GRYPS Model v0.4 outputs a versioned Resilience Signature (score, grade, risks, ranked options).",
       sections: [
         {
-          h2: "Score components (Model v0.3)",
-          body: `Redundancy (0–30) + latitude (0–20) + operational profile (0–15) + provider confidence (0–30), then hard caps, clamped 0–100. Grades: ${GRADE_BANDS_SUMMARY}.`,
+          h2: "Score components (Model v0.4)",
+          body: `Site Conditions (0–20) + Mitigation Quality (0–80: redundancy 0–35, provider/path independence 0–25, profile–autonomy alignment 0–20), then hard caps, clamped 0–100. Grades: ${GRADE_BANDS_SUMMARY}.`,
         },
         {
           h2: "Two scores, not one blend",
@@ -287,11 +287,11 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       h1: "Satelliittiyhteyksien resilienssipisteytys",
       question: "Mitä satelliittiyhteyksien resilienssipisteytys tarkoittaa?",
       shortAnswer:
-        "Se on rakenteellinen arvio siitä, miten hauras kohteen satelliittiasetelma on redundanssin, leveysasteen, toimintaprofiilin ja toimittajaluottamuksen suhteen — ei nopeustesti eikä live-kattavuus. GRYPS-malli v0.3 tuottaa versioidun Resilience Signaturen (pisteet, arvosana, riskit, suositukset).",
+        "Se on rakenteellinen arvio siitä, miten hauras kohteen satelliittiasetelma on redundanssin, leveysasteen, toimintaprofiilin ja toimittajaluottamuksen suhteen — ei nopeustesti eikä live-kattavuus. GRYPS-malli v0.4 tuottaa versioidun Resilience Signaturen (pisteet, arvosana, riskit, suositukset).",
       sections: [
         {
-          h2: "Pistekomponentit (malli v0.3)",
-          body: `Redundanssi (0–30) + leveysaste (0–20) + toimintaprofiili (0–15) + toimittajaluottamus (0–30), sitten kovat katot, rajattu 0–100. Arvosanat: ${GRADE_BANDS_SUMMARY}.`,
+          h2: "Pistekomponentit (malli v0.4)",
+          body: `Paikan olosuhteet (0–20) + Lievennyksen laatu (0–80: redundanssi 0–35, toimittaja-/polkuriippumattomuus 0–25, profiili–autonomia 0–20), sitten kovat katot, rajattu 0–100. Arvosanat: ${GRADE_BANDS_SUMMARY}.`,
         },
         {
           h2: "Kaksi pistettä, ei yhtä sekoitusta",

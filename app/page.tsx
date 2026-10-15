@@ -29,7 +29,6 @@ import {
   PRIORITY_LABELS,
   type AdvisorPriorityId,
 } from "@/lib/advisor-priorities";
-import { MODEL_VERSION } from "@/lib/signature-meta";
 import {
   HERO_DEMO,
   HERO_DEMO_PLACE,
@@ -176,11 +175,6 @@ const NORDIC_LNG_MIN = -30;
 const NORDIC_LNG_MAX = 40;
 const DEFAULT_LAT = "67.0";
 const DEFAULT_LNG = "26.0";
-
-function modelVersionDisplay(): string {
-  const m = MODEL_VERSION.match(/v[\d.]+/);
-  return m ? m[0] : "v0.3";
-}
 
 function parseProvidersParam(raw: string | null): string[] {
   if (!raw) return [];
@@ -1401,16 +1395,33 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
             marginBottom: 14,
           }}
         >
-          <p
-            style={{
-              fontFamily: "var(--font-data)",
-              fontSize: "var(--text-label)",
-              color: "var(--text-dim)",
-              letterSpacing: "0.12em",
-            }}
-          >
-            RESILIENCE SIGNATURE
-          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+            <span
+              className="gryps-hero-example-chip"
+              style={{
+                fontFamily: "var(--font-data)",
+                fontSize: 10,
+                letterSpacing: "0.1em",
+                color: "var(--aurora-1)",
+                border: "1px solid color-mix(in srgb, var(--aurora-1) 45%, transparent)",
+                padding: "3px 8px",
+                flexShrink: 0,
+              }}
+            >
+              {t.heroExampleChip}
+            </span>
+            <p
+              style={{
+                fontFamily: "var(--font-data)",
+                fontSize: "var(--text-label)",
+                color: "var(--text-dim)",
+                letterSpacing: "0.12em",
+                margin: 0,
+              }}
+            >
+              RESILIENCE SIGNATURE
+            </p>
+          </div>
           <span
             className="gryps-grade-badge"
             style={{
@@ -1557,7 +1568,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
   );
 }
 
-function LatitudeRuler() {
+function LatitudeRuler({ caption }: { caption: string }) {
   const ticks = [
     { label: "60N", active: false },
     { label: "65N", active: false },
@@ -1568,12 +1579,15 @@ function LatitudeRuler() {
     { label: "POLAR", active: false },
   ];
   return (
-    <div className="gryps-latitude-ruler gryps-no-print" aria-hidden="true">
-      {ticks.map((t) => (
-        <span key={t.label} data-active={t.active ? "true" : undefined}>
-          {t.label}
-        </span>
-      ))}
+    <div className="gryps-latitude-block gryps-no-print">
+      <p className="gryps-latitude-caption">{caption}</p>
+      <div className="gryps-latitude-ruler" aria-hidden="true">
+        {ticks.map((tick) => (
+          <span key={tick.label} data-active={tick.active ? "true" : undefined}>
+            {tick.label}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -1585,14 +1599,14 @@ function TrustStrip({ lang }: { lang: "en" | "fi" }) {
           "Malli v0.4",
           "Deterministinen pisteytys",
           "Tekoälyavusteinen tulkinta (valinnainen)",
-          "Espoo",
+          "Rakennettu Espoossa",
           "Tutkimusprototyyppi",
         ]
       : [
           "Model v0.4",
           "Deterministic scoring",
           "AI-assisted interpretation (opt-in)",
-          "Espoo",
+          "Built in Espoo",
           "Research prototype",
         ];
   const links = [
@@ -1675,9 +1689,13 @@ const COPY = {
     h1: "Connectivity resilience scoring for Nordic, Arctic and Icelandic sites.",
     h1Meta: "Deterministic · documented · free",
     sub: "A Resilience Signature — score, grade and ranked connectivity options.",
+    heroExampleBridge:
+      "Below: an example Resilience Signature for a site at 67°N. Latitude, operation profile and available providers produce the score.",
+    heroExampleChip: "EXAMPLE",
+    latitudeCaption: "Example site at 67°N — latitude marks the research envelope (not a control).",
     scoreLabel: "Score: {score}/100 · Grade {grade}",
-    heroSecondary: "Explore the Map",
-    modelChip: "Research prototype · Non-commercial · Model-based analysis",
+    heroSecondary: "Open the Map",
+    modelChip: "Non-commercial · Model-based analysis",
     sampleCta: "See a sample Signature",
     nis2line: "Supports NIS2/CER readiness documentation · Espoo, Finland · R&D prototype",
     statsL1: "Providers indexed (catalog)",
@@ -1687,7 +1705,8 @@ const COPY = {
     proofBand: "Illustrative · not live monitoring",
     advisorCta: "Generate Resilience Signature",
     advisorHeading: "Resilience Advisor",
-    advisorSub: "Most assessments take about a minute.",
+    advisorSub:
+      "Deterministic scoring for your site — most assessments take about a minute. Optional Ask Mimir (below) explains the model or results; it never changes scores or ranks.",
     sectorLabel: "OPERATIONAL SECTOR",
     sectorPlaceholder: "Select sector",
     autonomyLabel: "AUTONOMY LEVEL",
@@ -1773,9 +1792,13 @@ const COPY = {
     h1: "Yhteyden resilienssipisteytys pohjoismaisille, arktisille ja islantilaisille kohteille.",
     h1Meta: "Deterministinen · dokumentoitu · ilmainen",
     sub: "Resilience Signature — pisteet, arvosana ja sijoitetut yhteysvaihtoehdot.",
+    heroExampleBridge:
+      "Alla: esimerkki Resilience Signaturesta kohteelle 67°N. Leveysaste, toimintaprofiili ja käytettävissä olevat toimittajat tuottavat pisteen.",
+    heroExampleChip: "ESIMERKKI",
+    latitudeCaption: "Esimerkkikohde 67°N — merkit näyttävät tutkimuskehyksen (ei ohjain).",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
-    heroSecondary: "Tutki karttaa",
-    modelChip: "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi",
+    heroSecondary: "Avaa kartta",
+    modelChip: "Ei-kaupallinen · Mallipohjainen analyysi",
     sampleCta: "Katso esimerkki-Signature",
     nis2line: "Tukee NIS2/CER-valmiusdokumentaatiota · Espoo, Suomi · T&K-prototyyppi",
     statsL1: "Toimittajaa hakemistossa",
@@ -1785,7 +1808,8 @@ const COPY = {
     proofBand: "Havainnollistava · ei reaaliaikaista seurantaa",
     advisorCta: "Luo Resilience Signature",
     advisorHeading: "Resilience Advisor",
-    advisorSub: "Useimmat arviot kestävät noin minuutin.",
+    advisorSub:
+      "Deterministinen pisteytys kohteellesi — useimmat arviot kestävät noin minuutin. Valinnainen Kysy Mimiriltä selittää mallia tai tuloksia; se ei koskaan muuta pisteitä tai sijoituksia.",
     sectorLabel: "TOIMIALA",
     sectorPlaceholder: "Valitse toimiala",
     autonomyLabel: "AUTONOMIATASO",
@@ -1876,10 +1900,7 @@ export default function HomePage() {
   const [chromeH, setChromeH] = useState(82);
   const chromeRef = useRef<HTMLDivElement>(null);
   const t = COPY[lang];
-  const modelChip = useMemo(
-    () => t.modelChip.replace("v0.3", modelVersionDisplay()),
-    [t.modelChip]
-  );
+  const modelChip = t.modelChip;
 
   useEffect(() => {
     fetch("/api/signatures")
@@ -1966,6 +1987,7 @@ export default function HomePage() {
               <h1 className="gryps-hero-h1">{t.h1}</h1>
               <p className="gryps-hero-meta">{t.h1Meta}</p>
               <p className="gryps-hero-sub">{t.sub}</p>
+              <p className="gryps-hero-example-bridge">{t.heroExampleBridge}</p>
 
               <div className="gryps-hero-actions">
                 <a href="#advisor" className="gryps-cta-btn">
@@ -2000,7 +2022,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <LatitudeRuler />
+      <LatitudeRuler caption={t.latitudeCaption} />
       <TrustStrip lang={lang} />
 
       <FadeUp>

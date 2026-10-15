@@ -5,7 +5,7 @@ import { MODEL_VERSION } from "@/lib/signature-meta";
 /** Corner badge — includes "Esri" so a deploy is visually obvious vs Carto watermark builds. */
 export function modelBasemapChip(): string {
   const m = MODEL_VERSION.match(/v[\d.]+/);
-  const ver = m ? m[0] : "v0.3";
+  const ver = m ? m[0] : "v0.4";
   return `Esri · Model ${ver} · illustrative`;
 }
 
