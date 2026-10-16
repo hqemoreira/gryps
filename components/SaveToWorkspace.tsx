@@ -32,6 +32,8 @@ export function SaveToWorkspace({
   lang = "en",
   scenarioSlug,
   scenarioLabel,
+  /** When true, omit the local-storage note (parent toolbar shows one shared note). */
+  hideNote = false,
 }: {
   inputs: AssessmentInputs;
   result?: AdvisoryResult | null;
@@ -39,6 +41,7 @@ export function SaveToWorkspace({
   lang?: Lang;
   scenarioSlug?: string;
   scenarioLabel?: string;
+  hideNote?: boolean;
 }) {
   const t = COPY[lang];
   const [savedId, setSavedId] = useState<string | null>(null);
@@ -61,63 +64,37 @@ export function SaveToWorkspace({
   }
 
   return (
-    <div
-      className="gryps-no-print"
-      style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end" }}
-    >
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "flex-end" }}>
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={!!savedId || (!result && !abbreviated)}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            backgroundColor: savedId ? "rgba(46,212,122,0.12)" : "var(--surface2)",
-            border: `1px solid ${savedId ? "rgba(46,212,122,0.35)" : "var(--border2)"}`,
-            borderRadius: 6,
-            padding: "8px 14px",
-            cursor: savedId ? "default" : "pointer",
-            fontFamily: "var(--font-ui)",
-            fontWeight: 700,
-            fontSize: 12,
-            color: savedId ? "var(--accent-green)" : "var(--text-muted)",
-          }}
-        >
-          {savedId ? <Check size={13} /> : <BookmarkPlus size={13} />}
-          {savedId ? t.saved : t.save}
-        </button>
-        {savedId && (
-          <Link
-            href={`/workspace?id=${savedId}`}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              fontFamily: "var(--font-ui)",
-              fontSize: 12,
-              fontWeight: 600,
-              color: "var(--accent-blue)",
-              textDecoration: "none",
-              padding: "8px 4px",
-            }}
-          >
-            {t.open}
-          </Link>
-        )}
-      </div>
-      <p
+    <div className="gryps-no-print" style={{ display: "contents" }}>
+      <button
+        type="button"
+        onClick={handleSave}
+        disabled={!!savedId || (!result && !abbreviated)}
+        className="gryps-result-tool-btn"
         style={{
-          fontFamily: "var(--font-ui)",
-          fontSize: 10,
-          color: "var(--text-dim)",
-          textAlign: "right",
-          maxWidth: 320,
-          lineHeight: 1.4,
+          backgroundColor: savedId ? "rgba(46,212,122,0.12)" : undefined,
+          borderColor: savedId ? "rgba(46,212,122,0.35)" : undefined,
+          cursor: savedId ? "default" : "pointer",
+          color: savedId ? "var(--accent-green)" : undefined,
         }}
       >
-        {isTeaser ? t.noteTeaser : t.note}
-      </p>
+        {savedId ? <Check size={13} /> : <BookmarkPlus size={13} />}
+        {savedId ? t.saved : t.save}
+      </button>
+      {savedId && (
+        <Link href={`/workspace?id=${savedId}`} className="gryps-result-tool-link">
+          {t.open}
+        </Link>
+      )}
+      {!hideNote && (
+        <p className="gryps-result-tool-note gryps-result-tool-note--solo">
+          {isTeaser ? t.noteTeaser : t.note}
+        </p>
+      )}
     </div>
   );
+}
+
+export function workspaceSaveNote(lang: Lang, isTeaser: boolean) {
+  const t = COPY[lang];
+  return isTeaser ? t.noteTeaser : t.note;
 }

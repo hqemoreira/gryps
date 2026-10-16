@@ -421,37 +421,27 @@ function SignatureReveal({
           />
         ) : abbreviated ? (
           <>
-            <div
-              className="gryps-no-print"
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: 10,
-                flexWrap: "wrap",
-                alignItems: "flex-start",
-              }}
-            >
-              <SaveToWorkspace inputs={assessmentInputs} abbreviated={abbreviated} lang={lang} />
-              <button
-                type="button"
-                onClick={() => window.print()}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  backgroundColor: "var(--surface2)",
-                  border: "1px solid var(--border2)",
-                  borderRadius: 6,
-                  padding: "8px 14px",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-ui)",
-                  fontWeight: 700,
-                  fontSize: 12,
-                  color: "var(--text-muted)",
-                }}
-              >
-                <Download size={13} /> {lang === "fi" ? "Lataa PDF" : "Download PDF"}
-              </button>
+            <div className="gryps-result-toolbar gryps-no-print">
+              <div className="gryps-result-toolbar-actions">
+                <SaveToWorkspace
+                  inputs={assessmentInputs}
+                  abbreviated={abbreviated}
+                  lang={lang}
+                  hideNote
+                />
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="gryps-result-tool-btn"
+                >
+                  <Download size={13} /> {lang === "fi" ? "Lataa PDF" : "Download PDF"}
+                </button>
+              </div>
+              <p className="gryps-result-tool-note">
+                {lang === "fi"
+                  ? "Paikallinen esikatselu — avaa täysi arvio sähköpostilla. Ei asiakastiliä."
+                  : "Local teaser only — email if you want the full report. Not a customer account."}
+              </p>
             </div>
             <InitialAssessment result={abbreviated} lang={lang} />
             <UnlockFullAssessment submissionId={submissionId} lang={lang} />

@@ -27,7 +27,7 @@ import {
   SCORING_ENGINE_DISPLAY,
   SCORING_MODEL_LABEL,
 } from "@/lib/model-constants";
-import { SaveToWorkspace } from "@/components/SaveToWorkspace";
+import { SaveToWorkspace, workspaceSaveNote } from "@/components/SaveToWorkspace";
 import { TypeLabel } from "@/components/TypeLabel";
 import { IntelligenceDrawer } from "@/components/IntelligenceDrawer";
 import { NextStepsLinks } from "@/components/NextStepsLinks";
@@ -2308,59 +2308,17 @@ export function ResilienceOutput({
       className="gryps-report-body"
       style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 8 }}
     >
-      <div
-        className="gryps-no-print"
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: 8,
-          flexWrap: "wrap",
-          alignItems: "flex-start",
-        }}
-      >
-        {input && <SaveToWorkspace inputs={input} result={result} lang={lang} />}
-        <button
-          type="button"
-          onClick={copyShare}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            backgroundColor: "var(--surface2)",
-            border: "1px solid var(--border2)",
-            borderRadius: 6,
-            padding: "8px 14px",
-            cursor: "pointer",
-            fontFamily: "var(--font-ui)",
-            fontWeight: 700,
-            fontSize: 12,
-            color: "var(--text-muted)",
-          }}
-        >
-          {copied ? t.shareCopied : t.shareLink}
-        </button>
-        <button
-          type="button"
-          className="gryps-no-print"
-          onClick={handlePrint}
-          style={{
-            alignSelf: "flex-end",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            backgroundColor: "var(--surface2)",
-            border: "1px solid var(--border2)",
-            borderRadius: 6,
-            padding: "8px 14px",
-            cursor: "pointer",
-            fontFamily: "var(--font-ui)",
-            fontWeight: 700,
-            fontSize: 12,
-            color: "var(--text-muted)",
-          }}
-        >
-          <Download size={13} /> {t.downloadPdf}
-        </button>
+      <div className="gryps-result-toolbar gryps-no-print">
+        <div className="gryps-result-toolbar-actions">
+          {input && <SaveToWorkspace inputs={input} result={result} lang={lang} hideNote />}
+          <button type="button" onClick={copyShare} className="gryps-result-tool-btn">
+            {copied ? t.shareCopied : t.shareLink}
+          </button>
+          <button type="button" onClick={handlePrint} className="gryps-result-tool-btn">
+            <Download size={13} /> {t.downloadPdf}
+          </button>
+        </div>
+        {input && <p className="gryps-result-tool-note">{workspaceSaveNote(lang, false)}</p>}
       </div>
 
       <div

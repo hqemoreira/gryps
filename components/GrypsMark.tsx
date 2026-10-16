@@ -396,73 +396,37 @@ export function GrypsPrintBrand({ subtitle = "Connectivity resilience" }: { subt
 
 /**
  * Static square mark for ImageResponse (favicon, apple icon, OG).
- * The pierce gap is painted in `bg` rather than masked, for renderer safety.
+ * Satori-safe: solid fills only — complex gradients often render blank on Vercel.
+ * Pierce gap painted in `bg` rather than masked.
  */
 export function OrbitalGIconSvg({ size = 24, bg = "#070B12" }: { size?: number; bg?: string }) {
-  const p = MARK_PALETTE;
   const dims = signalDims(size <= 40 ? "micro" : "core");
-  const { x1, y1, x2, y2 } = SIGNAL;
-  const uid = `og-icon-${Math.round(size)}`;
+  const { x2, y2 } = SIGNAL;
   const vb = SQUARE_VIEWBOX;
-  const gg = G_GRADIENT;
-  const bgr = BAR_GRADIENT;
-  const fr = FLASH_REST;
-  const fs = FLASH_SPREAD;
   const core = toPoints(taperPoints(dims.core[0], dims.core[1]));
+  const gFill = "#9EB6D4";
+  const barFill = "#C5D4E8";
+  const lineFill = "#5EC8F0";
+  const nodeFill = "#E0F6FC";
   return (
-    <svg width={size} height={size} viewBox={`${vb.x} ${vb.y} ${vb.size} ${vb.size}`} fill="none">
-      <defs>
-        <radialGradient id={`${uid}-g`} cx={gg.cx} cy={gg.cy} r={gg.r} gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor={p.gTop} />
-          <stop offset="0.3" stopColor={p.gHi} />
-          <stop offset="0.45" stopColor={p.gMid} />
-          <stop offset="0.65" stopColor={p.gBot} />
-          <stop offset="1" stopColor={p.gRim} />
-        </radialGradient>
-        <linearGradient id={`${uid}-b`} x1={bgr.x1} y1="0" x2={bgr.x2} y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor={p.barL} />
-          <stop offset="1" stopColor={p.barR} />
-        </linearGradient>
-        <linearGradient id={`${uid}-l`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor={p.line} stopOpacity="0" />
-          <stop offset="0.1" stopColor={p.line} stopOpacity="0.7" />
-          <stop offset="0.22" stopColor={p.line} />
-          <stop offset="0.5" stopColor={p.lineMid} />
-          <stop offset="0.85" stopColor={p.lineMid} />
-          <stop offset="1" stopColor={p.lineHead} />
-        </linearGradient>
-        <linearGradient id={`${uid}-lg`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor={p.line} stopOpacity="0" />
-          <stop offset="0.4" stopColor={p.line} stopOpacity="0.06" />
-          <stop offset="0.69" stopColor={p.lineMid} stopOpacity="0.4" />
-          <stop offset="0.86" stopColor={p.line} stopOpacity="0.12" />
-          <stop offset="1" stopColor={p.lineHead} stopOpacity="0.25" />
-        </linearGradient>
-        <linearGradient id={`${uid}-f`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
-          <stop offset={fr - fs.before} stopColor={p.flash} stopOpacity="0" />
-          <stop offset={fr} stopColor={p.flash} stopOpacity="0.95" />
-          <stop offset={fr + fs.after} stopColor={p.flash} stopOpacity="0" />
-        </linearGradient>
-        <radialGradient id={`${uid}-n`} cx="0.42" cy="0.3" r="0.75">
-          <stop offset="0" stopColor={p.nodeCore} />
-          <stop offset="0.5" stopColor={p.nodeMid} />
-          <stop offset="1" stopColor={p.nodeEdge} />
-        </radialGradient>
-        <radialGradient id={`${uid}-h`}>
-          <stop offset="0" stopColor={p.lineHead} stopOpacity="0.35" />
-          <stop offset="0.5" stopColor={p.line} stopOpacity="0.1" />
-          <stop offset="1" stopColor={p.line} stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      <path d={G_PATH} fill={`url(#${uid}-g)`} />
+    <svg
+      width={size}
+      height={size}
+      viewBox={`${vb.x} ${vb.y} ${vb.size} ${vb.size}`}
+      fill="none"
+    >
+      <path d={G_PATH} fill={gFill} />
       <polygon points={toPoints(stripPoints(PIERCE.above, PIERCE.below))} fill={bg} />
-      <path d={TWIST_PATH} stroke={bg} strokeWidth={twistWidth(size <= 40 ? "micro" : "core")} fill="none" />
-      <path d={BAR_PATH} fill={`url(#${uid}-b)`} />
-      <polygon points={toPoints(taperPoints(dims.glow[0], dims.glow[1]))} fill={`url(#${uid}-lg)`} />
-      <polygon points={core} fill={`url(#${uid}-l)`} />
-      <polygon points={core} fill={`url(#${uid}-f)`} />
-      <circle cx={x2} cy={y2} r={dims.node * 1.9} fill={`url(#${uid}-h)`} />
-      <circle cx={x2} cy={y2} r={dims.node} fill={`url(#${uid}-n)`} />
+      <path
+        d={TWIST_PATH}
+        stroke={bg}
+        strokeWidth={twistWidth(size <= 40 ? "micro" : "core")}
+        fill="none"
+      />
+      <path d={BAR_PATH} fill={barFill} />
+      <polygon points={core} fill={lineFill} />
+      <circle cx={x2} cy={y2} r={dims.node * 1.6} fill="rgba(94, 200, 240, 0.35)" />
+      <circle cx={x2} cy={y2} r={dims.node} fill={nodeFill} />
     </svg>
   );
 }

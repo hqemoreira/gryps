@@ -107,11 +107,22 @@ export function MimirAssistant({
   }
 
   return (
-    <div className="gryps-mimir-dock gryps-no-print">
+    <div
+      className={`gryps-mimir-dock gryps-no-print${open ? " is-open" : ""}`}
+      data-open={open ? "true" : undefined}
+    >
+      {open && (
+        <button
+          type="button"
+          className="gryps-mimir-backdrop"
+          aria-label={lang === "fi" ? "Sulje Mimir" : "Close Mimir"}
+          onClick={() => setOpen(false)}
+        />
+      )}
       {open && (
         <div
           role="dialog"
-          aria-modal="false"
+          aria-modal="true"
           aria-labelledby={titleId}
           className="gryps-mimir-dialog"
         >
