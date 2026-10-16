@@ -202,6 +202,10 @@ export const RESEARCH_ASSUMPTIONS: AssumptionItem[] = [
     en: "Research Library and mission scenarios are illustrative operating profiles, not customer projects or procurement dossiers.",
     fi: "Research Library ja tehtäväskenaariot ovat havainnollistavia toimintaprofiileja, eivät asiakasprojekteja tai hankinta-aineistoja.",
   },
+  {
+    en: "Local RF interference is not modeled; significant EMI requires an on-site RF survey. Space-weather effects (e.g. polar cap absorption, geomagnetic storms) are out of scope for the deterministic Signature.",
+    fi: "Paikallista RF-häiriötä ei mallinneta; merkittävä EMI edellyttää paikan päällä tehtävää RF-mittausta. Avaruussään vaikutukset (esim. polaarikorkeuden absorptio, geomagneettiset myrskyt) ovat deterministisen Signaturen ulkopuolella.",
+  },
 ];
 
 export const RESEARCH_LIMITATIONS: AssumptionItem[] = [
@@ -224,6 +228,10 @@ export const RESEARCH_LIMITATIONS: AssumptionItem[] = [
   {
     en: "EU-DEM terrain and Bittimittari (Finland) are shown separately and are not blended into the Signature score.",
     fi: "EU-DEM-maasto ja Bittimittari (Suomi) näytetään erikseen eikä sekoiteta Signature-pisteeseen.",
+  },
+  {
+    en: "Local RF interference is not modeled; significant EMI requires an on-site RF survey. Space-weather effects on HF/satcom at high latitude are not scored.",
+    fi: "Paikallista RF-häiriötä ei mallinneta; merkittävä EMI edellyttää paikan päällä tehtävää RF-mittausta. Avaruussään vaikutuksia HF-/satcom-yhteyksiin korkeilla leveysasteilla ei pisteytetä.",
   },
   {
     en: "Research Workspace saves assessments in the local browser only — not a cloud customer account or CRM.",

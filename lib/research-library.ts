@@ -77,6 +77,11 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
         fi: "Signature-piste, arvosana ja sijoitukset ovat deterministisen mallin v0.4 tulosteita annetuille syötteille — ei live-RF.",
       },
       {
+        kind: "MEASURED",
+        en: "Traficom Bittimittari (period 2026-10): Sodankylä municipality median ~47 Mbit/s download, ~47 ms latency (n=6). Adjacent fixed-network context for ~68.2°N 27.4°E — not blended into the 0–100 score.",
+        fi: "Traficom Bittimittari (kausi 2026-10): Sodankylän kunta-mediaani ~47 Mbit/s lataus, ~47 ms viive (n=6). Viereinen kiinteän verkon konteksti ~68.2°N 27.4°E — ei sekoitu 0–100-pisteeseen.",
+      },
+      {
         kind: "ILLUSTRATIVE",
         en: "Single-Starlink failure mode is pedagogical: coordinates are real-region, the configuration is a research scenario.",
         fi: "Yhden Starlink-yhteyden vikamoodi on pedagoginen: koordinaatit ovat alueellisesti tosia, kokoonpano on tutkimusskenaario.",
@@ -113,8 +118,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
       },
       {
         kind: "MEASURED",
-        en: "Where shown, Traficom Bittimittari municipality aggregates are Finland-only reference evidence — not blended into the 0–100 score.",
-        fi: "Kun näytetään, Traficomin Bittimittari-kunta-aggregaatit ovat vain Suomen viitenäyttöä — eivät sekoitu 0–100-pisteeseen.",
+        en: "Traficom Bittimittari (period 2026-10): Inari municipality median ~170.8 Mbit/s download, ~49 ms latency (n=21). Fixed-network context only — not blended into the 0–100 score.",
+        fi: "Traficom Bittimittari (kausi 2026-10): Inarin kunta-mediaani ~170.8 Mbit/s lataus, ~49 ms viive (n=21). Vain kiinteän verkon konteksti — ei sekoitu 0–100-pisteeseen.",
       },
       {
         kind: "RESEARCH",
@@ -177,8 +182,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
       },
       {
         kind: "MEASURED",
-        en: "Finnish seed: Traficom Bittimittari may appear as adjacent municipality reference — excluded from the composite score.",
-        fi: "Suomalainen siemen: Traficom Bittimittari voi näkyä viereisenä kunta-aggregaattina — poissa yhdistelmäpisteestä.",
+        en: "Traficom Bittimittari (period 2026-10): Kittilä municipality median ~31.4 Mbit/s download, ~49 ms latency (n=7). Fixed-network context only — not blended into the 0–100 score.",
+        fi: "Traficom Bittimittari (kausi 2026-10): Kittilän kunta-mediaani ~31.4 Mbit/s lataus, ~49 ms viive (n=7). Vain kiinteän verkon konteksti — ei sekoitu 0–100-pisteeseen.",
       },
       {
         kind: "DERIVED",

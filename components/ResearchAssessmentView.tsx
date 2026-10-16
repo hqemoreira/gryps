@@ -12,6 +12,7 @@ import { TypeLabel } from "@/components/TypeLabel";
 import { gradeColor } from "@/lib/resilience-colors";
 import { SCORING_MODEL_LABEL } from "@/lib/model-constants";
 import type { ResolvedResearchAssessment } from "@/lib/research-library";
+import { getBittimittariReference } from "@/lib/bittimittari-reference";
 import { useLang } from "@/lib/use-lang";
 
 const UI = {
@@ -19,6 +20,12 @@ const UI = {
     eyebrow: "GRYPS RESEARCH LIBRARY",
     context: "Context",
     evidence: "Evidence hygiene",
+    measured: "Measured reference · Traficom Bittimittari",
+    measuredNotInScore: "Not blended into the 0–100 Signature score.",
+    download: "Median download",
+    latency: "Median latency",
+    samples: "samples",
+    period: "Period",
     prototype:
       "Research prototype · Non-commercial · Model-based analysis — not procurement advice or a site survey.",
     viewMethod: "Methodology →",
@@ -34,6 +41,12 @@ const UI = {
     eyebrow: "GRYPS RESEARCH LIBRARY",
     context: "Konteksti",
     evidence: "Näyttöhygienia",
+    measured: "Mitattu viite · Traficom Bittimittari",
+    measuredNotInScore: "Ei sekoiteta 0–100 Signature-pisteeseen.",
+    download: "Latausmediaani",
+    latency: "Viivemediaani",
+    samples: "näytettä",
+    period: "Kausi",
     prototype:
       "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi — ei hankintaneuvontaa eikä paikkamitasta.",
     viewMethod: "Menetelmä →",
@@ -68,6 +81,7 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
   const sig = result.resilience_signature;
   const gc = gradeColor(sig.grade);
   const siteLabel = location;
+  const bitti = getBittimittariReference(entry.slug);
 
   return (
     <article style={{ maxWidth: 800, margin: "0 auto", padding: "24px 32px 80px", paddingTop: 24 }}>
@@ -196,7 +210,7 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
         </p>
       </section>
 
-      {entry.evidenceNotes && entry.evidenceNotes.length > 0 && (
+      {(bitti || (entry.evidenceNotes && entry.evidenceNotes.length > 0)) && (
         <section style={{ marginBottom: 28 }}>
           <p
             style={{
@@ -209,32 +223,109 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
           >
             {t.evidence}
           </p>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
-            {entry.evidenceNotes.map((note) => (
-              <li
-                key={`${note.kind}-${note.en.slice(0, 24)}`}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: 6,
-                }}
-              >
-                <TypeLabel kind={note.kind} />
-                <p
+
+          {bitti && (
+            <div
+              style={{
+                marginBottom: 16,
+                padding: "14px 16px",
+                border: "1px solid var(--border)",
+                borderRadius: 6,
+                backgroundColor: "var(--surface)",
+              }}
+            >
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", marginBottom: 8 }}>
+                <TypeLabel kind="MEASURED" />
+                <span
                   style={{
-                    fontFamily: "var(--font-ui)",
-                    fontSize: 13,
-                    color: "var(--text-muted)",
-                    lineHeight: 1.55,
-                    margin: 0,
+                    fontFamily: "var(--font-data)",
+                    fontSize: 11,
+                    color: "var(--text-dim)",
+                    letterSpacing: "0.04em",
                   }}
                 >
-                  {lang === "fi" ? note.fi : note.en}
-                </p>
-              </li>
-            ))}
-          </ul>
+                  {t.measured}
+                </span>
+              </div>
+              <p
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: "var(--text)",
+                  margin: "0 0 6px",
+                }}
+              >
+                {lang === "fi" ? bitti.municipalityFi : bitti.municipality}
+                {" · "}
+                {t.period} {bitti.period}
+                {" · "}
+                n={bitti.sampleCount} {t.samples}
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--font-data)",
+                  fontSize: 13,
+                  color: "var(--text-muted)",
+                  margin: "0 0 8px",
+                }}
+              >
+                {t.download}: {bitti.medianDownloadMbps.toFixed(1)} Mbit/s
+                {" · "}
+                {t.latency}: {bitti.medianLatencyMs} ms
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 13,
+                  color: "var(--text-muted)",
+                  lineHeight: 1.55,
+                  margin: "0 0 6px",
+                }}
+              >
+                {lang === "fi" ? bitti.adjacencyFi : bitti.adjacencyEn}
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 12,
+                  color: "var(--text-dim)",
+                  margin: 0,
+                }}
+              >
+                {t.measuredNotInScore} · CC BY 4.0 Traficom
+              </p>
+            </div>
+          )}
+
+          {entry.evidenceNotes && entry.evidenceNotes.length > 0 && (
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+              {entry.evidenceNotes.map((note) => (
+                <li
+                  key={`${note.kind}-${note.en.slice(0, 24)}`}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    gap: 6,
+                  }}
+                >
+                  <TypeLabel kind={note.kind} />
+                  <p
+                    style={{
+                      fontFamily: "var(--font-ui)",
+                      fontSize: 13,
+                      color: "var(--text-muted)",
+                      lineHeight: 1.55,
+                      margin: 0,
+                    }}
+                  >
+                    {lang === "fi" ? note.fi : note.en}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
       )}
 

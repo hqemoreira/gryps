@@ -167,6 +167,63 @@ export const IA_LEGAL: { href: string; en: string; fi: string }[] = [
   { href: "/privacy", en: "Privacy", fi: "Tietosuoja" },
 ];
 
+/**
+ * Lean footer — 4 groups (header mega-menus stay on IA_MODES).
+ * Omits Scenarios / Changelog from the chrome; those remain in Research / Explore menus.
+ */
+export type FooterGroup = {
+  id: string;
+  en: string;
+  fi: string;
+  items: { href: string; en: string; fi: string }[];
+};
+
+export const FOOTER_GROUPS: FooterGroup[] = [
+  {
+    id: "use",
+    en: "Use",
+    fi: "Käytä",
+    items: [
+      { href: "/map", en: "Map", fi: "Kartta" },
+      { href: "/#advisor", en: "Resilience Advisor", fi: "Resilience Advisor" },
+      { href: "/research", en: "Research Library", fi: "Research Library" },
+      { href: "/workspace", en: "Assessments", fi: "Arviot" },
+    ],
+  },
+  {
+    id: "method",
+    en: "Method",
+    fi: "Menetelmä",
+    items: [
+      { href: "/methodology", en: "Methodology", fi: "Menetelmä" },
+      { href: "/knowledge", en: "Evidence", fi: "Näyttö" },
+      { href: "/data-sources", en: "Data sources", fi: "Datalähteet" },
+      { href: "/assumptions", en: "Assumptions", fi: "Oletukset" },
+      { href: "/limitations", en: "Limitations", fi: "Rajoitteet" },
+    ],
+  },
+  {
+    id: "project",
+    en: "Project",
+    fi: "Projekti",
+    items: [
+      { href: "/about", en: "About", fi: "Tietoa" },
+      { href: "/fi", en: "Finnish summary", fi: "Suomenkielinen tiivistelmä" },
+      { href: "/research-prototype", en: "Research & Prototype", fi: "Tutkimus ja prototyyppi" },
+      { href: "/case-study", en: "Case study", fi: "Case study" },
+    ],
+  },
+  {
+    id: "legal",
+    en: "Legal",
+    fi: "Juridiset",
+    items: [
+      { href: "/terms", en: "Terms", fi: "Ehdot" },
+      { href: "/privacy", en: "Privacy", fi: "Tietosuoja" },
+    ],
+  },
+];
+
 /** Short chrome CTA; hero/forms keep the full phrase. */
 export const CTA_SHORT = { en: "Generate Signature", fi: "Luo Signature" } as const;
 export const CTA_FULL = {

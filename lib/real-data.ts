@@ -31,7 +31,8 @@ async function getLatestBittimittariCsv(): Promise<{ period: string; rows: Bitti
 
   const zip = new AdmZip(buf);
   const entry = zip.getEntries()[0];
-  const csvText = entry.getData().toString("latin1"); // ISO8859-1 per Traficom's file description
+  // Recent Traficom ZIPs are UTF-8 (BOM). latin1 mangled ä/ö (Kittilä → KittilÃ¤).
+  const csvText = entry.getData().toString("utf8").replace(/^\uFEFF/, "");
 
   const lines = csvText.split("\n");
   const header = lines[0].split(";");
