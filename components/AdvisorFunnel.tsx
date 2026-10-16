@@ -405,6 +405,7 @@ export function UnlockFullAssessment({
   const [verifyUrl, setVerifyUrl] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(true);
   const [deliveryMode, setDeliveryMode] = useState<string | null>(null);
+  const [sendWarning, setSendWarning] = useState<string | null>(null);
 
   const t =
     lang === "fi"
@@ -418,7 +419,7 @@ export function UnlockFullAssessment({
           sending: "Lähetetään…",
           success: "Tarkista sähköpostisi — vahvistuslinkki avaa yksityiskohtaisen arvion.",
           successManual:
-            "Sähköpostia ei voitu lähettää (Resend-rajoitus). Avaa vahvistuslinkki alla:",
+            "Sähköpostia ei voitu lähettää. Avaa vahvistuslinkki alla (arvio avautuu silti):",
           openLink: "Avaa yksityiskohtainen arvio",
           footnote:
             "Ei tiliä tarvita. Lähetämme vain vahvistuslinkin. Päivitysaiheet ovat valinnaisia.",
@@ -440,7 +441,7 @@ export function UnlockFullAssessment({
           sending: "Sending…",
           success: "Check your email — the confirmation link opens the detailed assessment.",
           successManual:
-            "Email could not be sent (Resend domain/test limit). Open the confirmation link below:",
+            "Email could not be sent. Open the confirmation link below (assessment still unlocks):",
           openLink: "Open detailed assessment",
           footnote:
             "No account required. We only send a confirmation link. Update topics are optional.",
@@ -497,6 +498,7 @@ export function UnlockFullAssessment({
     setError("");
     setVerifyUrl(null);
     setEmailSent(true);
+    setSendWarning(null);
     try {
       const res = await fetch("/api/advise/unlock", {
         method: "POST",
@@ -520,6 +522,7 @@ export function UnlockFullAssessment({
       const link = (data.verifyUrl ?? data.devVerifyUrl) as string | undefined;
       if (link) setVerifyUrl(link);
       if (typeof data.deliveryMode === "string") setDeliveryMode(data.deliveryMode);
+      if (typeof data.warning === "string" && data.warning) setSendWarning(data.warning);
       // Inbox path only when Resend reported send success and no fallback link
       setEmailSent(data.emailSent === true && !link);
       setStatus("sent");
@@ -549,7 +552,7 @@ export function UnlockFullAssessment({
         >
           {emailSent && !verifyUrl ? t.success : t.successManual}
         </p>
-        {deliveryMode === "test_fallback" && (
+        {(sendWarning || deliveryMode === "test_fallback") && (
           <p
             style={{
               fontFamily: "var(--font-ui)",
@@ -559,9 +562,11 @@ export function UnlockFullAssessment({
               lineHeight: 1.45,
             }}
           >
-            {lang === "fi"
-              ? "Sähköposti käyttää vielä Resend-testiosoitetta — vahvista domain ja aseta RESEND_FROM Vercelissä."
-              : "Email is still on Resend test FROM — verify a domain and set RESEND_FROM in Vercel for inbox delivery."}
+            {sendWarning
+              ? `${lang === "fi" ? "Resend:" : "Resend:"} ${sendWarning}`
+              : lang === "fi"
+                ? "Sähköposti käyttää vielä Resend-testiosoitetta — vahvista domain ja aseta RESEND_FROM Vercelissä."
+                : "Email is still on Resend test FROM — verify a domain and set RESEND_FROM in Vercel for inbox delivery."}
           </p>
         )}
         {verifyUrl && (
