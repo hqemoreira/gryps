@@ -330,7 +330,8 @@ Optional `animate`: ~2.4s **signal-travel** along the diagonal (glow → node pe
 
 ## Animated canvas favicon (AnimatedFavicon.tsx)
 
-Runs a `requestAnimationFrame` loop on an offscreen `<canvas>`. Draws Micro Orbital G with diagonal signal-travel (~2.4s) and node peak. Writes to `link[rel='icon']` via `canvas.toDataURL()`. Static first paint: `app/icon.tsx`. Apple touch: `app/apple-icon.tsx`.
+Runs a `requestAnimationFrame` loop on an offscreen `<canvas>`. Draws Micro Orbital G with diagonal signal-travel (~2.4s) and node peak. Writes to `link[rel='icon']` via `canvas.toDataURL()`. Static first paint: `app/icon.png` (Orbital G PNG). Apple touch: `app/apple-icon.png`.
+Upload tile for Vercel dashboard avatar: `public/gryps-avatar.png` (Settings → General → Project Avatar).
 
 ```tsx
 useEffect(() => {
@@ -366,8 +367,8 @@ gryps/
 │   ├── signatures/             # Versioned Signature list + [slug] (noindex)
 │   ├── map/                    # Connectivity Intelligence map (MapLibre)
 │   ├── (prototype)/            # /terms · /privacy
-│   ├── icon.tsx                # Static PNG favicon (32×32) — Micro Orbital G
-│   ├── apple-icon.tsx          # Apple touch icon (180×180) — Orbital G tile
+│   ├── icon.png                # Favicon (32×32) — Micro Orbital G
+│   ├── apple-icon.png          # Apple touch icon (180×180) — Orbital G tile
 │   └── api/                    # advise, contact, signatures, submissions, notify
 ├── components/
 │   ├── OpsConsoleMap.tsx       # Shared MapLibre ops map
