@@ -963,14 +963,16 @@ body {
   font-size: 9.5px;
   letter-spacing: 0.06em;
   color: var(--text-dim);
+  cursor: default;
+  user-select: none;
 }
 .gryps-latitude-ruler span:last-child {
   border-right: none;
-  color: var(--aurora-1);
 }
-.gryps-latitude-ruler span[data-active="true"] {
-  color: var(--aurora-1);
-  box-shadow: inset 0 -2px 0 var(--aurora-1);
+/* Quiet location mark for the hero example — not a selected tab */
+.gryps-latitude-ruler span[data-mark="example"] {
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .gryps-trust-strip {

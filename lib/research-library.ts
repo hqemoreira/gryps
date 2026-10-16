@@ -15,10 +15,18 @@
  * do not import scoring or Neon from this module (breaks client bundles).
  */
 
+import type { EvidenceKind } from "@/lib/evidence-kinds";
 import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors";
 
 export type ResearchVertical = "forestry" | "mining" | "maritime" | "arctic" | "infrastructure";
 export type ResearchRegion = "nordics" | "arctic" | "iceland";
+
+/** Honest evidence notes shown on the assessment page (claim hygiene). */
+export type ResearchEvidenceNote = {
+  kind: EvidenceKind;
+  en: string;
+  fi: string;
+};
 
 export type ResearchEntry = {
   /** Public URL slug under /research/[slug] */
@@ -39,6 +47,8 @@ export type ResearchEntry = {
   sourceId: string;
   /** Seed slug when this research page supersedes a /signatures/[slug] URL */
   legacySignatureSlug?: string;
+  /** Optional evidence hygiene notes (MODELLED / MEASURED / RESEARCH / …) */
+  evidenceNotes?: ResearchEvidenceNote[];
 };
 
 /** Public research set — aim 8–12 excellent assessments. */
@@ -60,6 +70,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "example",
     sourceId: "forestry-mixed",
     legacySignatureSlug: "site-01-lapland-harvester-fleet",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "Signature score, grade, and ranks are deterministic Model v0.4 outputs for the stated inputs — not live RF.",
+        fi: "Signature-piste, arvosana ja sijoitukset ovat deterministisen mallin v0.4 tulosteita annetuille syötteille — ei live-RF.",
+      },
+      {
+        kind: "ILLUSTRATIVE",
+        en: "Single-Starlink failure mode is pedagogical: coordinates are real-region, the configuration is a research scenario.",
+        fi: "Yhden Starlink-yhteyden vikamoodi on pedagoginen: koordinaatit ovat alueellisesti tosia, kokoonpano on tutkimusskenaario.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "Aligned to GRYPS forestry knowledge notes and high-latitude constraints — not a vendor case study.",
+        fi: "Linjassa GRYPS:n metsätalouden tietomuistiinpanoihin ja korkeiden leveysasteiden rajoitteisiin — ei toimittajan case study.",
+      },
+    ],
   },
   {
     slug: "finnish-arctic-forestry-inari",
@@ -78,6 +105,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "seed",
     sourceId: "site-04-inari-forestry-block",
     legacySignatureSlug: "site-04-inari-forestry-block",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "Dual-path Signature from Model v0.4 (Starlink + Iridium) — reproducible for identical inputs.",
+        fi: "Kaksoispolun Signature mallista v0.4 (Starlink + Iridium) — toistettavissa samoilla syötteillä.",
+      },
+      {
+        kind: "MEASURED",
+        en: "Where shown, Traficom Bittimittari municipality aggregates are Finland-only reference evidence — not blended into the 0–100 score.",
+        fi: "Kun näytetään, Traficomin Bittimittari-kunta-aggregaatit ovat vain Suomen viitenäyttöä — eivät sekoitu 0–100-pisteeseen.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "Forestry + high-latitude Research Library entry; seed site with real Inari-area coordinates.",
+        fi: "Metsätalouden ja korkean leveysasteen Research Library -merkintä; siemenkohde Inarin alueen todellisilla koordinaateilla.",
+      },
+    ],
   },
   {
     slug: "arctic-mining-northern-sweden",
@@ -95,6 +139,18 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
       "Turvallisuuskriittinen autonominen kuljetuskalusto kahdella LEO-polulla (laajakaista + polaarinen kapeakaista). Tutkii redundanssiasemaa ja failover-automaation aukkoja korkeilla leveysasteilla.",
     source: "example",
     sourceId: "mining-autonomous",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "Safety-critical + autonomous posture scored by Model v0.4 hard caps and dual-LEO mitigation — not a measured pit survey.",
+        fi: "Turvallisuuskriittinen + autonominen asema pisteytetty mallin v0.4 kovilla katoilla ja kaksois-LEO-lievennyksellä — ei mitattu louhosmittaus.",
+      },
+      {
+        kind: "ILLUSTRATIVE",
+        en: "Operating scenario for research comparison with Finnish Kittilä dual-path mining — no commercial relationship with operators.",
+        fi: "Toimintaskenaario tutkimusvertailuun Suomen Kittilän kaksoispolkukaivoksen kanssa — ei kaupallista suhdetta operaattoreihin.",
+      },
+    ],
   },
   {
     slug: "finnish-arctic-mining-kittila",
@@ -113,6 +169,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "seed",
     sourceId: "site-22-kittila-gold-mine",
     legacySignatureSlug: "site-22-kittila-gold-mine",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "Hero-adjacent dual-path mining Signature (Model v0.4) — catalog confidence, not SLA availability.",
+        fi: "Heroon liittyvä kaksoispolun kaivos-Signature (malli v0.4) — hakemistoluottamus, ei SLA-saatavuus.",
+      },
+      {
+        kind: "MEASURED",
+        en: "Finnish seed: Traficom Bittimittari may appear as adjacent municipality reference — excluded from the composite score.",
+        fi: "Suomalainen siemen: Traficom Bittimittari voi näkyä viereisenä kunta-aggregaattina — poissa yhdistelmäpisteestä.",
+      },
+      {
+        kind: "DERIVED",
+        en: "Risks and ranked options follow from the same deterministic composition as the Advisor for these inputs.",
+        fi: "Riskit ja sijoitetut vaihtoehdot seuraavat samasta deterministisestä koostumuksesta kuin Advisor näillä syötteillä.",
+      },
+    ],
   },
   {
     slug: "norwegian-arctic-maritime-offshore",

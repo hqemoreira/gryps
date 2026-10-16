@@ -56,7 +56,7 @@ export type EvidencePackage = {
 
 const BASE_SOURCES: EvidenceSource[] = [
   {
-    id: "model-v03",
+    id: "model-v04",
     title: "GRYPS Deterministic Signature Engine",
     type: "model",
     attribution: "GRYPS R&D · Model v0.4",
@@ -223,7 +223,7 @@ function assessmentConfidence(opts: {
 
 function pickSources(sector: SectorId, lat: number): EvidenceSource[] {
   const ids = new Set([
-    "model-v03",
+    "model-v04",
     "provider-catalog",
     "orbital-reference",
     "arctic-connectivity",
@@ -346,7 +346,7 @@ export function buildEvidencePackage(opts: {
       "Clear sky-view and correct antenna installation are assumed unless contradicted by separate terrain evidence.",
       "Provider catalog confidence is a research heuristic, not a measured site availability rate.",
       "Mission priorities re-rank recommendations; they do not change the Signature score.",
-      "Optional Mistral prose may polish wording only — never score, grade, risks, or ranks.",
+      "Optional AI-assisted interpretation may polish wording only — never score, grade, risks, or ranks.",
       "Coordinates are interpreted within the Nordic / Arctic / Iceland research envelope.",
     ],
     limitations: [

@@ -1559,22 +1559,15 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
 }
 
 function LatitudeRuler({ caption }: { caption: string }) {
-  const ticks = [
-    { label: "60N", active: false },
-    { label: "65N", active: false },
-    { label: "67N", active: true },
-    { label: "70N", active: false },
-    { label: "75N", active: false },
-    { label: "80N", active: false },
-    { label: "POLAR", active: false },
-  ];
+  /** Static research-envelope strip — not interactive tabs. */
+  const ticks = ["60N", "65N", "67N", "70N", "75N", "80N", "POLAR"] as const;
   return (
     <div className="gryps-latitude-block gryps-no-print">
       <p className="gryps-latitude-caption">{caption}</p>
       <div className="gryps-latitude-ruler" aria-hidden="true">
-        {ticks.map((tick) => (
-          <span key={tick.label} data-active={tick.active ? "true" : undefined}>
-            {tick.label}
+        {ticks.map((label) => (
+          <span key={label} data-mark={label === "67N" ? "example" : undefined}>
+            {label}
           </span>
         ))}
       </div>
@@ -1682,7 +1675,7 @@ const COPY = {
     heroExampleBridge:
       "Below: an example Resilience Signature for a site at 67°N. Latitude, operation profile and available providers produce the score.",
     heroExampleChip: "EXAMPLE",
-    latitudeCaption: "Example site at 67°N — latitude marks the research envelope (not a control).",
+    latitudeCaption: "Example at 67°N · research envelope",
     scoreLabel: "Score: {score}/100 · Grade {grade}",
     heroSecondary: "Open the Map",
     modelChip: "Non-commercial · Model-based analysis",
@@ -1785,7 +1778,7 @@ const COPY = {
     heroExampleBridge:
       "Alla: esimerkki Resilience Signaturesta kohteelle 67°N. Leveysaste, toimintaprofiili ja käytettävissä olevat toimittajat tuottavat pisteen.",
     heroExampleChip: "ESIMERKKI",
-    latitudeCaption: "Esimerkkikohde 67°N — merkit näyttävät tutkimuskehyksen (ei ohjain).",
+    latitudeCaption: "Esimerkki 67°N · tutkimuskehys",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
     heroSecondary: "Avaa kartta",
     modelChip: "Ei-kaupallinen · Mallipohjainen analyysi",

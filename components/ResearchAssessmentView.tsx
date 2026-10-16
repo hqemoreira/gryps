@@ -18,6 +18,7 @@ const UI = {
   en: {
     eyebrow: "GRYPS RESEARCH LIBRARY",
     context: "Context",
+    evidence: "Evidence hygiene",
     prototype:
       "Research prototype · Non-commercial · Model-based analysis — not procurement advice or a site survey.",
     viewMethod: "Methodology →",
@@ -32,6 +33,7 @@ const UI = {
   fi: {
     eyebrow: "GRYPS RESEARCH LIBRARY",
     context: "Konteksti",
+    evidence: "Näyttöhygienia",
     prototype:
       "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi — ei hankintaneuvontaa eikä paikkamitasta.",
     viewMethod: "Menetelmä →",
@@ -193,6 +195,48 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
           {context}
         </p>
       </section>
+
+      {entry.evidenceNotes && entry.evidenceNotes.length > 0 && (
+        <section style={{ marginBottom: 28 }}>
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 10,
+              color: "var(--text-dim)",
+              letterSpacing: "0.12em",
+              marginBottom: 12,
+            }}
+          >
+            {t.evidence}
+          </p>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+            {entry.evidenceNotes.map((note) => (
+              <li
+                key={`${note.kind}-${note.en.slice(0, 24)}`}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 6,
+                }}
+              >
+                <TypeLabel kind={note.kind} />
+                <p
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 13,
+                    color: "var(--text-muted)",
+                    lineHeight: 1.55,
+                    margin: 0,
+                  }}
+                >
+                  {lang === "fi" ? note.fi : note.en}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <nav
         className="gryps-no-print"

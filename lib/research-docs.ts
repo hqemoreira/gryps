@@ -86,9 +86,9 @@ export const DATA_PROVENANCE: DataProvenanceRecord[] = [
     dataType: "Internal research model / reproducible algorithm",
     dataTypeFi: "Sisäinen tutkimusmalli / toistettava algoritmi",
     howUsed:
-      "Produces the 0–100 Resilience Signature, grade, risks, and ranked options. Optional Mistral prose never changes these numbers.",
+      "Produces the 0–100 Resilience Signature, grade, risks, and ranked options. Optional AI-assisted interpretation never changes these numbers.",
     howUsedFi:
-      "Tuottaa 0–100 Resilience Signaturen, arvosanan, riskit ja sijoitetut vaihtoehdot. Valinnainen Mistral-proosa ei koskaan muuta näitä lukuja.",
+      "Tuottaa 0–100 Resilience Signaturen, arvosanan, riskit ja sijoitetut vaihtoehdot. Valinnainen tekoälyavusteinen tulkinta ei koskaan muuta näitä lukuja.",
     url: "/methodology",
   },
   {
