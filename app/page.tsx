@@ -30,12 +30,16 @@ import {
   type AdvisorPriorityId,
 } from "@/lib/advisor-priorities";
 import {
-  HERO_DEMO,
-  HERO_DEMO_PLACE,
+  HERO_DEFAULT_LATITUDE_ID,
   HERO_DEMO_RESEARCH_HREF,
   HERO_DEMO_SUBTITLE_EN,
   HERO_DEMO_SUBTITLE_FI,
+  HERO_LATITUDE_TICKS,
+  getHeroLatitudeResult,
+  getHeroLatitudeTick,
+  type HeroLatitudeId,
 } from "@/lib/hero-demo";
+import type { DeterministicResult } from "@/lib/deterministic-score";
 import { SCORING_ENGINE } from "@/lib/model-constants";
 import { MimirAssistant } from "@/components/MimirAssistant";
 import {
@@ -1272,11 +1276,28 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   );
 }
 
-// ── Hero signature card (mid-range B — single source: lib/hero-demo.ts) ─
+// ── Hero signature card (engine-backed latitude demo — lib/hero-demo.ts) ─
 
-function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
-  const layers = HERO_DEMO.score_composition.layers ?? [];
-  const range = HERO_DEMO.score_composition.confidence_range;
+function heroRiskLabel(label: string, lang: "en" | "fi"): string {
+  if (lang === "en") return label;
+  const fi: Record<string, string> = {
+    "Correlated LEO broadband risk": "Korreloitu LEO-laajakaistariski",
+    "LEO broadband concentration": "LEO-laajakaistan keskittyminen",
+    "Single-provider dependency": "Yhden toimittajan riippuvuus",
+    "GEO elevation degradation": "GEO-elevaation heikkeneminen",
+  };
+  return fi[label] ?? label;
+}
+
+function HeroCompositionBars({
+  lang,
+  result,
+}: {
+  lang: "en" | "fi";
+  result: DeterministicResult;
+}) {
+  const layers = result.score_composition.layers ?? [];
+  const range = result.score_composition.confidence_range;
   const layerLabel = (id: string) =>
     id === "conditions"
       ? lang === "fi"
@@ -1352,15 +1373,26 @@ function HeroCompositionBars({ lang }: { lang: "en" | "fi" }) {
   );
 }
 
-function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
-  const score = HERO_DEMO.resilience_signature.score;
-  const grade = HERO_DEMO.resilience_signature.grade;
+function HeroSignatureCard({
+  t,
+  lang,
+  latId,
+}: {
+  t: typeof COPY.en;
+  lang: "en" | "fi";
+  latId: HeroLatitudeId;
+}) {
+  const tick = getHeroLatitudeTick(latId);
+  const result = getHeroLatitudeResult(latId);
+  const score = result.resilience_signature.score;
+  const grade = result.resilience_signature.grade;
   const gc = gradeTextColor(grade);
   const border = gradeColor(grade);
-  const topRisk = t.heroTopRisk;
-  const topRec = HERO_DEMO.connectivity_options[0]
-    ? `${HERO_DEMO.connectivity_options[0].provider} · ${HERO_DEMO.connectivity_options[0].confidence}`
-    : "Iridium Certus · 90";
+  const topRisk = heroRiskLabel(result.risk_factors[0]?.label ?? t.heroTopRisk, lang);
+  const topRec = result.connectivity_options[0]
+    ? `${result.connectivity_options[0].provider} · ${result.connectivity_options[0].confidence}`
+    : "—";
+  const place = lang === "fi" ? tick.placeFi : tick.placeEn;
 
   return (
     <div
@@ -1437,7 +1469,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
             marginBottom: 4,
           }}
         >
-          {HERO_DEMO_PLACE}
+          {place}
         </p>
         <p
           style={{
@@ -1495,7 +1527,7 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
           style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 16 }}
         />
 
-        <HeroCompositionBars lang={lang} />
+        <HeroCompositionBars lang={lang} result={result} />
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 18 }}>
           <div>
@@ -1558,18 +1590,48 @@ function HeroSignatureCard({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }
   );
 }
 
-function LatitudeRuler({ caption }: { caption: string }) {
-  /** Static research-envelope strip — not interactive tabs. */
-  const ticks = ["60N", "65N", "67N", "70N", "75N", "80N", "POLAR"] as const;
+function LatitudeRuler({
+  caption,
+  selectedId,
+  onSelect,
+  lang,
+}: {
+  caption: string;
+  selectedId: HeroLatitudeId;
+  onSelect: (id: HeroLatitudeId) => void;
+  lang: "en" | "fi";
+}) {
+  const groupLabel =
+    lang === "fi"
+      ? "Valitse leveysaste — sama kaksois-LEO-kaivosprofiili"
+      : "Select latitude — same dual-LEO mining profile";
   return (
     <div className="gryps-latitude-block gryps-no-print">
-      <p className="gryps-latitude-caption">{caption}</p>
-      <div className="gryps-latitude-ruler" aria-hidden="true">
-        {ticks.map((label) => (
-          <span key={label} data-mark={label === "67N" ? "example" : undefined}>
-            {label}
-          </span>
-        ))}
+      <p className="gryps-latitude-caption" id="gryps-latitude-caption">
+        {caption}
+      </p>
+      <div
+        className="gryps-latitude-ruler"
+        role="radiogroup"
+        aria-labelledby="gryps-latitude-caption"
+        aria-label={groupLabel}
+      >
+        {HERO_LATITUDE_TICKS.map((tick) => {
+          const selected = tick.id === selectedId;
+          return (
+            <button
+              key={tick.id}
+              type="button"
+              role="radio"
+              aria-checked={selected}
+              data-active={selected ? "true" : undefined}
+              className="gryps-latitude-tick"
+              onClick={() => onSelect(tick.id)}
+            >
+              {tick.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -1673,9 +1735,10 @@ const COPY = {
     h1Meta: "Deterministic · documented · free",
     sub: "A Resilience Signature — score, grade and ranked connectivity options.",
     heroExampleBridge:
-      "Below: an example Resilience Signature for a site at 67°N. Latitude, operation profile and available providers produce the score.",
+      "Below: an example Resilience Signature — same dual-LEO mining profile; change latitude on the strip to see Model v0.4 recompute the score.",
     heroExampleChip: "EXAMPLE",
-    latitudeCaption: "Example at 67°N · research envelope",
+    latitudeCaption:
+      "Select latitude · same dual-LEO mining profile · Model v0.4 bands (≤60 / ≤65 / ≤70 / >70)",
     scoreLabel: "Score: {score}/100 · Grade {grade}",
     heroSecondary: "Open the Map",
     modelChip: "Non-commercial · Model-based analysis",
@@ -1776,9 +1839,10 @@ const COPY = {
     h1Meta: "Deterministinen · dokumentoitu · ilmainen",
     sub: "Resilience Signature — pisteet, arvosana ja sijoitetut yhteysvaihtoehdot.",
     heroExampleBridge:
-      "Alla: esimerkki Resilience Signaturesta kohteelle 67°N. Leveysaste, toimintaprofiili ja käytettävissä olevat toimittajat tuottavat pisteen.",
+      "Alla: esimerkki Resilience Signaturesta — sama kaksois-LEO-kaivosprofiili; vaihda leveysastetta nauhalla, niin malli v0.4 laskee pisteen uudelleen.",
     heroExampleChip: "ESIMERKKI",
-    latitudeCaption: "Esimerkki 67°N · tutkimuskehys",
+    latitudeCaption:
+      "Valitse leveysaste · sama kaksois-LEO-kaivosprofiili · mallin v0.4 kaistat (≤60 / ≤65 / ≤70 / >70)",
     scoreLabel: "Pisteet: {score}/100 · Arvosana {grade}",
     heroSecondary: "Avaa kartta",
     modelChip: "Ei-kaupallinen · Mallipohjainen analyysi",
@@ -1881,6 +1945,7 @@ export default function HomePage() {
   const [lang, setLang] = useLang();
   const [siteCount, setSiteCount] = useState<number | null>(null);
   const [chromeH, setChromeH] = useState(82);
+  const [heroLatId, setHeroLatId] = useState<HeroLatitudeId>(HERO_DEFAULT_LATITUDE_ID);
   const chromeRef = useRef<HTMLDivElement>(null);
   const t = COPY[lang];
   const modelChip = t.modelChip;
@@ -1997,7 +2062,7 @@ export default function HomePage() {
               <div className="gryps-polar-stage">
                 <PolarAtmosphere className="gryps-polar-bg" variant="halo" />
                 <div className="gryps-polar-foreground">
-                  <HeroSignatureCard t={t} lang={lang} />
+                  <HeroSignatureCard t={t} lang={lang} latId={heroLatId} />
                 </div>
               </div>
             </div>
@@ -2005,7 +2070,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      <LatitudeRuler caption={t.latitudeCaption} />
+      <LatitudeRuler
+        caption={t.latitudeCaption}
+        selectedId={heroLatId}
+        onSelect={setHeroLatId}
+        lang={lang}
+      />
       <TrustStrip lang={lang} />
 
       <FadeUp>

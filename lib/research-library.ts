@@ -204,6 +204,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "example",
     sourceId: "maritime-offshore",
     legacySignatureSlug: "site-03-troms-fjord-platform",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "Single-GEO posture at 71°N scored by Model v0.4 latitude and GEO elevation caps — not live offshore RF.",
+        fi: "Yhden GEO-yhteyden asema 71°N pisteytetty mallin v0.4 leveysaste- ja GEO-elevaatiokatoilla — ei live-offshore-RF.",
+      },
+      {
+        kind: "ILLUSTRATIVE",
+        en: "Pedagogical failure mode for missing independent LEO backup; coordinates are Arctic-Norway region, not a named operator survey.",
+        fi: "Pedagoginen vikamoodi puuttuvasta riippumattomasta LEO-varasta; koordinaatit ovat arktisen Norjan alueelta, ei nimetyn operaattorin mittaus.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "Aligned to high-latitude GEO elevation notes in GRYPS knowledge — no Traficom or Norwegian Nkom blend into the score.",
+        fi: "Linjassa GRYPS:n korkean leveysasteen GEO-elevaatiomuistiinpanoihin — Traficom tai Norjan Nkom eivät sekoitu pisteeseen.",
+      },
+    ],
   },
   {
     slug: "norwegian-maritime-lofoten",
@@ -222,6 +239,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "seed",
     sourceId: "site-07-lofoten-fishing-fleet",
     legacySignatureSlug: "site-07-lofoten-fishing-fleet",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "VSAT + Iridium dual-path Signature from Model v0.4 for the stated fleet inputs — catalog confidence, not measured sea trials.",
+        fi: "VSAT + Iridium kaksoispolun Signature mallista v0.4 annetuille laivastosyötteille — hakemistoluottamus, ei mitatut merikokeet.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "Norwegian Nordics maritime seed with real-region coordinates; no Finnish Traficom Bittimittari applies.",
+        fi: "Norjan Pohjoismaiden merellinen siemen alueellisesti tosilla koordinaateilla; Suomen Traficom Bittimittari ei koske.",
+      },
+      {
+        kind: "DERIVED",
+        en: "Ranked options and risks follow the same deterministic Advisor composition for these inputs.",
+        fi: "Sijoitetut vaihtoehdot ja riskit seuraavat samaa determinististä Advisor-koostumusta näillä syötteillä.",
+      },
+    ],
   },
   {
     slug: "norwegian-maritime-energy-hammerfest",
@@ -240,6 +274,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "seed",
     sourceId: "site-12-hammerfest-lng-terminal",
     legacySignatureSlug: "site-12-hammerfest-lng-terminal",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "Safety-critical dual VSAT + Iridium at ~70.7°N — Model v0.4 site-conditions band (>70) and mitigation layers, not terminal telemetry.",
+        fi: "Turvallisuuskriittinen kaksois-VSAT + Iridium ~70.7°N — mallin v0.4 olosuhdekaista (>70) ja lievennyskerrokset, ei terminaalitelemetriaa.",
+      },
+      {
+        kind: "ILLUSTRATIVE",
+        en: "Energy-adjacent maritime research scenario; no commercial relationship with LNG operators.",
+        fi: "Energiaan liittyvä merellinen tutkimusskenaario; ei kaupallista suhdetta LNG-operaattoreihin.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "High-latitude redundancy pedagogy; national broadband aggregates (e.g. Traficom) are Finland-only and unused here.",
+        fi: "Korkean leveysasteen redundanssipedagogiikka; kansalliset laajakaista-aggregaatit (esim. Traficom) ovat vain Suomea eivätkä käytössä tässä.",
+      },
+    ],
   },
   {
     slug: "extreme-arctic-svalbard",
@@ -258,6 +309,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "seed",
     sourceId: "site-09-svalbard-outpost",
     legacySignatureSlug: "site-09-svalbard-outpost",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "Iridium-only autonomous outpost at ~78°N — Model v0.4 extreme-latitude site conditions and single-provider caps.",
+        fi: "Vain Iridium autonominen asema ~78°N — mallin v0.4 äärimmäisen leveysasteen olosuhteet ja yhden toimittajan katot.",
+      },
+      {
+        kind: "ILLUSTRATIVE",
+        en: "Stress-test scenario where GEO is effectively unavailable; not a Svalbard site survey or SLA claim.",
+        fi: "Kuormitusskenaario, jossa GEO ei käytännössä ole saatavilla — ei Huippuvuorten paikkamittaus eikä SLA-väite.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "Polar-envelope research entry; evidence is catalog + model commentary, not measured RF campaigns.",
+        fi: "Polaarikehyksen tutkimusmerkintä; näyttö on katalogi + mallikommentaari, ei mitatut RF-kampanjat.",
+      },
+    ],
   },
   {
     slug: "northern-infrastructure-jokkmokk",
@@ -276,6 +344,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "seed",
     sourceId: "site-25-jokkmokk-power-station",
     legacySignatureSlug: "site-25-jokkmokk-power-station",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "Fiber-primary + satellite DR posture scored as satellite resilience for outage continuity — Model v0.4, not a grid SCADA audit.",
+        fi: "Kuitupääyhteys + satelliitti-DR pisteytetty satelliittiresilienssinä katkosten varalle — malli v0.4, ei verkko-SCADA-auditointi.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "Swedish Nordics infrastructure seed; Traficom Bittimittari is Finland-only and not applied.",
+        fi: "Ruotsin Pohjoismaiden infrastruktuurisiemen; Traficom Bittimittari on vain Suomea eikä käytössä.",
+      },
+      {
+        kind: "DERIVED",
+        en: "Risks and ranks derive from the deterministic composition for the documented satellite backup path.",
+        fi: "Riskit ja sijoitukset seuraavat deterministisestä koostumuksesta dokumentoidulle satelliittivarapolulle.",
+      },
+    ],
   },
   {
     slug: "icelandic-autonomous-coastal",
@@ -293,6 +378,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
       "Autonominen rannikkotarkastuskalusto OneWeb LEO- ja Iridium Certus -varalla. Keskittyy failover-politiikan aukkoihin, kun kaksoislaitteisto on jo olemassa.",
     source: "example",
     sourceId: "iceland-autonomous-fleet",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "OneWeb + Iridium dual-LEO Signature from Model v0.4 — hardware exists in the scenario; failover policy gaps are research commentary.",
+        fi: "OneWeb + Iridium kaksois-LEO Signature mallista v0.4 — laitteisto on skenaariossa; failover-politiikan aukot ovat tutkimuskommentaaria.",
+      },
+      {
+        kind: "ILLUSTRATIVE",
+        en: "Iceland coastal autonomous fleet pedagogy; coordinates are regional, not an operator case study.",
+        fi: "Islannin rannikon autonomisen kaluston pedagogiikka; koordinaatit ovat alueellisia, ei operaattorin case study.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "No Traficom or Icelandic broadband aggregate is blended into the 0–100 score.",
+        fi: "Traficom tai islantilainen laajakaista-aggregaatti ei sekoitu 0–100-pisteeseen.",
+      },
+    ],
   },
   {
     slug: "icelandic-remote-industry-straumsvik",
@@ -311,6 +413,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "seed",
     sourceId: "site-31-straumsvik-aluminum-smelter",
     legacySignatureSlug: "site-31-straumsvik-aluminum-smelter",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "Single-Starlink safety-critical industrial Signature — Model v0.4 single-provider and autonomy caps, not plant RF.",
+        fi: "Yhden Starlinkin turvallisuuskriittinen teollisuus-Signature — mallin v0.4 yhden toimittajan ja autonomian katot, ei laitoksen RF.",
+      },
+      {
+        kind: "ILLUSTRATIVE",
+        en: "Icelandic remote-industry single-provider failure mode for research comparison — no commercial operator link.",
+        fi: "Islantilaisen etäteollisuuden yhden toimittajan vikamoodi tutkimusvertailuun — ei kaupallista operaattorisuhdetta.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "Seed site with real-region coordinates; national measured broadband is out of scope for Iceland entries.",
+        fi: "Siemenkohde alueellisesti tosilla koordinaateilla; kansallinen mitattu laajakaista on Islanti-merkinnöissä rajattu pois.",
+      },
+    ],
   },
   {
     slug: "icelandic-maritime-akureyri",
@@ -329,6 +448,23 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     source: "seed",
     sourceId: "site-32-akureyri-fishing-fleet",
     legacySignatureSlug: "site-32-akureyri-fishing-fleet",
+    evidenceNotes: [
+      {
+        kind: "MODELLED",
+        en: "VSAT primary + Iridium backup at ~65.7°N — Model v0.4 dual-path maritime composition for the stated inputs.",
+        fi: "VSAT-pääyhteys + Iridium-vara ~65.7°N — mallin v0.4 kaksoispolun merikoostumus annetuille syötteille.",
+      },
+      {
+        kind: "RESEARCH",
+        en: "Extends the maritime research set into Icelandic conditions; not a measured harbour survey.",
+        fi: "Laajentaa merellisen tutkimusjoukon islantilaisiin olosuhteisiin — ei mitattu satamamittaus.",
+      },
+      {
+        kind: "DERIVED",
+        en: "Risks and ranked options follow the same deterministic Advisor path as other library maritime seeds.",
+        fi: "Riskit ja sijoitetut vaihtoehdot seuraavat samaa determinististä Advisor-polkua kuin muut merelliset kirjastosiemenet.",
+      },
+    ],
   },
 ];
 
