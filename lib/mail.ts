@@ -26,14 +26,25 @@ export function appBaseUrl(reqUrl?: string): string {
   return "http://localhost:3000";
 }
 
+/** Resend is production-ready only when FROM is on a verified custom domain. */
+export function resendDeliveryMode(): "unconfigured" | "test_fallback" | "production" {
+  if (!process.env.RESEND_API_KEY) return "unconfigured";
+  const from = (process.env.RESEND_FROM ?? "").toLowerCase();
+  if (!from || from.includes("resend.dev") || from.includes("onboarding@")) {
+    return "test_fallback";
+  }
+  return "production";
+}
+
 export async function sendUnlockEmail(opts: {
   to: string;
   verifyUrl: string;
   locale?: "en" | "fi";
-}): Promise<{ ok: true } | { ok: false; error: string }> {
+}): Promise<{ ok: true; deliveryMode: "test_fallback" | "production" } | { ok: false; error: string; deliveryMode: ReturnType<typeof resendDeliveryMode> }> {
+  const deliveryMode = resendDeliveryMode();
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    return { ok: false, error: "Email sending is not configured (RESEND_API_KEY)." };
+    return { ok: false, error: "Email sending is not configured (RESEND_API_KEY).", deliveryMode };
   }
 
   const from = process.env.RESEND_FROM ?? "GRYPS <onboarding@resend.dev>";
@@ -71,10 +82,19 @@ export async function sendUnlockEmail(opts: {
       subject,
       text,
     });
-    if (error) return { ok: false, error: error.message };
-    return { ok: true };
+    if (error) {
+      return {
+        ok: false,
+        error:
+          deliveryMode === "test_fallback"
+            ? `${error.message} (RESEND_FROM still on resend.dev — verify a domain and set RESEND_FROM)`
+            : error.message,
+        deliveryMode,
+      };
+    }
+    return { ok: true, deliveryMode: deliveryMode === "production" ? "production" : "test_fallback" };
   } catch (err) {
     console.error("Resend send failed:", err);
-    return { ok: false, error: "Failed to send verification email." };
+    return { ok: false, error: "Failed to send verification email.", deliveryMode };
   }
 }

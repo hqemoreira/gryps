@@ -20,40 +20,77 @@ const jetbrainsMono = JetBrains_Mono({
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "GRYPS",
-  alternateName: "GRYPS Connectivity Resilience Advisor",
-  url: "https://gryps.vercel.app",
-  description:
-    "GRYPS is a non-commercial R&D prototype that scores and documents satellite connectivity resilience for remote and autonomous industrial operations in Nordic, Arctic, and Icelandic environments. It produces a Resilience Signature — a scored assessment of single-provider dependency risk, orbital redundancy gaps, and NIS2/CER readiness documentation support. Built for learning and portfolio demonstration, not as a commercial service.",
-  applicationCategory: "EducationalApplication",
-  operatingSystem: "Web",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "EUR",
-    availability: "https://schema.org/InStock",
-  },
-  audience: {
-    "@type": "Audience",
-    audienceType:
-      "Industrial operators, systems integrators, and connectivity planners working in maritime, forestry, mining, and Arctic environments",
-  },
-  author: {
-    "@type": "Person",
-    name: "Henrique Moreira",
-    url: "https://henriquemoreira.eu",
-    jobTitle: "Connectivity resilience researcher",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Espoo",
-      addressCountry: "FI",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://gryps.vercel.app/#app",
+      name: "GRYPS",
+      alternateName: "GRYPS Connectivity Resilience Advisor",
+      url: "https://gryps.vercel.app",
+      description:
+        "GRYPS is a non-commercial R&D prototype that scores and documents satellite connectivity resilience for remote and autonomous industrial operations in Nordic, Arctic, and Icelandic environments. It produces a Resilience Signature — a scored assessment of single-provider dependency risk, orbital redundancy gaps, and NIS2/CER readiness documentation support. Built for learning and portfolio demonstration, not as a commercial service.",
+      applicationCategory: "EducationalApplication",
+      operatingSystem: "Web",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
+      },
+      audience: {
+        "@type": "Audience",
+        audienceType:
+          "Industrial operators, systems integrators, and connectivity planners working in maritime, forestry, mining, and Arctic environments",
+      },
+      author: { "@id": "https://gryps.vercel.app/#author" },
+      speakable: {
+        "@type": "SpeakableSpecification",
+        cssSelector: ["h1", ".gryps-hero-sub"],
+      },
     },
-  },
-  speakable: {
-    "@type": "SpeakableSpecification",
-    cssSelector: ["h1", ".gryps-hero-sub"],
-  },
+    {
+      "@type": "Person",
+      "@id": "https://gryps.vercel.app/#author",
+      name: "Henrique Moreira",
+      url: "https://henriquemoreira.eu",
+      jobTitle: "Connectivity resilience researcher",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Espoo",
+        addressCountry: "FI",
+      },
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://gryps.vercel.app/#faq",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "What is GRYPS?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "GRYPS is a non-commercial R&D prototype that scores satellite connectivity resilience for remote and autonomous industrial operations in Nordic, Arctic, and Icelandic environments. It produces a Resilience Signature for learning and documentation support — not as a commercial service.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Is GRYPS procurement or certification advice?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No. Results are indicative research outputs. They are not procurement advice, coverage certification, or engineering sign-off. See https://gryps.vercel.app/methodology for assumptions and limitations.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Is GRYPS free?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. GRYPS is a free educational / portfolio prototype with no paid tiers. There is no commercial SaaS offering.",
+          },
+        },
+      ],
+    },
+  ],
 };
 
 export const metadata: Metadata = {

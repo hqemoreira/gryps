@@ -65,6 +65,10 @@ Progressive disclosure on output: Overview · Risks · Options · Evidence · Me
 
 See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 
+### Changelog — 2026-10
+
+- **2026-10-16 (Forge s24 / gryps-s16):** AEO — `public/llms.txt` + homepage FAQPage in layout `@graph` (with SoftwareApplication + Person). Resend: `resendDeliveryMode()` + unlock API returns `deliveryMode` (`production` | `test_fallback` | `unconfigured`) so ops can see when `RESEND_FROM` is still on resend.dev. Manual verify: set verified-domain `RESEND_FROM` in Vercel, request unlock to a mailbox you control, confirm inbox + funnel events in Vercel Analytics.
+
 ### Changelog — 2026-09
 
 - **2026-09-18 (Forge s22):** Confirmed dual-home sync with Forge journals (gryps-s14 still latest product work). Next: verify Resend domain delivery + watch Vercel Analytics funnel events.

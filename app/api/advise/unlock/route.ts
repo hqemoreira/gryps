@@ -89,15 +89,21 @@ export async function POST(req: NextRequest) {
   // Resend test mode / unverified domain often rejects non-account recipients.
   // Always return the magic link so unlock still works during the prototype.
   if (!sent.ok) {
-    console.warn("Unlock email not sent:", sent.error, "verifyUrl=", verifyUrl);
+    console.warn("Unlock email not sent:", sent.error, "mode=", sent.deliveryMode, "verifyUrl=", verifyUrl);
     return NextResponse.json({
       ok: true,
       pending: true,
       emailSent: false,
       warning: sent.error,
+      deliveryMode: sent.deliveryMode,
       verifyUrl,
     });
   }
 
-  return NextResponse.json({ ok: true, pending: true, emailSent: true });
+  return NextResponse.json({
+    ok: true,
+    pending: true,
+    emailSent: true,
+    deliveryMode: sent.deliveryMode,
+  });
 }

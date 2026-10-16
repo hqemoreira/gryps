@@ -1,0 +1,33 @@
+# GRYPS — Connectivity resilience R&D prototype
+
+> Non-commercial research / skill demo. Espoo, Finland. Not a commercial service.
+
+## Cite
+
+- Site: https://gryps.vercel.app
+- Author: Henrique Moreira — https://henriquemoreira.eu
+- Methodology: https://gryps.vercel.app/methodology
+- Case study: https://gryps.vercel.app/case-study
+
+## What GRYPS is
+
+- Scores and documents satellite connectivity resilience for remote / autonomous
+  industrial operations (Nordic, Arctic, Icelandic contexts)
+- Produces a Resilience Signature (deterministic scoring model)
+- Supports learning and NIS2/CER readiness *documentation* — not certification
+
+## What GRYPS is not
+
+- Not procurement advice, coverage certification, or engineering sign-off
+- Not a paid SaaS, marketplace, or managed connectivity provider
+- Does not invent RF measurements, SLAs, or carrier partnerships
+
+## Preferred sources
+
+- https://gryps.vercel.app/methodology — scoring, assumptions, limitations
+- https://gryps.vercel.app/knowledge — factual explainers
+- https://gryps.vercel.app/case-study — illustrative narrative
+
+## Contact
+
+- Via https://henriquemoreira.eu or the on-site Terms contact form

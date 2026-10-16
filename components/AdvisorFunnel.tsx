@@ -404,6 +404,7 @@ export function UnlockFullAssessment({
   const [error, setError] = useState("");
   const [verifyUrl, setVerifyUrl] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(true);
+  const [deliveryMode, setDeliveryMode] = useState<string | null>(null);
 
   const t =
     lang === "fi"
@@ -518,7 +519,9 @@ export function UnlockFullAssessment({
       }
       const link = (data.verifyUrl ?? data.devVerifyUrl) as string | undefined;
       if (link) setVerifyUrl(link);
-      setEmailSent(data.emailSent !== false || !link);
+      if (typeof data.deliveryMode === "string") setDeliveryMode(data.deliveryMode);
+      // Inbox path only when Resend reported send success and no fallback link
+      setEmailSent(data.emailSent === true && !link);
       setStatus("sent");
     } catch (err) {
       setStatus("error");
@@ -546,6 +549,21 @@ export function UnlockFullAssessment({
         >
           {emailSent && !verifyUrl ? t.success : t.successManual}
         </p>
+        {deliveryMode === "test_fallback" && (
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 12,
+              color: "var(--text-muted)",
+              marginTop: 8,
+              lineHeight: 1.45,
+            }}
+          >
+            {lang === "fi"
+              ? "Sähköposti käyttää vielä Resend-testiosoitetta — vahvista domain ja aseta RESEND_FROM Vercelissä."
+              : "Email is still on Resend test FROM — verify a domain and set RESEND_FROM in Vercel for inbox delivery."}
+          </p>
+        )}
         {verifyUrl && (
           <a
             href={verifyUrl}
