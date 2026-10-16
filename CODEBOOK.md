@@ -67,6 +67,7 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 
 ### Changelog — 2026-10
 
+- **2026-10-16 (Forge s25 / gryps-s17):** `GET /api/email-status` reports Resend `deliveryMode` without secrets. Production currently has `RESEND_API_KEY` but **no `RESEND_FROM`** — remains `test_fallback` until you `vercel env add RESEND_FROM production` with a verified-domain address.
 - **2026-10-16 (Forge s24 / gryps-s16):** AEO — `public/llms.txt` + homepage FAQPage in layout `@graph` (with SoftwareApplication + Person). Resend: `resendDeliveryMode()` + unlock API returns `deliveryMode` (`production` | `test_fallback` | `unconfigured`) so ops can see when `RESEND_FROM` is still on resend.dev. Manual verify: set verified-domain `RESEND_FROM` in Vercel, request unlock to a mailbox you control, confirm inbox + funnel events in Vercel Analytics.
 
 ### Changelog — 2026-09

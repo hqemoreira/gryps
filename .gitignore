@@ -55,3 +55,8 @@ next-env.d.ts
 # OS / IDE
 .idea/
 *.swp
+
+# Local secrets (Vercel CLI / Next.js) — keep committed examples
+.env
+.env.*
+!.env.example
