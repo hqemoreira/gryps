@@ -40,6 +40,9 @@ jobs:
       - name: TypeScript
         run: npm run typecheck
 
+      - name: Deterministic Signature verify
+        run: npm run test:score
+
       - name: Production build
         run: npm run build
         env:
