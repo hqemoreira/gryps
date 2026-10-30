@@ -1132,6 +1132,21 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
             {lang === "fi" ? "Ei yhteyttä" : "None"}
           </button>
         </div>
+        {providers.length === 0 && (
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 12,
+              color: "var(--accent-amber)",
+              marginTop: 8,
+              lineHeight: 1.45,
+            }}
+          >
+            {lang === "fi"
+              ? "Ei polkuja valittu — Signature pisteyttää heikon lievennyksen. Valitse toimittajat tai «Ei yhteyttä»."
+              : "No paths selected — Signature will score weak mitigation. Pick providers or «None»."}
+          </p>
+        )}
         <a
           href="/providers"
           style={{
@@ -1223,6 +1238,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
 
       {(boundsError || error || unlockBanner) && (
         <div
+          role="alert"
           style={{
             backgroundColor: "rgba(239,68,68,0.08)",
             border: "1px solid rgba(239,68,68,0.3)",
@@ -1230,8 +1246,21 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
             padding: "10px 14px",
           }}
         >
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-red)" }}>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--accent-red)", marginBottom: 6 }}>
             {boundsError || error || unlockBanner}
+          </p>
+          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.45 }}>
+            {boundsError
+              ? lang === "fi"
+                ? "Seuraava: siirrä koordinaatit Nordic/Arctic-alueelle ja yritä uudelleen."
+                : "Next: move coordinates into the Nordic/Arctic bounds and try again."
+              : error
+                ? lang === "fi"
+                  ? "Seuraava: tarkista syötteet ja paina Generoi uudelleen. Jos virhe toistuu, odota hetki (rajoitus) tai kokeile ilman tekoälytulkintaa."
+                  : "Next: check inputs and Generate again. If it persists, wait a minute (rate limit) or retry without AI interpretation."
+                : lang === "fi"
+                  ? "Seuraava: seuraa ohjetta yllä tai generoi Signature uudelleen."
+                  : "Next: follow the note above, or generate the Signature again."}
           </p>
         </div>
       )}
@@ -1240,6 +1269,7 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
         type="submit"
         className="gryps-cta-btn"
         disabled={loading || !vertical || !autonomy || !criticality}
+        aria-busy={loading}
         style={{
           width: "100%",
           opacity: !vertical || !autonomy || !criticality ? 0.5 : 1,
@@ -2090,9 +2120,6 @@ export default function HomePage() {
           style={{ scrollMarginTop: 80 }}
         >
           <div className="gryps-content-narrow">
-            <p className="gryps-no-print label" style={{ marginBottom: 10 }}>
-              {lang === "fi" ? "RESILIENCE ADVISOR · KONSOLI" : "RESILIENCE ADVISOR · CONSOLE"}
-            </p>
             <h2
               className="gryps-no-print text-display"
               style={{ fontFamily: "var(--font-ui)", color: "var(--text)", marginBottom: 10 }}
@@ -2106,6 +2133,7 @@ export default function HomePage() {
                 color: "var(--text-muted)",
                 marginBottom: 28,
                 fontSize: "var(--text-small)",
+                maxWidth: "65ch",
               }}
             >
               {t.advisorSub}

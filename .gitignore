@@ -56,6 +56,13 @@ next-env.d.ts
 .idea/
 *.swp
 
+# Archify finalize scratch (keep HTML + candidates; drop receipts)
+.archify/**/review-*/
+.archify/**/*.finalize.json
+.archify/**/*.finalize-summary.json
+.archify/**/*.delivery.json
+.archify/**/*.browser-check.json
+
 # Local secrets (Vercel CLI / Next.js) — keep committed examples
 .env
 .env.*

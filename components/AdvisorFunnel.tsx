@@ -159,20 +159,58 @@ export function InitialAssessment({
               <p className="gryps-cap-notice">{capNoticesLine(result.caps_applied, lang)}</p>
             )}
             {result.layers && result.layers.length > 0 && (
-              <div
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontSize: 12,
-                  color: "var(--text-muted)",
-                  lineHeight: 1.45,
-                  marginTop: 8,
-                }}
-              >
-                {result.layers.map((layer) => (
-                  <div key={layer.id}>
-                    {layer.label}: {layer.band} ({layer.points}/{layer.max})
-                  </div>
-                ))}
+              <div className="gryps-comp-bars" style={{ marginTop: 10 }}>
+                <p
+                  style={{
+                    fontFamily: "var(--font-data)",
+                    fontSize: 10,
+                    color: "var(--text-dim)",
+                    letterSpacing: "0.08em",
+                    marginBottom: 6,
+                  }}
+                >
+                  {lang === "fi" ? "KAKSI KERROSTA · MALLI V0.4" : "TWO-LAYER SCORE · MODEL V0.4"}
+                </p>
+                {result.layers.map((layer) => {
+                  const pct =
+                    layer.max > 0
+                      ? Math.max(0, Math.min(100, (layer.points / layer.max) * 100))
+                      : 0;
+                  const label =
+                    layer.id === "conditions"
+                      ? lang === "fi"
+                        ? "Olosuhteet"
+                        : "Conditions"
+                      : lang === "fi"
+                        ? "Lievennys"
+                        : "Mitigation";
+                  return (
+                    <div key={layer.id} className="gryps-comp-row">
+                      <span
+                        style={{
+                          fontFamily: "var(--font-ui)",
+                          fontSize: 11,
+                          color: "var(--text-muted)",
+                        }}
+                      >
+                        {label} · {layer.band}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-data)",
+                          fontSize: 11,
+                          color: "var(--text)",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {layer.points}/{layer.max}
+                      </span>
+                      <div className="gryps-comp-track">
+                        <div className="gryps-comp-fill" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
             <p
@@ -186,6 +224,20 @@ export function InitialAssessment({
             >
               {sig.summary}
             </p>
+            {(result.modelVersion || result.inputHash) && (
+              <p
+                style={{
+                  fontFamily: "var(--font-data)",
+                  fontSize: 10,
+                  color: "var(--text-dim)",
+                  letterSpacing: "0.04em",
+                  marginTop: 8,
+                }}
+              >
+                {result.modelVersion ?? "gryps-signature-v0.4"}
+                {result.inputHash ? ` · ${result.inputHash.slice(0, 10)}` : ""}
+              </p>
+            )}
           </div>
         </div>
 

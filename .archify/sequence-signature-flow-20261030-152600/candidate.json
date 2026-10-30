@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "GRYPS Resilience Signature flow",
+    "subtitle": "Advisor → Model v0.4 → abbreviated UI (code-backed)",
+    "output": ".archify/sequence-signature-flow-20261030-152600/signature-flow.html",
+    "viewBox": [1080, 660],
+    "column_fit": "spread",
+    "animation": "trace",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "Operator", "sublabel": "browser" },
+    { "id": "ui", "type": "frontend", "label": "AdvisorForm", "sublabel": "app/page.tsx #advisor" },
+    { "id": "api", "type": "backend", "label": "/api/advise", "sublabel": "route.ts" },
+    { "id": "neon", "type": "database", "label": "Neon", "sublabel": "advisor_submissions" },
+    { "id": "score", "type": "backend", "label": "scoreSite", "sublabel": "lib/scoring.ts" },
+    { "id": "model", "type": "backend", "label": "Model v0.4", "sublabel": "deterministic-score" },
+    { "id": "mistral", "type": "external", "label": "Mistral", "sublabel": "optional prose" }
+  ],
+  "segments": [
+    { "from": 140, "to": 250, "label": "Submit profile" },
+    { "from": 260, "to": 420, "label": "Deterministic Signature" },
+    { "from": 434, "to": 545, "label": "Persist + teaser UI" }
+  ],
+  "messages": [
+    { "id": "fill", "from": "user", "to": "ui", "y": 160, "label": "lat/lng · sector · providers · autonomy · criticality", "variant": "default" },
+    { "id": "post", "from": "ui", "to": "api", "y": 185, "label": "POST /api/advise", "variant": "emphasis" },
+    { "id": "rl", "from": "api", "to": "neon", "y": 215, "label": "rate-limit count (1h)", "variant": "dashed" },
+    { "id": "rlok", "from": "neon", "to": "api", "y": 243, "label": "ok / 429", "variant": "return" },
+    { "id": "scorecall", "from": "api", "to": "score", "y": 275, "label": "scoreSite(input)", "variant": "emphasis" },
+    { "id": "det", "from": "score", "to": "model", "y": 305, "label": "scoreDeterministic + hard rules", "variant": "default" },
+    { "id": "detout", "from": "model", "to": "score", "y": 333, "label": "score · grade · risks · ranks · layers", "variant": "return" },
+    { "id": "aiopt", "from": "score", "to": "mistral", "y": 365, "label": "enrichRecommendation (opt-in only)", "variant": "dashed" },
+    { "id": "aiout", "from": "mistral", "to": "score", "y": 393, "label": "prose (never changes score)", "variant": "return" },
+    { "id": "persist", "from": "api", "to": "neon", "y": 455, "label": "INSERT advisor_submissions", "variant": "default" },
+    { "id": "abbr", "from": "api", "to": "ui", "y": 490, "label": "abbreviateResult → InitialAssessment", "variant": "return" },
+    { "id": "show", "from": "ui", "to": "user", "y": 525, "label": "score / grade / top option / risks", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "ui", "from": 175, "to": 535, "type": "frontend" },
+    { "participant": "api", "from": 185, "to": 500, "type": "backend" },
+    { "participant": "neon", "from": 210, "to": 250, "type": "database" },
+    { "participant": "score", "from": 270, "to": 410, "type": "backend" },
+    { "participant": "model", "from": 300, "to": 340, "type": "backend" },
+    { "participant": "mistral", "from": 360, "to": 400, "type": "external" },
+    { "participant": "neon", "from": 450, "to": 480, "type": "database" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Authority",
+      "items": [
+        "Model v0.4 is the numeric authority (lib/deterministic-score.ts)",
+        "MODEL_VERSION gryps-signature-v0.4 in lib/model-constants.ts",
+        "Same inputs reproduce the same Signature"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Optional AI",
+      "items": [
+        "Mistral only when ai_interpretation is true",
+        "Polishes recommendation wording only",
+        "Never invents score, grade, or SLA claims"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Sources",
+      "items": [
+        "UI: app/page.tsx AdvisorForm #advisor",
+        "API: app/api/advise/route.ts",
+        "Teaser: lib/abbreviate-result.ts → AdvisorFunnel InitialAssessment"
+      ]
+    }
+  ]
+}
