@@ -45,16 +45,18 @@ const EXAMPLE_CARDS = [
 
 const COPY = {
   en: {
-    modelL: "HOW GRYPS WORKS",
-    modelH: "From coordinates and an operational profile to a scored, ranked view of connectivity options.",
-    loc: "LOCATION",
-    locB: "Where is the operation?",
-    op: "OPERATION",
-    opB: "What does it need?",
-    conn: "CONNECTIVITY",
-    connB: "What options exist?",
-    sig: "RESILIENCE SIGNATURE",
-    sigB: "A structured view of connectivity resilience.",
+    modelL: "HOW GRYPS WORKS · THE SYSTEM",
+    modelH: "Assess → score → rank → document. Same closed loop every time; the stack is secondary.",
+    loc: "1 · ASSESS",
+    locB: "Coordinates + operational profile — where and what the site needs.",
+    op: "2 · SCORE",
+    opB: "Deterministic Model v0.4. Optional AI never changes the number.",
+    conn: "3 · RANK",
+    connB: "Connectivity options ordered for this mission.",
+    sig: "4 · DOCUMENT",
+    sigB: "Resilience Signature — score, grade, risks, ranked backups. No account for the initial result.",
+    walkL: "HIRING / SKILL-DEMO PATH",
+    walkB: "Open the Advisor → fill a site profile → Generate Resilience Signature. Email is optional and only unlocks the longer report.",
     modesL: "THREE WAYS TO USE GRYPS",
     exploreCta: "Explore",
     assessCta: "Open the advisor →",
@@ -70,16 +72,18 @@ const COPY = {
     libraryLink: "Signatures from assessed research sites →",
   },
   fi: {
-    modelL: "MITEN GRYPS TOIMII",
-    modelH: "Koordinaateista ja toimintaprofiilista pisteytettyyn, järjestettyyn näkymään yhteysvaihtoehdoista.",
-    loc: "SIJAINTI",
-    locB: "Missä toiminta on?",
-    op: "TOIMINTA",
-    opB: "Mitä se tarvitsee?",
-    conn: "YHTEYS",
-    connB: "Mitä vaihtoehtoja on?",
-    sig: "RESILIENCE SIGNATURE",
-    sigB: "Rakenteinen näkymä yhteyden resilienssiin.",
+    modelL: "MITEN GRYPS TOIMII · JÄRJESTELMÄ",
+    modelH: "Arvioi → pisteytä → järjestä → dokumentoi. Sama suljettu silmukka joka kerta; pinot ovat toissijaisia.",
+    loc: "1 · ARVIOI",
+    locB: "Koordinaatit + toimintaprofiili — missä kohde on ja mitä se tarvitsee.",
+    op: "2 · PISTEYTÄ",
+    opB: "Deterministinen malli v0.4. Valinnainen tekoäly ei koskaan muuta lukua.",
+    conn: "3 · JÄRJESTÄ",
+    connB: "Yhteysvaihtoehdot järjestettynä tälle tehtävälle.",
+    sig: "4 · DOKUMENTOI",
+    sigB: "Resilience Signature — pisteet, arvosana, riskit, sijoitetut varayhteydet. Ei tiliä alustavaan tulokseen.",
+    walkL: "OSAAMISDEMO / REKRYPOLKU",
+    walkB: "Avaa Advisor → täytä kohteen tiedot → Luo Resilience Signature. Sähköposti on valinnainen ja avaa vain pidemmän raportin.",
     modesL: "KOLME TAPAA KÄYTTÄÄ GRYPS:ÄÄ",
     exploreCta: "Tutki",
     assessCta: "Avaa Advisor →",
@@ -176,11 +180,29 @@ export function HomeOrientation({
               fontFamily: "var(--font-ui)",
               fontSize: 15,
               color: "var(--text)",
-              margin: 0,
-              maxWidth: 420,
+              margin: "0 0 20px",
+              maxWidth: 480,
             }}
           >
             {t.sigB}
+          </p>
+          <p className="gryps-type-label" style={{ marginBottom: 6 }}>
+            {t.walkL}
+          </p>
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 14,
+              color: "var(--text-muted)",
+              margin: 0,
+              maxWidth: 520,
+              lineHeight: 1.55,
+            }}
+          >
+            {t.walkB}{" "}
+            <Link href="/#advisor" style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>
+              {t.assessCta}
+            </Link>
           </p>
         </div>
       </section>

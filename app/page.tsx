@@ -443,8 +443,8 @@ function SignatureReveal({
               </div>
               <p className="gryps-result-tool-note">
                 {lang === "fi"
-                  ? "Paikallinen esikatselu — avaa täysi arvio sähköpostilla. Ei asiakastiliä."
-                  : "Local teaser only — email if you want the full report. Not a customer account."}
+                  ? "Alustava Signature yllä — sähköposti vain jos haluat pidemmän raportin. Ei tiliä."
+                  : "Initial Signature above — email only if you want the longer report. No account."}
               </p>
             </div>
             <InitialAssessment result={abbreviated} lang={lang} />
@@ -1782,7 +1782,7 @@ const COPY = {
     advisorCta: "Generate Resilience Signature",
     advisorHeading: "Resilience Advisor",
     advisorSub:
-      "Deterministic scoring for your site — most assessments take about a minute. Optional Ask Mimir (below) explains the model or results; it never changes scores or ranks.",
+      "Hiring / skill-demo path: fill the profile → generate a Signature (~1 min) — no email needed for the initial result. Deterministic Model v0.4; optional Ask Mimir never changes scores or ranks.",
     sectorLabel: "OPERATIONAL SECTOR",
     sectorPlaceholder: "Select sector",
     autonomyLabel: "AUTONOMY LEVEL",
@@ -1799,7 +1799,8 @@ const COPY = {
     prioritiesHint:
       "Select up to 3. Same site can recommend differently — priorities re-rank options; they do not change the Signature score.",
     boundsHint: "Coordinates must be within Nordic/Arctic bounds (lat 55–85°, lng −30–40°).",
-    noAccountNote: "Free · No account required. Email only if you want the detailed assessment.",
+    noAccountNote:
+      "No account · no email required for the initial Resilience Signature (score, grade, top risks, ranked option). Email is optional — only if you want the longer report.",
     runAdvisor: "Generate Resilience Signature",
     analysing: "Generating Signature…",
     analyseAnother: "Generate another Signature",
@@ -1843,7 +1844,7 @@ const COPY = {
       {
         n: "04",
         title: "Generate Resilience Signature",
-        body: "Free initial assessment with score and top recommendation. Email only if you want the detailed assessment.",
+        body: "Initial Signature: score, grade, top risks, ranked option — no email. Optional email only unlocks the longer report.",
       },
     ],
     examplesLabel: "RESEARCH LIBRARY",
@@ -1886,7 +1887,7 @@ const COPY = {
     advisorCta: "Luo Resilience Signature",
     advisorHeading: "Resilience Advisor",
     advisorSub:
-      "Deterministinen pisteytys kohteellesi — useimmat arviot kestävät noin minuutin. Valinnainen Kysy Mimiriltä selittää mallia tai tuloksia; se ei koskaan muuta pisteitä tai sijoituksia.",
+      "Osaamisdemo: täytä tiedot → luo Signature (~1 min) — alustavaan tulokseen ei tarvita sähköpostia. Deterministinen malli v0.4; valinnainen Kysy Mimiriltä ei koskaan muuta pisteitä tai sijoituksia.",
     sectorLabel: "TOIMIALA",
     sectorPlaceholder: "Valitse toimiala",
     autonomyLabel: "AUTONOMIATASO",
@@ -1905,7 +1906,7 @@ const COPY = {
     boundsHint:
       "Koordinaattien on oltava Pohjoismaiden tai arktisen alueen rajoissa (lat 55–85°, lng −30–40°).",
     noAccountNote:
-      "Ilmainen · Ei tiliä tarvita. Sähköposti vain, jos haluat yksityiskohtaisen arvion.",
+      "Ei tiliä · ei sähköpostia alustavaan Resilience Signatureen (pisteet, arvosana, pääriskit, sijoitettu vaihtoehto). Sähköposti on valinnainen — vain jos haluat pidemmän raportin.",
     runAdvisor: "Luo Resilience Signature",
     analysing: "Luodaan Signaturea…",
     analyseAnother: "Luo toinen Signature",
@@ -1949,7 +1950,7 @@ const COPY = {
       {
         n: "04",
         title: "Luo Resilience Signature",
-        body: "Ilmainen alustava arvio pisteineen ja ykkössuosituksineen. Sähköposti vain, jos haluat yksityiskohtaisen arvion.",
+        body: "Alustava Signature: pisteet, arvosana, pääriskit, sijoitettu vaihtoehto — ei sähköpostia. Valinnainen sähköposti avaa vain pidemmän raportin.",
       },
     ],
     examplesLabel: "RESEARCH LIBRARY",
