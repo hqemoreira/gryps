@@ -65,6 +65,10 @@ Progressive disclosure on output: Overview · Risks · Options · Evidence · Me
 
 See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 
+### Changelog — 2026-11
+
+- **2026-11-03 (Forge s26):** No GRYPS product code change. Forge Control Tower UX + weekly Herald; Litrix fully retired in favor of Morea across portfolio docs. GRYPS remains indexed hiring spear; operator RESEND_FROM still pending if email-status ≠ production.
+
 ### Changelog — 2026-10
 
 - **2026-10-16 (Forge s25 / gryps-s17):** `GET /api/email-status` reports Resend `deliveryMode` without secrets. Production currently has `RESEND_API_KEY` but **no `RESEND_FROM`** — remains `test_fallback` until you `vercel env add RESEND_FROM production` with a verified-domain address.
