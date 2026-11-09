@@ -67,7 +67,7 @@ See `HOMEPAGE_CONTENT_MOVES` in `lib/ia-nav.ts`.
 
 ### Changelog — 2026-11
 
-- **2026-11-03 (Forge s26):** No GRYPS product code change. Forge Control Tower UX + weekly Herald; Litrix fully retired in favor of Morea across portfolio docs. GRYPS remains indexed hiring spear; operator RESEND_FROM still pending if email-status ≠ production.
+- **2026-11-03 (Forge s26):** No GRYPS product code change. Forge Control Tower UX + weekly Herald; portfolio docs use Morea for the AI Act literacy archive. GRYPS remains indexed hiring spear; operator RESEND_FROM still pending if email-status ≠ production.
 
 ### Changelog — 2026-10
 
