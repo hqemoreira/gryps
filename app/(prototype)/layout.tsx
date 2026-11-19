@@ -7,6 +7,7 @@ import { GrypsMark } from "@/components/GrypsMark";
 import { Footer } from "@/components/Footer";
 import { useTheme } from "@/context/ThemeContext";
 import { grypsCopyright } from "@/lib/gryps-copyright";
+import { PROTOTYPE_STATUS_CHIP } from "@/lib/prototype-status";
 
 export default function PrototypeLayout({ children }: { children: React.ReactNode }) {
   const { dark, toggleDark } = useTheme();
@@ -58,6 +59,7 @@ export default function PrototypeLayout({ children }: { children: React.ReactNod
           <Link href="/" className="gryps-nav-brand" style={{ maxWidth: "none" }}>
             <GrypsMark size={24} animate />
             <span className="gryps-nav-wordmark">GRYPS</span>
+            <span className="gryps-nav-prototype-chip">{PROTOTYPE_STATUS_CHIP.en}</span>
           </Link>
           <div
             className="gryps-prototype-midnav"
@@ -99,7 +101,7 @@ export default function PrototypeLayout({ children }: { children: React.ReactNod
       <main className="gryps-main-under-nav">{children}</main>
 
       <Footer
-        footerRights={grypsCopyright("en", "Non-commercial R&D prototype")}
+        footerRights={grypsCopyright("en")}
         secondaryLink={{ href: "/", label: "Back to GRYPS" }}
       />
     </div>

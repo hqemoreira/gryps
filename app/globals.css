@@ -242,6 +242,22 @@ body {
   color: var(--text);
   flex-shrink: 0;
 }
+/* Compact R&D status — muted; never competes with the wordmark */
+.gryps-nav-prototype-chip {
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--accent-cyan) 55%, var(--text-dim));
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  opacity: 0.9;
+}
 .gryps-nav-actions {
   display: flex;
   align-items: center;
@@ -1606,11 +1622,17 @@ body {
 .gryps-footer-bottom {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   gap: 16px;
   padding-top: 22px;
   position: relative;
   z-index: 1;
+}
+.gryps-footer-legal {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 .gryps-footer-copy {
   font-family: var(--font-ui);
@@ -1619,6 +1641,13 @@ body {
   color: var(--text-muted);
   line-height: 1.5;
 }
+.gryps-footer-disclosure {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
 .gryps-footer-model {
   font-family: var(--font-data);
   font-size: 12px;
@@ -1626,6 +1655,7 @@ body {
   color: var(--text-muted);
   line-height: 1.5;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ── Polar instrument (ops + methodology) ────────────────────────────────── */

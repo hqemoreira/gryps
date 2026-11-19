@@ -425,10 +425,7 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
 
       <Footer
         lang={lang}
-        footerRights={grypsCopyright(
-          lang,
-          lang === "en" ? "Non-commercial R&D prototype" : "Ei-kaupallinen T&K-prototyyppi"
-        )}
+        footerRights={grypsCopyright(lang)}
         secondaryLink={{ href: "/map", label: lang === "en" ? "Explore" : "Tutki" }}
       />
       <MimirAssistant lang={lang} variant="docs" />

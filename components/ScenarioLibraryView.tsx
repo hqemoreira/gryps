@@ -257,10 +257,7 @@ export function ScenarioLibraryView() {
 
       <Footer
         lang={lang}
-        footerRights={grypsCopyright(
-          lang,
-          lang === "en" ? "Non-commercial R&D prototype" : "Ei-kaupallinen T&K-prototyyppi"
-        )}
+        footerRights={grypsCopyright(lang)}
         footerTag={
           lang === "en"
             ? "Built in Finland for high-latitude resilience."

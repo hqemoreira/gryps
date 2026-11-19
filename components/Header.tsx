@@ -6,6 +6,7 @@ import { ChevronDown, Sun, Moon } from "lucide-react";
 import { GrypsMark } from "@/components/GrypsMark";
 import { useTheme } from "@/context/ThemeContext";
 import { CTA_SHORT, IA_MODES, descFor, labelFor, type IaMode, type IaModeId } from "@/lib/ia-nav";
+import { PROTOTYPE_STATUS_CHIP } from "@/lib/prototype-status";
 
 type ExtraLink = { href: string; label: string };
 
@@ -112,6 +113,9 @@ export function Header({
       <Link href="/" className="gryps-nav-brand" onClick={goHome} aria-label="GRYPS home">
         <GrypsMark size={28} animate />
         <span className="gryps-nav-wordmark">GRYPS</span>
+        <span className="gryps-nav-prototype-chip" title={PROTOTYPE_STATUS_CHIP[lang]}>
+          {PROTOTYPE_STATUS_CHIP[lang]}
+        </span>
         {tagline && <span className="gryps-nav-tagline">{tagline}</span>}
       </Link>
 
