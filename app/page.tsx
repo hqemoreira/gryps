@@ -2090,28 +2090,7 @@ export default function HomePage() {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }}>
-      <TopChrome
-        ref={chromeRef}
-        banner={
-          <div
-            className="gryps-banner"
-            style={{
-              backgroundColor: "rgba(245,184,74,0.06)",
-              borderBottom: "1px solid rgba(245,184,74,0.2)",
-              textAlign: "center",
-              fontFamily: "var(--font-data)",
-              fontSize: 9,
-              color: "var(--accent-amber)",
-              letterSpacing: "0.06em",
-              backdropFilter: "blur(12px)",
-            }}
-          >
-            {lang === "en"
-              ? "R&D PROTOTYPE · ESPOO, FINLAND · NOT FOR SALE"
-              : "T&K-PROTOTYYPPI · ESPOO · EI MYYNNISSÄ"}
-          </div>
-        }
-      >
+      <TopChrome ref={chromeRef}>
         <Header
           embedded
           tagline={lang === "fi" ? "YHTEYSRESILIENSSI" : "CONNECTIVITY INTELLIGENCE"}
@@ -2251,10 +2230,7 @@ export default function HomePage() {
 
       <Footer
         lang={lang}
-        footerRights={grypsCopyright(
-          lang,
-          lang === "en" ? "Non-commercial R&D prototype" : "Ei-kaupallinen T&K-prototyyppi"
-        )}
+        footerRights={grypsCopyright(lang)}
         footerTag={t.footerTag}
         secondaryLink={{ href: "/map", label: lang === "en" ? "Explore" : "Tutki" }}
       />

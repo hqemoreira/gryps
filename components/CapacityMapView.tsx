@@ -712,12 +712,7 @@ export function CapacityMapView({ sites }: { sites: CapacitySiteView[] }) {
 
       <Footer
         lang={lang}
-        footerRights={grypsCopyright(
-          lang,
-          lang === "en"
-            ? "Espoo, Finland · Non-commercial R&D prototype"
-            : "Espoo, Suomi · Ei-kaupallinen T&K-prototyyppi"
-        )}
+        footerRights={grypsCopyright(lang)}
         secondaryLink={{ href: "/research", label: "Research Library" }}
       />
     </div>

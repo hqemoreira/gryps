@@ -368,10 +368,7 @@ export function ResearchWorkspaceView({ initialId }: { initialId?: string | null
 
       <Footer
         lang={lang}
-        footerRights={grypsCopyright(
-          lang,
-          lang === "en" ? "Non-commercial R&D prototype" : "Ei-kaupallinen T&K-prototyyppi"
-        )}
+        footerRights={grypsCopyright(lang)}
       />
     </div>
   );

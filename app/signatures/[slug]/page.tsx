@@ -224,7 +224,7 @@ export default async function SignatureSitePage({ params }: Props) {
       </div>
 
       <Footer
-        footerRights={grypsCopyright("en", "Espoo, Finland · Non-commercial R&D prototype")}
+        footerRights={grypsCopyright("en")}
         secondaryLink={{ href: "/research", label: "Research Library" }}
       />
 

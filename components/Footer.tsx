@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { GrypsMark } from "@/components/GrypsMark";
 import { FOOTER_GROUPS, labelFor } from "@/lib/ia-nav";
+import { PROTOTYPE_FOOTER_DISCLOSURE } from "@/lib/prototype-status";
 
 const MODEL_SHORT = "v0.4";
 
@@ -57,7 +58,10 @@ export function Footer({
         <div className="gryps-footer-rule" aria-hidden="true" />
 
         <div className="gryps-footer-bottom">
-          <span className="gryps-footer-copy">{footerRights}</span>
+          <div className="gryps-footer-legal">
+            <span className="gryps-footer-copy">{footerRights}</span>
+            <span className="gryps-footer-disclosure">{PROTOTYPE_FOOTER_DISCLOSURE[lang]}</span>
+          </div>
           <span className="gryps-footer-model">
             {lang === "fi"
               ? `MALLI ${MODEL_SHORT} · ESPOO, SUOMI`
