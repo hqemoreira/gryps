@@ -109,7 +109,12 @@ export const HERO_DEMO = HERO_LATITUDE_RESULTS[HERO_DEFAULT_LATITUDE_ID];
 export const HERO_DEMO_SCORE = HERO_DEMO.resilience_signature.score;
 export const HERO_DEMO_GRADE = HERO_DEMO.resilience_signature.grade;
 
-export const HERO_DEMO_TOP_RISK_EN = "Correlated LEO broadband risk";
+/** Engine-backed — empty when Model v0.4 emits no risk_factors for this profile. */
+export const HERO_DEMO_TOP_RISK_EN = HERO_DEMO.risk_factors[0]?.label ?? "No material risk flags";
+export const HERO_DEMO_TOP_RISK_FI =
+  HERO_DEMO.risk_factors[0] != null
+    ? HERO_DEMO.risk_factors[0].label
+    : "Ei merkittäviä riskilippuja";
 export const HERO_DEMO_TOP_REC =
   HERO_DEMO.connectivity_options[0] != null
     ? `${HERO_DEMO.connectivity_options[0].provider} · ${HERO_DEMO.connectivity_options[0].confidence}`
@@ -119,11 +124,66 @@ export const HERO_DEMO_PLACE = "67.0°N 26.0°E · Northern Finland";
 export const HERO_DEMO_SUBTITLE_EN = "Starlink + Iridium Certus · dual LEO paths";
 export const HERO_DEMO_SUBTITLE_FI = "Starlink + Iridium Certus · kaksi LEO-polkua";
 
-/** Closest Research Library dual-path mining case for the hero sample card. */
+export const HERO_DEMO_SCENARIO_EN = "Remote-operated mining site";
+export const HERO_DEMO_SCENARIO_FI = "Etäohjattu kaivoskohde";
+export const HERO_DEMO_PROFILE_EN = "High criticality · Remote-operated · Starlink + Iridium Certus";
+export const HERO_DEMO_PROFILE_FI = "Korkea kriittisyys · Etäohjattu · Starlink + Iridium Certus";
+
+/** Closest Research Library dual-path mining case (below-fold / research — not first-screen CTA). */
 export const HERO_DEMO_RESEARCH_HREF = "/research/finnish-arctic-mining-kittila";
 
 export const HERO_DEMO_OG_TITLE = `GRYPS · Score: ${HERO_DEMO_SCORE}/100 · Grade ${HERO_DEMO_GRADE}`;
 export const HERO_DEMO_OG_ALT = `GRYPS Resilience Signature · Score ${HERO_DEMO_SCORE} · Grade ${HERO_DEMO_GRADE}`;
+
+/**
+ * First-screen model register — honesty boundaries beside the Signature.
+ * Links to /limitations; does not replace that page.
+ */
+export const HERO_CLAIMS_REGISTER = [
+  {
+    id: "computes",
+    labelEn: "Computes",
+    labelFi: "Laskee",
+    en: "A deterministic resilience score, grade, top risk and ranked connectivity options using the submitted inputs and GRYPS Model v0.4.",
+    fi: "Deterministisen resilienssipisteen, arvosanan, pääriskin ja sijoitetut yhteysvaihtoehdot annetuista syötteistä ja GRYPS-mallista v0.4.",
+  },
+  {
+    id: "observe",
+    labelEn: "Does not observe",
+    labelFi: "Ei havainnoi",
+    en: "Live radio conditions, actual customer-network performance or independently verified field coverage.",
+    fi: "Reaaliaikaisia radio-olosuhteita, asiakasverkon todellista suorituskykyä eikä itsenäisesti varmennettua kenttäkattavuutta.",
+  },
+  {
+    id: "decide",
+    labelEn: "Does not decide",
+    labelFi: "Ei päätä",
+    en: "Procurement, contractual SLAs or connectivity purchasing decisions.",
+    fi: "Hankintaa, sopimus-SLA:ita eikä yhteyksien ostopäätöksiä.",
+  },
+  {
+    id: "reproduce",
+    labelEn: "Reproducibility",
+    labelFi: "Toistettavuus",
+    en: "Identical inputs and model version produce the same Resilience Signature.",
+    fi: "Samat syötteet ja sama malliversio tuottavat saman Resilience Signaturen.",
+  },
+] as const;
+
+export const HERO_CLAIMS_LIMITATIONS_HREF = "/limitations";
+
+/** Advisor deep-link with the frozen mining profile (optional lat override from the ruler). */
+export function buildHeroAdvisorHref(lat: number = HERO_DEMO_INPUT.lat): string {
+  const params = new URLSearchParams({
+    lat: String(lat),
+    lng: String(HERO_DEMO_INPUT.lng),
+    sector: HERO_DEMO_INPUT.sector,
+    autonomy: HERO_DEMO_INPUT.autonomy,
+    criticality: HERO_DEMO_INPUT.criticality,
+    providers: HERO_DEMO_INPUT.providers.join(","),
+  });
+  return `/?${params.toString()}#advisor`;
+}
 
 /** Pedagogy / failure-mode companion (not the hero). */
 export const LAPLAND_FAILURE_DEMO_INPUT = {

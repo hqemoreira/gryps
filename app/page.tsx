@@ -30,17 +30,22 @@ import {
   type AdvisorPriorityId,
 } from "@/lib/advisor-priorities";
 import {
+  HERO_CLAIMS_LIMITATIONS_HREF,
+  HERO_CLAIMS_REGISTER,
   HERO_DEFAULT_LATITUDE_ID,
-  HERO_DEMO_RESEARCH_HREF,
-  HERO_DEMO_SUBTITLE_EN,
-  HERO_DEMO_SUBTITLE_FI,
+  HERO_DEMO_INPUT,
+  HERO_DEMO_PROFILE_EN,
+  HERO_DEMO_PROFILE_FI,
+  HERO_DEMO_SCENARIO_EN,
+  HERO_DEMO_SCENARIO_FI,
   HERO_LATITUDE_TICKS,
+  buildHeroAdvisorHref,
   getHeroLatitudeResult,
   getHeroLatitudeTick,
   type HeroLatitudeId,
 } from "@/lib/hero-demo";
 import type { DeterministicResult } from "@/lib/deterministic-score";
-import { SCORING_ENGINE } from "@/lib/model-constants";
+import { SCORING_ENGINE, SCORING_MODEL_LABEL } from "@/lib/model-constants";
 import { MimirAssistant } from "@/components/MimirAssistant";
 import {
   buildMimirSignatureContext,
@@ -83,7 +88,7 @@ function FadeUp({ children, className = "" }: { children: ReactNode; className?:
   );
 }
 
-function StickyMobileCta({ label }: { label: string }) {
+function StickyMobileCta({ label, href }: { label: string; href: string }) {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const hero = document.getElementById("gryps-hero");
@@ -166,7 +171,7 @@ function StickyMobileCta({ label }: { label: string }) {
       aria-hidden={!visible}
       {...(!visible ? { inert: true as const } : {})}
     >
-      <a href="#advisor" tabIndex={visible ? 0 : -1}>
+      <a href={href} tabIndex={visible ? 0 : -1}>
         {label} <ArrowRight size={14} />
       </a>
     </div>
@@ -177,8 +182,8 @@ const NORDIC_LAT_MIN = 55;
 const NORDIC_LAT_MAX = 85;
 const NORDIC_LNG_MIN = -30;
 const NORDIC_LNG_MAX = 40;
-const DEFAULT_LAT = "67.0";
-const DEFAULT_LNG = "26.0";
+const DEFAULT_LAT = String(HERO_DEMO_INPUT.lat);
+const DEFAULT_LNG = String(HERO_DEMO_INPUT.lng);
 
 function parseProvidersParam(raw: string | null): string[] {
   if (!raw) return [];
@@ -505,11 +510,11 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
   // and React hydration keeps those empty values, leaving the Score CTA disabled.
   const [lat, setLat] = useState(DEFAULT_LAT);
   const [lng, setLng] = useState(DEFAULT_LNG);
-  const [vertical, setVertical] = useState("");
-  const [providers, setProviders] = useState<string[]>([]);
+  const [vertical, setVertical] = useState(HERO_DEMO_INPUT.sector);
+  const [providers, setProviders] = useState<string[]>([...HERO_DEMO_INPUT.providers]);
   const [legacySetup, setLegacySetup] = useState("");
-  const [autonomy, setAutonomy] = useState("");
-  const [criticality, setCriticality] = useState("");
+  const [autonomy, setAutonomy] = useState(HERO_DEMO_INPUT.autonomy);
+  const [criticality, setCriticality] = useState(HERO_DEMO_INPUT.criticality);
   const [priorities, setPriorities] = useState<AdvisorPriorityId[]>([]);
   const [aiInterpretation, setAiInterpretation] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -1388,7 +1393,7 @@ function HeroCompositionBars({
         </p>
       )}
       <a
-        href="#score-composition-anchor"
+        href="/methodology"
         style={{
           fontFamily: "var(--font-data)",
           fontSize: 10,
@@ -1407,10 +1412,12 @@ function HeroSignatureCard({
   t,
   lang,
   latId,
+  advisorHref,
 }: {
   t: typeof COPY.en;
   lang: "en" | "fi";
   latId: HeroLatitudeId;
+  advisorHref: string;
 }) {
   const tick = getHeroLatitudeTick(latId);
   const result = getHeroLatitudeResult(latId);
@@ -1418,10 +1425,14 @@ function HeroSignatureCard({
   const grade = result.resilience_signature.grade;
   const gc = gradeTextColor(grade);
   const border = gradeColor(grade);
-  const topRisk = heroRiskLabel(result.risk_factors[0]?.label ?? t.heroTopRisk, lang);
-  const topRec = result.connectivity_options[0]
-    ? `${result.connectivity_options[0].provider} · ${result.connectivity_options[0].confidence}`
-    : "—";
+  const topRisk = result.risk_factors[0]
+    ? heroRiskLabel(result.risk_factors[0].label, lang)
+    : lang === "fi"
+      ? "Ei merkittäviä riskilippuja"
+      : "No material risk flags";
+  const topOpt = result.connectivity_options[0];
+  const topRec = topOpt ? `${topOpt.provider} · ${topOpt.confidence}` : "—";
+  const topRecNote = topOpt?.note ?? "";
   const place = lang === "fi" ? tick.placeFi : tick.placeEn;
 
   return (
@@ -1430,7 +1441,7 @@ function HeroSignatureCard({
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: 18,
+        gap: 16,
         width: "100%",
         minHeight: 0,
         justifyContent: "space-between",
@@ -1438,42 +1449,71 @@ function HeroSignatureCard({
       }}
     >
       <div>
+        <p
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: "var(--text-label)",
+            color: "var(--text-dim)",
+            letterSpacing: "0.12em",
+            margin: "0 0 8px",
+          }}
+        >
+          {lang === "fi" ? "VIITEKENAARIO" : "REFERENCE SCENARIO"}
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontWeight: 700,
+            fontSize: "var(--text-title)",
+            color: "var(--text)",
+            marginBottom: 4,
+          }}
+        >
+          {lang === "fi" ? HERO_DEMO_SCENARIO_FI : HERO_DEMO_SCENARIO_EN}
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: 12,
+            color: "var(--text-muted)",
+            letterSpacing: "0.02em",
+            marginBottom: 4,
+          }}
+        >
+          {place}
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--font-data)",
+            fontSize: 11,
+            color: "var(--text-dim)",
+            letterSpacing: "0.04em",
+            marginBottom: 18,
+          }}
+        >
+          {lang === "fi" ? HERO_DEMO_PROFILE_FI : HERO_DEMO_PROFILE_EN}
+        </p>
+
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             gap: 12,
-            marginBottom: 14,
+            marginBottom: 10,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-            <span
-              className="gryps-hero-example-chip"
-              style={{
-                fontFamily: "var(--font-data)",
-                fontSize: 10,
-                letterSpacing: "0.1em",
-                color: "var(--aurora-1)",
-                border: "1px solid color-mix(in srgb, var(--aurora-1) 45%, transparent)",
-                padding: "3px 8px",
-                flexShrink: 0,
-              }}
-            >
-              {t.heroExampleChip}
-            </span>
-            <p
-              style={{
-                fontFamily: "var(--font-data)",
-                fontSize: "var(--text-label)",
-                color: "var(--text-dim)",
-                letterSpacing: "0.12em",
-                margin: 0,
-              }}
-            >
-              RESILIENCE SIGNATURE
-            </p>
-          </div>
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: "var(--text-label)",
+              color: "var(--text-dim)",
+              letterSpacing: "0.12em",
+              margin: 0,
+            }}
+          >
+            RESILIENCE SIGNATURE
+          </p>
           <span
             className="gryps-grade-badge"
             style={{
@@ -1489,29 +1529,6 @@ function HeroSignatureCard({
             <span className="gryps-grade-badge-letter">{grade}</span>
           </span>
         </div>
-
-        <p
-          style={{
-            fontFamily: "var(--font-ui)",
-            fontWeight: 700,
-            fontSize: "var(--text-title)",
-            color: "var(--text)",
-            marginBottom: 4,
-          }}
-        >
-          {place}
-        </p>
-        <p
-          style={{
-            fontFamily: "var(--font-data)",
-            fontSize: 11,
-            color: "var(--text-muted)",
-            letterSpacing: "0.04em",
-            marginBottom: 20,
-          }}
-        >
-          {lang === "fi" ? HERO_DEMO_SUBTITLE_FI : HERO_DEMO_SUBTITLE_EN}
-        </p>
 
         <div
           aria-label={`Score ${score} out of 100, grade ${grade}`}
@@ -1546,20 +1563,18 @@ function HeroSignatureCard({
             fontSize: 10,
             color: "var(--text-dim)",
             letterSpacing: "0.06em",
-            marginBottom: 18,
+            marginBottom: 16,
           }}
         >
-          {SCORING_ENGINE}
+          {SCORING_MODEL_LABEL} · {SCORING_ENGINE}
         </p>
 
         <div
           className="gryps-signature-divider"
-          style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 16 }}
+          style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 14 }}
         />
 
-        <HeroCompositionBars lang={lang} result={result} />
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 18 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
           <div>
             <p
               style={{
@@ -1607,15 +1622,83 @@ function HeroSignatureCard({
             >
               {topRec}
             </p>
+            {topRecNote ? (
+              <p
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 11,
+                  color: "var(--text-muted)",
+                  lineHeight: 1.4,
+                  marginTop: 4,
+                }}
+              >
+                {topRecNote}
+              </p>
+            ) : null}
           </div>
+        </div>
+
+        <div className="gryps-hero-claims" style={{ marginBottom: 4 }}>
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: "var(--text-label)",
+              color: "var(--text-dim)",
+              letterSpacing: "0.1em",
+              marginBottom: 8,
+            }}
+          >
+            {lang === "fi" ? "MALLIREKISTERI" : "MODEL REGISTER"}
+          </p>
+          <ul
+            style={{
+              listStyle: "none",
+              margin: 0,
+              padding: 0,
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
+            {HERO_CLAIMS_REGISTER.map((row) => (
+              <li key={row.id} style={{ lineHeight: 1.4 }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-data)",
+                    fontSize: 10,
+                    letterSpacing: "0.06em",
+                    color: "var(--aurora-1)",
+                    display: "block",
+                    marginBottom: 2,
+                  }}
+                >
+                  {lang === "fi" ? row.labelFi : row.labelEn}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 12,
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  {lang === "fi" ? row.fi : row.en}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <a
+            href={HERO_CLAIMS_LIMITATIONS_HREF}
+            className="gryps-text-link"
+            style={{ display: "inline-block", marginTop: 10, fontSize: 12 }}
+          >
+            {lang === "fi" ? "Rajoitteet →" : "Limitations →"}
+          </a>
         </div>
       </div>
 
-      <div>
-        <a href={HERO_DEMO_RESEARCH_HREF} className="gryps-text-link">
-          {lang === "fi" ? "Katso täysi Signature →" : "View full Signature →"}
-        </a>
-      </div>
+      <a href={advisorHref} className="gryps-cta-btn" style={{ width: "100%", justifyContent: "center" }}>
+        {t.runAdvisor} <ArrowRight size={14} />
+      </a>
     </div>
   );
 }
@@ -1980,6 +2063,9 @@ export default function HomePage() {
   const chromeRef = useRef<HTMLDivElement>(null);
   const t = COPY[lang];
   const modelChip = t.modelChip;
+  const heroTick = getHeroLatitudeTick(heroLatId);
+  const heroResult = getHeroLatitudeResult(heroLatId);
+  const heroAdvisorHref = buildHeroAdvisorHref(heroTick.lat);
 
   useEffect(() => {
     fetch("/api/signatures")
@@ -2031,7 +2117,7 @@ export default function HomePage() {
           tagline={lang === "fi" ? "YHTEYSRESILIENSSI" : "CONNECTIVITY INTELLIGENCE"}
           lang={lang}
           onLangChange={setLang}
-          ctaHref="#advisor"
+          ctaHref={heroAdvisorHref}
           useIaNav
         />
       </TopChrome>
@@ -2069,7 +2155,7 @@ export default function HomePage() {
               <p className="gryps-hero-example-bridge">{t.heroExampleBridge}</p>
 
               <div className="gryps-hero-actions">
-                <a href="#advisor" className="gryps-cta-btn">
+                <a href={heroAdvisorHref} className="gryps-cta-btn">
                   {t.advisorCta} <ArrowRight size={14} />
                 </a>
                 <a href="/map" className="gryps-secondary-btn">
@@ -2093,7 +2179,12 @@ export default function HomePage() {
               <div className="gryps-polar-stage">
                 <PolarAtmosphere className="gryps-polar-bg" variant="halo" />
                 <div className="gryps-polar-foreground">
-                  <HeroSignatureCard t={t} lang={lang} latId={heroLatId} />
+                  <HeroSignatureCard
+                    t={t}
+                    lang={lang}
+                    latId={heroLatId}
+                    advisorHref={heroAdvisorHref}
+                  />
                 </div>
               </div>
             </div>
@@ -2107,6 +2198,20 @@ export default function HomePage() {
         onSelect={setHeroLatId}
         lang={lang}
       />
+
+      <div
+        id="score-composition-anchor"
+        className="gryps-content gryps-no-print"
+        style={{
+          paddingLeft: "var(--pad-x)",
+          paddingRight: "var(--pad-x)",
+          paddingBottom: 24,
+          maxWidth: 420,
+        }}
+      >
+        <HeroCompositionBars lang={lang} result={heroResult} />
+      </div>
+
       <TrustStrip lang={lang} />
 
       <FadeUp>
@@ -2154,7 +2259,7 @@ export default function HomePage() {
         secondaryLink={{ href: "/map", label: lang === "en" ? "Explore" : "Tutki" }}
       />
 
-      <StickyMobileCta label={t.navCta} />
+      <StickyMobileCta label={t.navCta} href={heroAdvisorHref} />
     </div>
   );
 }

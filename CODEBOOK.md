@@ -10,7 +10,7 @@
 - **Indexed** product (with Portfolio). Scores and documents — does **not** live-monitor links or sell a NOC. Private ops tooling (if any) stays private — do not discuss or couple product UI to it.
 - **Phase goal (product):** experimental research prototype for Connectivity Intelligence — commercialization and monetization are outside the current scope. Public posture: `/research-prototype`. Portfolio demonstration (career narrative): `/case-study`. Do not mix personal administrative / benefit notes into the product UI.
 - **Object:** Resilience Signature (deterministic engine **v0.4**, two-layer: Site Conditions + Mitigation Quality). Product vocabulary: Connectivity Intelligence → Advisor action **Generate Resilience Signature** → output **Resilience Signature** → map **Explore Connectivity Intelligence**. Assistant: **Mimir** (explains only; never scores). Supporting surfaces: `/methodology`, `/providers`, `/research` (Research Library), `/map`, `/about`, `/knowledge`, `/case-study`, `/research-prototype`, research docs (`/data-sources`, `/assumptions`, `/limitations`, `/changelog`). Thin `/signatures/[slug]` Site XX pages are **noindex** and excluded from the sitemap (kept for map/dev).
-- **Golden demo:** Homepage sample Signature is **Score 47 · Grade D** (forestry · 68.2°N · Starlink · autonomous · high). Single source: `lib/hero-demo.ts` (also drives OG / social previews). Verify with `npm run test:score`.
+- **Golden demo:** Homepage sample Signature is **Score 83 · Grade B** (mining · 67.0°N · Starlink + Iridium · remote-operated · high · Model v0.4). Single source: `lib/hero-demo.ts` (also drives OG / social previews + model register). Lapland forestry (68.2°N · single Starlink) is pedagogy only in the Research Library. Verify with `npm run test:score`.
 - **Landing:** Arctic ops-console composition — sticky Signature card, polar atmosphere around (not through) the Signature, GrypsMark footer lockup.
 - **Legal chrome:** Terms/Privacy at `/terms` and `/privacy` — labeled non-commercial R&D — not multi-section commercial “Legal”.
 - **Monitoring:** versioning fields support future T0/T1 comparison; live drift alerting is **not** productized. No freemium / free-trial CTAs. Prototype line: Research prototype · Non-commercial · Model-based analysis.
@@ -46,7 +46,7 @@ Source of truth: `lib/ia-nav.ts` (Header, Footer, DocShell).
 
 ### Homepage role
 
-Orientation + routing — not a catalogue. Hero + Signature sample (Score 47 · Grade D) → mental model → three modes → research dataset strip → example Signatures → Research & Prototype link. Heavy map/ops/methodology prose moves to child routes.
+Orientation + routing — not a catalogue. Hero + Signature sample (Score 83 · Grade B mining reference + model register) → mental model → three modes → research dataset strip → example Signatures → Research & Prototype link. Heavy map/ops/methodology prose moves to child routes.
 
 ### Signature UX
 
@@ -364,7 +364,7 @@ useEffect(() => {
 gryps/
 ├── app/
 │   ├── layout.tsx              # Root layout — fonts, JSON-LD, AnimatedFavicon
-│   ├── page.tsx                # Landing — ops-console hero + Signature (Score 47 · D)
+│   ├── page.tsx                # Landing — ops-console hero + Signature (Score 83 · B mining)
 │   ├── about/                  # About
 │   ├── methodology/            # Assessment methodology (EN/FI)
 │   ├── providers/              # Provider catalog
@@ -383,7 +383,7 @@ gryps/
 │   └── Footer.tsx / Header.tsx
 └── lib/
     ├── deterministic-score.ts  # Signature engine v0.4 (two-layer)
-    ├── hero-demo.ts            # Golden demo Score 47 · Grade D
+    ├── hero-demo.ts            # Golden demo Score 83 · Grade B + model register
     ├── basemap.ts              # Esri raster tile URLs
     ├── ops-map-style.ts        # Shared MapLibre style
     └── scoring.ts / signatures-db.ts / …

@@ -255,6 +255,27 @@ export type ChangelogEntry = {
 /** Methodology / prototype evolution — demonstrates how the research model advances. */
 export const METHODOLOGY_CHANGELOG: ChangelogEntry[] = [
   {
+    version: "v0.6.1",
+    date: "2026-11-19",
+    title: "First-screen mining reference + model register",
+    titleFi: "Ensimmäisen näytön kaivosviite + mallirekisteri",
+    scoringEngine: SCORING_ENGINE,
+    items: [
+      {
+        en: "Freeze homepage reference scenario: remote-operated mining at 67.0°N 26.0°E (Starlink + Iridium) — engine Score 83 · Grade B from Model v0.4; Lapland forestry remains Research Library pedagogy.",
+        fi: "Kotisivun viiteskenaario lukittu: etäohjattu kaivos 67.0°N 26.0°E (Starlink + Iridium) — moottorin Score 83 · Grade B mallista v0.4; Lapin metsätalous jää Research Library -pedagogiaksi.",
+      },
+      {
+        en: "Four-line model register on the Signature card (computes / does not observe / does not decide / reproducibility); links to /limitations. Advisor CTA prefills the same HERO_DEMO_INPUT.",
+        fi: "Nelirivinen mallirekisteri Signature-kortilla (laskee / ei havainnoi / ei päätä / toistettavuus); linkki /limitations-sivulle. Advisor-CTA täyttää saman HERO_DEMO_INPUT-syötteen.",
+      },
+      {
+        en: "Acceptance: landing and Advisor must match score, grade, top risk, ranked options, and scoring engine label (deterministic-v0.4).",
+        fi: "Hyväksyntä: landing ja Advisor vastaavat pisteen, arvosanan, pääriskin, sijoitettujen vaihtoehtojen ja pisteytysmoottorin tunnisteen (deterministic-v0.4) osalta.",
+      },
+    ],
+  },
+  {
     version: "v0.6",
     date: "2026-10-13",
     title: "Two-layer Signature (Model v0.4)",
