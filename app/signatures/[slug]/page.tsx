@@ -3,7 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getSiteBySlug, getAllSites } from "@/lib/signatures-db";
-import { hasHistoricalEnrichment, ResilienceOutput } from "@/components/ResilienceOutput";
+import { ResilienceOutput } from "@/components/ResilienceOutput";
 import { GrypsPrintBrand } from "@/components/GrypsMark";
 import { MimirAssistant } from "@/components/MimirAssistant";
 import { gradeColor } from "@/lib/resilience-colors";
@@ -14,6 +14,7 @@ import {
   chipsFromResult,
 } from "@/lib/mimir/signature-context";
 import { grypsCopyright } from "@/lib/gryps-copyright";
+import { hasHistoricalEnrichment } from "@/lib/real-data-evidence";
 import {
   getResearchByLegacySignatureSlug,
   isThinSignatureSlug,

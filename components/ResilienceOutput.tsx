@@ -24,6 +24,10 @@ import { computeComplianceFlags } from "@/lib/compliance";
 import { redundancyTiers } from "@/lib/redundancy-tiers";
 import { displayModelVersion } from "@/lib/model-constants";
 import {
+  hasHistoricalEnrichment,
+  type RealDataEvidence,
+} from "@/lib/real-data-evidence";
+import {
   GRADE_BANDS_SUMMARY,
   RECOMMENDATION_AI_LABEL,
   SCORING_ENGINE_DISPLAY,
@@ -2011,32 +2015,9 @@ function ComparisonTable({ rows, t }: { rows: ComparisonRow[]; t: UiCopy }) {
   );
 }
 
-// Historical enrichment columns only. The composite real_data_score is kept in
-// the database and is never rendered here — it reads as a second Signature.
-export type RealDataEvidence = {
-  /** Preserved for callers; not rendered as a current score. */
-  realDataScore?: number | null;
-  terrainPenaltyScore: number | null;
-  elevationCenterM: number | null;
-  elevationVarianceM: number | null;
-  realWorldGapScore: number | null;
-  municipality: string | null;
-  bittimittariPeriod: string | null;
-  bittimittariSampleCount: number | null;
-  bittimittariMedianDownloadMbps: number | null;
-  bittimittariMedianLatencyMs: number | null;
-};
-
-/** True when any stored enrichment field can be shown without the composite score. */
-export function hasHistoricalEnrichment(data: RealDataEvidence): boolean {
-  return (
-    data.terrainPenaltyScore != null ||
-    data.realWorldGapScore != null ||
-    data.elevationCenterM != null ||
-    data.bittimittariMedianDownloadMbps != null ||
-    data.bittimittariSampleCount != null
-  );
-}
+// Historical enrichment: type + predicate live in lib/real-data-evidence (server-safe).
+export type { RealDataEvidence } from "@/lib/real-data-evidence";
+export { hasHistoricalEnrichment } from "@/lib/real-data-evidence";
 
 function RealDataEvidencePanel({
   data,

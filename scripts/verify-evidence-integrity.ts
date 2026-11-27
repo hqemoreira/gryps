@@ -4,7 +4,7 @@
  */
 import { readFileSync } from "fs";
 import { join } from "path";
-import { hasHistoricalEnrichment } from "../components/ResilienceOutput";
+import { hasHistoricalEnrichment } from "../lib/real-data-evidence";
 import { buildEvidencePackage, DISPLAY_CHAIN_NOTICE } from "../lib/evidence-model";
 import { EVIDENCE_KINDS } from "../lib/evidence-kinds";
 import { EXAMPLE_SIGNATURES } from "../lib/example-signatures";
