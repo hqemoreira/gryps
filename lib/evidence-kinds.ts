@@ -2,7 +2,7 @@
  * Evidence chip vocabulary — single source of truth.
  * Same label = same meaning on every surface (Signature, Research, Map, Providers, Methodology).
  *
- * Do not invent synonyms (e.g. MODEL / DATA / INTERPRETATION). Use these five only.
+ * Do not invent synonyms (e.g. MODEL / DATA / INTERPRETATION). STORED is only for a persisted integer whose writer is not in this repository.
  */
 
 export const EVIDENCE_KINDS = {
@@ -31,6 +31,11 @@ export const EVIDENCE_KINDS = {
     en: "Computed from model outputs or catalog rules (e.g. capacity band from grade) — not a direct measurement.",
     fi: "Laskettu mallitulosteista tai hakemistosäännöistä (esim. kapasiteettivyöhyke arvosanasta) — ei suora mittaus.",
   },
+  STORED: {
+    label: "STORED",
+    en: "Historical enrichment fields from a retired pass. The composite real_data_score remains in the database and is not shown as a current Signature result. Original raw inputs are unavailable here. Not a direct measurement, not live satellite performance, and not the 0–100 Signature.",
+    fi: "Historiallisia rikastuskenttiä poistetusta ajosta. Yhdistetty real_data_score säilyy tietokannassa eikä sitä näytetä nykyisenä Signature-tuloksena. Alkuperäisiä raakasyötteitä ei ole tässä. Ei suora mittaus, ei live-satelliittisuorituskykyä, eikä 0–100 Signature.",
+  },
 } as const;
 
 export type EvidenceKind = keyof typeof EVIDENCE_KINDS;
@@ -41,4 +46,5 @@ export const EVIDENCE_KIND_ORDER: EvidenceKind[] = [
   "RESEARCH",
   "ILLUSTRATIVE",
   "DERIVED",
+  "STORED",
 ];

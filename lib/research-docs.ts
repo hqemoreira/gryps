@@ -79,9 +79,9 @@ export const DATA_PROVENANCE: DataProvenanceRecord[] = [
     name: "Deterministic Signature engine",
     nameFi: "Deterministinen Signature-moottori",
     source:
-      "GRYPS R&D — Model v0.4 scoring rules (Site Conditions + Mitigation Quality: redundancy, provider/path independence, profile–autonomy alignment, hard caps)",
+      "GRYPS R&D — Model v0.4 scoring rules (Site Conditions + Mitigation Quality: redundancy / provider diversity, Catalogue confidence, profile–autonomy alignment, hard caps)",
     sourceFi:
-      "GRYPS T&K — mallin v0.4 pisteytyssäännöt (Paikan olosuhteet + Lievennyksen laatu: redundanssi, toimittaja-/polkuriippumattomuus, profiili–autonomia, kovat katot)",
+      "GRYPS T&K — mallin v0.4 pisteytyssäännöt (Paikan olosuhteet + Lievennyksen laatu: redundanssi / toimittajien monimuotoisuus, hakemistoluottamus, profiili–autonomia, kovat katot)",
     dateAccessed: "2026-10-13",
     dataType: "Internal research model / reproducible algorithm",
     dataTypeFi: "Sisäinen tutkimusmalli / toistettava algoritmi",

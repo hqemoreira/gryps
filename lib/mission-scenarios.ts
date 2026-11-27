@@ -68,13 +68,13 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
       ],
       challenges: [
         "Canopy and terrain shadowing reduce effective sky-view for phased-array LEO",
-        "Single-provider broadband setups are common and create correlated outage risk",
+        "Single-provider broadband setups are common and leave no second catalogue path recorded",
         "GEO elevation degrades toward the Arctic Circle; unsuitable as sole primary above ~70°N",
         "Autonomy increases dependency: a connectivity gap becomes an operational safety event",
       ],
       technology: [
         "LEO broadband as primary mobility path where sky-view allows",
-        "Polar-orbit narrowband (e.g. Iridium-class) as independent control/backup",
+        "Polar-orbit narrowband (e.g. Iridium-class) as catalogue control/backup diversity",
         "Store-and-forward / edge buffering for non-critical telemetry during passes",
         "Dual-orbit architecture when safety-critical autonomy is in scope",
       ],
@@ -85,7 +85,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "GRYPS ranks options via Model v0.4 — illustrative, no commercial relationships",
       ],
       architecture:
-        "A research-fit architecture for Arctic forestry often looks like LEO broadband for logistics video/telemetry plus an independent polar narrowband path for control and distress — scored for redundancy and latitude, not sold as a package.",
+        "A research-fit architecture for Arctic forestry often looks like LEO broadband for logistics video/telemetry plus a polar narrowband catalogue path for control and distress — scored for catalogue diversity and latitude, not sold as a package, and not treated as proven end-to-end independence.",
     },
     fi: {
       environment:
@@ -140,7 +140,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "Open-pit and remote extraction sites in Sweden, Finland, and the wider Arctic — often beyond reliable terrestrial coverage, with autonomous or remote-operated haul fleets and strict safety envelopes.",
       requirements: [
         "Low-latency command paths for vehicle supervision where autonomy is active",
-        "Independent failover before safety-critical single-path postures",
+        "Second catalogue path before safety-critical single-path postures",
         "Orbital-class diversity so one constellation outage does not halt the fleet",
         "Modeled Signature evidence for readiness docs — not procurement bidding",
       ],
@@ -160,10 +160,10 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "LEO broadband for haul telemetry and cameras under open sky",
         "Polar narrowband for resilient control and distress",
         "GEO/VSAT only as tertiary or camp-side, not sole Arctic pit primary",
-        "Catalog confidence is assessment basis — not an SLA or commercial endorsement",
+        "Catalogue confidence is assessment basis — not an SLA or commercial endorsement",
       ],
       architecture:
-        "Mining research scenarios typically favour multi-orbit redundancy when autonomy is safety-critical: a broadband LEO primary plus an independent polar path, with Signature caps enforcing honesty about single-path setups.",
+        "Mining research scenarios typically favour multi-orbit catalogue redundancy when autonomy is safety-critical: a broadband LEO primary plus a polar narrowband path, with Signature caps enforcing honesty about single-path setups. Catalogue mix is not verified ground/backhaul independence."
     },
     fi: {
       environment:
@@ -311,7 +311,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "Operators confuse assessment confidence with availability guarantees",
       ],
       technology: [
-        "LEO broadband primary + independent LEO narrowband or GEO tertiary by latitude",
+        "LEO broadband primary + catalogue LEO narrowband or GEO tertiary by latitude",
         "SD-WAN / dual-modem patterns as research concepts (not GRYPS products)",
         "Edge caching so brief outages do not halt local production logic",
         "Mission priorities: uptime and bandwidth vs deployment simplicity trade-offs",
@@ -323,7 +323,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "Always label provider notes as non-endorsement research commentary",
       ],
       architecture:
-        "Remote industrial research scenarios usually ask whether the site has two independent paths and whether latitude allows GEO at all — then Signature the gap instead of opening a sales ticket.",
+        "Remote industrial research scenarios usually ask whether the site has two catalogue-documented paths, whether latitude allows GEO at all, and what remains UNKNOWN about ground and site dependencies — then Signature the gap instead of opening a sales ticket."
     },
     fi: {
       environment:
@@ -376,7 +376,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
       requirements: [
         "Minutes-scale setup with portable power and minimal pointing skill",
         "Coverage first; throughput second until command is stable",
-        "Independent path if the primary constellation is congested or blocked",
+        "Alternate catalogue path if the primary constellation is congested or blocked",
         "Decision support that stays research — no “request a quote” step",
       ],
       challenges: [
@@ -467,7 +467,7 @@ export const MISSION_SCENARIOS: MissionScenario[] = [
         "Polar/narrowband primary for SCADA-class traffic",
         "Optional LEO broadband bursts for maintenance windows and camera pulls",
         "Store-and-forward with local autonomy for non-critical samples",
-        "Dual independent narrowband/LEO paths when the entity is critical",
+        "Dual catalogue narrowband/LEO paths when the entity is critical"
       ],
       providers: [
         "Iridium-class and similar polar narrowband for continuous low-rate telemetry",

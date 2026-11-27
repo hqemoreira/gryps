@@ -1,0 +1,730 @@
+{
+  "schemaVersion": "gryps-dependency-fixture-v0.1",
+  "packSchemaVersion": "gryps-evidence-pack-v0",
+  "id": "nordic-lapland-dual-path-v0",
+  "displayName": "Nordic Lapland — Public Evidence Research Envelope",
+  "packKind": "public_evidence_pack",
+  "purpose": "Traceable research-only demonstration of how public architecture-class and facility-existence evidence can be attached to the dependency model for a Finnish Lapland dual-path research envelope — without inventing customer-serving paths or end-to-end independence.",
+  "researchConclusion": "Public sources support selected constellation architecture classes and named Nordic-relevant facility / PoP existence claims. Finnish Lapland site-to-gateway routing, shared backhaul, shared power, shared control, and end-to-end path independence remain UNKNOWN.",
+  "scope": {
+    "label": "Finnish Lapland dual-path research envelope (public evidence only)",
+    "precision": "regional_research_envelope",
+    "geographicNote": "Envelope geography is Finnish Lapland / high-latitude Nordic research context. No fictional industrial site pin, terminal IDs, or invented gateways. Named facilities outside Lapland are facility-existence entities only — not serving-path edges."
+  },
+  "temporalValidity": {
+    "recordedAt": "2026-11-26",
+    "validFrom": "2026-11-26",
+    "validTo": null,
+    "note": "Retrieval date 2026-11-26. Historical Iridium ground-station list is from 2019-03-28 and must not be silently treated as a current inventory. OneWeb SNP compilation is as of May 2025."
+  },
+  "catalogueClassification": {
+    "providerIds": ["starlink", "oneweb", "iridium"],
+    "providerDiversity": true,
+    "orbits": ["LEO", "LEO", "LEO"],
+    "serviceClasses": ["broadband", "broadband", "narrowband"],
+    "catalogueBasedOrbitMix": true,
+    "note": "Catalogue-based orbit mix is true because LEO broadband + LEO narrowband appear together. That boolean is not infrastructure independence."
+  },
+  "entities": [
+    {
+      "id": "env-lapland",
+      "kind": "assessment_site",
+      "name": "Finnish Lapland dual-path research envelope",
+      "attributes": {
+        "role": "research_envelope_only",
+        "hasInventedTerminals": false,
+        "hasInventedGateways": false,
+        "region": "FI-Lapland"
+      }
+    },
+    {
+      "id": "sp-starlink",
+      "kind": "service_provider",
+      "name": "Starlink",
+      "attributes": { "catalogueId": "starlink", "orbit": "LEO", "serviceClass": "broadband" }
+    },
+    {
+      "id": "sp-oneweb",
+      "kind": "service_provider",
+      "name": "OneWeb",
+      "attributes": { "catalogueId": "oneweb", "orbit": "LEO", "serviceClass": "broadband", "operatorLabel": "Eutelsat OneWeb" }
+    },
+    {
+      "id": "sp-iridium",
+      "kind": "service_provider",
+      "name": "Iridium Certus",
+      "attributes": { "catalogueId": "iridium", "orbit": "LEO", "serviceClass": "narrowband" }
+    },
+    {
+      "id": "const-starlink",
+      "kind": "constellation",
+      "name": "Starlink constellation",
+      "attributes": {
+        "operator": "SpaceX",
+        "orbit": "LEO",
+        "spaceSegmentProfile": "optical_isl_mesh_documented_class"
+      }
+    },
+    {
+      "id": "const-oneweb",
+      "kind": "constellation",
+      "name": "OneWeb constellation (Phase 1 class)",
+      "attributes": {
+        "operator": "Eutelsat OneWeb",
+        "orbit": "LEO",
+        "spaceSegmentProfile": "bent_pipe_no_isl_phase1_documented_class"
+      }
+    },
+    {
+      "id": "const-iridium",
+      "kind": "constellation",
+      "name": "Iridium constellation",
+      "attributes": {
+        "operator": "Iridium",
+        "orbit": "LEO",
+        "spaceSegmentProfile": "crosslink_mesh_documented_class"
+      }
+    },
+    {
+      "id": "gf-iridium-svalbard",
+      "kind": "ground_facility",
+      "name": "Iridium commercial ground station — Svalbard, Norway",
+      "attributes": {
+        "facilityClass": "commercial_ground_station",
+        "not": "snp",
+        "notPoP": true,
+        "country": "NO",
+        "place": "Svalbard",
+        "evidenceVintage": "2019-03-28"
+      }
+    },
+    {
+      "id": "gf-oneweb-snp-svalbard",
+      "kind": "ground_facility",
+      "name": "OneWeb SNP — Svalbard (compiled May 2025)",
+      "attributes": {
+        "facilityClass": "snp",
+        "not": "pop",
+        "country": "NO",
+        "place": "Svalbard",
+        "evidenceVintage": "2025-05"
+      }
+    },
+    {
+      "id": "gf-oneweb-snp-pitea",
+      "kind": "ground_facility",
+      "name": "OneWeb SNP — Piteå, Sweden (compiled May 2025)",
+      "attributes": {
+        "facilityClass": "snp",
+        "not": "pop",
+        "country": "SE",
+        "place": "Piteå",
+        "evidenceVintage": "2025-05"
+      }
+    },
+    {
+      "id": "gf-oneweb-snp-nuuk",
+      "kind": "ground_facility",
+      "name": "OneWeb SNP — Nuuk, Greenland (compiled May 2025)",
+      "attributes": {
+        "facilityClass": "snp",
+        "not": "pop",
+        "country": "GL",
+        "place": "Nuuk",
+        "evidenceVintage": "2025-05"
+      }
+    },
+    {
+      "id": "pop-oneweb-ams17",
+      "kind": "network_pop",
+      "name": "OneWeb interconnection facility — Digital Realty AMS17, Amsterdam",
+      "attributes": {
+        "facilityClass": "pop",
+        "not": "snp",
+        "asn": "800",
+        "country": "NL",
+        "place": "Amsterdam",
+        "peeringdbFacilityHint": "Digital Realty AMS17 - Amsterdam"
+      }
+    },
+    {
+      "id": "pop-oneweb-ld8",
+      "kind": "network_pop",
+      "name": "OneWeb interconnection facility — Equinix LD8, London Docklands",
+      "attributes": {
+        "facilityClass": "pop",
+        "not": "snp",
+        "asn": "800",
+        "country": "GB",
+        "place": "London",
+        "peeringdbFacilityHint": "Equinix LD8 - London, Docklands"
+      }
+    },
+    {
+      "id": "fd-constellation",
+      "kind": "failure_domain",
+      "name": "Constellation / spacecraft failure",
+      "attributes": { "layer": "space", "typicalImpact": "wide" }
+    },
+    {
+      "id": "fd-gateway",
+      "kind": "failure_domain",
+      "name": "Gateway / SNP / ground-station failure",
+      "attributes": { "layer": "ground", "typicalImpact": "regional" }
+    },
+    {
+      "id": "fd-backhaul",
+      "kind": "failure_domain",
+      "name": "Terrestrial backhaul disruption",
+      "attributes": { "layer": "network", "typicalImpact": "regional" }
+    },
+    {
+      "id": "fd-site-power",
+      "kind": "failure_domain",
+      "name": "Site power failure",
+      "attributes": { "layer": "site", "typicalImpact": "local" }
+    },
+    {
+      "id": "fd-ops-control",
+      "kind": "failure_domain",
+      "name": "Shared network operations / control dependency",
+      "attributes": { "layer": "operations", "typicalImpact": "wide" }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-starlink-offers",
+      "type": "offers",
+      "fromId": "sp-starlink",
+      "toId": "const-starlink",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": {
+        "label": "catalogue + public operator mapping",
+        "precision": "global",
+        "geographicNote": "Not a Lapland serving-path claim"
+      },
+      "evidenceIds": ["ev-catalog-index", "ev-starlink-isl"],
+      "limitations": "Architecture/catalogue mapping only."
+    },
+    {
+      "id": "rel-oneweb-offers",
+      "type": "offers",
+      "fromId": "sp-oneweb",
+      "toId": "const-oneweb",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": {
+        "label": "catalogue + public architecture-class mapping",
+        "precision": "global"
+      },
+      "evidenceIds": ["ev-catalog-index", "ev-oneweb-no-isl-tma"],
+      "limitations": "Phase 1 no-ISL class from secondary measurement paper citing filings — not operator press attestation in this pack."
+    },
+    {
+      "id": "rel-iridium-offers",
+      "type": "offers",
+      "fromId": "sp-iridium",
+      "toId": "const-iridium",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": {
+        "label": "catalogue + public operator mapping",
+        "precision": "global"
+      },
+      "evidenceIds": ["ev-catalog-index", "ev-iridium-crosslinks"],
+      "limitations": "Narrowband service class — not a broadband substitute."
+    },
+    {
+      "id": "rel-starlink-exposed-const",
+      "type": "exposed_to",
+      "fromId": "sp-starlink",
+      "toId": "fd-constellation",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "fleet-scoped space segment", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index", "ev-starlink-isl"],
+      "limitations": "Exposure class only."
+    },
+    {
+      "id": "rel-oneweb-exposed-const",
+      "type": "exposed_to",
+      "fromId": "sp-oneweb",
+      "toId": "fd-constellation",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "fleet-scoped space segment", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index", "ev-oneweb-no-isl-tma"],
+      "limitations": "Different fleet from Starlink/Iridium."
+    },
+    {
+      "id": "rel-iridium-exposed-const",
+      "type": "exposed_to",
+      "fromId": "sp-iridium",
+      "toId": "fd-constellation",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "fleet-scoped space segment", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index", "ev-iridium-crosslinks"],
+      "limitations": "Different fleet from Starlink/OneWeb."
+    },
+    {
+      "id": "rel-iridium-uses-svalbard",
+      "type": "uses",
+      "fromId": "sp-iridium",
+      "toId": "gf-iridium-svalbard",
+      "direction": "from→to",
+      "assertionKind": "facility_existence",
+      "confidence": "documented",
+      "inferred": false,
+      "recordedAt": "2026-11-26",
+      "validFrom": "2019-03-28",
+      "validTo": null,
+      "scope": {
+        "label": "Named Iridium commercial ground station (Svalbard) as stated 2019-03-28",
+        "precision": "place",
+        "geographicNote": "Svalbard, Norway — not a Finnish Lapland site edge"
+      },
+      "evidenceIds": ["ev-iridium-svalbard-2019"],
+      "limitations": "Historical 2019 operator statement. Does not establish that a Lapland terminal connects through Svalbard. Ownership vs local partner operation not fully specified for Svalbard in this source. FacilityClass is commercial_ground_station — not labelled SNP or PoP."
+    },
+    {
+      "id": "rel-oneweb-uses-snp-svalbard",
+      "type": "uses",
+      "fromId": "sp-oneweb",
+      "toId": "gf-oneweb-snp-svalbard",
+      "direction": "from→to",
+      "assertionKind": "facility_existence",
+      "confidence": "documented",
+      "inferred": false,
+      "recordedAt": "2026-11-26",
+      "validFrom": "2025-05-01",
+      "validTo": null,
+      "scope": {
+        "label": "Compiled OneWeb SNP existence (Svalbard) as of May 2025",
+        "precision": "place",
+        "geographicNote": "Secondary compilation — not Lapland serving path"
+      },
+      "evidenceIds": ["ev-oneweb-snp-nordic-tma"],
+      "limitations": "Secondary academic compilation. Not operator primary attestation. Must not be conflated with Iridium Svalbard ground station or with a PoP."
+    },
+    {
+      "id": "rel-oneweb-uses-snp-pitea",
+      "type": "uses",
+      "fromId": "sp-oneweb",
+      "toId": "gf-oneweb-snp-pitea",
+      "direction": "from→to",
+      "assertionKind": "facility_existence",
+      "confidence": "documented",
+      "inferred": false,
+      "recordedAt": "2026-11-26",
+      "validFrom": "2025-05-01",
+      "validTo": null,
+      "scope": {
+        "label": "Compiled OneWeb SNP existence (Piteå) as of May 2025",
+        "precision": "place"
+      },
+      "evidenceIds": ["ev-oneweb-snp-nordic-tma"],
+      "limitations": "Secondary compilation. Not a Finnish site path. Not a PoP."
+    },
+    {
+      "id": "rel-oneweb-uses-snp-nuuk",
+      "type": "uses",
+      "fromId": "sp-oneweb",
+      "toId": "gf-oneweb-snp-nuuk",
+      "direction": "from→to",
+      "assertionKind": "facility_existence",
+      "confidence": "documented",
+      "inferred": false,
+      "recordedAt": "2026-11-26",
+      "validFrom": "2025-05-01",
+      "validTo": null,
+      "scope": {
+        "label": "Compiled OneWeb SNP existence (Nuuk) as of May 2025",
+        "precision": "place"
+      },
+      "evidenceIds": ["ev-oneweb-snp-nordic-tma"],
+      "limitations": "Secondary compilation. Not a Lapland serving path."
+    },
+    {
+      "id": "rel-oneweb-uses-pop-ams",
+      "type": "uses",
+      "fromId": "sp-oneweb",
+      "toId": "pop-oneweb-ams17",
+      "direction": "from→to",
+      "assertionKind": "facility_existence",
+      "confidence": "documented",
+      "inferred": false,
+      "recordedAt": "2026-11-26",
+      "validFrom": null,
+      "validTo": null,
+      "scope": {
+        "label": "PeeringDB interconnection facility (PoP-class) — Amsterdam",
+        "precision": "facility",
+        "geographicNote": "European PoP example; not SNP; not Lapland path"
+      },
+      "evidenceIds": ["ev-oneweb-pop-ams", "ev-starlink-gateway-vs-pop"],
+      "limitations": "PoP ≠ SNP ≠ gateway. PeeringDB voluntary listing. Does not prove customer traffic for a Lapland terminal."
+    },
+    {
+      "id": "rel-oneweb-uses-pop-ldn",
+      "type": "uses",
+      "fromId": "sp-oneweb",
+      "toId": "pop-oneweb-ld8",
+      "direction": "from→to",
+      "assertionKind": "facility_existence",
+      "confidence": "documented",
+      "inferred": false,
+      "recordedAt": "2026-11-26",
+      "validFrom": null,
+      "validTo": null,
+      "scope": {
+        "label": "PeeringDB interconnection facility (PoP-class) — London Docklands",
+        "precision": "facility"
+      },
+      "evidenceIds": ["ev-oneweb-pop-ldn"],
+      "limitations": "PoP ≠ SNP. Not a Lapland serving path."
+    }
+  ],
+  "unknownRelationships": [
+    {
+      "id": "unk-lapland-to-any-gateway",
+      "between": ["env-lapland", "gf-iridium-svalbard", "gf-oneweb-snp-svalbard", "gf-oneweb-snp-pitea", "gf-oneweb-snp-nuuk"],
+      "layer": "ground",
+      "question": "Does any Finnish Lapland customer terminal connect through a named gateway / SNP in this pack?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Facility existence near the Nordic region does not establish a Lapland serving path"
+    },
+    {
+      "id": "unk-customer-routing",
+      "between": ["sp-starlink", "sp-oneweb", "sp-iridium", "env-lapland"],
+      "layer": "ground",
+      "question": "Actual customer traffic routing / landing for a Lapland dual-path deployment?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Architecture-class differences do not reveal session routing"
+    },
+    {
+      "id": "unk-shared-backhaul",
+      "between": ["sp-starlink", "sp-oneweb", "sp-iridium"],
+      "layer": "network",
+      "question": "Shared terrestrial backhaul or landing fibre under dual-path use?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Distinct brands or PoP listings do not prove backhaul separation or sharing"
+    },
+    {
+      "id": "unk-shared-power",
+      "between": ["sp-starlink", "sp-oneweb", "sp-iridium", "env-lapland"],
+      "layer": "site",
+      "question": "Shared site power supply for dual outdoor units?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Missing site evidence is not evidence of separation or of shared power"
+    },
+    {
+      "id": "unk-shared-ops",
+      "between": ["sp-starlink", "sp-oneweb", "sp-iridium"],
+      "layer": "operations",
+      "question": "Shared network operations, control plane, or wholesale chain?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Public architecture pages do not disclose NOC/control independence"
+    },
+    {
+      "id": "unk-e2e-independence",
+      "between": ["sp-starlink", "sp-oneweb", "sp-iridium", "env-lapland"],
+      "layer": "operations",
+      "question": "End-to-end path independence for a Lapland dual-path envelope?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Catalogue-based orbit mix or Nordic facility existence ≠ end-to-end independence"
+    },
+    {
+      "id": "unk-site-performance",
+      "between": ["env-lapland", "sp-starlink", "sp-oneweb", "sp-iridium"],
+      "layer": "site",
+      "question": "Site-specific availability and performance for Lapland?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "No operational measurements are asserted in this pack"
+    },
+    {
+      "id": "unk-fi-earth-station-inventory",
+      "between": ["env-lapland"],
+      "layer": "ground",
+      "question": "Public inventory of Finnish licensed earth-station / gateway locations usable for dependency mapping?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Traficom licensing regime and non-public register existence do not yield open coordinates"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-catalog-index",
+      "title": "GRYPS Advisor / indexed provider catalogue",
+      "urlOrReference": "lib/deterministic-score.ts ADVISOR_PROVIDERS; lib/providers.ts INDEXED_PROVIDERS",
+      "publisher": "GRYPS R&D",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "catalogue_note",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "internal",
+      "supportsClaimType": "architecture_class",
+      "claim": "Starlink, OneWeb, and Iridium are distinct catalogue ids with LEO broadband / broadband / narrowband labels; catalogue-based orbit mix is true for this set in Model v0.4.",
+      "scope": { "label": "GRYPS catalogue", "precision": "global" },
+      "limitations": "Catalogue metadata only — not gateway, backhaul, or site independence.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "ADVISOR_PROVIDERS / INDEXED_PROVIDERS catalogue ids and orbit/class fields."
+    },
+    {
+      "id": "ev-starlink-isl",
+      "title": "Starlink Technology — optical ISL mesh",
+      "urlOrReference": "https://starlink.com/technology",
+      "publisher": "SpaceX / Starlink",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "primary_operator",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "primary_operator",
+      "supportsClaimType": "architecture_class",
+      "claim": "Starlink publishes optical inter-satellite links (space lasers) forming a constellation mesh as an architecture class.",
+      "scope": { "label": "constellation design class", "precision": "global" },
+      "limitations": "Not a named Nordic gateway map; not dual-path independence with OneWeb or Iridium.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "Each Starlink satellite contains 3 space lasers (Optical Intersatellite Links or ISLs) operating at up to 200 Gbps, which together across the constellation form a global internet mesh…"
+    },
+    {
+      "id": "ev-starlink-gateway-vs-pop",
+      "title": "Starlink Progress 2025 — gateway sites vs Points-of-Presence",
+      "urlOrReference": "https://starlink.com/public-files/starlinkProgressReport_2025.pdf",
+      "publisher": "SpaceX / Starlink",
+      "publicationDate": "2025",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "primary_operator",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "primary_operator",
+      "supportsClaimType": "architecture_class",
+      "claim": "Starlink’s published resilience narrative distinguishes multiple gateway sites from internet Points-of-Presence as separate routing elements.",
+      "scope": { "label": "global operator narrative", "precision": "global" },
+      "limitations": "Does not name Nordic facilities; must not invent Lapland gateways from this distinction.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "…multiple gateway sites and internet Points of-Presence locations for the constellation to route data through."
+    },
+    {
+      "id": "ev-iridium-crosslinks",
+      "title": "Iridium Network — cross-linked LEO mesh",
+      "urlOrReference": "https://www.iridium.com/network/",
+      "publisher": "Iridium",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "primary_operator",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "primary_operator",
+      "supportsClaimType": "architecture_class",
+      "claim": "Iridium publishes a LEO constellation with each satellite cross-linked to four others, with polar coverage narrative.",
+      "scope": { "label": "constellation design class", "precision": "global" },
+      "limitations": "Does not inventory current ground stations; does not bind Lapland terminals.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "In space, each satellite is cross-linked to four others… The Iridium constellation is in Low-Earth Orbit (LEO), approximately 780 kilometers…"
+    },
+    {
+      "id": "ev-iridium-svalbard-2019",
+      "title": "Iridium IR — commercial ground stations including Svalbard (2019)",
+      "urlOrReference": "https://investor.iridium.com/2019-03-28-Iridium-Enhances-Network-with-New-Southern-Hemisphere-Ground-Station",
+      "publisher": "Iridium Communications Inc.",
+      "publicationDate": "2019-03-28",
+      "retrievalDate": "2026-11-26",
+      "validFrom": "2019-03-28",
+      "validTo": null,
+      "evidenceType": "primary_operator",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "primary_operator",
+      "supportsClaimType": "facility_existence",
+      "claim": "As of 2019-03-28 Iridium stated that Svalbard, Norway was among its operational commercial ground stations (with Fairbanks and Tempe).",
+      "scope": {
+        "label": "Named commercial ground stations as of 2019-03-28",
+        "precision": "place",
+        "geographicNote": "Svalbard named; not a Lapland edge"
+      },
+      "limitations": "Historical. Not silently current. Not a customer-serving path for Lapland. Do not conflate with OneWeb SNP at Svalbard.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "The Punta Arenas site now joins existing operational Iridium commercial ground stations in Fairbanks, Alaska; Svalbard, Norway and Tempe, Arizona."
+    },
+    {
+      "id": "ev-iridium-teleport-vs-gateway-imo",
+      "title": "IMO MSC.1/Circ.1613/Rev.2 — Iridium teleport vs gateway roles",
+      "urlOrReference": "https://wwwcdn.imo.org/localresources/en/OurWork/Safety/Documents/Documents%20relevant%20to%20GMDSS/MSC.1-Circ.1613-Rev.2.pdf",
+      "publisher": "IMO",
+      "publicationDate": "2023-07-01",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "regulatory_circular",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "primary_regulatory_description",
+      "supportsClaimType": "architecture_class",
+      "claim": "Iridium GMDSS documentation defines teleport and gateway as distinct terrestrial roles and describes cross-linked satellites.",
+      "scope": { "label": "Iridium system role taxonomy (GMDSS context)", "precision": "global" },
+      "limitations": "Role taxonomy — not a Nordic facility inventory or Lapland path.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "Teleport means a terrestrial part of the Iridium mobile-satellite system which communicates between the Iridium satellites and the gateway… Gateway means a terrestrial part of a mobile satellite system that acts as an interface between the network and other communication networks."
+    },
+    {
+      "id": "ev-oneweb-no-isl-tma",
+      "title": "TMA 2025 — OneWeb Phase 1 without ISLs",
+      "urlOrReference": "https://tma.ifip.org/2025/wp-content/uploads/sites/14/2025/06/tma2025-paper3.pdf",
+      "publisher": "Zhao et al. / IFIP TMA 2025",
+      "publicationDate": "2025",
+      "retrievalDate": "2026-11-26",
+      "validFrom": "2025-05-01",
+      "validTo": null,
+      "evidenceType": "peer_reviewed_or_workshop",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "secondary",
+      "supportsClaimType": "architecture_class",
+      "claim": "Secondary technical study states current OneWeb Phase 1 satellites do not utilize ISLs, making SNP placement critical for coverage.",
+      "scope": { "label": "OneWeb Phase 1 architecture class (as of paper)", "precision": "global" },
+      "limitations": "Secondary; cites prior filings. Not Lapland performance. Not independence proof.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "Since the current OneWeb Phase 1 satellites do not utilize ISLs [18], [21], the strategic positioning of SNPs worldwide is crucial to achieve optimal coverage."
+    },
+    {
+      "id": "ev-oneweb-snp-nordic-tma",
+      "title": "TMA 2025 Appendix — OneWeb Nordic SNPs (May 2025)",
+      "urlOrReference": "https://tma.ifip.org/2025/wp-content/uploads/sites/14/2025/06/tma2025-paper3.pdf",
+      "publisher": "Zhao et al. / IFIP TMA 2025",
+      "publicationDate": "2025",
+      "retrievalDate": "2026-11-26",
+      "validFrom": "2025-05-01",
+      "validTo": null,
+      "evidenceType": "peer_reviewed_or_workshop",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "secondary",
+      "supportsClaimType": "facility_existence",
+      "claim": "Secondary compilation lists OneWeb SNPs including Svalbard (Norway), Piteå (Sweden), and Nuuk (Greenland) as of May 2025.",
+      "scope": {
+        "label": "Compiled SNP place names (May 2025)",
+        "precision": "place",
+        "geographicNote": "Nordic/Arctic rows only; not Finnish Lapland serving paths"
+      },
+      "limitations": "Compiled from AWS dataset + regulators per paper — not OneWeb primary attestation. Ages after May 2025. SNP ≠ PoP. Must not connect env-lapland to these SNPs without direct evidence.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "APPENDIX ONEWEB SNPS (MAY 2025) … Europe … Norway Svalbard … Sweden Piteå … Greenland Nuuk"
+    },
+    {
+      "id": "ev-oneweb-pop-ams",
+      "title": "PeeringDB AS800 — Digital Realty AMS17 Amsterdam",
+      "urlOrReference": "https://www.peeringdb.com/asn/800",
+      "publisher": "PeeringDB / OneWeb (AS800)",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "community_network_database",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "primary_for_peering_self_publish",
+      "supportsClaimType": "facility_existence",
+      "claim": "OneWeb AS800 lists Digital Realty AMS17 — Amsterdam among interconnection facilities.",
+      "scope": { "label": "PeeringDB interconnection facility", "precision": "facility" },
+      "limitations": "PoP-class interconnect presence only. Not SNP. Not Lapland routing.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "Interconnection Facilities … Digital Realty AMS17 - Amsterdam … Netherlands Amsterdam"
+    },
+    {
+      "id": "ev-oneweb-pop-ldn",
+      "title": "PeeringDB AS800 — Equinix LD8 London Docklands",
+      "urlOrReference": "https://www.peeringdb.com/asn/800",
+      "publisher": "PeeringDB / OneWeb (AS800)",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "community_network_database",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "primary_for_peering_self_publish",
+      "supportsClaimType": "facility_existence",
+      "claim": "OneWeb AS800 lists Equinix LD8 — London, Docklands among interconnection facilities.",
+      "scope": { "label": "PeeringDB interconnection facility", "precision": "facility" },
+      "limitations": "PoP-class only. Not SNP. Not Lapland routing.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "Interconnection Facilities … Equinix LD8 - London, Docklands … United Kingdom London"
+    },
+    {
+      "id": "ev-traficom-earth-station-regime",
+      "title": "Traficom — earth station licensing guidelines (1 Nov 2023)",
+      "urlOrReference": "https://www.traficom.fi/files/media/file/Guidelines%20earth%20station%20and%20radar%20operation%20licencing%201.11.2023.pdf",
+      "publisher": "Traficom",
+      "publicationDate": "2023-11-01",
+      "retrievalDate": "2026-11-26",
+      "validFrom": "2023-11-01",
+      "validTo": null,
+      "evidenceType": "national_regulator",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "primary",
+      "supportsClaimType": "architecture_class",
+      "claim": "Finland requires a licence to establish and operate an earth station (conventional satellite terminal use generally outside that Act’s scope).",
+      "scope": { "label": "Finnish regulatory regime", "precision": "country" },
+      "limitations": "Context only — no facility inventory. Not attached to any connects_through edge.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "A licence … is required for the establishment and operation of an earth station and radar in Finnish territory… The scope of application of the Act does not cover the conventional use of satellite services."
+    },
+    {
+      "id": "ev-traficom-register-not-public",
+      "title": "Traficom — earth station register privacy notice",
+      "urlOrReference": "https://www.traficom.fi/files/media/file/Privacy%20statement%20earth%20station%20and%20radar%20operations.pdf",
+      "publisher": "Traficom",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "national_regulator",
+      "isSynthetic": false,
+      "accessClass": "public",
+      "primaryVsSecondary": "primary",
+      "supportsClaimType": "architecture_class",
+      "claim": "Traficom maintains a licence/supervision register including earth-station location for official duties; this pack treats bulk public inventory as unavailable.",
+      "scope": { "label": "Finnish regulatory register", "precision": "country" },
+      "limitations": "Explains UNKNOWN Finnish gateway inventory. Do not attempt unauthorized access.",
+      "verificationStatus": "spot_checked",
+      "relevantPassage": "Register of licence and supervision matters related to earth station and radar operations … Location of the earth station or radar"
+    }
+  ],
+  "claimsNotToMake": [
+    "End-to-end dual-path independence for Finnish Lapland",
+    "That any Lapland terminal connects through Svalbard, Piteå, Nuuk, Amsterdam, or London",
+    "That Iridium Svalbard ground station and OneWeb Svalbard SNP are the same facility or shared failure domain",
+    "That PoP listings are SNPs or gateways",
+    "That Traficom licensing proves or disproves gateway locations",
+    "Operational availability, latency, or performance for Lapland",
+    "Any Resilience Signature, grade, weight, or failure probability derived from this pack",
+    "That historical 2019 ground-station lists are verified current without re-check"
+  ],
+  "limitations": [
+    "Research envelope only — not an operational assessment or provider recommendation.",
+    "No Neon persistence; not a production assessment input.",
+    "Secondary SNP compilation may age; re-retrieve before elevating verificationStatus.",
+    "Iridium Svalbard evidence is dated 2019-03-28.",
+    "Excluded unverified leads are listed in sources-traceability.json.",
+    "Does not establish a complete customer-serving path."
+  ],
+  "isOperationalAssessment": false,
+  "containsScoreOrProbability": false,
+  "entersProductionAssessmentWorkflow": false
+}

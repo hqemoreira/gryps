@@ -1,0 +1,252 @@
+{
+  "schemaVersion": "gryps-dependency-fixture-v0.1",
+  "id": "fixture-b-starlink-iridium",
+  "purpose": "Demonstrate a different provider/service combination without confusing catalogue-based orbit mix with verified path independence.",
+  "researchConclusion": "The catalogue represents different provider and service characteristics. End-to-end infrastructure independence remains UNKNOWN.",
+  "scope": {
+    "label": "Catalogue + public architecture-class comparison (no site binding)",
+    "precision": "global",
+    "geographicNote": "Not bound to a specific Nordic/Arctic site pin; hero demo uses this pair only for Signature arithmetic, not for this fixture's independence claims"
+  },
+  "temporalValidity": {
+    "recordedAt": "2026-11-26",
+    "validFrom": "2026-11-26",
+    "validTo": null,
+    "note": "Architecture-class citations retrieved 2026-11-26; may age"
+  },
+  "catalogueClassification": {
+    "providerIds": ["starlink", "iridium"],
+    "providerDiversity": true,
+    "orbits": ["LEO", "LEO"],
+    "serviceClasses": ["broadband", "narrowband"],
+    "catalogueBasedOrbitMix": true,
+    "note": "v0.4 hasOrbitMix is true because LEO broadband + LEO narrowband. That bonus is catalogue classification — separate from Catalogue confidence and from infrastructure independence."
+  },
+  "entities": [
+    {
+      "id": "sp-starlink",
+      "kind": "service_provider",
+      "name": "Starlink",
+      "attributes": { "catalogueId": "starlink", "orbit": "LEO", "serviceClass": "broadband" }
+    },
+    {
+      "id": "sp-iridium",
+      "kind": "service_provider",
+      "name": "Iridium Certus",
+      "attributes": { "catalogueId": "iridium", "orbit": "LEO", "serviceClass": "narrowband" }
+    },
+    {
+      "id": "const-starlink",
+      "kind": "constellation",
+      "name": "Starlink constellation",
+      "attributes": {
+        "operator": "SpaceX",
+        "orbit": "LEO",
+        "spaceSegmentProfile": "optical_isl_mesh_documented_class"
+      }
+    },
+    {
+      "id": "const-iridium",
+      "kind": "constellation",
+      "name": "Iridium constellation",
+      "attributes": {
+        "operator": "Iridium",
+        "orbit": "LEO",
+        "spaceSegmentProfile": "crosslink_mesh_documented_class"
+      }
+    },
+    {
+      "id": "fd-constellation",
+      "kind": "failure_domain",
+      "name": "Constellation / spacecraft failure",
+      "attributes": { "layer": "space", "typicalImpact": "wide" }
+    },
+    {
+      "id": "fd-gateway",
+      "kind": "failure_domain",
+      "name": "Gateway / ground-station failure",
+      "attributes": { "layer": "ground", "typicalImpact": "regional" }
+    },
+    {
+      "id": "fd-backhaul",
+      "kind": "failure_domain",
+      "name": "Terrestrial backhaul disruption",
+      "attributes": { "layer": "network", "typicalImpact": "regional" }
+    },
+    {
+      "id": "fd-site-power",
+      "kind": "failure_domain",
+      "name": "Site power failure",
+      "attributes": { "layer": "site", "typicalImpact": "local" }
+    },
+    {
+      "id": "fd-throughput-mismatch",
+      "kind": "failure_domain",
+      "name": "Mission traffic class mismatch (narrowband cannot substitute broadband)",
+      "attributes": { "layer": "operations", "typicalImpact": "local" }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-starlink-offers",
+      "type": "offers",
+      "fromId": "sp-starlink",
+      "toId": "const-starlink",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "catalogue + public operator mapping", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index", "ev-starlink-tech"],
+      "limitations": "Service class broadband — not interchangeable with Iridium Certus throughput."
+    },
+    {
+      "id": "rel-iridium-offers",
+      "type": "offers",
+      "fromId": "sp-iridium",
+      "toId": "const-iridium",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "catalogue + public operator mapping", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index", "ev-iridium-network"],
+      "limitations": "Service class narrowband — control/backup role ≠ bulk broadband substitute."
+    },
+    {
+      "id": "rel-starlink-exposed-const",
+      "type": "exposed_to",
+      "fromId": "sp-starlink",
+      "toId": "fd-constellation",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "fleet-scoped space segment", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index"],
+      "limitations": "Exposure class only."
+    },
+    {
+      "id": "rel-iridium-exposed-const",
+      "type": "exposed_to",
+      "fromId": "sp-iridium",
+      "toId": "fd-constellation",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "fleet-scoped space segment", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index"],
+      "limitations": "Different fleet from Starlink."
+    },
+    {
+      "id": "rel-iridium-throughput",
+      "type": "exposed_to",
+      "fromId": "sp-iridium",
+      "toId": "fd-throughput-mismatch",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "service class", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index"],
+      "limitations": "Hypothesis for mission design: narrowband independence for control traffic ≠ independence for bulk traffic."
+    }
+  ],
+  "unknownRelationships": [
+    {
+      "id": "unk-gateways",
+      "between": ["sp-starlink", "sp-iridium"],
+      "layer": "ground",
+      "question": "Distinct gateway / GES exposure for site traffic?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Ground independence from catalogue-based orbit mix being true"
+    },
+    {
+      "id": "unk-backhaul",
+      "between": ["sp-starlink", "sp-iridium"],
+      "layer": "network",
+      "question": "Distinct landings / transit?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Backhaul separation from broadband vs narrowband labels"
+    },
+    {
+      "id": "unk-ops",
+      "between": ["sp-starlink", "sp-iridium"],
+      "layer": "operations",
+      "question": "Shared ops or wholesale chain?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Operational independence from distinct brands"
+    },
+    {
+      "id": "unk-site",
+      "between": ["sp-starlink", "sp-iridium"],
+      "layer": "site",
+      "question": "Two outdoor units and two power domains?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Site separation from provider diversity alone"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-catalog-index",
+      "title": "GRYPS Advisor / indexed provider catalogue",
+      "urlOrReference": "lib/deterministic-score.ts ADVISOR_PROVIDERS; lib/providers.ts INDEXED_PROVIDERS",
+      "publisher": "GRYPS R&D",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "catalogue_note",
+      "isSynthetic": false,
+      "claim": "Starlink (LEO broadband) and Iridium Certus (LEO narrowband) are distinct catalogue ids; catalogue-based orbit mix is true for this pair in Model v0.4.",
+      "scope": { "label": "GRYPS catalogue", "precision": "global" },
+      "limitations": "Orbit mix boolean is not infrastructure independence; Catalogue confidence is a separate component.",
+      "verificationStatus": "spot_checked"
+    },
+    {
+      "id": "ev-starlink-tech",
+      "title": "Starlink Technology — optical laser mesh (architecture class)",
+      "urlOrReference": "https://starlink.com/technology",
+      "publisher": "SpaceX / Starlink",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "primary_operator",
+      "isSynthetic": false,
+      "claim": "Starlink publishes optical ISL mesh as a constellation design class.",
+      "scope": { "label": "constellation design class", "precision": "global" },
+      "limitations": "Not site dual-path proof with Iridium.",
+      "verificationStatus": "unverified"
+    },
+    {
+      "id": "ev-iridium-network",
+      "title": "Iridium network — cross-linked mesh (architecture class)",
+      "urlOrReference": "https://www.iridium.com/network",
+      "publisher": "Iridium",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "primary_operator",
+      "isSynthetic": false,
+      "claim": "Iridium describes a cross-linked satellite mesh architecture class.",
+      "scope": { "label": "constellation design class", "precision": "global" },
+      "limitations": "Does not evidence gateway/GES diversity for a GRYPS site account.",
+      "verificationStatus": "unverified"
+    }
+  ],
+  "claimsNotToMake": [
+    "Verified end-to-end path independence",
+    "That catalogue-based orbit mix equals demonstrated separation of ground, backhaul, or site dependencies",
+    "That Catalogue confidence measures independence",
+    "That Iridium Certus substitutes for Starlink broadband throughput",
+    "Any resilience score, grade, weight, or failure probability"
+  ],
+  "limitations": [
+    "Strongest LEO-only catalogue-label dual in v0.4 still lacks ground/backhaul/site evidence.",
+    "No invented gateway coordinates or shared-fibre edges.",
+    "Fixture is research-only and must not be treated as an operational assessment."
+  ],
+  "isOperationalAssessment": false,
+  "containsScoreOrProbability": false
+}

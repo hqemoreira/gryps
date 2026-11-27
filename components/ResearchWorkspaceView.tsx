@@ -29,7 +29,14 @@ import {
   slugifyTitle,
   type SavedResearchAssessment,
 } from "@/lib/research-workspace";
-import { MODEL_VERSION } from "@/lib/model-constants";
+import { displayModelVersion } from "@/lib/model-constants";
+import { DISPLAY_CHAIN_NOTICE } from "@/lib/evidence-model";
+import {
+  buildEvidenceExportCompanion,
+  formatEvidenceExportCompanionMarkdown,
+} from "@/lib/research/evidence-binder";
+import { loadWorkflowSession } from "@/lib/research/workflow-context";
+import { EvidenceAnnotationPanel } from "@/components/EvidenceAnnotationPanel";
 
 const COPY = {
   en: {
@@ -136,11 +143,20 @@ function fmtDate(iso: string, lang: "en" | "fi") {
   });
 }
 
-export function ResearchWorkspaceView({ initialId }: { initialId?: string | null }) {
+export function ResearchWorkspaceView({
+  initialId,
+  initialMode,
+  fromWorkflow = false,
+}: {
+  initialId?: string | null;
+  initialMode?: Mode;
+  /** Deep-link from /research/workflow — show return banner only */
+  fromWorkflow?: boolean;
+}) {
   const [lang, setLang] = useLang();
   const t = COPY[lang];
   const [items, setItems] = useState<SavedResearchAssessment[]>([]);
-  const [mode, setMode] = useState<Mode>("list");
+  const [mode, setMode] = useState<Mode>(initialMode ?? "list");
   const [activeId, setActiveId] = useState<string | null>(initialId ?? null);
   const [compareA, setCompareA] = useState("");
   const [compareB, setCompareB] = useState("");
@@ -150,14 +166,26 @@ export function ResearchWorkspaceView({ initialId }: { initialId?: string | null
     setItems(listSavedAssessments());
   }, []);
 
+  const [staleInitialId, setStaleInitialId] = useState<string | null>(null);
+
   useEffect(() => {
     refresh();
     setHydrated(true);
-    if (initialId && getSavedAssessment(initialId)) {
-      setActiveId(initialId);
-      setMode("detail");
+    if (initialMode) {
+      setMode(initialMode);
     }
-  }, [initialId, refresh]);
+    if (initialId) {
+      if (getSavedAssessment(initialId)) {
+        setActiveId(initialId);
+        setStaleInitialId(null);
+        if (!initialMode || initialMode === "detail") setMode("detail");
+      } else {
+        // Do not silently select the latest unrelated assessment
+        setStaleInitialId(initialId);
+        setActiveId(null);
+      }
+    }
+  }, [initialId, initialMode, refresh]);
 
   const active = useMemo(
     () =>
@@ -186,6 +214,13 @@ export function ResearchWorkspaceView({ initialId }: { initialId?: string | null
   function handleExportMd(a: SavedResearchAssessment) {
     const md = exportAssessmentMarkdown(a);
     downloadTextFile(`gryps-${slugifyTitle(a.title)}.md`, md);
+  }
+
+  function handleExportCompanion(a: SavedResearchAssessment) {
+    const session = loadWorkflowSession();
+    const companion = buildEvidenceExportCompanion({ session, assessment: a });
+    const md = formatEvidenceExportCompanionMarkdown(companion);
+    downloadTextFile(`gryps-evidence-companion-${slugifyTitle(a.title)}.md`, md);
   }
 
   const btn: CSSProperties = {
@@ -236,6 +271,45 @@ export function ResearchWorkspaceView({ initialId }: { initialId?: string | null
             { en: "Assessments", fi: "Arviot" },
           ]}
         />
+        {staleInitialId && (
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 13,
+              color: "var(--accent-amber)",
+              lineHeight: 1.6,
+              margin: "0 0 16px",
+              padding: "10px 12px",
+              border: "1px solid rgba(217,119,6,0.35)",
+              borderRadius: 6,
+              background: "rgba(217,119,6,0.08)",
+            }}
+          >
+            Linked assessment id <code>{staleInitialId}</code> is missing from local workspace. No
+            substitute assessment was selected.
+          </p>
+        )}
+        {fromWorkflow && (
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 13,
+              color: "var(--text-muted)",
+              lineHeight: 1.6,
+              margin: "0 0 16px",
+              padding: "10px 12px",
+              border: "1px solid var(--border2)",
+              borderRadius: 6,
+              background: "var(--surface)",
+            }}
+          >
+            Opened from the research workflow. Compare and export here do not invent independence
+            or certify the site.{" "}
+            <Link href="/research/workflow" style={{ color: "var(--accent-cyan)" }}>
+              Return to research workflow
+            </Link>
+          </p>
+        )}
         <p
           style={{
             fontFamily: "var(--font-data)",
@@ -361,15 +435,13 @@ export function ResearchWorkspaceView({ initialId }: { initialId?: string | null
             lang={lang}
             onBack={() => setMode("detail")}
             onDownload={() => handleExportMd(active)}
+            onDownloadCompanion={() => handleExportCompanion(active)}
             btn={btn}
           />
         )}
       </main>
 
-      <Footer
-        lang={lang}
-        footerRights={grypsCopyright(lang)}
-      />
+      <Footer lang={lang} footerRights={grypsCopyright(lang)} />
     </div>
   );
 }
@@ -558,7 +630,7 @@ function DetailPanel({
   const grade = gradeOf(a);
   const gtc = gradeTextColor(grade);
   const gc = gradeColor(grade);
-  const model = a.result?.modelVersion ?? a.abbreviated?.modelVersion ?? MODEL_VERSION;
+  const model = displayModelVersion(a.result?.modelVersion ?? a.abbreviated?.modelVersion);
   const evidence = a.result?.evidence;
   const rec = a.result?.intelligence?.recommendation;
   const comparison = a.result?.intelligence?.comparison ?? [];
@@ -865,6 +937,19 @@ function DetailPanel({
               {evidence.environment_theme} · {evidence.confidence.band} ({evidence.confidence.score}
               %)
             </p>
+            {evidence.chainOrigin === "display" && (
+              <p
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 13,
+                  color: "var(--text)",
+                  lineHeight: 1.55,
+                  marginTop: 10,
+                }}
+              >
+                {lang === "fi" ? DISPLAY_CHAIN_NOTICE.fi : DISPLAY_CHAIN_NOTICE.en}
+              </p>
+            )}
           </>
         ) : (
           <p style={{ fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--text-dim)" }}>
@@ -874,6 +959,8 @@ function DetailPanel({
           </p>
         )}
       </Section>
+
+      <EvidenceAnnotationPanel assessmentId={a.id} />
 
       {a.scenarioSlug && (
         <p style={{ marginTop: 16 }}>
@@ -1104,6 +1191,22 @@ function ComparePanel({
             {t.clearCompare}
           </button>
 
+          {(compareA && !items.some((i) => i.id === compareA)) ||
+          (compareB && !items.some((i) => i.id === compareB)) ? (
+            <p
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: 13,
+                color: "var(--accent-amber)",
+                marginBottom: 16,
+                lineHeight: 1.5,
+              }}
+            >
+              One or both selected assessment ids are missing from local workspace. Comparison
+              will not silently substitute another record.
+            </p>
+          ) : null}
+
           {rows.length > 0 && (
             <div
               style={{
@@ -1207,6 +1310,7 @@ function ExportReport({
   lang,
   onBack,
   onDownload,
+  onDownloadCompanion,
   btn,
 }: {
   a: SavedResearchAssessment;
@@ -1214,11 +1318,12 @@ function ExportReport({
   lang: "en" | "fi";
   onBack: () => void;
   onDownload: () => void;
+  onDownloadCompanion: () => void;
   btn: CSSProperties;
 }) {
   const score = scoreOf(a);
   const grade = gradeOf(a);
-  const model = a.result?.modelVersion ?? a.abbreviated?.modelVersion ?? MODEL_VERSION;
+  const model = displayModelVersion(a.result?.modelVersion ?? a.abbreviated?.modelVersion);
   const evidence = a.result?.evidence;
   const rec = a.result?.intelligence?.recommendation;
   const comparison = a.result?.intelligence?.comparison ?? [];
@@ -1235,10 +1340,26 @@ function ExportReport({
         <button type="button" style={btn} onClick={onDownload}>
           <Download size={12} /> {t.export}
         </button>
+        <button type="button" style={btn} onClick={onDownloadCompanion}>
+          <Download size={12} /> Evidence companion
+        </button>
         <button type="button" style={btn} onClick={() => window.print()}>
           <FileText size={12} /> {t.exportPrint}
         </button>
       </div>
+      <p
+        className="gryps-no-print"
+        style={{
+          fontFamily: "var(--font-ui)",
+          fontSize: 12,
+          color: "var(--accent-amber)",
+          marginBottom: 16,
+          lineHeight: 1.5,
+        }}
+      >
+        Evidence companion is a non-certifying research export (inputs, model id, evidence
+        references, assumptions, UNKNOWN fields). Not cryptographic verification.
+      </p>
 
       <div
         className="gryps-print-target"

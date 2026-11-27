@@ -1,0 +1,233 @@
+{
+  "schemaVersion": "gryps-dependency-fixture-v0.1",
+  "id": "fixture-a-starlink-oneweb",
+  "purpose": "Demonstrate different constellation architecture classes without claiming end-to-end independence.",
+  "researchConclusion": "Different constellation architecture classes are represented. End-to-end infrastructure independence remains UNKNOWN.",
+  "scope": {
+    "label": "Catalogue + public architecture-class comparison (no site binding)",
+    "precision": "global",
+    "geographicNote": "Not bound to a specific Nordic/Arctic site pin"
+  },
+  "temporalValidity": {
+    "recordedAt": "2026-11-26",
+    "validFrom": "2026-11-26",
+    "validTo": null,
+    "note": "Architecture-class citations retrieved 2026-11-26; may age"
+  },
+  "catalogueClassification": {
+    "providerIds": ["starlink", "oneweb"],
+    "providerDiversity": true,
+    "orbits": ["LEO", "LEO"],
+    "serviceClasses": ["broadband", "broadband"],
+    "catalogueBasedOrbitMix": false,
+    "note": "v0.4 hasOrbitMix is false for two LEO broadband ids. This is catalogue classification, not infrastructure independence."
+  },
+  "entities": [
+    {
+      "id": "sp-starlink",
+      "kind": "service_provider",
+      "name": "Starlink",
+      "attributes": { "catalogueId": "starlink", "orbit": "LEO", "serviceClass": "broadband" }
+    },
+    {
+      "id": "sp-oneweb",
+      "kind": "service_provider",
+      "name": "OneWeb",
+      "attributes": { "catalogueId": "oneweb", "orbit": "LEO", "serviceClass": "broadband" }
+    },
+    {
+      "id": "const-starlink",
+      "kind": "constellation",
+      "name": "Starlink constellation",
+      "attributes": {
+        "operator": "SpaceX",
+        "orbit": "LEO",
+        "spaceSegmentProfile": "optical_isl_mesh_documented_class"
+      }
+    },
+    {
+      "id": "const-oneweb",
+      "kind": "constellation",
+      "name": "OneWeb constellation",
+      "attributes": {
+        "operator": "Eutelsat OneWeb",
+        "orbit": "LEO",
+        "spaceSegmentProfile": "bent_pipe_no_isl_documented_class"
+      }
+    },
+    {
+      "id": "fd-constellation",
+      "kind": "failure_domain",
+      "name": "Constellation / spacecraft failure",
+      "attributes": { "layer": "space", "typicalImpact": "wide" }
+    },
+    {
+      "id": "fd-gateway",
+      "kind": "failure_domain",
+      "name": "Gateway / ground-station failure",
+      "attributes": { "layer": "ground", "typicalImpact": "regional" }
+    },
+    {
+      "id": "fd-backhaul",
+      "kind": "failure_domain",
+      "name": "Terrestrial backhaul disruption",
+      "attributes": { "layer": "network", "typicalImpact": "regional" }
+    },
+    {
+      "id": "fd-site-power",
+      "kind": "failure_domain",
+      "name": "Site power failure",
+      "attributes": { "layer": "site", "typicalImpact": "local" }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-starlink-offers",
+      "type": "offers",
+      "fromId": "sp-starlink",
+      "toId": "const-starlink",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "catalogue + public operator mapping", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index", "ev-starlink-tech"],
+      "limitations": "Does not identify which gateways or PoPs serve a given site."
+    },
+    {
+      "id": "rel-oneweb-offers",
+      "type": "offers",
+      "fromId": "sp-oneweb",
+      "toId": "const-oneweb",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "catalogue + public operator mapping", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index", "ev-oneweb-bentpipe"],
+      "limitations": "Does not identify which gateways serve a given site."
+    },
+    {
+      "id": "rel-starlink-exposed-const",
+      "type": "exposed_to",
+      "fromId": "sp-starlink",
+      "toId": "fd-constellation",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "fleet-scoped space segment", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index"],
+      "limitations": "Exposure class only; no live constellation health."
+    },
+    {
+      "id": "rel-oneweb-exposed-const",
+      "type": "exposed_to",
+      "fromId": "sp-oneweb",
+      "toId": "fd-constellation",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "fleet-scoped space segment", "precision": "global" },
+      "evidenceIds": ["ev-catalog-index"],
+      "limitations": "Different fleets — same failure-domain *type*, not the same asset."
+    }
+  ],
+  "unknownRelationships": [
+    {
+      "id": "unk-gateways",
+      "between": ["sp-starlink", "sp-oneweb"],
+      "layer": "ground",
+      "question": "Do site-serving gateways / teleports overlap or share a campus?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Independence of ground segment from different constellation architectures"
+    },
+    {
+      "id": "unk-backhaul",
+      "between": ["sp-starlink", "sp-oneweb"],
+      "layer": "network",
+      "question": "Do landings share fibre, metro, IX, or transit?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Backhaul separation from brand or ISL vs bent-pipe contrast"
+    },
+    {
+      "id": "unk-ops",
+      "between": ["sp-starlink", "sp-oneweb"],
+      "layer": "operations",
+      "question": "Shared NOC, provisioning, or cybersecurity domain?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Operational independence from distinct operators alone"
+    },
+    {
+      "id": "unk-site",
+      "between": ["sp-starlink", "sp-oneweb"],
+      "layer": "site",
+      "question": "Distinct terminals and distinct site power domains?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "Site-level separation (GRYPS Signature has no terminal/power fields)"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-catalog-index",
+      "title": "GRYPS Advisor / indexed provider catalogue",
+      "urlOrReference": "lib/deterministic-score.ts ADVISOR_PROVIDERS; lib/providers.ts INDEXED_PROVIDERS",
+      "publisher": "GRYPS R&D",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "catalogue_note",
+      "isSynthetic": false,
+      "claim": "Starlink and OneWeb are distinct catalogue ids; both LEO broadband; operators SpaceX and Eutelsat OneWeb in the display index.",
+      "scope": { "label": "GRYPS catalogue", "precision": "global" },
+      "limitations": "No gateway, backhaul, or site fields.",
+      "verificationStatus": "spot_checked"
+    },
+    {
+      "id": "ev-starlink-tech",
+      "title": "Starlink Technology — optical laser mesh (architecture class)",
+      "urlOrReference": "https://starlink.com/technology",
+      "publisher": "SpaceX / Starlink",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "primary_operator",
+      "isSynthetic": false,
+      "claim": "Current Starlink satellites are described as using optical inter-satellite links (architecture class).",
+      "scope": { "label": "constellation design class", "precision": "global" },
+      "limitations": "Not a site-specific gateway or PoP map; not proof of dual-path independence with OneWeb.",
+      "verificationStatus": "unverified"
+    },
+    {
+      "id": "ev-oneweb-bentpipe",
+      "title": "OneWeb bent-pipe / gateway-dependent architecture class (secondary literature)",
+      "urlOrReference": "https://www.eoportal.org/satellite-missions/oneweb",
+      "publisher": "ESA eoPortal (secondary)",
+      "publicationDate": null,
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "technical_report",
+      "isSynthetic": false,
+      "claim": "OneWeb user literature / technical comparisons describe bent-pipe designs without ISL requiring gateway visibility (architecture class).",
+      "scope": { "label": "constellation design class", "precision": "global" },
+      "limitations": "Architecture class only; does not identify gateways for a GRYPS site.",
+      "verificationStatus": "unverified"
+    }
+  ],
+  "claimsNotToMake": [
+    "End-to-end path independence between Starlink and OneWeb",
+    "Independence of ground infrastructure, backhaul, operations, or site power",
+    "That catalogue-based orbit mix is true for this pair (it is false in v0.4)",
+    "That ISL vs bent-pipe proves site dual-path continuity",
+    "Any resilience score, grade, weight, or failure probability"
+  ],
+  "limitations": [
+    "No GroundFacility or TerrestrialBackhaul entities are instantiated — inventing them would fabricate evidence.",
+    "Architecture-class evidence is not site-verified.",
+    "Fixture is research-only and must not be treated as an operational assessment."
+  ],
+  "isOperationalAssessment": false,
+  "containsScoreOrProbability": false
+}

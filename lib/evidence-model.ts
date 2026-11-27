@@ -37,6 +37,18 @@ export type EvidenceConfidence = {
   rationale: string;
 };
 
+/**
+ * `stored` — chain arrived with the assessment.
+ * `display` — current engine attached a chain for reading. It did not produce the stored score.
+ * Absent means stored. Do not treat absence as Model v0.4.
+ */
+export type EvidenceChainOrigin = "stored" | "display";
+
+export const DISPLAY_CHAIN_NOTICE = {
+  en: "Display chain from the current engine. It was attached because this assessment had no stored chain. It did not produce the stored score, and it does not set the model version.",
+  fi: "Näyttöketju nykyisestä moottorista. Se liitettiin, koska arvioon ei ollut tallennettu ketjua. Se ei tuottanut tallennettua pistettä eikä aseta malliversiota.",
+} as const;
+
 export type EvidencePackage = {
   environment_theme: string;
   chain: EvidenceChainStep[];
@@ -45,6 +57,7 @@ export type EvidencePackage = {
   limitations: string[];
   methodology_summary: string;
   confidence: EvidenceConfidence;
+  chainOrigin?: EvidenceChainOrigin;
   data_freshness: {
     model: string;
     catalog: string;
@@ -71,15 +84,17 @@ const BASE_SOURCES: EvidenceSource[] = [
     attribution: "GRYPS curated public-knowledge index — no commercial relationships",
     url: "/providers",
     freshness: "Catalog snapshot · Model v0.4 weights",
-    notes: "Catalog confidence is assessment/data-basis confidence, not SLA availability.",
+    notes: "Catalogue confidence is assessment/data-basis confidence, not SLA availability.",
   },
   {
     id: "eu-dem",
     title: "EU-DEM terrain elevation",
     type: "dataset",
-    attribution: "Copernicus / EEA via OpenTopoData — EU-funded Copernicus data",
-    freshness: "On-demand sample · ~25 m DEM",
-    notes: "Shown as separate terrain evidence; not blended into the 0–100 Signature.",
+    attribution: "EU-DEM v1.1 via OpenTopoData · produced with funding by the European Union",
+    freshness:
+      "Stored 2026-11-26 hybrid surface snapshot · separate five-point variance sample · not a bare-earth DTM · not in the 0–100 Signature",
+    notes:
+      "Phase 1 reference scenarios use the stored November 2026 EU-DEM v1.1 hybrid surface-model snapshot. A separate five-point variance sample is shown beside a Signature. Neither path is a bare-earth DTM or a live feed, and neither enters the 0–100 Resilience Signature.",
   },
   {
     id: "bittimittari",
@@ -170,12 +185,16 @@ function connectivityCharacteristics(lat: number, providers: ProviderMeta[]): st
   if (providers.length === 0) {
     bits.push("No documented satellite path — characteristics assume zero primary connectivity");
   } else if (providers.length === 1) {
-    bits.push(`Single documented path (${providers[0].name}) — correlated outage exposure`);
+    bits.push(
+      `Single documented catalogue path (${providers[0].name}) — no second provider id recorded`
+    );
   } else if (hasLeo && hasGeo) {
-    bits.push("Documented LEO + GEO mix — orbital-class diversity present");
+    bits.push(
+      "Documented LEO + GEO catalogue mix — orbital-class diversity in the model, not verified end-to-end independence"
+    );
   } else if (hasLeo) {
     bits.push(
-      "LEO-only documented path(s) — throughput diversity possible; polar backup still relevant"
+      "LEO-only documented catalogue path(s) — throughput diversity possible; polar backup still relevant"
     );
   } else {
     bits.push("GEO-centric documented path(s) — high-latitude primary risk if used alone");
@@ -193,7 +212,7 @@ function scoringFactorsSummary(opts: {
     ? ` Mission priorities (${opts.priorities.join(", ").replace(/_/g, " ")}) re-rank recommendations only.`
     : "";
   return (
-    `Model v0.4 scores Site Conditions (0–20, fixed) and Mitigation Quality (0–80: redundancy 0–35, provider/path independence 0–25, profile–autonomy alignment 0–20), then applies hard caps.` +
+    `Model v0.4 scores Site Conditions (0–20, fixed) and Mitigation Quality (0–80: redundancy / provider diversity 0–35, Catalogue confidence 0–25, profile–autonomy alignment 0–20), then applies hard caps.` +
     ` This ${opts.sector.replace(/-/g, " ")} profile at ~${opts.lat.toFixed(1)}°N with ${opts.providerCount} documented provider(s) drives the Signature layers.` +
     priorityBit
   );
@@ -221,7 +240,7 @@ function assessmentConfidence(opts: {
   return { band, score, rationale };
 }
 
-function pickSources(sector: SectorId, lat: number): EvidenceSource[] {
+function pickSources(sector: SectorId, finnishMunicipalitySeed: boolean): EvidenceSource[] {
   const ids = new Set([
     "model-v04",
     "provider-catalog",
@@ -232,7 +251,8 @@ function pickSources(sector: SectorId, lat: number): EvidenceSource[] {
     "eu-dem",
   ]);
   if (sector === "forestry") ids.add("forestry-fi");
-  if (lat >= 55 && lat <= 72) ids.add("bittimittari"); // may apply for FI seeds
+  // Traficom municipality medians. Latitude is not a country.
+  if (finnishMunicipalitySeed) ids.add("bittimittari");
   return BASE_SOURCES.filter((s) => ids.has(s.id));
 }
 
@@ -273,9 +293,11 @@ export function buildEvidencePackage(opts: {
   recommendedProvider?: string;
   score: number;
   grade: string;
+  /** True only when this assessment is a seeded Finnish municipality, not a latitude guess. */
+  finnishMunicipalitySeed?: boolean;
 }): EvidencePackage {
   const theme = environmentTheme(opts.lat, opts.sector);
-  const sources = pickSources(opts.sector, opts.lat);
+  const sources = pickSources(opts.sector, opts.finnishMunicipalitySeed === true);
   const avgConf =
     opts.providers.length === 0
       ? 40
@@ -328,13 +350,13 @@ export function buildEvidencePackage(opts: {
       id: "scoring",
       label: "GRYPS scoring factors",
       summary: scoring,
-      sourceIds: ["model-v03", "resilience-scoring"],
+      sourceIds: ["model-v04", "resilience-scoring"],
     },
     {
       id: "recommendation",
       label: "Provider recommendation",
       summary: `Signature ${opts.score}/100 · ${opts.grade}. Model recommends ${recLabel} as the leading fit for this evidence chain — indicative research output, not procurement advice.`,
-      sourceIds: ["model-v03", "provider-catalog"],
+      sourceIds: ["model-v04", "provider-catalog"],
     },
   ];
 
@@ -361,8 +383,9 @@ export function buildEvidencePackage(opts: {
     confidence,
     data_freshness: {
       model: `${MODEL_VERSION} (${SCORING_ENGINE_DISPLAY})`,
-      catalog: "Providers · Model v0.4 catalog confidence",
-      reference_datasets: "EU-DEM on demand · Bittimittari for FI municipality seeds",
+      catalog: "Providers · Model v0.4 Catalogue confidence",
+      reference_datasets:
+        "EU-DEM v1.1 hybrid surface snapshot (2026-11-26) and a separate variance sample · Bittimittari only for a joined Finnish municipality seed",
       knowledge: "GRYPS Knowledge + Research Library · editorial 2026",
     },
     research_links: researchLinks(opts.sector),

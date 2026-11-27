@@ -15,9 +15,9 @@ permissions:
 
 jobs:
   preflight:
-    name: Lint · Typecheck · Build
+    name: Lint · Typecheck · Research QA · Build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -40,8 +40,55 @@ jobs:
       - name: TypeScript
         run: npm run typecheck
 
-      - name: Deterministic Signature verify
+      - name: Deterministic Signature verify (test:score)
         run: npm run test:score
+
+      - name: Provider dependency fixtures (test:fixtures)
+        run: npm run test:fixtures
+
+      - name: Nordic Lapland evidence pack (test:evidence-pack)
+        run: npm run test:evidence-pack
+
+      - name: Evidence intake synthetic cases (test:evidence-intake)
+        run: npm run test:evidence-intake
+
+      - name: Dependency Research Lab (test:dependency-lab)
+        run: npm run test:dependency-lab
+
+      - name: Evidence provenance integrity (test:evidence)
+        run: npm run test:evidence
+
+      - name: Evidence binder (test:evidence-binder)
+        run: npm run test:evidence-binder
+
+      - name: Evidence annotations persistence (test:evidence-annotations)
+        run: npm run test:evidence-annotations
+
+      - name: Protected boundaries (test:boundaries)
+        run: npm run test:boundaries
+
+      - name: Research workflow integration (test:workflow)
+        run: npm run test:workflow
+
+      - name: Workflow integrity E2E (test:workflow-integrity)
+        run: npm run test:workflow-integrity
+
+      - name: Multi-agent QA mock pipeline (test:qa-agents)
+        run: npm run test:qa-agents
+
+      - name: Task-level change-aware QA (test:task-qa)
+        run: npm run test:task-qa
+
+      - name: QA execution + snapshot hardening (test:qa-execution)
+        run: npm run test:qa-execution
+
+      # Live AI reviews are on-demand only (test:qa-live). Ordinary CI must not
+      # call external model APIs. Infrastructure path of test:qa-live is safe
+      # without credentials and must return BLOCKED rather than PASS.
+      - name: Live QA infrastructure gate (test:qa-live, no external API required)
+        run: npm run test:qa-live
+        env:
+          GRYPS_QA_LIVE: "0"
 
       - name: Production build
         run: npm run build

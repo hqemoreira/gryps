@@ -16,11 +16,11 @@ export function redundancyTiers(input?: AssessmentInputs): RedundancyTier[] {
     {
       id: "certus-backup",
       tier: "essential",
-      label: "Iridium Certus as independent backup",
+      label: "Iridium Certus as catalogue narrowband backup",
       estimate: "Lowest incremental hardware cost · polar-capable",
       detail: single
-        ? "Adds a second orbital class (polar LEO narrowband) so a Starlink/GEO outage does not halt safety-critical command."
-        : "Confirms an independent narrowband path if the current dual setup still shares a failure mode (power, mount, or sky view).",
+        ? "Adds a second catalogue orbital class (polar LEO narrowband). That raises the diversity indicator; site power, mounts, and ground independence still need separate evidence."
+        : "Adds polar LEO narrowband diversity in the catalogue. If the dual setup still shares power, mount, or sky view, end-to-end independence remains unverified.",
     },
     {
       id: "dual-leo",
@@ -28,8 +28,8 @@ export function redundancyTiers(input?: AssessmentInputs): RedundancyTier[] {
       label: "Dual LEO broadband (e.g. Starlink + OneWeb)",
       estimate: "Mid cost · two broadband paths",
       detail: arctic
-        ? "At 70°N+, pair broadband LEO with polar-orbit narrowband; two broadband LEOs still share weather and constellation congestion modes."
-        : "Independent LEO broadband operators reduce single-constellation risk for telemetry and video.",
+        ? "At 70°N+, pair broadband LEO with polar-orbit narrowband; two broadband LEOs still share weather and constellation congestion modes. Different brands alone do not prove independent ground or backhaul."
+        : "Two LEO broadband catalogue operators reduce single-constellation exposure in the model. Ground, backhaul, and site dependencies remain unverified unless evidenced separately.",
     },
     {
       id: "auto-failover",

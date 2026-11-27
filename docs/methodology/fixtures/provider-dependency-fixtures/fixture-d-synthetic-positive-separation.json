@@ -1,0 +1,249 @@
+{
+  "schemaVersion": "gryps-dependency-fixture-v0.1",
+  "id": "fixture-d-synthetic-positive-separation",
+  "purpose": "Demonstrate evidence supporting separation of one particular dependency (ground landing) without claiming end-to-end independence.",
+  "researchConclusion": "Evidence supports separation of the specified infrastructure dependency within the stated scope. This does not establish complete end-to-end independence.",
+  "scope": {
+    "label": "Synthetic — ground landing separation only",
+    "precision": "unspecified",
+    "geographicNote": "Fictional Nordic Test Enclave; not a real site"
+  },
+  "temporalValidity": {
+    "recordedAt": "2026-11-26",
+    "validFrom": "2026-11-26",
+    "validTo": null,
+    "note": "Synthetic evidence has no real-world validity period"
+  },
+  "catalogueClassification": {
+    "providerIds": ["synth-frostpeak-link", "synth-glaciermesh"],
+    "providerDiversity": true,
+    "orbits": ["LEO", "LEO"],
+    "serviceClasses": ["broadband", "narrowband"],
+    "catalogueBasedOrbitMix": true,
+    "note": "Fictional catalogue-like labels. Catalogue-based orbit mix is true here as a label only — not infrastructure independence."
+  },
+  "entities": [
+    {
+      "id": "sp-frostpeak",
+      "kind": "service_provider",
+      "name": "FrostPeak Link (fictional)",
+      "attributes": {
+        "catalogueId": "synth-frostpeak-link",
+        "orbit": "LEO",
+        "serviceClass": "broadband",
+        "fictional": true
+      }
+    },
+    {
+      "id": "sp-glaciermesh",
+      "kind": "service_provider",
+      "name": "GlacierMesh (fictional)",
+      "attributes": {
+        "catalogueId": "synth-glaciermesh",
+        "orbit": "LEO",
+        "serviceClass": "narrowband",
+        "fictional": true
+      }
+    },
+    {
+      "id": "const-frostpeak",
+      "kind": "constellation",
+      "name": "FrostPeak constellation (fictional)",
+      "attributes": { "fictional": true, "orbit": "LEO" }
+    },
+    {
+      "id": "const-glaciermesh",
+      "kind": "constellation",
+      "name": "GlacierMesh constellation (fictional)",
+      "attributes": { "fictional": true, "orbit": "LEO" }
+    },
+    {
+      "id": "gf-landing-north",
+      "kind": "ground_facility",
+      "name": "Landing North Yard (fictional)",
+      "attributes": { "facilityKind": "teleport", "fictional": true }
+    },
+    {
+      "id": "gf-landing-south",
+      "kind": "ground_facility",
+      "name": "Landing South Yard (fictional)",
+      "attributes": { "facilityKind": "teleport", "fictional": true }
+    },
+    {
+      "id": "fd-ground-landing",
+      "kind": "failure_domain",
+      "name": "Single landing-yard outage",
+      "attributes": { "layer": "ground", "typicalImpact": "regional", "fictional": true }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-frostpeak-offers",
+      "type": "offers",
+      "fromId": "sp-frostpeak",
+      "toId": "const-frostpeak",
+      "direction": "from→to",
+      "assertionKind": "assumption",
+      "confidence": "inferred",
+      "inferred": true,
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-d-design"],
+      "limitations": "Fictional mapping for structural demo only."
+    },
+    {
+      "id": "rel-glaciermesh-offers",
+      "type": "offers",
+      "fromId": "sp-glaciermesh",
+      "toId": "const-glaciermesh",
+      "direction": "from→to",
+      "assertionKind": "assumption",
+      "confidence": "inferred",
+      "inferred": true,
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-d-design"],
+      "limitations": "Fictional mapping for structural demo only."
+    },
+    {
+      "id": "rel-frostpeak-landing",
+      "type": "connects_through",
+      "fromId": "const-frostpeak",
+      "toId": "gf-landing-north",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "synthetic ground landing", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-d-frostpeak-landing"],
+      "limitations": "Synthetic attestation for FrostPeak landing only."
+    },
+    {
+      "id": "rel-glaciermesh-landing",
+      "type": "connects_through",
+      "fromId": "const-glaciermesh",
+      "toId": "gf-landing-south",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": { "label": "synthetic ground landing", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-d-glaciermesh-landing"],
+      "limitations": "Synthetic attestation for GlacierMesh landing only."
+    },
+    {
+      "id": "rel-landings-separated",
+      "type": "separated_from",
+      "fromId": "gf-landing-north",
+      "toId": "gf-landing-south",
+      "direction": "from→to",
+      "assertionKind": "separation",
+      "confidence": "documented",
+      "inferred": false,
+      "scope": {
+        "label": "ground landing yards only — synthetic",
+        "precision": "unspecified"
+      },
+      "evidenceIds": ["ev-synth-d-separation"],
+      "limitations": "Separation is scoped to named landing yards. Does not cover backhaul, operations, site power, or end-to-end independence."
+    }
+  ],
+  "unknownRelationships": [
+    {
+      "id": "unk-backhaul",
+      "between": ["sp-frostpeak", "sp-glaciermesh"],
+      "layer": "network",
+      "question": "Do landings share fibre, metro, or transit after the yards?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "That ground-yard separation implies backhaul separation"
+    },
+    {
+      "id": "unk-ops",
+      "between": ["sp-frostpeak", "sp-glaciermesh"],
+      "layer": "operations",
+      "question": "Shared NOC or provisioning domain?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "That distinct landings imply distinct operations"
+    },
+    {
+      "id": "unk-site",
+      "between": ["sp-frostpeak", "sp-glaciermesh"],
+      "layer": "site",
+      "question": "Distinct terminals and power domains at the site?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "That ground separation establishes site-level independence"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-synth-d-design",
+      "title": "Synthetic fixture design — FrostPeak / GlacierMesh",
+      "urlOrReference": "docs/methodology/fixtures/provider-dependency-fixtures/fixture-d-synthetic-positive-separation.json",
+      "publisher": "GRYPS Phase 4 Sprint 11 (synthetic)",
+      "publicationDate": "2026-11-26",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "Fictional providers exist only to demonstrate scoped separation.",
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "limitations": "Not a real operator claim.",
+      "verificationStatus": "operator_confirmed"
+    },
+    {
+      "id": "ev-synth-d-frostpeak-landing",
+      "title": "Synthetic attestation — FrostPeak uses Landing North Yard",
+      "urlOrReference": "synthetic://fixture-d/frostpeak-landing-north",
+      "publisher": "GRYPS Phase 4 Sprint 11 (synthetic)",
+      "publicationDate": "2026-11-26",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "FrostPeak constellation traffic connects through Landing North Yard only in this fixture.",
+      "scope": { "label": "synthetic ground", "precision": "unspecified" },
+      "limitations": "Synthetic. Single-layer claim.",
+      "verificationStatus": "operator_confirmed"
+    },
+    {
+      "id": "ev-synth-d-glaciermesh-landing",
+      "title": "Synthetic attestation — GlacierMesh uses Landing South Yard",
+      "urlOrReference": "synthetic://fixture-d/glaciermesh-landing-south",
+      "publisher": "GRYPS Phase 4 Sprint 11 (synthetic)",
+      "publicationDate": "2026-11-26",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "GlacierMesh constellation traffic connects through Landing South Yard only in this fixture.",
+      "scope": { "label": "synthetic ground", "precision": "unspecified" },
+      "limitations": "Synthetic. Single-layer claim.",
+      "verificationStatus": "operator_confirmed"
+    },
+    {
+      "id": "ev-synth-d-separation",
+      "title": "Synthetic separation note — North vs South landing yards",
+      "urlOrReference": "synthetic://fixture-d/landing-yards-separated",
+      "publisher": "GRYPS Phase 4 Sprint 11 (synthetic)",
+      "publicationDate": "2026-11-26",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "Landing North Yard and Landing South Yard are modelled as distinct facilities with no shared campus in this fixture.",
+      "scope": { "label": "ground landing yards only", "precision": "unspecified" },
+      "limitations": "Does not address backhaul, ops, site power, or end-to-end independence.",
+      "verificationStatus": "operator_confirmed"
+    }
+  ],
+  "claimsNotToMake": [
+    "Complete end-to-end independence",
+    "Separation of backhaul, operations, or site dependencies",
+    "Any claim about real commercial operators",
+    "Any resilience score, grade, weight, or failure probability"
+  ],
+  "limitations": [
+    "Positive separation is scoped to fictional ground landing yards only.",
+    "Other layers remain UNKNOWN by design.",
+    "Must not be imported into scoring or Neon."
+  ],
+  "isOperationalAssessment": false,
+  "containsScoreOrProbability": false
+}

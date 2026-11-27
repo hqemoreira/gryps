@@ -2,7 +2,7 @@
  * Homepage sample Signature — single source for the live widget, meta tags, and OG image.
  * Recompute via scoreDeterministic so social previews cannot drift from the on-page demo.
  *
- * Mid-range well-configured example (Model v0.4): dual independent LEO paths at 67°N.
+ * Mid-range well-configured example (Model v0.4): dual catalogue LEO providers (broadband + narrowband) at 67°N.
  * Interactive latitude ticks use the same profile; only lat changes — scores are never hand-tuned.
  * Lapland single-Starlink failure mode lives in the Research Library pedagogy entry.
  */

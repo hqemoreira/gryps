@@ -46,7 +46,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
         {
           label: "No LEO backup path",
           detail:
-            "Model commentary: an independent LEO path (broadband or polar narrowband) would reduce single-point-of-failure risk for this profile — not a provider commitment.",
+            "Model commentary: a second catalogue LEO path (broadband or polar narrowband) would raise the diversity indicator for this profile — not a provider commitment, and not proof of ground/backhaul independence.",
         },
       ],
       connectivity_options: [
@@ -70,9 +70,9 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
         },
       ],
       recommendation:
-        "Model commentary: document an independent LEO backup alongside the current GEO path. Single-GEO at 71°N scores below the model's resilience threshold for safety-critical operations. A dual LEO+GEO architecture would raise this modeled score into a stronger band.",
+        "Model commentary: document a second catalogue LEO path alongside the current GEO path. Single-GEO at 71°N scores below the model's resilience threshold for safety-critical operations. A dual LEO+GEO catalogue mix would raise this modeled score into a stronger band — site independence still needs separate evidence.",
       caveats: [
-        "Score reflects current single-provider configuration in Model v0.4 — not live network performance",
+        "Authored historical example. The model version was not recorded — not live network performance",
         "Model commentary — not a substitute for professional connectivity planning or a provider SLA",
       ],
     },
@@ -94,7 +94,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
         score: 78,
         grade: "B",
         summary:
-          "Dual-provider LEO architecture with independent orbital types. Strong redundancy posture for an autonomous safety-critical mining fleet, with minor improvement opportunities in failover automation.",
+          "Dual-provider LEO architecture with catalogue orbital-class mix (broadband + narrowband). Strong modelled redundancy indicator for an autonomous safety-critical mining fleet; ground/backhaul/site independence is not verified by catalogue mix alone. Minor improvement opportunities in failover automation.",
       },
       risk_factors: [
         {
@@ -114,7 +114,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
         {
           label: "No terrestrial fallback",
           detail:
-            "Where mine infrastructure permits, a terrestrial LTE/5G path would add a third independent class in the model.",
+            "Where mine infrastructure permits, a terrestrial LTE/5G path would add a third catalogue path class in the model.",
         },
       ],
       connectivity_options: [
@@ -131,7 +131,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
           provider: "Iridium Certus",
           type: "Polar LEO narrowband",
           confidence: 93,
-          note: "Independent narrowband backup in the modeled ranking.",
+          note: "Catalogue narrowband backup in the modeled ranking.",
           elevation: "Low-profile omni; modest sky view.",
           coverage: "True polar (catalog note).",
           failover_latency: "Model estimate: sub-minute if pre-provisioned.",
@@ -189,7 +189,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
       ],
       redundancy_gaps: [
         {
-          label: "No independent backup link",
+          label: "No second catalogue backup path",
           detail:
             "Model commentary: a polar narrowband terminal is ranked as a safety/control backup during broadband LEO gaps — not a measured outage profile.",
         },
@@ -220,7 +220,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
         },
       ],
       recommendation:
-        "Model commentary: add an independent narrowband backup path and consider local mesh for fleet coordination. That architecture would raise the modeled score into a stronger band — not a live coverage guarantee.",
+        "Model commentary: add a catalogue narrowband backup path and consider local mesh for fleet coordination. That architecture would raise the modeled score into a stronger band — not a live coverage guarantee, and not verified site-level independence.",
       caveats: [
         "Terrain penalty is estimated from EU-DEM elevation data, not on-site survey",
         "Model commentary — not a substitute for professional connectivity planning or a provider SLA",
@@ -284,7 +284,7 @@ export const EXAMPLE_SIGNATURES: ExampleSignature[] = [
           provider: "Iridium Certus",
           type: "Polar LEO narrowband",
           confidence: 91,
-          note: "Independent safety/control channel in the ranking.",
+          note: "Catalogue safety/control channel in the ranking.",
           elevation: "Omnidirectional terminal; modest sky-view need.",
           coverage: "True polar including high latitudes (catalog note).",
           failover_latency: "Model estimate: sub-minute if pre-provisioned.",

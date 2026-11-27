@@ -43,8 +43,9 @@ function Article() {
         <strong style={{ color: "var(--text)", fontWeight: 600 }}>Paikan olosuhteet</strong> (0–20,
         mm. leveysaste) ja{" "}
         <strong style={{ color: "var(--text)", fontWeight: 600 }}>Lievennyksen laatu</strong>{" "}
-        (0–80: redundanssi, toimittaja-/polkuriippumattomuus, profiili–autonomia), sitten kovat
-        katot. Arvosanakaistat: {GRADE_BANDS_SUMMARY}.
+        (0–80: redundanssi / toimittajien monimuotoisuus, hakemistoluottamus, profiili–autonomia),
+        sitten kovat katot. Hakemistopohjainen rata-mix ei ole todennettu päästä päähän
+        -riippumattomuus. Arvosanakaistat: {GRADE_BANDS_SUMMARY}.
       </p>
       <p style={p}>
         Valinnainen tekoälyteksti voi selittää tulosta — se ei koskaan muuta pistettä, arvosanaa,

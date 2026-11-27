@@ -1,0 +1,75 @@
+{
+  "schema": "gryps-qa-seeded-defects-catalog-v0",
+  "recorded": "2026-11-27",
+  "notes": [
+    "Isolated sandboxes only — never applied to live GRYPS scoring or packs.",
+    "Mock agents detect via rule markers (P6-S4 CI).",
+    "Live LLM evaluation matrix: live-eval-catalog.json + npm run test:qa-live (P6-S7, on-demand)."
+  ],
+  "seeds": [
+    {
+      "id": "SD-01-scoring-weight",
+      "title": "Changed scoring weight",
+      "intendedDefect": "Model v0.4 weight/constant altered in sandbox stub",
+      "expectedAgents": ["domain_model"],
+      "expectedFindingIds": ["DOM-SCORE-01"],
+      "minSeverity": "CRITICAL"
+    },
+    {
+      "id": "SD-02-regression-broken",
+      "title": "Broken Model v0.4 homepage regression",
+      "intendedDefect": "HERO_DEMO_SCORE not 83",
+      "expectedAgents": ["regression_integration"],
+      "expectedFindingIds": ["REG-83-01"],
+      "minSeverity": "CRITICAL"
+    },
+    {
+      "id": "SD-03-missing-provenance",
+      "title": "Missing evidence provenance",
+      "intendedDefect": "Evidence object without source provenance",
+      "expectedAgents": ["evidence_provenance"],
+      "expectedFindingIds": ["EV-PROV-01"],
+      "minSeverity": "HIGH"
+    },
+    {
+      "id": "SD-04-unknown-to-positive",
+      "title": "UNKNOWN coerced to positive claim",
+      "intendedDefect": "UNKNOWN relationship described as confirmed independent",
+      "expectedAgents": ["domain_model"],
+      "expectedFindingIds": ["DOM-UNKNOWN-01"],
+      "minSeverity": "HIGH"
+    },
+    {
+      "id": "SD-05-false-independence",
+      "title": "Unsupported provider independence claim",
+      "intendedDefect": "Catalogue diversity claimed as infrastructure independence",
+      "expectedAgents": ["domain_model"],
+      "expectedFindingIds": ["DOM-INDEP-01"],
+      "minSeverity": "HIGH"
+    },
+    {
+      "id": "SD-06-broken-workflow-link",
+      "title": "Broken workflow navigation link",
+      "intendedDefect": "href points to /research/workflo",
+      "expectedAgents": ["regression_integration"],
+      "expectedFindingIds": ["REG-NAV-01"],
+      "minSeverity": "HIGH"
+    },
+    {
+      "id": "SD-07-false-green-validator",
+      "title": "Validator succeeds despite failure",
+      "intendedDefect": "ALWAYS_PASS / VALIDATOR_LIES marker",
+      "expectedAgents": ["test_engineer", "adversarial"],
+      "expectedFindingIds": ["TEST-FALSEGREEN-01", "ADV-FALSEGREEN-01"],
+      "minSeverity": "CRITICAL"
+    },
+    {
+      "id": "SD-08-secret-exposed",
+      "title": "Secret exposed in fixture",
+      "intendedDefect": "API key / SECRET_EXPOSED in sandbox file",
+      "expectedAgents": ["security_privacy"],
+      "expectedFindingIds": ["SEC-SECRET-01"],
+      "minSeverity": "CRITICAL"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "gryps-protected-boundaries-manifest-v0",
+  "recorded": "2026-11-27",
+  "notes": [
+    "LICENSE and P5-S2 pack files are hash-locked. Changing them fails test:boundaries.",
+    "Model v0.4 homepage regression is asserted as 83 · B via lib/hero-demo exports.",
+    "REVIEW-01/02 packages live on the main checkout when present; absence is reported, not failed.",
+    "Scoring engine file hashes are reported for visibility. Hash drift alone does not fail CI — Gate F + human approval govern scoring changes. Homepage 83 · B must still hold."
+  ],
+  "immutableFiles": [
+    {
+      "id": "LICENSE",
+      "path": "LICENSE",
+      "sha256": "10719d71aede7e5790d01ac9631cfdfc109e02dde2c049ae3204cece400f9a13"
+    },
+    {
+      "id": "P5-S2-pack",
+      "path": "docs/methodology/evidence-packs/nordic-lapland-dual-path-v0/pack.json",
+      "sha256": "e0d407f0bb25c15f48791f4a5e7403b75d9cfa0a6013170883f73f96db57e1e5"
+    },
+    {
+      "id": "P5-S2-traceability",
+      "path": "docs/methodology/evidence-packs/nordic-lapland-dual-path-v0/sources-traceability.json",
+      "sha256": "445aa83c20eb8d6205bdac0522e2ded9aa1fd4b7b7d1e2ac6d85d036855f23d1"
+    }
+  ],
+  "homepageRegression": {
+    "lat": 67,
+    "lng": 26,
+    "sector": "mining",
+    "autonomy": "remote-operated",
+    "criticality": "high",
+    "providers": ["starlink", "iridium"],
+    "expectedScore": 83,
+    "expectedGrade": "B"
+  },
+  "reviewPackagesOptional": [
+    {
+      "id": "REVIEW-02-BASELINE",
+      "pathCandidates": ["review-package-02/BASELINE.md", "../gryps/review-package-02/BASELINE.md"],
+      "sha256": "01ca1f4cb59ad91c741442a7000ff8ecb4ebc83ba00404bd60a5e311b3c0585a"
+    },
+    {
+      "id": "REVIEW-01-BASELINE",
+      "pathCandidates": ["review-package/BASELINE.md", "../gryps/review-package/BASELINE.md"],
+      "sha256": "b1bd89f54ed33b5790d8f5bf33ca2cd0d07b990546cf18a9b4e6ee6ddaf08310"
+    }
+  ],
+  "scoringEngineWatchlist": [
+    "lib/deterministic-score.ts",
+    "lib/scoring.ts",
+    "lib/model-constants.ts",
+    "lib/hero-demo.ts",
+    "lib/signature-meta.ts"
+  ]
+}

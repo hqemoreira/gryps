@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { ResearchLibraryView } from "@/components/ResearchLibraryView";
 import { getAllResearchEntries } from "@/lib/research-library";
 import { resolveResearchAssessment } from "@/lib/research-resolve";
@@ -31,5 +32,9 @@ export default async function ResearchLibraryPage() {
     })
   );
 
-  return <ResearchLibraryView cards={cards} />;
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", backgroundColor: "var(--bg)" }} />}>
+      <ResearchLibraryView cards={cards} />
+    </Suspense>
+  );
 }

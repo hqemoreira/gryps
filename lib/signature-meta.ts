@@ -10,6 +10,8 @@ export {
   METHODOLOGY_LABEL,
   SCORING_MODEL_LABEL,
   GRADE_BANDS_SUMMARY,
+  UNRECORDED_MODEL_VERSION,
+  displayModelVersion,
 } from "@/lib/model-constants";
 
 export function gradeFromScore(score: number): "A" | "B" | "C" | "D" | "F" {

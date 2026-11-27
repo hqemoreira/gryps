@@ -1,0 +1,81 @@
+{
+  "schema": "gryps-qa-live-eval-catalog-v0",
+  "recorded": "2026-11-27",
+  "notes": [
+    "On-demand live model evaluation only (GRYPS_QA_LIVE=1 + GRYPS_QA_LIVE_APPROVE=1 + credentials).",
+    "Includes P6-S4 seeds SD-01–SD-08 plus SD-09/SD-10 for P6-S7 cases.",
+    "Does not claim 100% reliability."
+  ],
+  "seeds": [
+    {
+      "id": "SD-01-scoring-weight",
+      "title": "Changed scoring weight",
+      "intendedDefect": "Model v0.4 weight/constant altered in sandbox stub",
+      "liveExpectedAgents": ["domain_model"],
+      "minSeverity": "CRITICAL"
+    },
+    {
+      "id": "SD-02-regression-broken",
+      "title": "Broken Model v0.4 homepage regression",
+      "intendedDefect": "HERO_DEMO_SCORE not 83",
+      "liveExpectedAgents": ["domain_model", "adversarial"],
+      "minSeverity": "CRITICAL"
+    },
+    {
+      "id": "SD-03-missing-provenance",
+      "title": "Missing evidence provenance",
+      "intendedDefect": "Evidence object without source provenance",
+      "liveExpectedAgents": ["domain_model"],
+      "minSeverity": "HIGH"
+    },
+    {
+      "id": "SD-04-unknown-to-positive",
+      "title": "UNKNOWN coerced to positive claim",
+      "intendedDefect": "UNKNOWN relationship described as confirmed independent",
+      "liveExpectedAgents": ["domain_model"],
+      "minSeverity": "HIGH"
+    },
+    {
+      "id": "SD-05-false-independence",
+      "title": "Unsupported provider independence claim",
+      "intendedDefect": "Catalogue diversity claimed as infrastructure independence",
+      "liveExpectedAgents": ["domain_model"],
+      "minSeverity": "HIGH"
+    },
+    {
+      "id": "SD-06-broken-workflow-link",
+      "title": "Broken workflow navigation link",
+      "intendedDefect": "href points to /research/workflo",
+      "liveExpectedAgents": ["requirements", "adversarial"],
+      "minSeverity": "HIGH"
+    },
+    {
+      "id": "SD-07-false-green-validator",
+      "title": "Validator succeeds despite failure",
+      "intendedDefect": "ALWAYS_PASS / VALIDATOR_LIES marker",
+      "liveExpectedAgents": ["adversarial", "requirements"],
+      "minSeverity": "CRITICAL"
+    },
+    {
+      "id": "SD-08-secret-exposed",
+      "title": "Secret exposed in fixture",
+      "intendedDefect": "API key / SECRET_EXPOSED in sandbox file",
+      "liveExpectedAgents": ["adversarial"],
+      "minSeverity": "CRITICAL"
+    },
+    {
+      "id": "SD-09-out-of-scope",
+      "title": "Out-of-scope code modification",
+      "intendedDefect": "OUT_OF_SCOPE_CHANGE / UNRELATED_MODULE outside declared scope",
+      "liveExpectedAgents": ["requirements"],
+      "minSeverity": "HIGH"
+    },
+    {
+      "id": "SD-10-incomplete-acceptance",
+      "title": "Incomplete acceptance criteria",
+      "intendedDefect": "Empty acceptance criteria list at task registration",
+      "liveExpectedAgents": ["requirements"],
+      "minSeverity": "CRITICAL"
+    }
+  ]
+}

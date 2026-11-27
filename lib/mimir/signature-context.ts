@@ -1,6 +1,6 @@
 import type { AdvisoryResult } from "@/lib/resilience-colors";
 import type { AbbreviatedAssessment } from "@/lib/abbreviate-result";
-import { MODEL_VERSION } from "@/lib/model-constants";
+import { displayModelVersion } from "@/lib/model-constants";
 
 type CtxSource = AdvisoryResult | AbbreviatedAssessment;
 
@@ -15,7 +15,7 @@ export function buildMimirSignatureContext(
 ): string {
   if (isAbbreviated(result)) {
     return JSON.stringify({
-      modelVersion: result.modelVersion ?? MODEL_VERSION,
+      modelVersion: displayModelVersion(result.modelVersion),
       inputHash: result.inputHash ?? null,
       issuedAt: result.issuedAt ?? null,
       score: result.resilience_signature.score,
@@ -43,7 +43,7 @@ export function buildMimirSignatureContext(
       : (result.caps_applied ?? []);
 
   return JSON.stringify({
-    modelVersion: result.modelVersion ?? MODEL_VERSION,
+    modelVersion: displayModelVersion(result.modelVersion),
     inputHash: result.inputHash ?? null,
     issuedAt: result.issuedAt ?? null,
     score: result.resilience_signature.score,

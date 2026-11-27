@@ -17,10 +17,12 @@ import type {
   ScoreExplanation,
 } from "@/lib/advisor-intelligence";
 import type { EvidencePackage } from "@/lib/evidence-model";
+import { DISPLAY_CHAIN_NOTICE } from "@/lib/evidence-model";
+import { EVIDENCE_KINDS } from "@/lib/evidence-kinds";
 import { PRIORITY_LABELS, type AdvisorPriorityId } from "@/lib/advisor-priorities";
 import { computeComplianceFlags } from "@/lib/compliance";
 import { redundancyTiers } from "@/lib/redundancy-tiers";
-import { MODEL_VERSION } from "@/lib/signature-meta";
+import { displayModelVersion } from "@/lib/model-constants";
 import {
   GRADE_BANDS_SUMMARY,
   RECOMMENDATION_AI_LABEL,
@@ -170,10 +172,9 @@ const UI = {
     notSpecified: "Not specified",
     stricter: "stricter threshold applied",
     realData: "REFERENCE DATA",
-    realDataSub:
-      "Source-backed third-party datasets — not AI-generated, not blended into the Resilience Score above.",
-    realWorldGap: "Real-world gap (55%)",
-    terrainPenalty: "Terrain penalty (45%)",
+    realDataSub: EVIDENCE_KINDS.STORED.en,
+    realWorldGap: "Stored real-world gap component",
+    terrainPenalty: "Stored terrain penalty component",
     bittiNA: "Not available — Bittimittari (Traficom) covers Finland only",
     demNA: "Not available — EU-DEM has a data gap at this location (likely open water).",
     sources:
@@ -252,10 +253,12 @@ const UI = {
     scoreCaps: "Hard caps applied",
     scoreNoCaps: "No hard caps applied",
     methodologyLink: "Full scoring methodology →",
-    componentRedundancy: "Redundancy (independent paths)",
+    componentRedundancy: "Redundancy (provider diversity)",
     componentLatitude: "Site conditions",
     componentProfile: "Profile–autonomy alignment",
-    componentConfidence: "Provider / path independence",
+    componentConfidence: "Catalogue confidence",
+    componentDiversityNote:
+      "Provider diversity and catalogue-based orbit mix reflect selected catalogue characteristics only. Catalogue confidence is a separate v0.4 component (assessment/data basis). None of these establish independent ground infrastructure, backhaul, operations, or site-level dependencies.",
     riskFactors: "RISK FACTORS",
     redundancyGaps: "REDUNDANCY GAPS",
     scoreImpact: "↓ SCORE IMPACT",
@@ -348,10 +351,9 @@ const UI = {
     notSpecified: "Ei ilmoitettu",
     stricter: "tiukempi kynnys käytössä",
     realData: "VIITEDATA",
-    realDataSub:
-      "Lähteisiin perustuvat kolmannen osapuolen aineistot — ei tekoälyn tuottamia, eikä sekoitettu yllä olevaan Resilience-pisteeseen.",
-    realWorldGap: "Todellinen kuilu (55 %)",
-    terrainPenalty: "Maastorangaistus (45 %)",
+    realDataSub: EVIDENCE_KINDS.STORED.fi,
+    realWorldGap: "Tallennettu todellisen kuilun osatekijä",
+    terrainPenalty: "Tallennettu maastorangaistuksen osatekijä",
     bittiNA: "Ei saatavilla — Bittimittari (Traficom) kattaa vain Suomen",
     demNA: "Ei saatavilla — EU-DEM:ssä on aukko tällä sijainnilla (todennäköisesti avovettä).",
     sources:
@@ -430,10 +432,12 @@ const UI = {
     scoreCaps: "Käytetyt kovat katot",
     scoreNoCaps: "Ei kovia kattoja",
     methodologyLink: "Täysi pisteytysmenetelmä →",
-    componentRedundancy: "Redundanssi (riippumattomat polut)",
+    componentRedundancy: "Redundanssi (toimittajien monimuotoisuus)",
     componentLatitude: "Paikan olosuhteet",
     componentProfile: "Profiili–autonomia -linjaus",
-    componentConfidence: "Toimittaja- / polkuriippumattomuus",
+    componentConfidence: "Hakemistoluottamus",
+    componentDiversityNote:
+      "Toimittajien monimuotoisuus ja hakemistopohjainen rata-mix kuvastavat vain valittuja hakemisto-ominaisuuksia. Hakemistoluottamus on erillinen v0.4-komponentti (arvioinnin/dataperusta). Mikään näistä ei osoita riippumatonta maa-infrastruktuuria, backhaulia, operaatioita eikä kohdetason riippuvuuksia.",
     riskFactors: "RISKITEKIJÄT",
     redundancyGaps: "REDUNDANSSIAUKOT",
     scoreImpact: "↓ VAIKUTUS PISTEISIIN",
@@ -512,6 +516,27 @@ const UI = {
 } as const;
 
 type UiCopy = (typeof UI)[UiLang];
+
+/** Display remap for engine gap strings that overclaim correlated outage from catalogue labels alone. */
+function displayRedundancyGapDetail(detail: string, lang: UiLang): string {
+  if (detail === "Providers share the same orbital class — correlated outage risk remains.") {
+    return lang === "fi"
+      ? "Valitut toimittajat jakavat saman hakemiston rataluokan tai LEO-palveluluokan. Tämä on hakemistopohjainen rata-mix -huomio — ei todennettua yhteistä maa-, backhaul- tai kohderiippuvuutta."
+      : "Selected providers share the same catalogue orbit class or LEO service class. This is a catalogue-based orbit-mix observation — not verified shared ground, backhaul, or site dependencies.";
+  }
+  if (detail.includes("No independent failover path")) {
+    return lang === "fi"
+      ? detail.replace(
+          "No independent failover path.",
+          "Ei toista hakemistotunnisteista polkua dokumentoitu."
+        )
+      : detail.replace(
+          "No independent failover path.",
+          "No second catalogue-documented provider path is recorded."
+        );
+  }
+  return detail;
+}
 
 function AssessmentInputsPanel({
   input,
@@ -979,6 +1004,17 @@ function ScoreCompositionPanel({
           );
         })}
       </div>
+      <p
+        style={{
+          fontFamily: "var(--font-ui)",
+          fontSize: 11,
+          color: "var(--text-muted)",
+          lineHeight: 1.55,
+          marginBottom: 12,
+        }}
+      >
+        {t.componentDiversityNote}
+      </p>
       <div
         style={{
           display: "flex",
@@ -1426,7 +1462,15 @@ function IntelligencePanel({ intelligence, t }: { intelligence: AdvisorIntellige
   );
 }
 
-function EvidencePanel({ evidence, t }: { evidence: EvidencePackage; t: UiCopy }) {
+function EvidencePanel({
+  evidence,
+  t,
+  lang,
+}: {
+  evidence: EvidencePackage;
+  t: UiCopy;
+  lang: "en" | "fi";
+}) {
   const band = bandLabel(evidence.confidence.band, t);
   const sourceById = new Map(evidence.sources.map((s) => [s.id, s]));
 
@@ -1524,6 +1568,19 @@ function EvidencePanel({ evidence, t }: { evidence: EvidencePackage; t: UiCopy }
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 18 }}>
+        {evidence.chainOrigin === "display" && (
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 13,
+              color: "var(--text)",
+              lineHeight: 1.55,
+              marginBottom: 14,
+            }}
+          >
+            {lang === "fi" ? DISPLAY_CHAIN_NOTICE.fi : DISPLAY_CHAIN_NOTICE.en}
+          </p>
+        )}
         {evidence.chain.map((step, i) => (
           <div
             key={step.id}
@@ -1954,15 +2011,11 @@ function ComparisonTable({ rows, t }: { rows: ComparisonRow[]; t: UiCopy }) {
   );
 }
 
-// Real, measured data — deliberately separate from and never blended into the
-// Resilience Signature score above. Two independent inputs:
-// Bittimittari real-world speed/latency (Finland only — Traficom's dataset has
-// no coverage outside Finland) and EU-DEM terrain variance (works globally).
-// When Bittimittari doesn't apply (non-Finnish site, or a live ad-hoc query
-// where no municipality can be resolved), this shows terrain only, clearly
-// labeled as such — never a fabricated or interpolated real-world-gap number.
+// Historical enrichment columns only. The composite real_data_score is kept in
+// the database and is never rendered here — it reads as a second Signature.
 export type RealDataEvidence = {
-  realDataScore: number;
+  /** Preserved for callers; not rendered as a current score. */
+  realDataScore?: number | null;
   terrainPenaltyScore: number | null;
   elevationCenterM: number | null;
   elevationVarianceM: number | null;
@@ -1974,6 +2027,17 @@ export type RealDataEvidence = {
   bittimittariMedianLatencyMs: number | null;
 };
 
+/** True when any stored enrichment field can be shown without the composite score. */
+export function hasHistoricalEnrichment(data: RealDataEvidence): boolean {
+  return (
+    data.terrainPenaltyScore != null ||
+    data.realWorldGapScore != null ||
+    data.elevationCenterM != null ||
+    data.bittimittariMedianDownloadMbps != null ||
+    data.bittimittariSampleCount != null
+  );
+}
+
 function RealDataEvidencePanel({
   data,
   t,
@@ -1983,12 +2047,6 @@ function RealDataEvidencePanel({
   t: UiCopy;
   lang?: UiLang;
 }) {
-  const scoreColor =
-    data.realDataScore >= 70
-      ? "var(--accent-green)"
-      : data.realDataScore >= 40
-        ? "var(--accent-amber)"
-        : "var(--accent-red)";
   const terrainOnly = data.realWorldGapScore == null;
 
   return (
@@ -2010,7 +2068,7 @@ function RealDataEvidencePanel({
         }}
       >
         <div>
-          <TypeLabel kind="MEASURED" />
+          <TypeLabel kind="STORED" />
           <p
             style={{
               fontFamily: "var(--font-data)",
@@ -2022,23 +2080,11 @@ function RealDataEvidencePanel({
             {t.realData}
           </p>
         </div>
-        <div style={{ textAlign: "right" }}>
-          <span
-            style={{
-              fontFamily: "var(--font-data)",
-              fontSize: 20,
-              fontWeight: 900,
-              color: scoreColor,
-            }}
-          >
-            {data.realDataScore}
-          </span>
-          {terrainOnly && (
-            <p style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)" }}>
-              {lang === "fi" ? "vain maasto" : "terrain only"}
-            </p>
-          )}
-        </div>
+        {terrainOnly && (
+          <p style={{ fontFamily: "var(--font-data)", fontSize: 8, color: "var(--text-dim)" }}>
+            {lang === "fi" ? "vain maasto" : "terrain only"}
+          </p>
+        )}
       </div>
       <p
         style={{
@@ -2088,7 +2134,8 @@ function RealDataEvidencePanel({
                 lineHeight: 1.6,
               }}
             >
-              {data.municipality} · {t.measured} {data.bittimittariMedianDownloadMbps?.toFixed(1)}{" "}
+              {data.municipality} · {lang === "fi" ? "tallennettu mediaani" : "stored median"}{" "}
+              {data.bittimittariMedianDownloadMbps?.toFixed(1)}{" "}
               {t.medianDownload}, {data.bittimittariMedianLatencyMs?.toFixed(0)}
               {t.medianLatency}({data.bittimittariSampleCount} {t.measurements},{" "}
               {data.bittimittariPeriod})
@@ -2850,7 +2897,7 @@ export function ResilienceOutput({
                         lineHeight: 1.6,
                       }}
                     >
-                      {g.detail}
+                      {displayRedundancyGapDetail(g.detail, lang)}
                     </p>
                   </div>
                 ))}
@@ -2907,7 +2954,9 @@ export function ResilienceOutput({
               marginBottom: 14,
             }}
           >
-            {primaryGap ? `${primaryGap.label} — ${primaryGap.detail}` : "—"}
+            {primaryGap
+              ? `${primaryGap.label} — ${displayRedundancyGapDetail(primaryGap.detail, lang)}`
+              : "—"}
           </p>
           <TypeLabel kind="RESEARCH" />
           <p
@@ -3293,8 +3342,10 @@ export function ResilienceOutput({
 
       <SigTabPanel id="evidence" tab={tab} printExpand={printExpand}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {evidence && <EvidencePanel evidence={evidence} t={t} />}
-          {realData && <RealDataEvidencePanel data={realData} t={t} lang={lang} />}
+          {evidence && <EvidencePanel evidence={evidence} t={t} lang={lang} />}
+          {realData && hasHistoricalEnrichment(realData) && (
+            <RealDataEvidencePanel data={realData} t={t} lang={lang} />
+          )}
           <Link
             href="/knowledge"
             style={{
@@ -3480,7 +3531,7 @@ export function ResilienceOutput({
                 <span
                   style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--text-muted)" }}
                 >
-                  {result.modelVersion ?? MODEL_VERSION}
+                  {displayModelVersion(result.modelVersion)}
                 </span>
               </div>
               {result.inputHash && (
@@ -3691,7 +3742,7 @@ export function ResilienceOutput({
         style={{ borderTop: "1px solid var(--border)", paddingTop: 12, marginTop: 4 }}
       >
         <p style={{ fontFamily: "var(--font-data)", fontSize: 10, color: "var(--text-dim)" }}>
-          {t.generated} {dateLabel} · {t.printAttr} · {result.modelVersion ?? MODEL_VERSION}
+          {t.generated} {dateLabel} · {t.printAttr} · {displayModelVersion(result.modelVersion)}
         </p>
       </div>
     </div>

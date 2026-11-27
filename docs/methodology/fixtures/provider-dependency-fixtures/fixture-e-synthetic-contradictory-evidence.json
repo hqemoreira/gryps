@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "gryps-dependency-fixture-v0.1",
+  "id": "fixture-e-synthetic-contradictory-evidence",
+  "purpose": "Demonstrate conflicting evidence about a single dependency relationship, including temporal records that do not silently overwrite each other.",
+  "researchConclusion": "Available evidence conflicts. The dependency relationship cannot currently be classified as established or absent.",
+  "scope": {
+    "label": "Synthetic — contested backhaul hop",
+    "precision": "unspecified",
+    "geographicNote": "Fictional corridor 'Kola Test Fibre'; not a real route"
+  },
+  "temporalValidity": {
+    "recordedAt": "2026-11-26",
+    "validFrom": "2024-01-01",
+    "validTo": null,
+    "note": "Earlier and later synthetic attestations both retained; contradiction unresolved"
+  },
+  "catalogueClassification": {
+    "providerIds": ["synth-norrsken-path", "synth-midnightsun-link"],
+    "providerDiversity": true,
+    "orbits": ["LEO", "GEO"],
+    "serviceClasses": ["broadband", "broadband"],
+    "catalogueBasedOrbitMix": true,
+    "note": "Fictional labels only. Catalogue-based orbit mix does not resolve the contested backhaul claim."
+  },
+  "entities": [
+    {
+      "id": "sp-norrsken",
+      "kind": "service_provider",
+      "name": "Norrsken Path (fictional)",
+      "attributes": {
+        "catalogueId": "synth-norrsken-path",
+        "orbit": "LEO",
+        "serviceClass": "broadband",
+        "fictional": true
+      }
+    },
+    {
+      "id": "sp-midnight",
+      "kind": "service_provider",
+      "name": "MidnightSun Link (fictional)",
+      "attributes": {
+        "catalogueId": "synth-midnightsun-link",
+        "orbit": "GEO",
+        "serviceClass": "broadband",
+        "fictional": true
+      }
+    },
+    {
+      "id": "bh-kola-test",
+      "kind": "terrestrial_backhaul",
+      "name": "Kola Test Fibre hop (fictional)",
+      "attributes": { "fictional": true }
+    },
+    {
+      "id": "fd-backhaul",
+      "kind": "failure_domain",
+      "name": "Shared backhaul hop failure",
+      "attributes": { "layer": "network", "typicalImpact": "regional", "fictional": true }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-norrsken-backhaul-claim",
+      "type": "depends_on",
+      "fromId": "sp-norrsken",
+      "toId": "bh-kola-test",
+      "direction": "from→to",
+      "assertionKind": "shared_dependency",
+      "confidence": "contradicted",
+      "inferred": false,
+      "scope": { "label": "synthetic contested backhaul", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-e-earlier-shared", "ev-synth-e-later-separate"],
+      "limitations": "Unresolved contradiction between 2024 shared-hop claim and 2026 separation claim. Newer source does not automatically win.",
+      "recordedAt": "2026-11-26",
+      "validFrom": "2024-01-01",
+      "validTo": null
+    },
+    {
+      "id": "rel-midnight-backhaul-claim",
+      "type": "depends_on",
+      "fromId": "sp-midnight",
+      "toId": "bh-kola-test",
+      "direction": "from→to",
+      "assertionKind": "shared_dependency",
+      "confidence": "contradicted",
+      "inferred": false,
+      "scope": { "label": "synthetic contested backhaul", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-e-earlier-shared", "ev-synth-e-later-separate"],
+      "limitations": "Same unresolved contradiction as Norrsken Path for this hop.",
+      "recordedAt": "2026-11-26",
+      "validFrom": "2024-01-01",
+      "validTo": null
+    },
+    {
+      "id": "rel-backhaul-exposed",
+      "type": "exposed_to",
+      "fromId": "bh-kola-test",
+      "toId": "fd-backhaul",
+      "direction": "from→to",
+      "assertionKind": "architecture_class",
+      "confidence": "inferred",
+      "inferred": true,
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-e-design"],
+      "limitations": "Failure domain exists as a modelling object; shared exposure remains contradicted."
+    }
+  ],
+  "unknownRelationships": [
+    {
+      "id": "unk-ground",
+      "between": ["sp-norrsken", "sp-midnight"],
+      "layer": "ground",
+      "question": "Do gateways / teleports overlap?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "That a contested backhaul claim settles ground independence"
+    },
+    {
+      "id": "unk-site",
+      "between": ["sp-norrsken", "sp-midnight"],
+      "layer": "site",
+      "question": "Site terminal and power domains?",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "That contradictory backhaul evidence implies site separation or sharing"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-synth-e-design",
+      "title": "Synthetic fixture design — Norrsken / MidnightSun contradiction",
+      "urlOrReference": "docs/methodology/fixtures/provider-dependency-fixtures/fixture-e-synthetic-contradictory-evidence.json",
+      "publisher": "GRYPS Phase 4 Sprint 11 (synthetic)",
+      "publicationDate": "2026-11-26",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "Fixture exists to exercise contradicted confidence and evidence preservation.",
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "limitations": "Not real-world.",
+      "verificationStatus": "operator_confirmed"
+    },
+    {
+      "id": "ev-synth-e-earlier-shared",
+      "title": "Synthetic 2024 note — both paths share Kola Test Fibre",
+      "urlOrReference": "synthetic://fixture-e/2024-shared-kola-hop",
+      "publisher": "GRYPS Phase 4 Sprint 11 (synthetic earlier source)",
+      "publicationDate": "2024-03-15",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "In 2024 both Norrsken Path and MidnightSun Link were attested to depend on the same Kola Test Fibre hop.",
+      "scope": { "label": "synthetic backhaul · account-wide 2024", "precision": "unspecified" },
+      "validFrom": "2024-01-01",
+      "validTo": "2025-12-31",
+      "limitations": "Earlier synthetic attestation. Not deleted when later evidence appears. Scope is account-wide corridor claim.",
+      "verificationStatus": "spot_checked",
+      "supersededBy": null,
+      "qualifiedBy": "ev-synth-e-later-separate"
+    },
+    {
+      "id": "ev-synth-e-later-separate",
+      "title": "Synthetic 2026 note — MidnightSun uses alternate hop",
+      "urlOrReference": "synthetic://fixture-e/2026-midnight-alternate-hop",
+      "publisher": "GRYPS Phase 4 Sprint 11 (synthetic later source)",
+      "publicationDate": "2026-06-01",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "In 2026 a later synthetic attestation states MidnightSun Link no longer uses Kola Test Fibre and lands via an alternate hop — conflicting with the 2024 shared-hop claim for the overlapping period boundary.",
+      "scope": { "label": "synthetic backhaul · MidnightSun account 2026", "precision": "unspecified" },
+      "validFrom": "2026-01-01",
+      "validTo": null,
+      "limitations": "Later source has narrower account scope. Does not automatically invalidate the earlier record for 2024. Authority and coverage differ — contradiction remains unresolved.",
+      "verificationStatus": "spot_checked",
+      "supersedes": null,
+      "qualifies": "ev-synth-e-earlier-shared"
+    }
+  ],
+  "claimsNotToMake": [
+    "That the dependency is established",
+    "That the dependency is absent",
+    "That the newer source is automatically correct",
+    "That the older source is invalid merely because a newer source exists",
+    "Any resilience score, grade, weight, or probability",
+    "Any claim about real commercial operators"
+  ],
+  "limitations": [
+    "Contradiction is intentional and unresolved.",
+    "Both evidence records are retained; neither is deleted.",
+    "Later record qualifies/conflicts with earlier claim without silent overwrite.",
+    "Must not be imported into scoring or Neon."
+  ],
+  "isOperationalAssessment": false,
+  "containsScoreOrProbability": false
+}

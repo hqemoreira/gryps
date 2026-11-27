@@ -40,6 +40,15 @@ export const REDUNDANCY_MAX_V04 = 35;
 export const PROVIDER_INDEPENDENCE_MAX_V04 = 25;
 export const PROFILE_ALIGNMENT_MAX_V04 = 20;
 
+/** Missing on a stored payload. Not a synonym for the current engine. */
+export const UNRECORDED_MODEL_VERSION = "unrecorded";
+
+/** Show a stored model id as written. A blank historical id stays unrecorded. */
+export function displayModelVersion(stored: string | null | undefined): string {
+  const version = stored?.trim();
+  return version ? version : UNRECORDED_MODEL_VERSION;
+}
+
 /** Confidence range half-widths from evidence confidence band. */
 export const CONFIDENCE_RANGE_HALF = {
   High: 3,

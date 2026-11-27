@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { AbbreviatedAssessment } from "@/lib/abbreviate-result";
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors";
 import { capNoticesLine } from "@/lib/cap-labels";
+import { displayModelVersion } from "@/lib/model-constants";
 
 type Lang = "en" | "fi";
 
@@ -234,7 +235,7 @@ export function InitialAssessment({
                   marginTop: 8,
                 }}
               >
-                {result.modelVersion ?? "gryps-signature-v0.4"}
+                {displayModelVersion(result.modelVersion)}
                 {result.inputHash ? ` · ${result.inputHash.slice(0, 10)}` : ""}
               </p>
             )}

@@ -3,7 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getSiteBySlug, getAllSites } from "@/lib/signatures-db";
-import { ResilienceOutput } from "@/components/ResilienceOutput";
+import { hasHistoricalEnrichment, ResilienceOutput } from "@/components/ResilienceOutput";
 import { GrypsPrintBrand } from "@/components/GrypsMark";
 import { MimirAssistant } from "@/components/MimirAssistant";
 import { gradeColor } from "@/lib/resilience-colors";
@@ -131,22 +131,22 @@ export default async function SignatureSitePage({ params }: Props) {
               operation_criticality: site.operation_criticality,
               current_setup: site.current_setup ?? undefined,
             }}
-            realData={
-              site.real_data_score != null
-                ? {
-                    realDataScore: site.real_data_score,
-                    terrainPenaltyScore: site.terrain_penalty_score,
-                    elevationCenterM: site.elevation_center_m,
-                    elevationVarianceM: site.elevation_variance_m,
-                    realWorldGapScore: site.real_world_gap_score,
-                    municipality: site.municipality,
-                    bittimittariPeriod: site.bittimittari_period,
-                    bittimittariSampleCount: site.bittimittari_sample_count,
-                    bittimittariMedianDownloadMbps: site.bittimittari_median_download_mbps,
-                    bittimittariMedianLatencyMs: site.bittimittari_median_latency_ms,
-                  }
-                : undefined
-            }
+            realData={(() => {
+              const historical = {
+                realDataScore: site.real_data_score,
+                terrainPenaltyScore: site.terrain_penalty_score,
+                elevationCenterM: site.elevation_center_m,
+                elevationVarianceM: site.elevation_variance_m,
+                realWorldGapScore: site.real_world_gap_score,
+                municipality: site.municipality,
+                bittimittariPeriod: site.bittimittari_period,
+                bittimittariSampleCount: site.bittimittari_sample_count,
+                bittimittariMedianDownloadMbps: site.bittimittari_median_download_mbps,
+                bittimittariMedianLatencyMs: site.bittimittari_median_latency_ms,
+              };
+              // Composite integer stays in the row; it is not passed as a current score.
+              return hasHistoricalEnrichment(historical) ? historical : undefined;
+            })()}
           />
         </div>
 

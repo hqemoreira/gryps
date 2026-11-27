@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState, type CSSProperties } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -20,6 +21,14 @@ import {
 import { TypeLabel } from "@/components/TypeLabel";
 import { MimirAssistant } from "@/components/MimirAssistant";
 import { gradeColor, gradeTextColor } from "@/lib/resilience-colors";
+import { EvidenceBinderPanel } from "@/components/EvidenceBinderPanel";
+import { EvidenceAnnotationPanel } from "@/components/EvidenceAnnotationPanel";
+import {
+  evidenceForLabScenario,
+  listEvidenceBinderRecords,
+  listSyntheticEvidence,
+} from "@/lib/research/evidence-binder";
+import { isLabScenarioId, type LabScenarioId } from "@/lib/research/evidence-packs";
 
 type CardMeta = {
   slug: string;
@@ -33,37 +42,46 @@ const COPY = {
     title: "Research Library",
     lead: "Explore modeled satellite connectivity resilience across remote and autonomous operating environments. Curated research assessments — not customer cases or procurement reports.",
     disclosure:
-      "Research prototype · Non-commercial · Model-based analysis. Each assessment uses deterministic Model v0.4. Curated sample — illustrative operating scenarios with real coordinates, not live RF monitoring.",
+      "Research prototype · Non-commercial · Model-based analysis. Seed assessments may show historical stored Signatures whose model version was not recorded; authored examples keep their stored version metadata. Fresh Advisor runs use deterministic Model v0.4. Curated sample — illustrative operating scenarios with real coordinates, not live RF monitoring.",
     vertical: "Vertical",
     region: "Region",
     empty: "No assessments match these filters.",
     view: "View assessment →",
-    model: "Model v0.4",
+    model: "Research assessment",
     sampleNote: `Curated Research Library — ${RESEARCH_LIBRARY_COUNT} assessments (map portfolio also includes seed sites).`,
     ctaHeading: "Generate Resilience Signature",
-    ctaSub: "Free · No account required. Same scoring model as the research assessments above.",
+    ctaSub:
+      "Free · No account required. Fresh Signatures use Model v0.4 — not a claim that every library card was produced by that engine.",
     ctaBtn: "Generate Resilience Signature",
     navCta: "Generate Resilience Signature",
     count: (n: number) => `${n} of ${RESEARCH_LIBRARY_COUNT} research assessments`,
+    depLabTitle: "Dependency Research Lab",
+    depLabBody:
+      "Experimental, non-scoring research tool for provider-dependency fixtures and Unknown relationships. Separate from Advisor assessments and the homepage Signature.",
+    depLabLink: "Open Dependency Research Lab →",
   },
   fi: {
     eyebrow: "GRYPS · RESEARCH LIBRARY",
     title: "Research Library",
     lead: "Tutki mallinnettua satelliittiyhteyden resilienssiä etäisissä ja autonomisissa toimintaympäristöissä. Kuratoituja tutkimusarvioita — ei asiakastarinoita eikä hankintaraportteja.",
     disclosure:
-      "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi. Jokainen arvio käyttää determinististä mallia v0.4. Kuratoitu otos — havainnollistavia skenaarioita todellisilla koordinaateilla, ei live-RF-seurantaa.",
+      "Tutkimusprototyyppi · Ei-kaupallinen · Mallipohjainen analyysi. Siemenarviot voivat näyttää historiallisia tallennettuja Signatureja, joiden malliversiota ei tallennettu; laaditut esimerkit säilyttävät tallennetun versiotiedon. Tuoreet Advisor-ajot käyttävät determinististä mallia v0.4. Kuratoitu otos — havainnollistavia skenaarioita todellisilla koordinaateilla, ei live-RF-seurantaa.",
     vertical: "Toimiala",
     region: "Alue",
     empty: "Yksikään arvio ei vastaa suodattimia.",
     view: "Katso arvio →",
-    model: "Malli v0.4",
+    model: "Tutkimusarvio",
     sampleNote: `Kuratoitu Research Library — ${RESEARCH_LIBRARY_COUNT} arviota (karttaportfolio sisältää myös siemenkohteita).`,
     ctaHeading: "Luo Resilience Signature",
     ctaSub:
-      "Ilmainen · Ei tiliä tarvita. Sama pisteytysmalli kuin yllä olevissa tutkimusarvioissa.",
+      "Ilmainen · Ei tiliä tarvita. Tuoreet Signaturet käyttävät mallia v0.4 — ei väitettä, että jokainen kirjastokortti syntyi sillä moottorilla.",
     ctaBtn: "Luo Resilience Signature",
     navCta: "Luo Resilience Signature",
     count: (n: number) => `${n} / ${RESEARCH_LIBRARY_COUNT} tutkimusarviota`,
+    depLabTitle: "Dependency Research Lab",
+    depLabBody:
+      "Kokeellinen, ei-pisteyttävä tutkimustyökalu toimittajariippuvuus-fixtureille ja Unknown-suhteille. Erillään Advisor-arvioista ja kotisivun Signaturesta.",
+    depLabLink: "Avaa Dependency Research Lab →",
   },
 };
 
@@ -72,6 +90,12 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
   const t = COPY[lang];
   const [vertical, setVertical] = useState<ResearchVertical | "all">("all");
   const [region, setRegion] = useState<ResearchRegion | "all">("all");
+  const searchParams = useSearchParams();
+  const fromWorkflow = searchParams.get("from") === "workflow";
+  const showBinder = searchParams.get("binder") === "1" || fromWorkflow;
+  const labParam = searchParams.get("lab");
+  const labId: LabScenarioId | null =
+    labParam && isLabScenarioId(labParam) ? labParam : null;
 
   const gradeBySlug = useMemo(() => {
     const m = new Map<string, CardMeta>();
@@ -86,6 +110,11 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
       return true;
     });
   }, [vertical, region]);
+
+  const binderRecords = useMemo(() => {
+    if (labId) return evidenceForLabScenario(labId);
+    return listEvidenceBinderRecords().filter((r) => r.associations.researchLibrarySlug);
+  }, [labId]);
 
   const chip = (active: boolean): CSSProperties => ({
     fontFamily: "var(--font-ui)",
@@ -122,6 +151,37 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
           ]}
         />
         <ResearchDocsNav lang={lang} active="research" />
+
+        {fromWorkflow && (
+          <div
+            style={{
+              marginBottom: 16,
+              padding: "10px 14px",
+              borderRadius: 6,
+              border: "1px solid rgba(34,211,238,0.3)",
+              backgroundColor: "rgba(34,211,238,0.08)",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: 13,
+                color: "var(--text-muted)",
+                margin: 0,
+                lineHeight: 1.55,
+              }}
+            >
+              Opened from the research workflow. Viewing the library does not mark the evidence
+              stage complete.{" "}
+              <Link href="/research/workflow" style={{ color: "var(--accent-cyan)" }}>
+                Return to research workflow
+              </Link>
+              {listSyntheticEvidence().length > 0
+                ? ` · ${listSyntheticEvidence().length} synthetic binder records are labelled SYNTHETIC.`
+                : ""}
+            </p>
+          </div>
+        )}
         <div
           style={{
             display: "flex",
@@ -182,6 +242,80 @@ export function ResearchLibraryView({ cards }: { cards: CardMeta[] }) {
         >
           {t.disclosure}
         </p>
+
+        {showBinder && (
+          <>
+            <EvidenceBinderPanel
+              title={
+                labId
+                  ? `Evidence binder · ${labId}`
+                  : "Evidence binder · Research Library notes"
+              }
+              records={binderRecords}
+              returnHref={fromWorkflow ? "/research/workflow" : undefined}
+              maxItems={8}
+            />
+            <EvidenceAnnotationPanel />
+          </>
+        )}
+
+        <aside
+          style={{
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            background: "var(--surface)",
+            padding: "14px 16px",
+            marginBottom: 20,
+            maxWidth: 640,
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "var(--font-data)",
+              fontSize: 10,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--accent-amber)",
+              marginBottom: 6,
+            }}
+          >
+            Research preview
+          </p>
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 14,
+              fontWeight: 600,
+              color: "var(--text)",
+              margin: "0 0 6px",
+            }}
+          >
+            {t.depLabTitle}
+          </p>
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 13,
+              color: "var(--text-muted)",
+              lineHeight: 1.55,
+              margin: "0 0 10px",
+            }}
+          >
+            {t.depLabBody}
+          </p>
+          <Link
+            href="/research/dependency-lab"
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 13,
+              fontWeight: 600,
+              color: "var(--accent-cyan)",
+              textDecoration: "none",
+            }}
+          >
+            {t.depLabLink}
+          </Link>
+        </aside>
         <p
           style={{
             fontFamily: "var(--font-data)",

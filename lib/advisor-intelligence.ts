@@ -218,10 +218,10 @@ function explainComponent(
         ctx.providerCount === 0
           ? "No documented path — redundancy contributes nothing to the Signature."
           : ctx.providerCount === 1
-            ? "Single-provider setup limits redundancy; correlated outage risk remains."
+            ? "Single-provider setup limits the catalogue redundancy indicator; a second documented provider path is not recorded."
             : band === "High"
-              ? "Multiple independent paths strengthen failover posture in the model."
-              : "Some redundancy is documented, but orbital-class concentration still limits diversity.";
+              ? "Multiple catalogue provider ids raise provider diversity. This does not by itself prove independent ground infrastructure, backhaul, or site dependencies."
+              : "Some provider diversity is documented, but catalogue-based orbit mix remains concentrated (same orbit/class labels).";
       break;
     case "latitude":
       explanation =
@@ -242,8 +242,8 @@ function explainComponent(
     case "provider_confidence":
       explanation =
         band === "High"
-          ? "Catalog confidence for the selected providers is comparatively strong at this latitude."
-          : "Provider catalog confidence is moderate or degraded (e.g. GEO at high latitude).";
+          ? "Catalogue confidence for the selected providers is comparatively strong at this latitude."
+          : "Catalogue confidence is moderate or degraded (e.g. GEO at high latitude).";
       break;
     default:
       explanation = `${label} scored ${points}/${max} in Model v0.4.`;
@@ -343,7 +343,9 @@ export function buildRecommendationPackage(opts: {
     trade_offs.push("Hardware/sky-view demands are higher than compact LEO kits.");
   }
   if (attr.resilience === "Medium" || attr.resilience === "Low") {
-    trade_offs.push("Pair with an independent orbital class if redundancy is mission-critical.");
+    trade_offs.push(
+      "Pair with a different catalogue orbital class if redundancy is mission-critical — and still verify ground, backhaul, and site dependencies separately."
+    );
   }
   if (!trade_offs.length) {
     trade_offs.push(

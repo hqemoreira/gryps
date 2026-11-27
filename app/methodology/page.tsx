@@ -30,7 +30,7 @@ const jsonLd = {
       name: "How is the 0–100 Resilience Score computed?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: `${SCORING_MODEL_LABEL} (${SCORING_ENGINE_DISPLAY}) is deterministic. Score = Site Conditions (0–20) + Mitigation Quality (0–80: redundancy 0–35, provider/path independence 0–25, profile–autonomy alignment 0–20), then hard caps. Grades: ${GRADE_BANDS_SUMMARY}. Terrain evidence from EU-DEM is shown separately and is not blended into the Signature score.`,
+        text: `${SCORING_MODEL_LABEL} (${SCORING_ENGINE_DISPLAY}) is deterministic. Score = Site Conditions (0–20) + Mitigation Quality (0–80: redundancy / provider diversity 0–35, Catalogue confidence 0–25, profile–autonomy alignment 0–20), then hard caps. Catalogue-based orbit mix is not verified end-to-end path independence. Grades: ${GRADE_BANDS_SUMMARY}. Terrain evidence from EU-DEM is shown separately and is not blended into the Signature score.`,
       },
     },
     {

@@ -6,7 +6,9 @@
 import type { AbbreviatedAssessment } from "@/lib/abbreviate-result";
 import type { AdvisorPriorityId } from "@/lib/advisor-priorities";
 import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors";
-import { MODEL_VERSION } from "@/lib/model-constants";
+import { displayModelVersion } from "@/lib/model-constants";
+import { DISPLAY_CHAIN_NOTICE } from "@/lib/evidence-model";
+import { distinguishAssessmentEvidence } from "@/lib/research/evidence-binder";
 
 export const WORKSPACE_STORAGE_KEY = "gryps-research-workspace-v1";
 export const WORKSPACE_MAX = 40;
@@ -170,9 +172,9 @@ export function gradeOf(a: SavedResearchAssessment): string {
 
 export function recommendedProvider(a: SavedResearchAssessment): string {
   return (
-    a.result?.intelligence?.recommendation.provider ??
-    a.result?.connectivity_options[0]?.provider ??
-    a.abbreviated?.recommended.provider ??
+    a.result?.intelligence?.recommendation?.provider ??
+    a.result?.connectivity_options?.[0]?.provider ??
+    a.abbreviated?.recommended?.provider ??
     "—"
   );
 }
@@ -268,8 +270,8 @@ export function buildComparisonRows(
       key: "model",
       labelEn: "Methodology version",
       labelFi: "Menetelmäversio",
-      a: left.result?.modelVersion ?? left.abbreviated?.modelVersion ?? MODEL_VERSION,
-      b: right.result?.modelVersion ?? right.abbreviated?.modelVersion ?? MODEL_VERSION,
+      a: displayModelVersion(left.result?.modelVersion ?? left.abbreviated?.modelVersion),
+      b: displayModelVersion(right.result?.modelVersion ?? right.abbreviated?.modelVersion),
     },
   ];
 }
@@ -278,7 +280,7 @@ export function buildComparisonRows(
 export function exportAssessmentMarkdown(a: SavedResearchAssessment): string {
   const score = scoreOf(a);
   const grade = gradeOf(a);
-  const model = a.result?.modelVersion ?? a.abbreviated?.modelVersion ?? MODEL_VERSION;
+  const model = displayModelVersion(a.result?.modelVersion ?? a.abbreviated?.modelVersion);
   const date = new Date(a.savedAt).toISOString().slice(0, 10);
   const rec = a.result?.intelligence?.recommendation;
   const evidence = a.result?.evidence;
@@ -372,7 +374,7 @@ export function exportAssessmentMarkdown(a: SavedResearchAssessment): string {
       lines.push("");
     }
   } else {
-    lines.push(a.result?.recommendation ?? a.abbreviated?.recommended.why ?? "—", "");
+    lines.push(a.result?.recommendation ?? a.abbreviated?.recommended?.why ?? "—", "");
   }
 
   lines.push("## Evidence", "");
@@ -384,6 +386,9 @@ export function exportAssessmentMarkdown(a: SavedResearchAssessment): string {
       ""
     );
     lines.push("Chain:", "");
+    if (evidence.chainOrigin === "display") {
+      lines.push(DISPLAY_CHAIN_NOTICE.en, "");
+    }
     for (const step of evidence.chain) {
       lines.push(`1. **${step.label}**: ${step.summary}`);
     }
@@ -392,14 +397,93 @@ export function exportAssessmentMarkdown(a: SavedResearchAssessment): string {
     lines.push("Full evidence package available on unlocked assessments.", "");
   }
 
-  lines.push("## Assumptions", "");
-  if (evidence?.assumptions?.length) {
-    for (const x of evidence.assumptions) lines.push(`- ${x}`);
-  } else {
-    lines.push("- Clear sky-view assumed unless contradicted by separate terrain evidence.");
-    lines.push("- Catalog confidence is research heuristic, not measured availability.");
+  // Binder distinctions — reflect persisted associations; do not upgrade claims
+  {
+    const distinction = distinguishAssessmentEvidence({ assessment: a });
+    lines.push("## Evidence associations and distinctions", "");
+    lines.push(
+      "Binder references below are research hygiene — not proof of infrastructure independence.",
+      ""
+    );
+    lines.push(
+      "Association with an assessment does not mean the evidence supports the assessment.",
+      ""
+    );
+    lines.push("### Associated evidence (persisted)", "");
+    if (distinction.associated.length) {
+      for (const r of distinction.associated.slice(0, 12)) {
+        lines.push(
+          `- \`${r.id}\` · **${r.origin}** · ${r.supportClass} · ${r.verificationStatus} — ${r.title}`
+        );
+      }
+    } else {
+      lines.push("- None persisted for this assessment.");
+    }
+    lines.push("", "### Explicit support intent", "");
+    if (distinction.explicitSupportIntent.length) {
+      for (const x of distinction.explicitSupportIntent.slice(0, 12)) {
+        lines.push(
+          `- \`${x.evidenceId}\` · intent **${x.supportIntent}** · ${x.record.origin} — ${x.record.title}`
+        );
+      }
+    } else {
+      lines.push(
+        "- None set. Association alone does not imply support; intent requires an explicit action."
+      );
+    }
+    lines.push("", "### Evidence-supported findings (PUBLIC documented / indirect)", "");
+    if (distinction.evidenceSupported.length) {
+      for (const r of distinction.evidenceSupported.slice(0, 8)) {
+        lines.push(
+          `- \`${r.id}\` · **${r.origin}** · ${r.verificationStatus} — ${r.supportedClaim}`
+        );
+      }
+    } else {
+      lines.push("- None classified as evidence-supported for this export context.");
+    }
+    lines.push("", "### USER_SUPPLIED annotations", "");
+    if (distinction.userSupplied.length) {
+      for (const r of distinction.userSupplied.slice(0, 8)) {
+        lines.push(`- \`${r.id}\` · unverified — ${r.title}`);
+      }
+    } else {
+      lines.push("- None.");
+    }
+    lines.push("", "### SYNTHETIC records", "");
+    if (distinction.synthetic.length) {
+      for (const r of distinction.synthetic.slice(0, 8)) {
+        lines.push(`- \`${r.id}\` · SYNTHETIC — ${r.title}`);
+      }
+    } else {
+      lines.push("- None in associated set.");
+    }
+    lines.push("", "### Assumptions", "");
+    for (const x of distinction.assumptions) lines.push(`- ${x}`);
+    if (evidence?.assumptions?.length) {
+      for (const x of evidence.assumptions) {
+        if (!distinction.assumptions.includes(x)) lines.push(`- ${x}`);
+      }
+    }
+    lines.push("", "### Missing evidence", "");
+    if (distinction.missingEvidence.length) {
+      for (const x of distinction.missingEvidence) lines.push(`- ${x}`);
+    } else {
+      lines.push("- No missing flags for this export.");
+    }
+    lines.push("", "### UNKNOWN dependencies", "");
+    if (distinction.unknownDependencies.length) {
+      for (const x of distinction.unknownDependencies.slice(0, 12)) lines.push(`- ${x}`);
+    } else {
+      lines.push("- None listed.");
+    }
+    if (distinction.unresolvedConflicts.length) {
+      lines.push("", "### Unresolved conflicts", "");
+      for (const p of distinction.unresolvedConflicts) {
+        lines.push(`- ${p.a} ↔ ${p.b}`);
+      }
+    }
+    lines.push("");
   }
-  lines.push("");
 
   lines.push("## Limitations", "");
   if (evidence?.limitations?.length) {

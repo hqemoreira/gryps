@@ -542,7 +542,9 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     const sectorQ = q.get("sector");
     const autonomyQ = q.get("autonomy");
     const criticalityQ = q.get("criticality");
-    const providersQ = parseProvidersParam(q.get("providers"));
+    const providersRaw = q.get("providers");
+    const providersUnknownFlag = q.get("providersUnknown") === "1";
+    const providersQ = parseProvidersParam(providersRaw);
     const prioritiesQ = (q.get("priorities") ?? "")
       .split(",")
       .map((s) => s.trim())
@@ -558,8 +560,13 @@ function AdvisorForm({ t, lang }: { t: typeof COPY.en; lang: "en" | "fi" }) {
     if (sectorQ) setVertical(sectorQ);
     if (autonomyQ) setAutonomy(autonomyQ);
     if (criticalityQ) setCriticality(criticalityQ);
-    if (providersQ.length) setProviders(providersQ);
-    else if (setupQ) setProviders(inferProvidersFromSetup(setupQ));
+    // Explicit providers query (including empty) preserves UNKNOWN from research workflow.
+    // Do not fall back to hero defaults or invent providers from setup when the param is present.
+    if (providersRaw !== null || providersUnknownFlag) {
+      setProviders(providersQ);
+    } else if (setupQ) {
+      setProviders(inferProvidersFromSetup(setupQ));
+    }
     if (prioritiesQ.length) setPriorities(prioritiesQ);
     if (setupQ) setLegacySetup(setupQ);
     if (sid) setShareId(sid);

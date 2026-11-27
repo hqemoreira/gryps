@@ -40,7 +40,7 @@ const COPY = {
       },
       {
         title: "4 · GRYPS scoring factors",
-        body: "Deterministic Model v0.4 scores two layers: Site Conditions (fixed latitude + forestry elevation demerit) and Mitigation Quality (independent-path redundancy, provider/path independence, profile–autonomy alignment), then applies hard caps. Mission priorities may re-rank recommendations; they do not change the Signature score.",
+        body: "Deterministic Model v0.4 scores two layers: Site Conditions (fixed latitude + forestry elevation demerit) and Mitigation Quality (provider diversity redundancy, Catalogue confidence, profile–autonomy alignment), then applies hard caps. Mission priorities may re-rank recommendations; they do not change the Signature score. Catalogue-based orbit mix is not verified end-to-end path independence.",
       },
       {
         title: "5 · Provider recommendation",
@@ -78,19 +78,19 @@ const COPY = {
     formulaH2: `${SCORING_MODEL_LABEL} formula (${SCORING_ENGINE_DISPLAY})`,
     formulaP1: `The Resilience Score is deterministic and reproducible for the same inputs (${SCORING_MODEL_LABEL}). Optional language-model text may polish the recommendation paragraph only — it never changes score, grade, risks, or ranked providers.`,
     formulaP2:
-      "Score = Site Conditions (0–20) + Mitigation Quality (0–80), then hard caps, clamped 0–100. Points earned, higher = better. An independent path requires a different orbit class, ground segment, or failure mode.",
+      "Score = Site Conditions (0–20) + Mitigation Quality (0–80), then hard caps, clamped 0–100. Points earned, higher = better. Research definition of an independent path still requires evidence of distinct failure modes (orbit class alone is insufficient; ground segment, backhaul, and site dependencies must be evidenced). Model v0.4 scores catalogue provider diversity and orbit/class mix only — not verified end-to-end independence.",
     components: [
       {
         title: "Layer A — Site Conditions (0–20, fixed)",
         body: "Latitude band (≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8) plus forestry elevation demerit (−4 below 300 m). Operators cannot change these; the label translates points earned (e.g. 8/20 → harsh).",
       },
       {
-        title: "Layer B — Redundancy / independent paths (0–35)",
-        body: "Remapped from the v0.3 redundancy curve (0 / 8 / 22+orbit-mix / 28) onto a 0–35 scale. Same constellation × two terminals still counts as one path.",
+        title: "Layer B — Redundancy / provider diversity (0–35)",
+        body: "Remapped from the v0.3 redundancy curve (0 / 8 / 22+catalogue-based orbit mix / 28) onto a 0–35 scale. Counts distinct catalogue provider ids (provider diversity); same constellation × two terminals still counts as one path. Catalogue-based orbit mix does not establish independent ground infrastructure, backhaul, operations, or site-level dependencies.",
       },
       {
-        title: "Layer B — Provider / path independence (0–25)",
-        body: "Remapped from catalog provider confidence (avg × 0.30 on the old 0–30 scale). GEO above 70°N uses degraded confidence. Confidence = assessment/data basis — not availability %.",
+        title: "Layer B — Catalogue confidence (0–25)",
+        body: "Remapped from the Catalogue confidence heuristic (avg × 0.30 on the old 0–30 scale). GEO above 70°N uses degraded confidence. This is assessment/data basis — not availability %, not provider diversity, and not path independence.",
       },
       {
         title: "Layer B — Profile–autonomy alignment (0–20)",
@@ -157,7 +157,7 @@ const COPY = {
       },
       {
         title: "4 · GRYPS-pisteytystekijät",
-        body: "Deterministinen malli v0.4 pisteyttää kaksi kerrosta: Paikan olosuhteet (kiinteä leveysaste + metsäkorkeus) ja Lievennyksen laatu (riippumattomat polut, toimittaja-/polkuriippumattomuus, profiili–autonomia), sitten soveltaa kovia kattoja. Tehtävän prioriteetit voivat järjestää suositukset uudelleen; ne eivät muuta Signature-pistettä.",
+        body: "Deterministinen malli v0.4 pisteyttää kaksi kerrosta: Paikan olosuhteet (kiinteä leveysaste + metsäkorkeus) ja Lievennyksen laatu (toimittajien monimuotoisuus, hakemistoluottamus, profiili–autonomia), sitten soveltaa kovia kattoja. Tehtävän prioriteetit voivat järjestää suositukset uudelleen; ne eivät muuta Signature-pistettä. Hakemistopohjainen rata-mix ei ole todennettu päästä päähän -polkuriippumattomuus.",
       },
       {
         title: "5 · Toimittajasuositus",
@@ -197,19 +197,19 @@ const COPY = {
     formulaP1:
       "Resilience-piste on deterministinen ja toistettavissa samoilla syötteillä (deterministinen malli v0.4). Valinnainen kielimalliteksti voi hioa vain suosituskappaleen — se ei koskaan muuta pistettä, arvosanaa, riskejä tai toimittajasuosituksia.",
     formulaP2:
-      "Piste = Paikan olosuhteet (0–20) + Lievennyksen laatu (0–80), sitten kovat katot, rajattu 0–100. Ansaitut pisteet, korkeampi = parempi. Riippumaton polku vaatii eri rataluokan, maa-asemaverkon tai vikatilan.",
+      "Piste = Paikan olosuhteet (0–20) + Lievennyksen laatu (0–80), sitten kovat katot, rajattu 0–100. Ansaitut pisteet, korkeampi = parempi. Tutkimuksellinen riippumaton polku edellyttää näyttöä eri vikatiloista (pelkkä rataluokka ei riitä; maa-, backhaul- ja kohderiippuvuudet on todennettava). Malli v0.4 pisteyttää vain hakemiston toimittajien monimuotoisuutta ja rata-/palveluluokan mixiä — ei todennettua päästä päähän -riippumattomuutta.",
     components: [
       {
         title: "Kerros A — Paikan olosuhteet (0–20, kiinteä)",
         body: "Leveysastekaista (≤60°N → 20; ≤65 → 16; ≤70 → 12; >70 → 8) plus metsäkorkeus (−4 alle 300 m). Operaattori ei voi muuttaa näitä; etiketti kääntää ansaitut pisteet (esim. 8/20 → ankara).",
       },
       {
-        title: "Kerros B — Redundanssi / riippumattomat polut (0–35)",
-        body: "Mapattu v0.3-redundanssikäyrästä (0 / 8 / 22+rata-mix / 28) 0–35-asteikolle. Sama konstellaatio × kaksi päätettä = yksi polku.",
+        title: "Kerros B — Redundanssi / toimittajien monimuotoisuus (0–35)",
+        body: "Mapattu v0.3-redundanssikäyrästä (0 / 8 / 22+hakemistopohjainen rata-mix / 28) 0–35-asteikolle. Laskee erilliset hakemistotunnisteet (toimittajien monimuotoisuus); sama konstellaatio × kaksi päätettä = yksi polku. Hakemistopohjainen rata-mix ei osoita riippumatonta maa-infrastruktuuria, backhaulia, operaatioita eikä kohdetason riippuvuuksia.",
       },
       {
-        title: "Kerros B — Toimittaja- / polkuriippumattomuus (0–25)",
-        body: "Mapattu hakemiston toimittajaluottamuksesta. GEO yli 70°N käyttää heikennettyä luottamusta. Luottamus = arvioinnin/dataperustan varmuus — ei saatavuus-%.",
+        title: "Kerros B — Hakemistoluottamus (0–25)",
+        body: "Mapattu hakemistoluottamuksesta. GEO yli 70°N käyttää heikennettyä luottamusta. Tämä on arvioinnin/dataperustan varmuus — ei saatavuus-%, ei toimittajien monimuotoisuutta eikä polkuriippumattomuutta.",
       },
       {
         title: "Kerros B — Profiili–autonomia -linjaus (0–20)",

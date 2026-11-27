@@ -16,6 +16,7 @@
  */
 
 import type { EvidenceKind } from "@/lib/evidence-kinds";
+import { MODEL_VERSION } from "@/lib/model-constants";
 import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors";
 
 export type ResearchVertical = "forestry" | "mining" | "maritime" | "arctic" | "infrastructure";
@@ -73,8 +74,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "Signature score, grade, and ranks are deterministic Model v0.4 outputs for the stated inputs — not live RF.",
-        fi: "Signature-piste, arvosana ja sijoitukset ovat deterministisen mallin v0.4 tulosteita annetuille syötteille — ei live-RF.",
+        en: "Authored historical example stored as gryps-signature-v1. The score on this page is that stored result, not a current-engine demonstration.",
+        fi: "Laadittu historiallinen esimerkki, tallennettu tunnuksella gryps-signature-v1. Sivun piste on tuo tallennettu tulos, ei nykyisen moottorin esittely.",
       },
       {
         kind: "MEASURED",
@@ -104,17 +105,17 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     locationLabel: "Inari, Finland · ~68.9°N",
     locationLabelFi: "Inari, Suomi · ~68.9°N",
     context:
-      "Mixed-autonomy forestry block in Inari with Starlink + Iridium dual redundancy. Contrasts with single-provider Lapland fleet scenarios and shows how independent orbital classes affect the modeled Signature.",
+      "Mixed-autonomy forestry block in Inari with Starlink + Iridium dual catalogue redundancy. Contrasts with single-provider Lapland fleet scenarios and shows how catalogue orbital-class mix affects the modeled Signature — not verified end-to-end path independence.",
     contextFi:
-      "Seka-autonomian metsälohko Inarissa Starlink- ja Iridium-kaksoisredundanssilla. Vertautuu yhden toimittajan Lappi-skenaarioihin ja näyttää, miten riippumattomat rataluokat vaikuttavat mallinnettuun Signatureen.",
+      "Seka-autonomian metsälohko Inarissa Starlink- ja Iridium-kaksoisredundanssilla (hakemisto). Vertautuu yhden toimittajan Lappi-skenaarioihin ja näyttää, miten hakemiston rataluokkien mix vaikuttaa mallinnettuun Signatureen — ei todennettua päästä päähän -polkuriippumattomuutta.",
     source: "seed",
     sourceId: "site-04-inari-forestry-block",
     legacySignatureSlug: "site-04-inari-forestry-block",
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "Dual-path Signature from Model v0.4 (Starlink + Iridium) — reproducible for identical inputs.",
-        fi: "Kaksoispolun Signature mallista v0.4 (Starlink + Iridium) — toistettavissa samoilla syötteillä.",
+        en: "Historical stored assessment (Starlink + Iridium dual path). The original model version was not recorded. This result has not been recalculated or independently validated. A database miss calculates a fresh gryps-signature-v0.4 Signature for the same seed inputs.",
+        fi: "Historiallinen tallennettu arvio (Starlink + Iridium kaksoispolku). Alkuperäistä malliversiota ei tallennettu. Tulosta ei ole laskettu uudelleen eikä validoitu itsenäisesti. Jos tietokantariviä ei ole, sivulle lasketaan tuore gryps-signature-v0.4 Signature samoilla siemen-syötteillä.",
       },
       {
         kind: "MEASURED",
@@ -147,8 +148,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "Safety-critical + autonomous posture scored by Model v0.4 hard caps and dual-LEO mitigation — not a measured pit survey.",
-        fi: "Turvallisuuskriittinen + autonominen asema pisteytetty mallin v0.4 kovilla katoilla ja kaksois-LEO-lievennyksellä — ei mitattu louhosmittaus.",
+        en: "Authored historical example. The model version was not recorded. The score on this page is the stored result, not a current-engine demonstration.",
+        fi: "Laadittu historiallinen esimerkki. Malliversiota ei tallennettu. Sivun piste on tallennettu tulos, ei nykyisen moottorin esittely.",
       },
       {
         kind: "ILLUSTRATIVE",
@@ -177,8 +178,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "Hero-adjacent dual-path mining Signature (Model v0.4) — catalog confidence, not SLA availability.",
-        fi: "Heroon liittyvä kaksoispolun kaivos-Signature (malli v0.4) — hakemistoluottamus, ei SLA-saatavuus.",
+        en: "Historical stored assessment (dual-path mining). The original model version was not recorded. This result has not been recalculated or independently validated. A database miss calculates a fresh gryps-signature-v0.4 Signature for the same seed inputs.",
+        fi: "Historiallinen tallennettu arvio (kaksoispolun kaivos). Alkuperäistä malliversiota ei tallennettu. Tulosta ei ole laskettu uudelleen eikä validoitu itsenäisesti. Jos tietokantariviä ei ole, sivulle lasketaan tuore gryps-signature-v0.4 Signature samoilla siemen-syötteillä.",
       },
       {
         kind: "MEASURED",
@@ -187,8 +188,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
       },
       {
         kind: "DERIVED",
-        en: "Risks and ranked options follow from the same deterministic composition as the Advisor for these inputs.",
-        fi: "Riskit ja sijoitetut vaihtoehdot seuraavat samasta deterministisestä koostumuksesta kuin Advisor näillä syötteillä.",
+        en: "Risks and ranked options belong to the assessment payload on this page — not a claim that the current engine reproduces the historical score.",
+        fi: "Riskit ja sijoitetut vaihtoehdot kuuluvat sivun arvioinnin sisältöön — ei väitettä, että nykyinen moottori toistaa historiallisen pisteen.",
       },
     ],
   },
@@ -203,7 +204,7 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     locationLabel: "Arctic Norway · ~71.0°N",
     locationLabelFi: "Arktinen Norja · ~71.0°N",
     context:
-      "Safety-critical remote-operated offshore platform on a single GEO path at 71°N. Highlights latitude-driven GEO elevation risk and the cost of missing an independent LEO backup.",
+      "Safety-critical remote-operated offshore platform on a single GEO path at 71°N. Highlights latitude-driven GEO elevation risk and the cost of missing a second catalogue LEO path.",
     contextFi:
       "Turvallisuuskriittinen etäohjattu offshore-alusta yhdellä GEO-yhteydellä 71°N:ssä. Korostaa leveysasteen GEO-elevaatioriskiä ja riippumattoman LEO-varayhteyden puutetta.",
     source: "example",
@@ -212,12 +213,12 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "Single-GEO posture at 71°N scored by Model v0.4 latitude and GEO elevation caps — not live offshore RF.",
-        fi: "Yhden GEO-yhteyden asema 71°N pisteytetty mallin v0.4 leveysaste- ja GEO-elevaatiokatoilla — ei live-offshore-RF.",
+        en: "Authored historical example. The model version was not recorded. The score on this page is the stored result, not a current-engine demonstration.",
+        fi: "Laadittu historiallinen esimerkki. Malliversiota ei tallennettu. Sivun piste on tallennettu tulos, ei nykyisen moottorin esittely.",
       },
       {
         kind: "ILLUSTRATIVE",
-        en: "Pedagogical failure mode for missing independent LEO backup; coordinates are Arctic-Norway region, not a named operator survey.",
+        en: "Pedagogical failure mode for missing a second catalogue LEO path; coordinates are Arctic-Norway region, not a named operator survey.",
         fi: "Pedagoginen vikamoodi puuttuvasta riippumattomasta LEO-varasta; koordinaatit ovat arktisen Norjan alueelta, ei nimetyn operaattorin mittaus.",
       },
       {
@@ -247,8 +248,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "VSAT + Iridium dual-path Signature from Model v0.4 for the stated fleet inputs — catalog confidence, not measured sea trials.",
-        fi: "VSAT + Iridium kaksoispolun Signature mallista v0.4 annetuille laivastosyötteille — hakemistoluottamus, ei mitatut merikokeet.",
+        en: "Historical stored assessment (VSAT + Iridium dual path). The original model version was not recorded. This result has not been recalculated or independently validated. A database miss calculates a fresh gryps-signature-v0.4 Signature for the same seed inputs.",
+        fi: "Historiallinen tallennettu arvio (VSAT + Iridium kaksoispolku). Alkuperäistä malliversiota ei tallennettu. Tulosta ei ole laskettu uudelleen eikä validoitu itsenäisesti. Jos tietokantariviä ei ole, sivulle lasketaan tuore gryps-signature-v0.4 Signature samoilla siemen-syötteillä.",
       },
       {
         kind: "RESEARCH",
@@ -257,8 +258,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
       },
       {
         kind: "DERIVED",
-        en: "Ranked options and risks follow the same deterministic Advisor composition for these inputs.",
-        fi: "Sijoitetut vaihtoehdot ja riskit seuraavat samaa determinististä Advisor-koostumusta näillä syötteillä.",
+        en: "Ranked options and risks belong to the assessment payload on this page — not a claim that the current engine reproduces the historical score.",
+        fi: "Sijoitetut vaihtoehdot ja riskit kuuluvat sivun arvioinnin sisältöön — ei väitettä, että nykyinen moottori toistaa historiallisen pisteen.",
       },
     ],
   },
@@ -282,8 +283,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "Safety-critical dual VSAT + Iridium at ~70.7°N — Model v0.4 site-conditions band (>70) and mitigation layers, not terminal telemetry.",
-        fi: "Turvallisuuskriittinen kaksois-VSAT + Iridium ~70.7°N — mallin v0.4 olosuhdekaista (>70) ja lievennyskerrokset, ei terminaalitelemetriaa.",
+        en: "Historical stored assessment (dual VSAT + Iridium at ~70.7°N). The original model version was not recorded. This result has not been recalculated or independently validated. A database miss calculates a fresh gryps-signature-v0.4 Signature for the same seed inputs.",
+        fi: "Historiallinen tallennettu arvio (kaksois-VSAT + Iridium ~70.7°N). Alkuperäistä malliversiota ei tallennettu. Tulosta ei ole laskettu uudelleen eikä validoitu itsenäisesti. Jos tietokantariviä ei ole, sivulle lasketaan tuore gryps-signature-v0.4 Signature samoilla siemen-syötteillä.",
       },
       {
         kind: "ILLUSTRATIVE",
@@ -317,8 +318,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "Iridium-only autonomous outpost at ~78°N — Model v0.4 extreme-latitude site conditions and single-provider caps.",
-        fi: "Vain Iridium autonominen asema ~78°N — mallin v0.4 äärimmäisen leveysasteen olosuhteet ja yhden toimittajan katot.",
+        en: "Historical stored assessment (Iridium-only at ~78°N). The original model version was not recorded. This result has not been recalculated or independently validated. A database miss calculates a fresh gryps-signature-v0.4 Signature for the same seed inputs.",
+        fi: "Historiallinen tallennettu arvio (vain Iridium ~78°N). Alkuperäistä malliversiota ei tallennettu. Tulosta ei ole laskettu uudelleen eikä validoitu itsenäisesti. Jos tietokantariviä ei ole, sivulle lasketaan tuore gryps-signature-v0.4 Signature samoilla siemen-syötteillä.",
       },
       {
         kind: "ILLUSTRATIVE",
@@ -352,8 +353,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "Fiber-primary + satellite DR posture scored as satellite resilience for outage continuity — Model v0.4, not a grid SCADA audit.",
-        fi: "Kuitupääyhteys + satelliitti-DR pisteytetty satelliittiresilienssinä katkosten varalle — malli v0.4, ei verkko-SCADA-auditointi.",
+        en: "Historical stored assessment (fiber-primary + satellite DR). The original model version was not recorded. This result has not been recalculated or independently validated. A database miss calculates a fresh gryps-signature-v0.4 Signature for the same seed inputs.",
+        fi: "Historiallinen tallennettu arvio (kuitupääyhteys + satelliitti-DR). Alkuperäistä malliversiota ei tallennettu. Tulosta ei ole laskettu uudelleen eikä validoitu itsenäisesti. Jos tietokantariviä ei ole, sivulle lasketaan tuore gryps-signature-v0.4 Signature samoilla siemen-syötteillä.",
       },
       {
         kind: "RESEARCH",
@@ -362,8 +363,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
       },
       {
         kind: "DERIVED",
-        en: "Risks and ranks derive from the deterministic composition for the documented satellite backup path.",
-        fi: "Riskit ja sijoitukset seuraavat deterministisestä koostumuksesta dokumentoidulle satelliittivarapolulle.",
+        en: "Risks and ranks belong to the assessment payload on this page — not a claim that the current engine reproduces the historical score.",
+        fi: "Riskit ja sijoitukset kuuluvat sivun arvioinnin sisältöön — ei väitettä, että nykyinen moottori toistaa historiallisen pisteen.",
       },
     ],
   },
@@ -386,8 +387,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "OneWeb + Iridium dual-LEO Signature from Model v0.4 — hardware exists in the scenario; failover policy gaps are research commentary.",
-        fi: "OneWeb + Iridium kaksois-LEO Signature mallista v0.4 — laitteisto on skenaariossa; failover-politiikan aukot ovat tutkimuskommentaaria.",
+        en: "Authored historical example stored as gryps-signature-v1. The score on this page is that stored result, not a current-engine demonstration.",
+        fi: "Laadittu historiallinen esimerkki, tallennettu tunnuksella gryps-signature-v1. Sivun piste on tuo tallennettu tulos, ei nykyisen moottorin esittely.",
       },
       {
         kind: "ILLUSTRATIVE",
@@ -421,8 +422,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "Single-Starlink safety-critical industrial Signature — Model v0.4 single-provider and autonomy caps, not plant RF.",
-        fi: "Yhden Starlinkin turvallisuuskriittinen teollisuus-Signature — mallin v0.4 yhden toimittajan ja autonomian katot, ei laitoksen RF.",
+        en: "Historical stored assessment (single-Starlink industrial). The original model version was not recorded. This result has not been recalculated or independently validated. A database miss calculates a fresh gryps-signature-v0.4 Signature for the same seed inputs.",
+        fi: "Historiallinen tallennettu arvio (yhden Starlinkin teollisuus). Alkuperäistä malliversiota ei tallennettu. Tulosta ei ole laskettu uudelleen eikä validoitu itsenäisesti. Jos tietokantariviä ei ole, sivulle lasketaan tuore gryps-signature-v0.4 Signature samoilla siemen-syötteillä.",
       },
       {
         kind: "ILLUSTRATIVE",
@@ -456,8 +457,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
     evidenceNotes: [
       {
         kind: "MODELLED",
-        en: "VSAT primary + Iridium backup at ~65.7°N — Model v0.4 dual-path maritime composition for the stated inputs.",
-        fi: "VSAT-pääyhteys + Iridium-vara ~65.7°N — mallin v0.4 kaksoispolun merikoostumus annetuille syötteille.",
+        en: "Historical stored assessment (VSAT primary + Iridium backup at ~65.7°N). The original model version was not recorded. This result has not been recalculated or independently validated. A database miss calculates a fresh gryps-signature-v0.4 Signature for the same seed inputs.",
+        fi: "Historiallinen tallennettu arvio (VSAT-pääyhteys + Iridium-vara ~65.7°N). Alkuperäistä malliversiota ei tallennettu. Tulosta ei ole laskettu uudelleen eikä validoitu itsenäisesti. Jos tietokantariviä ei ole, sivulle lasketaan tuore gryps-signature-v0.4 Signature samoilla siemen-syötteillä.",
       },
       {
         kind: "RESEARCH",
@@ -466,8 +467,8 @@ export const RESEARCH_LIBRARY: ResearchEntry[] = [
       },
       {
         kind: "DERIVED",
-        en: "Risks and ranked options follow the same deterministic Advisor path as other library maritime seeds.",
-        fi: "Riskit ja sijoitetut vaihtoehdot seuraavat samaa determinististä Advisor-polkua kuin muut merelliset kirjastosiemenet.",
+        en: "Risks and ranked options belong to the assessment payload on this page — not a claim that the current engine reproduces the historical score.",
+        fi: "Riskit ja sijoitetut vaihtoehdot kuuluvat sivun arvioinnin sisältöön — ei väitettä, että nykyinen moottori toistaa historiallisen pisteen.",
       },
     ],
   },
@@ -558,6 +559,41 @@ export type ResolvedResearchAssessment = {
   modelVersion: string;
   fromDatabase: boolean;
 };
+
+const CURRENT_ENGINE_CLAIM = /model v0\.4|mallin v0\.4|mallista v0\.4/i;
+
+/** Drop a v0.4 generation claim when the score on screen is a stored row with another version. */
+export function visibleEvidenceNotes(
+  notes: ResearchEvidenceNote[] | undefined,
+  source: ResearchEntry["source"],
+  fromDatabase: boolean,
+  modelVersion: string
+): ResearchEvidenceNote[] {
+  const list = notes ?? [];
+  if (source === "seed" && fromDatabase && modelVersion !== MODEL_VERSION) {
+    return list.filter((note) => !CURRENT_ENGINE_CLAIM.test(`${note.en}\n${note.fi}`));
+  }
+  return list;
+}
+
+/** Seed pages can show either a stored row or a fresh v0.4 calculation. Say which. */
+export function seedLibraryProvenance(opts: {
+  source: ResearchEntry["source"];
+  fromDatabase: boolean;
+  modelVersion: string;
+}): { en: string; fi: string } | null {
+  if (opts.source !== "seed") return null;
+  if (opts.fromDatabase) {
+    return {
+      en: `Stored signature_sites output. Recorded model version: ${opts.modelVersion}. This page did not recompute the score.`,
+      fi: `Tallennettu signature_sites-tulos. Tallennettu malliversio: ${opts.modelVersion}. Sivun pistettä ei laskettu uudelleen.`,
+    };
+  }
+  return {
+    en: `Calculated for this request by ${MODEL_VERSION}. No database row was used.`,
+    fi: `Laskettu tälle pyynnölle tunnuksella ${MODEL_VERSION}. Tietokantariviä ei käytetty.`,
+  };
+}
 
 export const RESEARCH_VERTICALS: { id: ResearchVertical | "all"; en: string; fi: string }[] = [
   { id: "all", en: "All", fi: "Kaikki" },

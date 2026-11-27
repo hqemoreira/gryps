@@ -28,7 +28,7 @@ export function computeComplianceFlags(
       reason: nis2Pass
         ? "Score and redundancy posture are consistent with a documented multi-path connectivity control."
         : single
-          ? "Single-provider setups typically fail NIS2-style network resilience evidence: no independent failover path is documented."
+          ? "Single-provider setups typically fail NIS2-style network resilience evidence: no second catalogue-documented provider path is recorded."
           : "Score or redundancy gaps indicate incomplete network security measures for connectivity continuity.",
     },
     {

@@ -7,8 +7,9 @@ import { EXAMPLE_SIGNATURES } from "@/lib/example-signatures";
 import { SEED_SITES } from "@/lib/seed-sites";
 import { scoreSiteSync } from "@/lib/scoring";
 import { getSiteBySlug } from "@/lib/signatures-db";
-import { MODEL_VERSION } from "@/lib/signature-meta";
-import { buildEvidencePackage } from "@/lib/evidence-model";
+import { displayModelVersion, MODEL_VERSION } from "@/lib/model-constants";
+import { buildEvidencePackage, DISPLAY_CHAIN_NOTICE } from "@/lib/evidence-model";
+import { BITTIMITTARI_BY_RESEARCH_SLUG } from "@/lib/bittimittari-reference";
 import { parseProviders, normalizeSector } from "@/lib/deterministic-score";
 import { normalizePriorities } from "@/lib/advisor-priorities";
 import type { AdvisoryResult, AssessmentInputs } from "@/lib/resilience-colors";
@@ -16,8 +17,15 @@ import { getResearchEntry, type ResolvedResearchAssessment } from "@/lib/researc
 
 export type { ResolvedResearchAssessment };
 
-/** Attach Sprint 5 evidence when older stored/example results lack it. */
-function withEvidence(result: AdvisoryResult, input: AssessmentInputs): AdvisoryResult {
+/**
+ * Keep a stored chain as stored. If none exists, attach a display chain from the
+ * current engine without changing the score or modelVersion.
+ */
+export function withEvidence(
+  result: AdvisoryResult,
+  input: AssessmentInputs,
+  finnishMunicipalitySeed = false
+): AdvisoryResult {
   if (result.evidence) return result;
   const lat = input.lat ?? 68.2;
   const sector = normalizeSector(input.sector);
@@ -30,7 +38,7 @@ function withEvidence(result: AdvisoryResult, input: AssessmentInputs): Advisory
     lat,
   });
   const priorities = normalizePriorities(input.priorities);
-  const evidence = buildEvidencePackage({
+  const built = buildEvidencePackage({
     lat,
     sector,
     providers,
@@ -39,8 +47,16 @@ function withEvidence(result: AdvisoryResult, input: AssessmentInputs): Advisory
       result.intelligence?.recommendation.provider ?? result.connectivity_options[0]?.provider,
     score: result.resilience_signature.score,
     grade: result.resilience_signature.grade,
+    finnishMunicipalitySeed,
   });
-  return { ...result, evidence };
+  return {
+    ...result,
+    evidence: {
+      ...built,
+      chainOrigin: "display",
+      limitations: [DISPLAY_CHAIN_NOTICE.en, ...built.limitations],
+    },
+  };
 }
 
 export async function resolveResearchAssessment(
@@ -52,12 +68,16 @@ export async function resolveResearchAssessment(
   if (entry.source === "example") {
     const ex = EXAMPLE_SIGNATURES.find((e) => e.id === entry.sourceId);
     if (!ex) return null;
-    const result = withEvidence(ex.result, ex.input);
+    const result = withEvidence(
+      ex.result,
+      ex.input,
+      Boolean(BITTIMITTARI_BY_RESEARCH_SLUG[entry.slug])
+    );
     return {
       entry,
       input: ex.input,
       result,
-      modelVersion: result.modelVersion ?? MODEL_VERSION,
+      modelVersion: displayModelVersion(result.modelVersion),
       fromDatabase: false,
     };
   }
@@ -73,12 +93,16 @@ export async function resolveResearchAssessment(
         operation_criticality: row.operation_criticality,
         current_setup: row.current_setup ?? undefined,
       };
-      const result = withEvidence(row.output, input);
+      const result = withEvidence(
+        row.output,
+        input,
+        Boolean(BITTIMITTARI_BY_RESEARCH_SLUG[entry.slug])
+      );
       return {
         entry,
         input,
         result,
-        modelVersion: result.modelVersion ?? MODEL_VERSION,
+        modelVersion: displayModelVersion(result.modelVersion),
         fromDatabase: true,
       };
     }

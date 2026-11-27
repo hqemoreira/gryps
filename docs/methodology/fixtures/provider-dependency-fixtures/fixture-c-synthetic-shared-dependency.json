@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "gryps-dependency-fixture-v0.1",
+  "id": "fixture-c-synthetic-shared-dependency",
+  "purpose": "Test whether the proposed model can represent a common failure domain via an explicitly fictional shared infrastructure entity.",
+  "researchConclusion": "Two otherwise distinct paths depend on the same explicitly modelled infrastructure entity. A failure of that entity could affect both paths.",
+  "scope": {
+    "label": "Synthetic structural demonstration — fictional providers only",
+    "precision": "unspecified",
+    "geographicNote": "Fictional region 'Nordic Test Enclave'; not a real site"
+  },
+  "temporalValidity": {
+    "recordedAt": "2026-11-26",
+    "validFrom": "2026-11-26",
+    "validTo": null,
+    "note": "Synthetic evidence has no real-world validity period"
+  },
+  "catalogueClassification": {
+    "providerIds": ["synth-aurora-link", "synth-borealis-relay"],
+    "providerDiversity": true,
+    "orbits": ["LEO", "LEO"],
+    "serviceClasses": ["broadband", "broadband"],
+    "catalogueBasedOrbitMix": false,
+    "note": "Fictional catalogue-like labels for structural testing only. Not ADVISOR_PROVIDERS. Not scored."
+  },
+  "entities": [
+    {
+      "id": "sp-aurora",
+      "kind": "service_provider",
+      "name": "AuroraLink (fictional)",
+      "attributes": {
+        "catalogueId": "synth-aurora-link",
+        "orbit": "LEO",
+        "serviceClass": "broadband",
+        "fictional": true
+      }
+    },
+    {
+      "id": "sp-borealis",
+      "kind": "service_provider",
+      "name": "BorealisRelay (fictional)",
+      "attributes": {
+        "catalogueId": "synth-borealis-relay",
+        "orbit": "LEO",
+        "serviceClass": "broadband",
+        "fictional": true
+      }
+    },
+    {
+      "id": "const-aurora",
+      "kind": "constellation",
+      "name": "Aurora constellation (fictional)",
+      "attributes": { "fictional": true, "orbit": "LEO" }
+    },
+    {
+      "id": "const-borealis",
+      "kind": "constellation",
+      "name": "Borealis constellation (fictional)",
+      "attributes": { "fictional": true, "orbit": "LEO" }
+    },
+    {
+      "id": "gf-shared-landing",
+      "kind": "ground_facility",
+      "name": "Shared Landing Campus Z (fictional)",
+      "attributes": {
+        "facilityKind": "teleport",
+        "fictional": true,
+        "note": "Single explicit shared infrastructure entity for both paths"
+      }
+    },
+    {
+      "id": "fd-shared-landing",
+      "kind": "failure_domain",
+      "name": "Failure of Shared Landing Campus Z",
+      "attributes": {
+        "layer": "ground",
+        "typicalImpact": "regional",
+        "fictional": true
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-aurora-offers",
+      "type": "offers",
+      "fromId": "sp-aurora",
+      "toId": "const-aurora",
+      "direction": "from→to",
+      "assertionKind": "assumption",
+      "confidence": "inferred",
+      "inferred": true,
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-fixture-design"],
+      "limitations": "Fictional mapping for structural demo only."
+    },
+    {
+      "id": "rel-borealis-offers",
+      "type": "offers",
+      "fromId": "sp-borealis",
+      "toId": "const-borealis",
+      "direction": "from→to",
+      "assertionKind": "assumption",
+      "confidence": "inferred",
+      "inferred": true,
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-fixture-design"],
+      "limitations": "Fictional mapping for structural demo only."
+    },
+    {
+      "id": "rel-aurora-connects",
+      "type": "connects_through",
+      "fromId": "const-aurora",
+      "toId": "gf-shared-landing",
+      "direction": "from→to",
+      "assertionKind": "shared_dependency",
+      "confidence": "verified",
+      "inferred": false,
+      "scope": { "label": "synthetic shared landing", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-shared-landing-a"],
+      "limitations": "Synthetic verification inside the fixture only — not real-world."
+    },
+    {
+      "id": "rel-borealis-connects",
+      "type": "connects_through",
+      "fromId": "const-borealis",
+      "toId": "gf-shared-landing",
+      "direction": "from→to",
+      "assertionKind": "shared_dependency",
+      "confidence": "verified",
+      "inferred": false,
+      "scope": { "label": "synthetic shared landing", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-shared-landing-b"],
+      "limitations": "Synthetic verification inside the fixture only — not real-world."
+    },
+    {
+      "id": "rel-landing-exposed",
+      "type": "exposed_to",
+      "fromId": "gf-shared-landing",
+      "toId": "fd-shared-landing",
+      "direction": "from→to",
+      "assertionKind": "shared_dependency",
+      "confidence": "verified",
+      "inferred": false,
+      "scope": { "label": "synthetic failure domain", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-failure-domain"],
+      "limitations": "Demonstrates structural coupling; assigns no probability."
+    },
+    {
+      "id": "rel-aurora-shares-with-borealis",
+      "type": "shares_infrastructure_with",
+      "fromId": "sp-aurora",
+      "toId": "sp-borealis",
+      "direction": "from→to",
+      "assertionKind": "shared_dependency",
+      "confidence": "verified",
+      "inferred": false,
+      "scope": { "label": "via gf-shared-landing", "precision": "unspecified" },
+      "evidenceIds": ["ev-synth-shared-landing-a", "ev-synth-shared-landing-b"],
+      "limitations": "Share is only the named fictional landing campus — not all layers."
+    }
+  ],
+  "unknownRelationships": [
+    {
+      "id": "unk-site-power",
+      "between": ["sp-aurora", "sp-borealis"],
+      "layer": "site",
+      "question": "Site power domains for fictional terminals (intentionally not modelled)",
+      "confidence": "unknown",
+      "evidenceIds": [],
+      "mustNotInfer": "That shared landing implies every other layer is also shared"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-synth-fixture-design",
+      "title": "Synthetic fixture design note — AuroraLink / BorealisRelay",
+      "urlOrReference": "docs/methodology/fixtures/provider-dependency-fixtures/fixture-c-synthetic-shared-dependency.json",
+      "publisher": "GRYPS Phase 4 Sprint 9 (synthetic)",
+      "publicationDate": "2026-11-26",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "Fictional providers and constellations exist only for dependency-model validation.",
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "limitations": "Must never be cited as real-world evidence about any commercial operator.",
+      "verificationStatus": "operator_confirmed"
+    },
+    {
+      "id": "ev-synth-shared-landing-a",
+      "title": "Synthetic attestation — Aurora path lands at Campus Z",
+      "urlOrReference": "synthetic://fixture-c/aurora-landing-campus-z",
+      "publisher": "GRYPS Phase 4 Sprint 9 (synthetic)",
+      "publicationDate": "2026-11-26",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "Aurora constellation traffic in this fixture connects through Shared Landing Campus Z.",
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "limitations": "Fictional. Not Starlink, OneWeb, Iridium, or any real operator.",
+      "verificationStatus": "operator_confirmed"
+    },
+    {
+      "id": "ev-synth-shared-landing-b",
+      "title": "Synthetic attestation — Borealis path lands at Campus Z",
+      "urlOrReference": "synthetic://fixture-c/borealis-landing-campus-z",
+      "publisher": "GRYPS Phase 4 Sprint 9 (synthetic)",
+      "publicationDate": "2026-11-26",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "Borealis constellation traffic in this fixture connects through the same Shared Landing Campus Z.",
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "limitations": "Fictional. Establishes the shared dependency for structural demo only.",
+      "verificationStatus": "operator_confirmed"
+    },
+    {
+      "id": "ev-synth-failure-domain",
+      "title": "Synthetic failure-domain binding — Campus Z outage",
+      "urlOrReference": "synthetic://fixture-c/campus-z-failure-domain",
+      "publisher": "GRYPS Phase 4 Sprint 9 (synthetic)",
+      "publicationDate": "2026-11-26",
+      "retrievalDate": "2026-11-26",
+      "evidenceType": "synthetic_test",
+      "isSynthetic": true,
+      "claim": "A failure of Shared Landing Campus Z is modelled as affecting both Aurora and Borealis paths that connect through it.",
+      "scope": { "label": "synthetic", "precision": "unspecified" },
+      "limitations": "No probability, weight, or Signature impact is assigned.",
+      "verificationStatus": "operator_confirmed"
+    }
+  ],
+  "claimsNotToMake": [
+    "Any claim about Starlink, OneWeb, Iridium, or other real operators",
+    "That this shared dependency exists outside the synthetic fixture",
+    "Failure probability or resilience score derived from this fixture",
+    "That provider diversity alone caused the shared failure (the shared entity did)"
+  ],
+  "limitations": [
+    "Entirely fictional — structural demonstration of shared_dependency edges only.",
+    "Site power and other layers deliberately left UNKNOWN to show layered modelling.",
+    "Must not be imported into scoring or Neon."
+  ],
+  "isOperationalAssessment": false,
+  "containsScoreOrProbability": false
+}

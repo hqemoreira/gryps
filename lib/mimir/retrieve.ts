@@ -19,13 +19,13 @@ const STATIC_CHUNKS: RetrievalChunk[] = [
     id: "model-layers",
     title: "Two-layer Signature (Model v0.4)",
     source: "/methodology",
-    text: `${SCORING_MODEL_LABEL} (${SCORING_ENGINE_DISPLAY}) scores Site Conditions (0–20, fixed: latitude band + forestry elevation demerit) and Mitigation Quality (0–80: redundancy/independent paths 0–35, provider/path independence 0–25, profile–autonomy alignment 0–20). Composite = Conditions + Mitigation, then hard caps. Points earned, higher = better. Labels translate (e.g. 8/20 Conditions → harsh). Grades: ${GRADE_BANDS_SUMMARY}.`,
+    text: `${SCORING_MODEL_LABEL} (${SCORING_ENGINE_DISPLAY}) scores Site Conditions (0–20, fixed: latitude band + forestry elevation demerit) and Mitigation Quality (0–80: redundancy / provider diversity 0–35, Catalogue confidence 0–25, profile–autonomy alignment 0–20). Composite = Conditions + Mitigation, then hard caps. Catalogue-based orbit mix is not verified end-to-end independence. Points earned, higher = better. Labels translate (e.g. 8/20 Conditions → harsh). Grades: ${GRADE_BANDS_SUMMARY}.`,
   },
   {
     id: "independent-path",
-    title: "Independent path definition",
+    title: "Independent path vs catalogue diversity",
     source: "/methodology",
-    text: "An independent connectivity path requires at least one of: different orbit class (LEO/MEO/GEO), different ground segment / ground-station network, or different failure mode (e.g. fiber cut vs satellite rain fade). Two terminals on the same constellation count as one path.",
+    text: "Research definition: claiming an independent connectivity path requires evidence beyond brand or orbit labels — typically distinct failure modes across space, ground, backhaul, operations, and site layers. Model v0.4 only counts distinct catalogue provider ids and a catalogue-based orbit/class mix boolean. Two terminals on the same constellation still count as one path. Different constellations alone do not prove independent ground infrastructure, backhaul, or site dependencies.",
   },
   {
     id: "hard-caps",
@@ -70,7 +70,7 @@ function providerChunks(): RetrievalChunk[] {
     id: `provider-${p.id}`,
     title: `${p.name} (catalog)`,
     source: "/providers",
-    text: `${p.name}: ${p.orbit} ${p.class}. Catalog confidence ${p.confidence} (assessment/data basis, not availability %). Aliases: ${p.aliases.join(", ")}. GEO service is latitude-degraded in the model above ~70°N.`,
+    text: `${p.name}: ${p.orbit} ${p.class}. Catalogue confidence ${p.confidence} (assessment/data basis, not availability %). Aliases: ${p.aliases.join(", ")}. GEO service is latitude-degraded in the model above ~70°N.`,
   }));
 }
 

@@ -43,7 +43,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       sections: [
         {
           h2: "Why Arctic sites are different",
-          body: "Above roughly 70°N, geostationary (GEO) satellites sit lower on the horizon, so weather, terrain, and antenna clearance matter more. LEO and polar-friendly constellations can help, but only if the site actually has a second independent path — not just a second modem on the same constellation class.",
+          body: "Above roughly 70°N, geostationary (GEO) satellites sit lower on the horizon, so weather, terrain, and antenna clearance matter more. LEO and polar-friendly constellations can help, but only with a second documented provider path — not just a second modem on the same constellation. Catalogue orbit mix alone does not prove independent ground, backhaul, or site dependencies.",
         },
         {
           h2: "What “coverage” marketing leaves out",
@@ -110,7 +110,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       h1: "LEO vs MEO vs GEO for remote operations",
       question: "How should remote operators compare LEO, MEO, and GEO satellite connectivity?",
       shortAnswer:
-        "Compare by latency needs, latitude (especially GEO elevation), and whether paths are independent. LEO usually wins on latency; GEO is stable where elevation allows; MEO sits between. Resilience improves when orbital classes are mixed — not when two links share the same failure mode.",
+        "Compare by latency needs, latitude (especially GEO elevation), and whether failure modes are genuinely distinct. LEO usually wins on latency; GEO is stable where elevation allows; MEO sits between. Catalogue orbital-class mix can raise a diversity indicator — it does not by itself prove independent ground, backhaul, or site dependencies.",
       sections: [
         {
           h2: "LEO (low Earth orbit)",
@@ -118,7 +118,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         },
         {
           h2: "MEO (medium Earth orbit)",
-          body: "Often positioned as a middle ground between GEO reliability narratives and LEO latency. Useful as an independent class in a multi-orbit design when the catalog and latitude support it — still subject to real antenna and service constraints on site.",
+          body: "Often positioned as a middle ground between GEO reliability narratives and LEO latency. Useful as a distinct orbital class in a multi-orbit catalogue design when the catalog and latitude support it — still subject to real antenna and service constraints on site.",
         },
         {
           h2: "GEO (geostationary)",
@@ -126,7 +126,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
         },
         {
           h2: "What GRYPS scores",
-          body: "The deterministic engine rewards independent orbital types in the redundancy component and applies latitude and GEO-related caps. Provider names in demos are catalog references — GRYPS has no commercial relationship with listed operators.",
+          body: "The deterministic engine rewards catalogue-based orbit mix inside the redundancy (provider diversity) component and applies latitude and GEO-related caps. That is not verified end-to-end path independence. Catalogue confidence is a separate component. Provider names in demos are catalog references — GRYPS has no commercial relationship with listed operators.",
         },
       ],
       limitationsH2: "Limitations",
@@ -260,7 +260,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       sections: [
         {
           h2: "Score components (Model v0.4)",
-          body: `Site Conditions (0–20) + Mitigation Quality (0–80: redundancy 0–35, provider/path independence 0–25, profile–autonomy alignment 0–20), then hard caps, clamped 0–100. Grades: ${GRADE_BANDS_SUMMARY}.`,
+          body: `Site Conditions (0–20) + Mitigation Quality (0–80: redundancy / provider diversity 0–35, Catalogue confidence 0–25, profile–autonomy alignment 0–20), then hard caps, clamped 0–100. Catalogue-based orbit mix is not verified end-to-end independence. Grades: ${GRADE_BANDS_SUMMARY}.`,
         },
         {
           h2: "Two scores, not one blend",
@@ -291,7 +291,7 @@ export const KNOWLEDGE_ARTICLES: KnowledgeArticle[] = [
       sections: [
         {
           h2: "Pistekomponentit (malli v0.4)",
-          body: `Paikan olosuhteet (0–20) + Lievennyksen laatu (0–80: redundanssi 0–35, toimittaja-/polkuriippumattomuus 0–25, profiili–autonomia 0–20), sitten kovat katot, rajattu 0–100. Arvosanat: ${GRADE_BANDS_SUMMARY}.`,
+          body: `Paikan olosuhteet (0–20) + Lievennyksen laatu (0–80: redundanssi / toimittajien monimuotoisuus 0–35, hakemistoluottamus 0–25, profiili–autonomia 0–20), sitten kovat katot, rajattu 0–100. Hakemistopohjainen rata-mix ei ole todennettu päästä päähän -riippumattomuus. Arvosanat: ${GRADE_BANDS_SUMMARY}.`,
         },
         {
           h2: "Kaksi pistettä, ei yhtä sekoitusta",

@@ -64,6 +64,13 @@ export const IA_MODES: IaMode[] = [
     fi: "Arvioi",
     items: [
       {
+        href: "/research/workflow",
+        en: "Research workflow",
+        fi: "Tutkimustyönkulku",
+        descEn: "Site → scenario → dependencies → evidence → assessment",
+        descFi: "Kohde → skenaario → riippuvuudet → näyttö → arvio",
+      },
+      {
         href: "/#advisor",
         en: "Resilience Advisor",
         fi: "Resilience Advisor",
@@ -84,6 +91,20 @@ export const IA_MODES: IaMode[] = [
     en: "Research",
     fi: "Tutkimus",
     items: [
+      {
+        href: "/research/workflow",
+        en: "Research workflow",
+        fi: "Tutkimustyönkulku",
+        descEn: "Integrated research journey",
+        descFi: "Integroitu tutkimuksen kulku",
+      },
+      {
+        href: "/research/dependency-lab",
+        en: "Dependency Lab",
+        fi: "Dependency Lab",
+        descEn: "Non-scoring dependency research preview",
+        descFi: "Pisteyttämätön riippuvuustutkimus",
+      },
       {
         href: "/methodology",
         en: "Methodology",

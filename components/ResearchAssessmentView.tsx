@@ -10,10 +10,13 @@ import {
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { TypeLabel } from "@/components/TypeLabel";
 import { gradeColor } from "@/lib/resilience-colors";
-import { SCORING_MODEL_LABEL } from "@/lib/model-constants";
+import { displayModelVersion, MODEL_VERSION, SCORING_MODEL_LABEL } from "@/lib/model-constants";
 import type { ResolvedResearchAssessment } from "@/lib/research-library";
+import { seedLibraryProvenance, visibleEvidenceNotes } from "@/lib/research-library";
 import { getBittimittariReference } from "@/lib/bittimittari-reference";
 import { useLang } from "@/lib/use-lang";
+import { EvidenceBinderPanel } from "@/components/EvidenceBinderPanel";
+import { evidenceForLibrarySlug } from "@/lib/research/evidence-binder";
 
 const UI = {
   en: {
@@ -82,6 +85,25 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
   const gc = gradeColor(sig.grade);
   const siteLabel = location;
   const bitti = getBittimittariReference(entry.slug);
+  const provenance = seedLibraryProvenance({
+    source: entry.source,
+    fromDatabase: data.fromDatabase,
+    modelVersion: data.modelVersion,
+  });
+  const notes = visibleEvidenceNotes(
+    entry.evidenceNotes,
+    entry.source,
+    data.fromDatabase,
+    data.modelVersion
+  );
+  /** Do not stamp every library page as Model v0.4 — historical rows may be unrecorded / other versions. */
+  const modelMetaLabel = data.fromDatabase
+    ? lang === "fi"
+      ? `Tallennettu malli · ${displayModelVersion(data.modelVersion)}`
+      : `Stored model · ${displayModelVersion(data.modelVersion)}`
+    : data.modelVersion === MODEL_VERSION
+      ? SCORING_MODEL_LABEL
+      : displayModelVersion(data.modelVersion);
 
   return (
     <article style={{ maxWidth: 800, margin: "0 auto", padding: "24px 32px 80px", paddingTop: 24 }}>
@@ -161,7 +183,7 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
         {" · "}
         {entry.vertical}
         {" · "}
-        {SCORING_MODEL_LABEL}
+        {modelMetaLabel}
       </p>
 
       <div
@@ -298,9 +320,9 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
             </div>
           )}
 
-          {entry.evidenceNotes && entry.evidenceNotes.length > 0 && (
+          {notes.length > 0 && (
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
-              {entry.evidenceNotes.map((note) => (
+              {notes.map((note) => (
                 <li
                   key={`${note.kind}-${note.en.slice(0, 24)}`}
                   style={{
@@ -328,6 +350,18 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
           )}
         </section>
       )}
+
+      <EvidenceBinderPanel
+        title="Evidence binder · this assessment"
+        records={evidenceForLibrarySlug(entry.slug)}
+        returnHref="/research?from=workflow"
+        returnLabel={lang === "fi" ? "← Research Library" : "← Research Library"}
+        emptyMessage={
+          lang === "fi"
+            ? "Ei sideaineistoa tälle arviolle. Puuttuva näyttö säilyy näkyvänä."
+            : "No binder evidence for this assessment yet. Missing evidence stays visible."
+        }
+      />
 
       <nav
         className="gryps-no-print"
@@ -367,6 +401,19 @@ export function ResearchAssessmentView({ data }: { data: ResolvedResearchAssessm
         </Link>
       </nav>
 
+      {provenance && (
+        <p
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontSize: 13,
+            color: "var(--text-muted)",
+            lineHeight: 1.55,
+            marginBottom: 12,
+          }}
+        >
+          {lang === "fi" ? provenance.fi : provenance.en}
+        </p>
+      )}
       <ResilienceOutput result={result} input={input} lang={lang} siteLabel={siteLabel} />
 
       <div
